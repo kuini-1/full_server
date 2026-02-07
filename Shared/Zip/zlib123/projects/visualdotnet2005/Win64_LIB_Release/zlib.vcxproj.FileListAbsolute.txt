@@ -1,0 +1,2 @@
+D:\SERVER\full_server\Shared\Zip\zlib123\projects\visualdotnet2005\Win64_LIB_Release\zlib.lib
+E:\SERVER\full_server\Shared\Zip\zlib123\projects\visualdotnet2005\Win64_LIB_Release\zlib.lib

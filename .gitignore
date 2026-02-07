@@ -1,0 +1,14 @@
+/.vs
+/build
+/Release
+/ReleaseX64
+DboServerFiles.sln
+*.obj
+*.log
+*.pch
+*.tlog
+/Shared/Zip/zlib123/old
+/Server/dbod-web
+/Server/test
+/Server/Tools
+/Server/web-bridge

@@ -1,0 +1,81 @@
+#include "stdafx.h"
+#include "mg_opcodes.h"
+#include "MasterServerSession.h"
+
+
+CMG_Opcodes::CMG_Opcodes()
+{
+	BuildOpcodeList();
+}
+
+
+CMG_Opcodes::~CMG_Opcodes()
+{
+	delete[] aOpcodeHandler;
+}
+
+
+void CMG_Opcodes::BuildOpcodeList()
+{
+	for (int i = 0; i < MG_OPCODE_END - MG_OPCODE_BEGIN; i++)
+		aOpcodeHandler[i] = new OpcodeHandler<CMasterServerSession>;
+
+	StoreOpcode(MG_PING_REQ, "MG_PING_REQ", PROCESS_INPLACE, &CMasterServerSession::RecvPingRes);
+	StoreOpcode(MG_SERVERS_INFO_ADD, "MG_SERVERS_INFO_ADD", PROCESS_INPLACE, &CMasterServerSession::RecvServerInfoAdd);
+	StoreOpcode(MG_GAME_SERVER_CHANNEL_INFO, "MG_GAME_SERVER_CHANNEL_INFO", PROCESS_INPLACE, &CMasterServerSession::RecvGameServerChannelInfo);
+	StoreOpcode(MG_CHARACTER_SERVER_FARM_INFO_CHANGED_NFY, "MG_CHARACTER_SERVER_FARM_INFO_CHANGED_NFY", PROCESS_INPLACE, &CMasterServerSession::RecvCharServerUpdate);
+	StoreOpcode(MG_GAME_SERVER_CHANNEL_INFO_CHANGED_NFY, "MG_GAME_SERVER_CHANNEL_INFO_CHANGED_NFY", PROCESS_INPLACE, &CMasterServerSession::RecvGameServerUpdate);
+	StoreOpcode(MG_LOGIN_RES, "MG_LOGIN_RES", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvUserLogin);
+	StoreOpcode(MG_MOVE_RES, "MG_MOVE_RES", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvUserMove);
+	StoreOpcode(MG_PLAYER_SWITCH_CHANNEL_RES, "MG_PLAYER_SWITCH_CHANNEL_RES", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvPlayerSwitchChannel);
+	StoreOpcode(MG_CHAR_SERVER_TELEPORT_RES, "MG_CHAR_SERVER_TELEPORT_RES", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvCharServerTeleportRes);
+	StoreOpcode(MG_WEB_ONLINE_PLAYERS_REQ, "MG_WEB_ONLINE_PLAYERS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebOnlinePlayersReq);
+	StoreOpcode(MG_WEB_SEND_NOTICE_REQ, "MG_WEB_SEND_NOTICE_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSendNoticeReq);
+	StoreOpcode(MG_WEB_KICK_PLAYER_REQ, "MG_WEB_KICK_PLAYER_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebKickPlayerReq);
+	StoreOpcode(MG_WEB_GIVE_ITEM_REQ, "MG_WEB_GIVE_ITEM_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebGiveItemReq);
+	StoreOpcode(MG_WEB_GIVE_ITEM_ALL_REQ, "MG_WEB_GIVE_ITEM_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebGiveItemAllReq);
+	StoreOpcode(MG_WEB_EXEC_GM_COMMAND_REQ, "MG_WEB_EXEC_GM_COMMAND_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebExecGmCommandReq);
+	StoreOpcode(MG_WEB_APPLY_BUFF_REQ, "MG_WEB_APPLY_BUFF_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebApplyBuffReq);
+	StoreOpcode(MG_WEB_REMOVE_BUFF_SKILL_REQ, "MG_WEB_REMOVE_BUFF_SKILL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebRemoveBuffSkillReq);
+	StoreOpcode(MG_WEB_REMOVE_BUFF_EFFECT_REQ, "MG_WEB_REMOVE_BUFF_EFFECT_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebRemoveBuffEffectReq);
+	StoreOpcode(MG_WEB_CLEAR_BUFFS_REQ, "MG_WEB_CLEAR_BUFFS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebClearBuffsReq);
+	StoreOpcode(MG_WEB_HEAL_FULL_REQ, "MG_WEB_HEAL_FULL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebHealFullReq);
+	StoreOpcode(MG_WEB_ADD_ZENI_REQ, "MG_WEB_ADD_ZENI_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebAddZeniReq);
+	StoreOpcode(MG_WEB_GIVE_ITEM_CUSTOM_REQ, "MG_WEB_GIVE_ITEM_CUSTOM_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebGiveItemCustomReq);
+	StoreOpcode(MG_WEB_APPLY_BUFF_SKILL_ALL_REQ, "MG_WEB_APPLY_BUFF_SKILL_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebApplyBuffSkillAllReq);
+	StoreOpcode(MG_WEB_APPLY_BUFF_ITEM_REQ, "MG_WEB_APPLY_BUFF_ITEM_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebApplyBuffItemReq);
+	StoreOpcode(MG_WEB_APPLY_BUFF_ITEM_ALL_REQ, "MG_WEB_APPLY_BUFF_ITEM_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebApplyBuffItemAllReq);
+	StoreOpcode(MG_WEB_REMOVE_BUFF_SKILL_ALL_REQ, "MG_WEB_REMOVE_BUFF_SKILL_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebRemoveBuffSkillAllReq);
+	StoreOpcode(MG_WEB_REMOVE_BUFF_EFFECT_ALL_REQ, "MG_WEB_REMOVE_BUFF_EFFECT_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebRemoveBuffEffectAllReq);
+	StoreOpcode(MG_WEB_CLEAR_BUFFS_ALL_REQ, "MG_WEB_CLEAR_BUFFS_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebClearBuffsAllReq);
+	StoreOpcode(MG_WEB_SET_LEVEL_REQ, "MG_WEB_SET_LEVEL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetLevelReq);
+	StoreOpcode(MG_WEB_SET_CLASS_REQ, "MG_WEB_SET_CLASS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetClassReq);
+	StoreOpcode(MG_WEB_KILL_PLAYER_REQ, "MG_WEB_KILL_PLAYER_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebKillPlayerReq);
+	StoreOpcode(MG_WEB_TELEPORT_PORTAL_REQ, "MG_WEB_TELEPORT_PORTAL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebTeleportPortalReq);
+	StoreOpcode(MG_WEB_TELEPORT_WORLD_REQ, "MG_WEB_TELEPORT_WORLD_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebTeleportWorldReq);
+	StoreOpcode(MG_WEB_TELEPORT_COORDS_REQ, "MG_WEB_TELEPORT_COORDS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebTeleportCoordsReq);
+	StoreOpcode(MG_WEB_MUTE_PLAYER_REQ, "MG_WEB_MUTE_PLAYER_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebMutePlayerReq);
+	StoreOpcode(MG_WEB_UNMUTE_PLAYER_REQ, "MG_WEB_UNMUTE_PLAYER_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebUnmutePlayerReq);
+	StoreOpcode(MG_WEB_TOGGLE_EXP_REQ, "MG_WEB_TOGGLE_EXP_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebToggleExpReq);
+	StoreOpcode(MG_WEB_RESET_EXP_REQ, "MG_WEB_RESET_EXP_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebResetExpReq);
+	StoreOpcode(MG_WEB_LEARN_SKILL_REQ, "MG_WEB_LEARN_SKILL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebLearnSkillReq);
+	StoreOpcode(MG_WEB_ADD_TITLE_REQ, "MG_WEB_ADD_TITLE_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebAddTitleReq);
+	StoreOpcode(MG_WEB_REMOVE_TITLE_REQ, "MG_WEB_REMOVE_TITLE_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebRemoveTitleReq);
+	StoreOpcode(MG_WEB_SET_SOLO_EXP_BONUS_REQ, "MG_WEB_SET_SOLO_EXP_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetSoloExpBonusReq);
+	StoreOpcode(MG_WEB_SET_PARTY_EXP_BONUS_REQ, "MG_WEB_SET_PARTY_EXP_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetPartyExpBonusReq);
+	StoreOpcode(MG_WEB_SET_QUEST_EXP_BONUS_REQ, "MG_WEB_SET_QUEST_EXP_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetQuestExpBonusReq);
+	StoreOpcode(MG_WEB_SET_CRAFT_EXP_BONUS_REQ, "MG_WEB_SET_CRAFT_EXP_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetCraftExpBonusReq);
+	StoreOpcode(MG_WEB_SET_ZENI_DROP_BONUS_REQ, "MG_WEB_SET_ZENI_DROP_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetZeniDropBonusReq);
+	StoreOpcode(MG_WEB_SET_QUEST_MONEY_BONUS_REQ, "MG_WEB_SET_QUEST_MONEY_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetQuestMoneyBonusReq);
+	StoreOpcode(MG_WEB_SET_UPGRADE_RATE_BONUS_REQ, "MG_WEB_SET_UPGRADE_RATE_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetUpgradeRateBonusReq);
+	StoreOpcode(MG_WEB_SET_MONSTER_AGGRESSIVE_REQ, "MG_WEB_SET_MONSTER_AGGRESSIVE_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetMonsterAggressiveReq);
+	StoreOpcode(MG_WEB_SET_MONSTER_STAT_BONUS_REQ, "MG_WEB_SET_MONSTER_STAT_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetMonsterStatBonusReq);
+	StoreOpcode(MG_WEB_APPLY_MONSTER_BUFF_SKILL_ALL_REQ, "MG_WEB_APPLY_MONSTER_BUFF_SKILL_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebApplyMonsterBuffSkillAllReq);
+	StoreOpcode(MG_WEB_CLEAR_MONSTER_BUFFS_ALL_REQ, "MG_WEB_CLEAR_MONSTER_BUFFS_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebClearMonsterBuffsAllReq);
+	StoreOpcode(MG_WEB_SET_KILL_DEBUFF_REQ, "MG_WEB_SET_KILL_DEBUFF_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetKillDebuffReq);
+	StoreOpcode(MG_WEB_RESET_SKILL_COOLDOWN_REQ, "MG_WEB_RESET_SKILL_COOLDOWN_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebResetSkillCooldownReq);
+	StoreOpcode(MG_WEB_RESET_SKILL_COOLDOWN_ALL_REQ, "MG_WEB_RESET_SKILL_COOLDOWN_ALL_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebResetSkillCooldownAllReq);
+	StoreOpcode(MG_WEB_SET_CHANNEL_STAT_BONUS_REQ, "MG_WEB_SET_CHANNEL_STAT_BONUS_REQ", PROCESS_THREADUNSAFE, &CMasterServerSession::RecvWebSetChannelStatBonusReq);
+}
+
+

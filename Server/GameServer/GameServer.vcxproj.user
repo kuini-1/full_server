@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseX64|x64'">
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <RemoteDebuggerCommand>C:\Users\Administrator\Desktop\test\GameServer.exe</RemoteDebuggerCommand>
+    <RemoteDebuggerWorkingDirectory>C:\Users\Administrator\Desktop\test</RemoteDebuggerWorkingDirectory>
+    <RemoteDebuggerServerName>130.193.104.50</RemoteDebuggerServerName>
+    <RemoteDebuggerDebuggerType>NativeOnly</RemoteDebuggerDebuggerType>
+    <DeploymentDirectory>C:\Users\Administrator\Desktop\test</DeploymentDirectory>
+    <AdditionalFiles>C:\Users\Administrator\Desktop\test\gameserverdata.txt</AdditionalFiles>
+    <LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand>
+    <LocalDebuggerCommandArguments>.\\config\\GameServer.ini</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>E:\SERVER\full_server\ReleaseX64</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ShowAllFiles>false</ShowAllFiles>
+  </PropertyGroup>
+</Project>

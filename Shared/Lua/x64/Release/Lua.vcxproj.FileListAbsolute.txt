@@ -1,0 +1,1 @@
+D:\SERVER\full_server\Shared\Lua\x64\Release\Lua.lib
