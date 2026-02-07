@@ -115,7 +115,11 @@ static int BYTEBIT[] = {0200, 0100, 040, 020, 010, 04, 02, 01};
 
 static int NIBBLEBIT[] = {010, 04, 02, 01};
 
+#if defined(__cplusplus) && __cplusplus >= 201703L
+#define REGISTER	/* empty: register deprecated in C++17 */
+#else
 #define REGISTER	register
+#endif
 
 
 CDes	DesObject;

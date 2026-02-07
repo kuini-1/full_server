@@ -1,7 +1,12 @@
 #include "stdafx.h"
 #define ORDER_DCBA
 
-#include "blowfish.h"
+#include "Blowfish.h"
+#include <cstring>
+
+#ifndef _WIN32
+#define ZeroMemory(ptr, size) memset((ptr), 0, (size))
+#endif
 
 static UWORD_32bits bf_PSource[bf_N + 2] = {
   0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344,

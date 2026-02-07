@@ -15,6 +15,7 @@
 #include "stdafx.h"
 
 #include "CBaseQueue.h"
+#include <cstring>
 
 
 /////////////////////////////////////////
@@ -93,7 +94,7 @@ bool CBaseQueue::Create( DWORD dwMaxSize, WORD wMode )
 
 	if( m_wState != STATE_DISABLED )
 	{
-		this->SetLastError( ERROR_NOT_READY );
+		this->SetErrorCode( ERROR_NOT_READY );
 
 		return false;
 	}
@@ -212,7 +213,7 @@ bool CBaseQueue::Refresh( void )
 
 	if( m_wState != STATE_READY )
 	{
-		this->SetLastError( ERROR_NOT_READY );
+		this->SetErrorCode( ERROR_NOT_READY );
 
 		return false;
 	}
@@ -280,7 +281,7 @@ bool CBaseQueue::Push( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( lpInfo == NULL || lpvData == NULL )
 	{
-		this->SetLastError( ERROR_INVALID_PARAMETER );
+		this->SetErrorCode( ERROR_INVALID_PARAMETER );
 
 		return false;
 	}
@@ -290,7 +291,7 @@ bool CBaseQueue::Push( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( m_wState != STATE_READY )
 	{
-		this->SetLastError( ERROR_NOT_READY );
+		this->SetErrorCode( ERROR_NOT_READY );
 
 		return false;
 	}
@@ -340,7 +341,7 @@ bool CBaseQueue::Push( LPQUEUEINFO lpInfo, LPVOID lpvData )
 		{
 			m_wState &= ~STATE_PUSH;
 
-			this->SetLastError( ERROR_NOT_ENOUGH_MEMORY );
+			this->SetErrorCode( ERROR_NOT_ENOUGH_MEMORY );
 
 			return false;
 		}
@@ -352,7 +353,7 @@ bool CBaseQueue::Push( LPQUEUEINFO lpInfo, LPVOID lpvData )
 	m_lpInfoQueueBuffer[m_dwHead] = new QUEUEINFO;
 	if( m_lpInfoQueueBuffer[m_dwHead] == NULL )
 	{
-		this->SetLastError( ERROR_OUTOFMEMORY );
+		this->SetErrorCode( ERROR_OUTOFMEMORY );
 
 		return false;
 	}
@@ -365,7 +366,7 @@ bool CBaseQueue::Push( LPQUEUEINFO lpInfo, LPVOID lpvData )
 	m_lpDataQueueBuffer[m_dwHead] = new BYTE[lpInfo->wSize];
 	if( m_lpDataQueueBuffer[m_dwHead] == NULL )
 	{
-		this->SetLastError( ERROR_OUTOFMEMORY );
+		this->SetErrorCode( ERROR_OUTOFMEMORY );
 
 		delete m_lpInfoQueueBuffer[m_dwHead];
 		m_lpInfoQueueBuffer[m_dwHead] = NULL;
@@ -408,7 +409,7 @@ bool CBaseQueue::Pop( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( ( lpInfo == NULL ) || ( lpvData == NULL ) )
 	{
-		this->SetLastError( ERROR_INVALID_PARAMETER );
+		this->SetErrorCode( ERROR_INVALID_PARAMETER );
 
 		return false;
 	}
@@ -418,7 +419,7 @@ bool CBaseQueue::Pop( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( m_dwSize == 0 )
 	{
-		this->SetLastError( ERROR_EMPTY );
+		this->SetErrorCode( ERROR_EMPTY );
 
 		return false;
 	}
@@ -427,7 +428,7 @@ bool CBaseQueue::Pop( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( m_wState != STATE_READY )
 	{
-		SetLastError( ERROR_NOT_READY );
+		SetErrorCode( ERROR_NOT_READY );
 
 		return false;
 	}
@@ -492,7 +493,7 @@ bool CBaseQueue::PushFast( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( lpInfo == NULL || lpvData == NULL )
 	{
-		this->SetLastError( ERROR_INVALID_PARAMETER );
+		this->SetErrorCode( ERROR_INVALID_PARAMETER );
 
 		return false;
 	}
@@ -502,7 +503,7 @@ bool CBaseQueue::PushFast( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( m_wState != STATE_READY )
 	{
-		SetLastError( ERROR_NOT_READY );
+		SetErrorCode( ERROR_NOT_READY );
 
 		return false;
 	}
@@ -595,7 +596,7 @@ bool CBaseQueue::PopFast( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( m_dwSize == 0 )
 	{
-		this->SetLastError( ERROR_EMPTY );
+		this->SetErrorCode( ERROR_EMPTY );
 
 		return false;
 	}
@@ -605,7 +606,7 @@ bool CBaseQueue::PopFast( LPQUEUEINFO lpInfo, LPVOID lpvData )
 
 	if( m_wState != STATE_READY )
 	{
-		SetLastError( ERROR_NOT_READY );
+		SetErrorCode( ERROR_NOT_READY );
 
 		return false;
 	}
@@ -662,7 +663,7 @@ bool CBaseQueue::SetMaxSize( DWORD dwNewMaxSize )
 
 	if( dwNewMaxSize < m_dwSize )
 	{
-		this->SetLastError( ERROR_INVALID_PARAMETER );
+		this->SetErrorCode( ERROR_INVALID_PARAMETER );
 
 		return false;
 	}
@@ -682,7 +683,7 @@ bool CBaseQueue::SetMaxSize( DWORD dwNewMaxSize )
 	pNewInfoQueueBuffer = new LPQUEUEINFO[dwNewMaxSize];
 	if( pNewInfoQueueBuffer == NULL )
 	{
-		this->SetLastError( ERROR_OUTOFMEMORY );
+		this->SetErrorCode( ERROR_OUTOFMEMORY );
 
 		return false;
 	}
@@ -694,7 +695,7 @@ bool CBaseQueue::SetMaxSize( DWORD dwNewMaxSize )
 	pNewDataQueueBuffer = new LPBYTE[dwNewMaxSize];
 	if( pNewDataQueueBuffer == NULL )
 	{
-		this->SetLastError( ERROR_OUTOFMEMORY );
+		this->SetErrorCode( ERROR_OUTOFMEMORY );
 
 		delete[] pNewInfoQueueBuffer;
 
@@ -782,7 +783,7 @@ bool CBaseQueue::SetMode( WORD wNewMode )
 
 		default:
 		{
-			this->SetLastError( ERROR_INVALID_PARAMETER );
+			this->SetErrorCode( ERROR_INVALID_PARAMETER );
 
 			return false;
 		}

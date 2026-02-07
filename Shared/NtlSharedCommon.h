@@ -36,6 +36,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <errno.h>
+#include <cstring>
 
 // Socket type mapping (Winsock -> POSIX)
 typedef int SOCKET;
@@ -60,6 +61,30 @@ typedef unsigned long DWORD;
 #define FALSE 0
 #endif
 typedef void* HANDLE;
+typedef void* LPVOID;
+typedef unsigned char* LPBYTE;
+
+// Windows error code equivalents for compatibility
+#ifndef ERROR_SUCCESS
+#define ERROR_SUCCESS 0
+#endif
+#ifndef ERROR_INVALID_PARAMETER
+#define ERROR_INVALID_PARAMETER 87
+#endif
+#ifndef ERROR_NOT_READY
+#define ERROR_NOT_READY 21
+#endif
+#ifndef ERROR_EMPTY
+#define ERROR_EMPTY 0x100
+#endif
+#ifndef ERROR_NOT_ENOUGH_MEMORY
+#define ERROR_NOT_ENOUGH_MEMORY 8
+#endif
+#ifndef ERROR_OUTOFMEMORY
+#define ERROR_OUTOFMEMORY 14
+#endif
+
+#define ZeroMemory(ptr, size) memset((ptr), 0, (size))
 
 typedef struct _OVERLAPPED {
 	void* Internal;

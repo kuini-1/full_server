@@ -115,6 +115,9 @@ if(NOT WIN32)
   # Windows-style precompiled-header naming. They are not referenced by the servers
   # and block Linux compilation.
   list(FILTER _dbo_util_src EXCLUDE REGEX ".*[/\\\\]CFixedString.*\\.cpp$")
+  # CLogMessageManager uses Windows-only APIs (TCHAR, WriteFile, GetLocalTime,
+  # SYSTEMTIME, _tcscpy_s, etc.). Exclude from Linux build.
+  list(FILTER _dbo_util_src EXCLUDE REGEX ".*[/\\\\]CLogMessageManager.*\\.cpp$")
 endif()
 add_library(Util STATIC ${_dbo_util_src})
 target_link_libraries(Util PUBLIC dbo_includes)

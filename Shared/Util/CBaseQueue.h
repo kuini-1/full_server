@@ -88,8 +88,8 @@ class CBaseQueue
 		bool					SetMode( WORD wNewMode );
 		WORD					GetMode( void ) { return m_wMode; }
 
-		void					SetLastError( DWORD dwErrorCode ) { m_dwErrorCode = dwErrorCode; }
-		DWORD					GetLastError( void ) { return m_dwErrorCode; }
+		void					SetErrorCode( DWORD dwErrorCode ) { m_dwErrorCode = dwErrorCode; }
+		DWORD					GetErrorCode( void ) { return m_dwErrorCode; }
 
 	protected:
 
@@ -130,7 +130,7 @@ class CBaseQueue
 		static const WORD		STATE_DISABLED;					// Disabled State
 };
 
-#endif _INCLUDED_BASE_QUEUE_H_
+#endif // _INCLUDED_BASE_QUEUE_H_
 
 //////////////////////////////////////////////////////////////////////////////
 //
