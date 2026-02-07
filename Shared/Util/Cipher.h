@@ -5,6 +5,7 @@
 #else
 typedef void* HCRYPTPROV;
 typedef void* HCRYPTKEY;
+typedef void* HCRYPTHASH;
 #endif
 
 #include "Constant.h"

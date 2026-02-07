@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-01-22
 //
-//	Copyright	:	¬®√è NTL-Inc Co., Ltd
+//	Copyright	:	®œ NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -158,7 +158,7 @@ bool CNtlBitFlagManager::Set(DWORD dwIndex)
 	}
 
 	DWORD dwByteIndex = dwIndex / 8;
-	BYTE byMask = 0x01ui8 << (BYTE)(dwIndex % 8);
+	BYTE byMask = (BYTE)0x01 << (BYTE)(dwIndex % 8);
 
 	m_pabyFlag[dwByteIndex] |= byMask;
 
@@ -178,7 +178,7 @@ bool CNtlBitFlagManager::Unset(DWORD dwIndex)
 	}
 
 	DWORD dwByteIndex = dwIndex / 8;
-	BYTE byMask = 0x01ui8 << (BYTE)(dwIndex % 8);
+	BYTE byMask = (BYTE)0x01 << (BYTE)(dwIndex % 8);
 
 	m_pabyFlag[dwByteIndex] &= ~byMask;
 
@@ -198,9 +198,9 @@ bool CNtlBitFlagManager::IsSet(DWORD dwIndex)
 	}
 
 	DWORD dwByteIndex = dwIndex / 8;
-	BYTE byMask = 0x01ui8 << (BYTE)(dwIndex % 8);
+	BYTE byMask = (BYTE)0x01 << (BYTE)(dwIndex % 8);
 
-	if (0x00ui8 == (m_pabyFlag[dwByteIndex] & byMask))
+	if ((BYTE)0x00 == (m_pabyFlag[dwByteIndex] & byMask))
 	{
 		return false;
 	}

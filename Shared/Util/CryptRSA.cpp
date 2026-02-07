@@ -1,7 +1,7 @@
 #include "StdAfx.h"
-#include "cryptrsa.h"
+#include "CryptRSA.h"
 
-
+#ifdef _WIN32
 ///////////////////////////// by using crypt Platform SDK: Security
 CCryptGenRSA::CCryptGenRSA(void)
 {
@@ -552,3 +552,33 @@ int CCryptTripleDes::Decrypt(unsigned char *originalData, int originalDataLength
 
 	return decDataLen;
 }
+
+#else
+// Linux: Windows Crypto API not available. Stub implementations so NtlCipher etc. link.
+CCryptGenRSA::CCryptGenRSA(void) { mhProv = 0; mhRSAKey = 0; }
+CCryptGenRSA::~CCryptGenRSA(void) { FreeHandle(); }
+bool CCryptGenRSA::SetCryptAPIHandle(void) { return false; }
+void CCryptGenRSA::PrintError(DWORD, int, wchar_t *) {}
+int CCryptGenRSA::GetPublicKey(int, unsigned char *) { return 0; }
+void CCryptGenRSA::FreeHandle(void) { mhRSAKey = 0; mhProv = 0; }
+int CCryptGenRSA::GetPrivateKey(int, unsigned char *) { return 0; }
+bool CCryptGenRSA::SetPublicKey(int, unsigned char *) { return false; }
+int CCryptGenRSA::Encrypt(unsigned char *, int, unsigned char *) { return 0; }
+int CCryptGenRSA::Decrypt(unsigned char *, int, unsigned char *) { return 0; }
+
+CCryptRSA::CCryptRSA(void) { mhProv = 0; mhRSAKey = 0; }
+CCryptRSA::~CCryptRSA(void) { ReleaseCipher(); }
+void CCryptRSA::ReleaseCipher(void) { mhRSAKey = 0; mhProv = 0; }
+void CCryptRSA::PrintError(DWORD, int, wchar_t *) {}
+int CCryptRSA::SetKey(unsigned char *, int) { return RSA_SYSTEM_ERROR; }
+int CCryptRSA::Encrypt(unsigned char *, int, unsigned char *, int) { return CIPHER_ERROR; }
+int CCryptRSA::Decrypt(unsigned char *, int, unsigned char *, int) { return CIPHER_ERROR; }
+
+CCryptTripleDes::CCryptTripleDes(void) { mhProv = 0; mhTripleDesKey = 0; }
+CCryptTripleDes::~CCryptTripleDes(void) { ReleaseCipher(); }
+void CCryptTripleDes::ReleaseCipher(void) { mhTripleDesKey = 0; mhProv = 0; }
+void CCryptTripleDes::PrintError(DWORD, int, wchar_t *) {}
+int CCryptTripleDes::SetKey(unsigned char *, int) { return RSA_SYSTEM_ERROR; }
+int CCryptTripleDes::Encrypt(unsigned char *, int, unsigned char *, int) { return CIPHER_ERROR; }
+int CCryptTripleDes::Decrypt(unsigned char *, int, unsigned char *, int) { return CIPHER_ERROR; }
+#endif

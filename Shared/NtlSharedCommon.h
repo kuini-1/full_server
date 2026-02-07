@@ -85,6 +85,7 @@ typedef unsigned char* LPBYTE;
 #endif
 
 #define ZeroMemory(ptr, size) memset((ptr), 0, (size))
+#define CopyMemory(dest, src, size) memcpy((dest), (src), (size))
 
 typedef struct _OVERLAPPED {
 	void* Internal;
