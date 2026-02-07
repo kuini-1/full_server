@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "Cipher.h"
 
+#ifndef _WIN32
+#include <openssl/rand.h>
+#endif
+
 CCipher::CCipher(void)
 {
 }
@@ -16,6 +20,7 @@ NCGenRandomKey::NCGenRandomKey(void)
 	mhProv = 0;
 }
 
+#ifdef _WIN32
 NCGenRandomKey::~NCGenRandomKey(void)
 {
 	if (mhProv) 
@@ -115,3 +120,36 @@ int NCGenRandomKey::GenerateRSAPrivateKey(int cipherKeySize, unsigned char *ciph
 
 	return rsaKeyLen;
 }
+
+#else
+NCGenRandomKey::~NCGenRandomKey(void)
+{
+	(void)mhProv;
+}
+
+bool NCGenRandomKey::Init(void)
+{
+	return true;
+}
+
+bool NCGenRandomKey::GenerateKey(int cipherKeyLength, unsigned char *cipherKey)
+{
+	if ((cipherKeyLength <= 0) || (!cipherKey))
+		return false;
+	return RAND_bytes(cipherKey, cipherKeyLength) == 1;
+}
+
+int NCGenRandomKey::GenerateRSAKey(int cipherKeySize, unsigned char *cipherKey)
+{
+	(void)cipherKeySize;
+	(void)cipherKey;
+	return 0;
+}
+
+int NCGenRandomKey::GenerateRSAPrivateKey(int cipherKeySize, unsigned char *cipherKey)
+{
+	(void)cipherKeySize;
+	(void)cipherKey;
+	return 0;
+}
+#endif

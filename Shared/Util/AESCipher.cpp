@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "AESCipher.h"
+#include <cstring>
 
 /* uncomment the following line to use pre-computed tables */
 /* otherwise the tables will be generated at the first run */

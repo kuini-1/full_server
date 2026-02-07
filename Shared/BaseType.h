@@ -59,7 +59,11 @@ typedef double					Float64;
 
 #include "NtlSharedCommon.h"
 
+#ifdef _WIN32
 #include <tchar.h>
+#else
+#include <cstring>
+#endif
 
 
 //-----------------------------------------------------------------------------
@@ -278,6 +282,7 @@ BYTE inline ForceByte( TCLASS tVal )
 
 
 #ifndef AfxMessageBox
+#ifdef _WIN32
 	int inline AfxMessageBox( LPCTSTR pchMessage, LPTSTR pchTitle = _T( "AfxMessage\0" ), UINT nFlag = MB_OK )
 	{
 		return MessageBox( (HWND)NULL, pchMessage, pchTitle, nFlag );
@@ -292,14 +297,26 @@ BYTE inline ForceByte( TCLASS tVal )
 	{
 		return MessageBoxW( (HWND)NULL, pchMessage, pchTitle, nFlag );
 	}
+#else
+	int inline AfxMessageBox( const char*, const char* = nullptr, unsigned int = 0 ) { return 0; }
+	int inline AfxMessageBoxA( const char*, const char* = nullptr, unsigned int = 0 ) { return 0; }
+	int inline AfxMessageBoxW( const wchar_t*, const wchar_t* = nullptr, unsigned int = 0 ) { return 0; }
+#endif
 #endif AfxMessageBox
 
 
 #ifndef IsEqualString
+#ifdef _WIN32
 	BOOL inline IsEqualString( LPTSTR pchString1, LPTSTR pchString2 )
 	{
 		return !( _tcscmp( pchString1, pchString2 ) );
 	}
+#else
+	BOOL inline IsEqualString( const char* pchString1, const char* pchString2 )
+	{
+		return ( pchString1 && pchString2 && strcmp( pchString1, pchString2 ) == 0 );
+	}
+#endif
 #endif IsEqualString
 
 

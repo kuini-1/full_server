@@ -9,7 +9,11 @@
 // Modify by Lili lilijreey@gmail.com for Lua5.2 version Thu Nov 15 17:47:06 CST 2012
 
 
+#ifdef _WIN32
 #define I64_FMT "I64"
+#else
+#define I64_FMT "ll"
+#endif
 
 #include "lua_tinker.h"
 

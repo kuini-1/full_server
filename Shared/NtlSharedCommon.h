@@ -4,8 +4,13 @@
 // It has no responsibility for any problems which occurs on another platforms.
 // - YOSHIKI
 
+#ifdef _WIN32
 #include <ws2tcpip.h> //includes winsock2.h
 #include <windows.h>
+
+#if defined(_MSC_VER)
+#pragma warning(disable:4819) // vs2005 codepage bug disable
+#endif
 
 //typedef char Char;
 //typedef unsigned char Byte;
@@ -24,4 +29,55 @@
 //typedef signed __int64 Int64;
 //typedef unsigned __int64 UInt64;
 
-#pragma warning(disable:4819) // vs2005 codepage bug disable
+#else
+// Linux / POSIX: do not include Windows headers.
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <errno.h>
+
+// Socket type mapping (Winsock -> POSIX)
+typedef int SOCKET;
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET (-1)
+#endif
+#ifndef SOCKET_ERROR
+#define SOCKET_ERROR (-1)
+#endif
+
+// Minimal types required by NtlSocket.h and other includers
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+typedef unsigned long DWORD;
+#ifndef BOOL
+#define BOOL int
+#endif
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
+typedef void* HANDLE;
+
+typedef struct _OVERLAPPED {
+	void* Internal;
+	void* InternalHigh;
+	union { struct { DWORD Offset; DWORD OffsetHigh; }; void* Pointer; };
+	HANDLE hEvent;
+} OVERLAPPED;
+
+typedef struct _WSABUF {
+	unsigned long len;
+	char* buf;
+} WSABUF;
+
+// Map Win32 error APIs to errno for compatibility
+#define GetLastError() (errno)
+#define SetLastError(x) (void)(errno = (x))
+
+// closesocket on Windows; on POSIX use close()
+#define closesocket close
+
+#endif // _WIN32

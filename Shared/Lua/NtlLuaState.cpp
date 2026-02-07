@@ -5,6 +5,7 @@
 #include "../NtlSharedCommon.h"
 #include <cstring>
 #endif
+#include <cstdio>
 #include "NtlLuaState.h"
 
 extern "C" {
@@ -68,7 +69,7 @@ bool CNtlLuaState::RunScript(const char *pFileName)
 	}
 
 	char chSuccess[NTL_MAX_LUA_ERR];
-	sprintf_s(chSuccess, NTL_MAX_LUA_ERR, "RunScript(lua_pcall) Success - Script Name : %s\n", pFileName);
+	snprintf(chSuccess, NTL_MAX_LUA_ERR, "RunScript(lua_pcall) Success - Script Name : %s\n", pFileName);
 	CallSuccessHandler(chSuccess);
 
 	return true;
@@ -79,7 +80,7 @@ bool CNtlLuaState::RunString(const char *pCmd)
 	if(luaL_loadbuffer(m_pScriptContext, pCmd, strlen(pCmd), NULL) != 0)
 	{
 		char chError[ NTL_MAX_LUA_ERR ] = { '\0', };
-		sprintf_s(chError, NTL_MAX_LUA_ERR, "RunString(luaL_loadbuffer) Error - Error Message:%s", luaL_checkstring(m_pScriptContext, -1));
+		snprintf(chError, NTL_MAX_LUA_ERR, "RunString(luaL_loadbuffer) Error - Error Message:%s", luaL_checkstring(m_pScriptContext, -1));
 
 		CallErrorHandler(chError);
 
@@ -89,7 +90,7 @@ bool CNtlLuaState::RunString(const char *pCmd)
 	if(lua_pcall(m_pScriptContext, 0, LUA_MULTRET, 0) != 0)
 	{
 		char chError[ NTL_MAX_LUA_ERR ] = { '\0', };
-		sprintf_s(chError, NTL_MAX_LUA_ERR, "RunString(lua_pcall) Error - Error Message:%s", luaL_checkstring(m_pScriptContext, -1));
+		snprintf(chError, NTL_MAX_LUA_ERR, "RunString(lua_pcall) Error - Error Message:%s", luaL_checkstring(m_pScriptContext, -1));
 
 		CallErrorHandler(chError);
 
@@ -97,7 +98,7 @@ bool CNtlLuaState::RunString(const char *pCmd)
 	}
 
 	char chSuccess[NTL_MAX_LUA_ERR] = { '\0', };
-	sprintf_s(chSuccess, NTL_MAX_LUA_ERR, "RunString(lua_pcall) Success\n");
+	snprintf(chSuccess, NTL_MAX_LUA_ERR, "RunString(lua_pcall) Success\n");
 	CallSuccessHandler(chSuccess);
 
 	return true;

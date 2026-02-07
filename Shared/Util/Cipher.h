@@ -1,9 +1,17 @@
 #pragma once
 
+#ifdef _WIN32
 #include <WinCrypt.h>
+#else
+typedef void* HCRYPTPROV;
+typedef void* HCRYPTKEY;
+#endif
+
 #include "Constant.h"
 
+#ifdef _MSC_VER
 #pragma warning(disable : 4100 )
+#endif
 
 // This is cipher object class
 class CCipher
