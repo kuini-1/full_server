@@ -3,6 +3,9 @@
 //-----------------------------------------------------------------------------------
 
 #include "stdafx.h"
+#if !defined(_WIN32)
+#include <time.h>
+#endif
 #include "CharServer.h"
 #include "NtlBitFlagManager.h"
 #include "TableFileNameList.h"
@@ -255,8 +258,14 @@ int main(int argc, _TCHAR* argv[])
 	CCharServer app;
 	CNtlFileStream traceFileStream;
 	
+#if defined(_WIN32)
 	SYSTEMTIME ti;
 	GetLocalTime( &ti );
+#else
+	struct tm* ti_ptr;
+	time_t now = time(NULL);
+	ti_ptr = localtime(&now);
+#endif
 
 	// CHECK INI FILE AND START PROGRAM
 	int rc = app.Create(argc, argv, argv[1]);
@@ -265,12 +274,20 @@ int main(int argc, _TCHAR* argv[])
 
 	CNtlString consolename;
 	consolename.Format("DBOD CHAR - %u", app.GetServerIndex());
+#if defined(_WIN32)
 	SetConsoleTitle(consolename.c_str());
-
+#endif
 
 	// LOG FILE
 	char m_LogFile[256];
-	sprintf_s(m_LogFile,".\\logs\\charserver\\index_%u\\log_%02d-%02d-%02d.txt", app.GetServerIndex(), ti.wYear, ti.wMonth, ti.wDay);
+#if defined(_WIN32)
+	snprintf(m_LogFile, sizeof(m_LogFile), ".\\logs\\charserver\\index_%u\\log_%02d-%02d-%02d.txt", app.GetServerIndex(), ti.wYear, ti.wMonth, ti.wDay);
+#else
+	if (ti_ptr)
+		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/charserver/index_%u/log_%02d-%02d-%02d.txt", app.GetServerIndex(), ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
+	else
+		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/charserver/index_%u/log_00-00-00.txt", app.GetServerIndex());
+#endif
 
 	rc = traceFileStream.Create(m_LogFile);
 	if (NTL_SUCCESS != rc)

@@ -832,7 +832,7 @@ bool CNtlNaviODGroupExporter::ProcessPostPEData( void )
 			AttachBackSlash( strMeshFileName );
 
 			char szTempBuffer[128];
-			sprintf_s( szTempBuffer, 128, "%d.%s", m_sInputParam.uiGroupID, PE_FIELD_GROUP_MESH_EXT );
+			snprintf( szTempBuffer, 128, "%d.%s", m_sInputParam.uiGroupID, PE_FIELD_GROUP_MESH_EXT );
 			strMeshFileName += szTempBuffer;
 
 			CPathDataOutStream clMeshStream( strMeshFileName.c_str() );
@@ -864,7 +864,7 @@ bool CNtlNaviODGroupExporter::ProcessPostPEData( void )
 					std::string strColPreFileName = m_strExportPath;
 					AttachBackSlash( strColPreFileName );
 
-					sprintf_s( szTempBuffer, 128, "%d_%d.%s", m_sInputParam.uiGroupID, (tSigned32)WORLD_COORD_TO_PATH_COORD(sAgent.fRadius), PE_FIELD_GROUP_COL_PRE_EXT );
+					snprintf( szTempBuffer, 128, "%d_%d.%s", m_sInputParam.uiGroupID, (tSigned32)WORLD_COORD_TO_PATH_COORD(sAgent.fRadius), PE_FIELD_GROUP_COL_PRE_EXT );
 					strColPreFileName += szTempBuffer;
 
 					CPathDataOutStream clColPreOutStream( strColPreFileName.c_str() );
@@ -879,7 +879,7 @@ bool CNtlNaviODGroupExporter::ProcessPostPEData( void )
 					std::string strPFPreFileName = m_strExportPath;
 					AttachBackSlash( strPFPreFileName );
 
-					sprintf_s( szTempBuffer, 128, "%d_%d.%s", m_sInputParam.uiGroupID, (tSigned32)WORLD_COORD_TO_PATH_COORD(sAgent.fRadius), PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
+					snprintf( szTempBuffer, 128, "%d_%d.%s", m_sInputParam.uiGroupID, (tSigned32)WORLD_COORD_TO_PATH_COORD(sAgent.fRadius), PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
 					strPFPreFileName += szTempBuffer;
 
 					CPathDataOutStream clPFPreOutStream( strPFPreFileName.c_str() );

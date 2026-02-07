@@ -190,22 +190,22 @@ void CNtlTSTrigger::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEntity::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetID() );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetID() );
 	clProperty.m_defProperty["tid"] = std::string( g_NtlTSString );
 
-	sprintf_s( g_NtlTSString, "%d", IsRepeatQuest() ? 1 : 0 );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", IsRepeatQuest() ? 1 : 0 );
 	clProperty.m_defProperty["rq"] = std::string( g_NtlTSString );
 
-	sprintf_s( g_NtlTSString, "%d", IsShareQuest() ? 1 : 0 );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", IsShareQuest() ? 1 : 0 );
 	clProperty.m_defProperty["sq"] = std::string( g_NtlTSString );
 
-	sprintf_s( g_NtlTSString, "%d", IsOutStateMsg() ? 1 : 0 );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", IsOutStateMsg() ? 1 : 0 );
 	clProperty.m_defProperty["sm"] = std::string( g_NtlTSString );
 
-	sprintf_s( g_NtlTSString, "%d", GetTitle() );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTitle() );
 	clProperty.m_defProperty["title"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetQC() );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetQC() );
 	clProperty.m_defProperty["qc"] = g_NtlTSString;
 }
 

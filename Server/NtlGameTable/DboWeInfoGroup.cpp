@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-12-12 first written
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hong Ho Dong   ( battery@ntl-inc.com )
 //
@@ -193,7 +193,7 @@ DWORD CDboWeInfo::GetAttribute(float x, float z)
 	if(!IsTileDataLoaded())
 		return 0;
 	
-	//Tile 좌표계로 변환
+	//Tile ?????? ???
 	float fTileCoordX = x + m_nWidthHalfSize;
 	float fTileCoordZ = z + m_nHeightHalfSize;
 	
@@ -296,7 +296,7 @@ bool CDboWeInfoGroup::Create(const char * pszTilePath, const char * pszFieldPath
 		}
 		else
 		{
-			sprintf_s(szBuffer1,"%s\\%s", pszTilePath, pWorldData->szName);
+			snprintf(szBuffer1, sizeof(szBuffer1), "%s\\%s", pszTilePath, pWorldData->szName);
 			pTileFileName = szBuffer1;
 		}
 
@@ -306,7 +306,7 @@ bool CDboWeInfoGroup::Create(const char * pszTilePath, const char * pszFieldPath
 		}
 		else
 		{
-			sprintf_s(szBuffer2,"%s\\%s", pszFieldPath, pWorldData->szName);
+			snprintf(szBuffer2, sizeof(szBuffer2), "%s\\%s", pszFieldPath, pWorldData->szName);
 			pFieldFileName = szBuffer2;
 		}
 

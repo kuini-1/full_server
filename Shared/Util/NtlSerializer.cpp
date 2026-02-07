@@ -526,10 +526,10 @@ CNtlSerializer& CNtlSerializer::Format(const char *pData /*= NULL*/, ...)
 	va_list args;
 	va_start(args, pData);
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+#if defined(_WIN32) && defined(_MSC_VER) && (_MSC_VER >= 1400)
 	vsprintf_s(chBuffer, 1024, pData, args);
 #else
-	vsprintf(chBuffer, pData, args);
+	vsnprintf(chBuffer, 1024, pData, args);
 #endif
 	va_end(args);
 

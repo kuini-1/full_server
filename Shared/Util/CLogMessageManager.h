@@ -198,7 +198,7 @@ class CLogMessageManager
 		static const WORD			STATE_IDLE;
 };
 
-#endif _INCLUDED_LOG_MESSAGE_MANAGER_H_
+#endif // _INCLUDED_LOG_MESSAGE_MANAGER_H_
 
 //////////////////////////////////////////////////////////////////////////////
 //

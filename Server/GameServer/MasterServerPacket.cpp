@@ -146,7 +146,7 @@ void CMasterServerSession::RecvUserLogin(CNtlPacket * pPacket)
 			sGU_GAME_ENTER_RES * res = (sGU_GAME_ENTER_RES *)packet.GetPacketData();
 			res->wOpCode = GU_GAME_ENTER_RES;
 			res->wResultCode = GAME_SUCCESS;
-			strcpy_s(res->achCommunityServerIP, NTL_MAX_LENGTH_OF_IP + 1, app->GetConfigChatServerIP().c_str() );
+			snprintf(res->achCommunityServerIP, NTL_MAX_LENGTH_OF_IP + 1, "%s", app->GetConfigChatServerIP().c_str() );
 			res->wCommunityServerPort = app->GetConfigChatServerPort();
 			res->timeDBOEnter = time( NULL );
 			packet.SetPacketLen( sizeof(sGU_GAME_ENTER_RES) );
@@ -194,7 +194,7 @@ void CMasterServerSession::RecvUserMove(CNtlPacket * pPacket)
 		{
 		//	ERR_LOG(LOG_USER, "Account %u connect success to char server %u, dwLoad %u, dwMaxLoad %u", req->accountId, info->byServerIndex, info->dwLoad, info->dwMaxLoad);
 
-			strcpy_s(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, info->achPublicAddress );
+			snprintf(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, "%s", info->achPublicAddress );
 			res->aServerInfo[0].wCharacterServerPortForClient = info->wPortForClient;
 			res->aServerInfo[0].dwLoad = DWORD((float)info->dwLoad / (float)info->dwMaxLoad * 100.f);
 			res->aServerInfo[0].serverchannelID = info->byServerChannelIndex;

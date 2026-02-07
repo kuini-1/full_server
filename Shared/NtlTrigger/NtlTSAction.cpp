@@ -29,6 +29,6 @@ void CNtlTSAction::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEntity::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetActionId() );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetActionId() );
 	clProperty.m_defProperty["taid"] = g_NtlTSString;
 }

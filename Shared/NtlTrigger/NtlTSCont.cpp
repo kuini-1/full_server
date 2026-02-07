@@ -224,7 +224,7 @@ void CNtlTSCont::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEntity::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetID() );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetID() );
 	clProperty.m_defProperty["cid"] = g_NtlTSString;
 
 	if ( !m_defPrevLink.empty() )
@@ -233,7 +233,7 @@ void CNtlTSCont::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 		listdef_ContList::iterator it = m_defPrevLink.begin();
 		for ( ; it != m_defPrevLink.end(); ++it )
 		{
-			sprintf_s( g_NtlTSString, "%d", *it );
+			snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", *it );
 			strPreLnk += g_NtlTSString;
 			strPreLnk += ";";
 		}

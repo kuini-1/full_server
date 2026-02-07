@@ -37,6 +37,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <cstring>
+#include <pthread.h>
 
 // Socket type mapping (Winsock -> POSIX)
 typedef int SOCKET;
@@ -87,6 +88,10 @@ typedef unsigned char* LPBYTE;
 #define ZeroMemory(ptr, size) memset((ptr), 0, (size))
 #define CopyMemory(dest, src, size) memcpy((dest), (src), (size))
 
+#ifndef _countof
+#define _countof(a) (sizeof(a) / sizeof((a)[0]))
+#endif
+
 typedef struct _OVERLAPPED {
 	void* Internal;
 	void* InternalHigh;
@@ -105,5 +110,23 @@ typedef struct _WSABUF {
 
 // closesocket on Windows; on POSIX use close()
 #define closesocket close
+
+// CRITICAL_SECTION as pthread_mutex_t for code that uses Win32 mutex API
+typedef pthread_mutex_t CRITICAL_SECTION;
+static inline void InitializeCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_init(p, NULL); }
+static inline void InitializeCriticalSectionAndSpinCount(CRITICAL_SECTION* p, DWORD dwSpinCount) { (void)dwSpinCount; pthread_mutex_init(p, NULL); }
+static inline void DeleteCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_destroy(p); }
+static inline void EnterCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_lock(p); }
+static inline void LeaveCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_unlock(p); }
+
+#ifndef LPCTSTR
+#define LPCTSTR const char*
+#endif
+#ifndef TEXT
+#define TEXT(x) x
+#endif
+#ifndef _T
+#define _T(x) x
+#endif
 
 #endif // _WIN32

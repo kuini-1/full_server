@@ -115,7 +115,7 @@ bool CNtlTSScrParser::Parsing( CNtlTSScrTokenizer* pLexer )
 				if ( "{" == strToken )
 				{
 					int nNextID = mapdefObjEnumerator[strObjType]++;
-					sprintf_s( g_NtlTSString, "%d", nNextID );
+					snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", nNextID );
 					if ( strlen( g_NtlTSString ) == 1 ) 
 					{
 						strObjName = strObjType + "00" + g_NtlTSString;

@@ -83,7 +83,7 @@ int Ntl_GenerateFormattedString(std::string& rstrResult, char* pszFormat, ...)
 	va_list valist;
 	va_start(valist, pszFormat);
 
-	int nWrittenBytes = vsprintf_s(szResult, _countof(szResult), pszFormat, valist);
+	int nWrittenBytes = vsnprintf(szResult, _countof(szResult), pszFormat, valist);
 
 	va_end(valist);
 
@@ -107,7 +107,7 @@ int Ntl_GenerateFormattedStringW(std::wstring& rwstrResult, WCHAR* pwszFormat, .
 	va_list valist;
 	va_start(valist, pwszFormat);
 
-	int nWrittenBytes = vswprintf_s(wszResult, _countof(wszResult), pwszFormat, valist);
+	int nWrittenBytes = vswprintf(wszResult, _countof(wszResult), pwszFormat, valist);
 
 	va_end(valist);
 

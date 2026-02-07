@@ -18,6 +18,10 @@
 
 #if defined(_WIN32)
 #include <tchar.h>
+#else
+#ifndef _TCHAR
+#define _TCHAR char
+#endif
 #endif
 
 #include "NtlNetwork.h"

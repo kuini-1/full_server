@@ -39,7 +39,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 		{
 			if (vecStack.size() != 1 || vecStack[0].eEntityType)
 			{
-				sprintf_s(m_szMsg, sizeof(m_szMsg), "idk what error. vecStack.size() %I64u, vecStack[0].eEntityType %u", vecStack.size(), vecStack[0].eEntityType);
+				snprintf(m_szMsg, sizeof(m_szMsg), "idk what error. vecStack.size() %zu, vecStack[0].eEntityType %u", vecStack.size(), vecStack[0].eEntityType);
 				return false;
 			}
 			else
@@ -51,7 +51,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 				}
 				else
 				{
-					sprintf_s(m_szMsg, sizeof(m_szMsg), "'%s' eResult: %u %s", rFormula.sResult.str(), eResult, GetSSD_VARIABLE_RESULT_STRING(eResult));
+					snprintf(m_szMsg, sizeof(m_szMsg), "'%s' eResult: %u %s", rFormula.sResult.str(), eResult, GetSSD_VARIABLE_RESULT_STRING(eResult));
 					return false;
 				}
 			}
@@ -74,7 +74,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 				sSSD_VARIABLE* pVar = GetVariable(sEntity.sVarName.str());
 				if (!pVar)
 				{
-					sprintf_s(m_szMsg, sizeof(m_szMsg), "GetVariable is null. VarName '%s'", sEntity.sVarName.str());
+					snprintf(m_szMsg, sizeof(m_szMsg), "GetVariable is null. VarName '%s'", sEntity.sVarName.str());
 					return false;
 				}
 
@@ -91,7 +91,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 			{
 				if (vecStack.size() < 2)
 				{
-					sprintf_s(m_szMsg, sizeof(m_szMsg), "invalid formula");
+					snprintf(m_szMsg, sizeof(m_szMsg), "invalid formula");
 					return false;
 				}
 				switch (sEntity.eArithmetic)
@@ -106,7 +106,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 
 					default:
 					{
-						sprintf_s(m_szMsg, sizeof(m_szMsg), "invalid formula(2)");
+						snprintf(m_szMsg, sizeof(m_szMsg), "invalid formula(2)");
 						return false;
 					}
 					break;
@@ -114,7 +114,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 
 				if (sVariable.eResult)
 				{
-					sprintf_s(m_szMsg, sizeof(m_szMsg), "yy %s", GetSSD_VARIABLE_RESULT_STRING(sVariable.eResult));
+					snprintf(m_szMsg, sizeof(m_szMsg), "yy %s", GetSSD_VARIABLE_RESULT_STRING(sVariable.eResult));
 					return false;
 				}
 
@@ -137,7 +137,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 					{
 						if (sEntity.sFunction.vecParam.size() != 3)
 						{
-							sprintf_s(m_szMsg, sizeof(m_szMsg), "vector parameter is invalid. param count[%I64u]", sEntity.sFunction.vecParam.size());
+							snprintf(m_szMsg, sizeof(m_szMsg), "vector parameter is invalid. param count[%zu]", sEntity.sFunction.vecParam.size());
 							return false;
 						}
 
@@ -165,7 +165,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 						eSSD_VARIABLE_RESULT eResult = sVarEntity.sConstant.Vector(rX, rY, rZ);
 						if (eResult)
 						{
-							sprintf_s(m_szMsg, sizeof(m_szMsg), "vector make is fail.(%s)", GetSSD_VARIABLE_RESULT_STRING(eResult));
+							snprintf(m_szMsg, sizeof(m_szMsg), "vector make is fail.(%s)", GetSSD_VARIABLE_RESULT_STRING(eResult));
 							return false;
 						}
 
@@ -177,7 +177,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 					{
 						if (sEntity.sFunction.vecParam.size() != 2)
 						{
-							sprintf_s(m_szMsg, sizeof(m_szMsg), "vector parameter is invalid. param count[%I64u]", sEntity.sFunction.vecParam.size());
+							snprintf(m_szMsg, sizeof(m_szMsg), "vector parameter is invalid. param count[%zu]", sEntity.sFunction.vecParam.size());
 							return false;
 						}
 
@@ -202,7 +202,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 								char buff[129];
 								GetString_SSD_FORMULA_ENTITY(sEntity.sFunction.vecParam[j], 129, buff);
 
-								sprintf_s(m_szMsg, sizeof(m_szMsg), "o %s", buff);
+								snprintf(m_szMsg, sizeof(m_szMsg), "o %s", buff);
 								return false;
 							}
 						}
@@ -217,7 +217,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 					{
 						if (sEntity.sFunction.vecParam.size() != 4)
 						{
-							sprintf_s(m_szMsg, sizeof(m_szMsg), "vector parameter is invalid. param count[%I64u]", sEntity.sFunction.vecParam.size());
+							snprintf(m_szMsg, sizeof(m_szMsg), "vector parameter is invalid. param count[%zu]", sEntity.sFunction.vecParam.size());
 							return false;
 						}
 
@@ -233,22 +233,22 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 
 						if (sRelaiveCoord[0].eType != SSD_VARIABLE_VECTOR)
 						{
-							sprintf_s(m_szMsg, sizeof(m_szMsg), "sRelaiveCoord[0].eType %u != SSD_VARIABLE_VECTOR", sRelaiveCoord[0].eType);
+							snprintf(m_szMsg, sizeof(m_szMsg), "sRelaiveCoord[0].eType %u != SSD_VARIABLE_VECTOR", sRelaiveCoord[0].eType);
 							return false;
 						}
 						if (sRelaiveCoord[1].eType != SSD_VARIABLE_VECTOR)
 						{
-							sprintf_s(m_szMsg, sizeof(m_szMsg), "sRelaiveCoord[1].eType %u != SSD_VARIABLE_VECTOR", sRelaiveCoord[1].eType);
+							snprintf(m_szMsg, sizeof(m_szMsg), "sRelaiveCoord[1].eType %u != SSD_VARIABLE_VECTOR", sRelaiveCoord[1].eType);
 							return false;
 						}
 						if (sRelaiveCoord[2].eType != SSD_VARIABLE_INTEGER )
 						{
-							sprintf_s(m_szMsg, sizeof(m_szMsg), "sRelaiveCoord[2].eType %u != SSD_VARIABLE_INTEGER", sRelaiveCoord[2].eType);
+							snprintf(m_szMsg, sizeof(m_szMsg), "sRelaiveCoord[2].eType %u != SSD_VARIABLE_INTEGER", sRelaiveCoord[2].eType);
 							return false;
 						}
 						if (sRelaiveCoord[3].eType != SSD_VARIABLE_INTEGER && sRelaiveCoord[3].eType != SSD_VARIABLE_FLOAT)
 						{
-							sprintf_s(m_szMsg, sizeof(m_szMsg), "sRelaiveCoord[3].eType %u != SSD_VARIABLE_INTEGER || SSD_VARIABLE_FLOAT", sRelaiveCoord[3].eType);
+							snprintf(m_szMsg, sizeof(m_szMsg), "sRelaiveCoord[3].eType %u != SSD_VARIABLE_INTEGER || SSD_VARIABLE_FLOAT", sRelaiveCoord[3].eType);
 							return false;
 						}
 
@@ -283,7 +283,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 
 					default:
 					{
-						sprintf_s(m_szMsg, sizeof(m_szMsg), "not registered function. function type[%d]", sEntity.sFunction.eFuncType);
+						snprintf(m_szMsg, sizeof(m_szMsg), "not registered function. function type[%d]", sEntity.sFunction.eFuncType);
 						return false;
 					}
 					break;
@@ -293,7 +293,7 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 
 			default:
 			{
-				sprintf_s(m_szMsg, sizeof(m_szMsg), "invalid entitytype. %u", sEntity.eEntityType);
+				snprintf(m_szMsg, sizeof(m_szMsg), "invalid entitytype. %u", sEntity.eEntityType);
 				return false;
 			}
 			break;
@@ -317,14 +317,14 @@ bool CSvrScrFormulaCalc::ConvertVariable(sSSD_VARIABLE& sVariable, sSSD_FORMULA_
 	{
 		if (rFormula.eEntityType != SSD_FORMULA_ENTITY_VARNAME)
 		{
-			sprintf_s(m_szMsg, sizeof(m_szMsg), "invalid parameter type. type [%d]", rFormula.eEntityType);
+			snprintf(m_szMsg, sizeof(m_szMsg), "invalid parameter type. type [%d]", rFormula.eEntityType);
 			return false;
 		}
 
 		sSSD_VARIABLE* rVar = GetVariable(rFormula.sVarName.str());
 		if (!rVar)
 		{
-			sprintf_s(m_szMsg, sizeof(m_szMsg), "Could not find %s", rFormula.sVarName.str());
+			snprintf(m_szMsg, sizeof(m_szMsg), "Could not find %s", rFormula.sVarName.str());
 			return false;
 		}
 

@@ -244,7 +244,7 @@ bool CTextTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, 
 
 	while( ppwszSheetList[dwSheetIndex] )
 	{
-		swprintf_s<_countof(wszXPath)>( wszXPath, rowXPathFormat, ppwszSheetList[dwSheetIndex], m_nField );
+		swprintf( wszXPath, _countof(wszXPath), rowXPathFormat, ppwszSheetList[dwSheetIndex], m_nField );
 
 		IXMLDOMNodeList* pIndexNodeList = NULL;
 		pIndexNodeList = pXmlDoc->SelectNodeList( wszXPath );
@@ -630,7 +630,7 @@ std::wstring CMapNameTextTable::GetAreaName( TBLIDX tblidx )
 VOID CMapNameTextTable::GetErrorText( TBLIDX tblidx, std::wstring* pwString )
 {
 	WCHAR buf[256];
-	swprintf_s( buf, 256, L"TextTable::MapName Error : %u Index is Wrong", tblidx );
+	swprintf( buf, 256, L"TextTable::MapName Error : %u Index is Wrong", tblidx );
 	(*pwString) = buf;
 }
 

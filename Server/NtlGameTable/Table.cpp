@@ -558,6 +558,7 @@ bool CTable::READ_STR(std::string & rDest, BSTR bstr, const char * lpszInvalidVa
 		return true;
 	}
 
+#if defined(_WIN32)
 	int nStrLen = WideCharToMultiByte( GetACP(), 0, bstr, -1, NULL, 0, NULL, NULL );
 	char * pBuffer = new char[ nStrLen ];
 	if( pBuffer )
@@ -568,12 +569,16 @@ bool CTable::READ_STR(std::string & rDest, BSTR bstr, const char * lpszInvalidVa
 	}
 	else
 	{
-		_ASSERT( 0 );	// �޸� �Ҵ� ����
-
+		_ASSERT( 0 );
 		return false;
 	}
-
 	return true;
+#else
+	(void)rDest;
+	(void)bstr;
+	(void)lpszInvalidValue;
+	return false;
+#endif
 }
 
 
@@ -612,6 +617,7 @@ bool CTable::READ_STRING(BSTR bstr, char* pszBuffer, DWORD dwBufferLength, const
 		return false;
 	}
 
+#if defined(_WIN32)
 	if (false == CheckInvalidValue(bstr))
 	{
 		int nRequiredBytes = ::WideCharToMultiByte(m_dwCodePage, 0, bstr, -1, NULL, 0, NULL, NULL);
@@ -631,8 +637,9 @@ bool CTable::READ_STRING(BSTR bstr, char* pszBuffer, DWORD dwBufferLength, const
 		}
 	}
 	else
+#endif
 	{
-		strcpy_s(pszBuffer, dwBufferLength, pszInvalidValue);
+		snprintf(pszBuffer, dwBufferLength, "%s", pszInvalidValue);
 	}
 
 	return true;
@@ -693,7 +700,7 @@ bool CTable::READ_STRINGW(BSTR bstr, WCHAR* pwszBuffer, DWORD dwBufferLength, co
 
 		va_list args;
 		va_start(args, pszFormatString);
-		vsprintf_s<_countof(szErrorMessage)>(szErrorMessage, pszFormatString, args);
+		vsnprintf(szErrorMessage, _countof(szErrorMessage), pszFormatString, args);
 		va_end(args);
 		_ASSERTE( pszFormatString );
 		_ASSERTE( !"@�� ���� �� ���� �ʵ��Դϴ�.");
@@ -713,10 +720,10 @@ void CTable::CheckNegativeInvalid(const wchar_t* pwszFormatString, BSTR bstr)
 
 		va_list args;
 		va_start(args, pwszFormatString);
-		vswprintf_s<_countof(wszErrorMessage)>(wszErrorMessage, pwszFormatString, args);
+		vswprintf(wszErrorMessage, _countof(wszErrorMessage), pwszFormatString, args);
 		va_end(args);
 
-		::WideCharToMultiByte(::GetACP(), 0, pwszFormatString, -1, szErrorMessage, _countof(szErrorMessage), NULL, NULL);
+		::WideCharToMultiByte(::GetACP(), 0, wszErrorMessage, -1, szErrorMessage, _countof(szErrorMessage), NULL, NULL);
 		_ASSERTE( szErrorMessage );*/
 		_ASSERTE( !"@�� ���� �� ���� �ʵ��Դϴ�.");
 	}
@@ -745,7 +752,7 @@ void CTable::CallErrorCallbackFunction(char* pszFormatString, ...)
 
 		va_list args;
 		va_start(args, pszFormatString);
-		vsprintf_s<_countof(szErrorMessage)>(szErrorMessage, pszFormatString, args);
+		vsnprintf(szErrorMessage, _countof(szErrorMessage), pszFormatString, args);
 		va_end(args);
 
 		m_pfnErrorCallback(szErrorMessage, m_pvErrorCallbackArg);
@@ -759,6 +766,7 @@ void CTable::CallErrorCallbackFunction(char* pszFormatString, ...)
 //-----------------------------------------------------------------------------------
 void CTable::CallErrorCallbackFunction(WCHAR* pwszFormatString, ...)
 {
+#if defined(_WIN32)
 	if (NULL != m_pfnErrorCallback)
 	{
 		WCHAR wszErrorMessage[1024 + 1];
@@ -766,10 +774,13 @@ void CTable::CallErrorCallbackFunction(WCHAR* pwszFormatString, ...)
 
 		va_list args;
 		va_start(args, pwszFormatString);
-		vswprintf_s<_countof(wszErrorMessage)>(wszErrorMessage, pwszFormatString, args);
+		vswprintf(wszErrorMessage, _countof(wszErrorMessage), pwszFormatString, args);
 		va_end(args);
 
 		::WideCharToMultiByte(::GetACP(), 0, wszErrorMessage, -1, szErrorMessage, _countof(szErrorMessage), NULL, NULL);
 		m_pfnErrorCallback(szErrorMessage, m_pvErrorCallbackArg);
 	}
+#else
+	(void)pwszFormatString;
+#endif
 }

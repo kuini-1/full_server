@@ -45,7 +45,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 			{
 				MD5 md;
 				char md5pwd[NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER];
-				strcpy_s(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, md.digestString(password));
+				snprintf(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, "%s", md.digestString(password));
 
 				Field* fields = result->Fetch();
 

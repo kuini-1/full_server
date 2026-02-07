@@ -3,7 +3,7 @@
 #include "TwofishCipher.h"
 #include "AESCipher.h"
 #include "CryptRSA.h"
-#include "blowfish.h"
+#include "Blowfish.h"
 #include "md5.h"
 #include "TripleDes.h"
 #include "NtlCipher.h"

@@ -2425,7 +2425,7 @@ ACMD(do_dbann)
 	qRes->wOpCode = GQ_ACCOUNT_BANN;
 	qRes->gmAccountID = pPlayer->GetAccountID();
 	qRes->targetAccountID = accid;
-	strcpy_s(qRes->szReason, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, text.c_str());
+	snprintf(qRes->szReason, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, "%s", text.c_str());
 	qRes->byDuration = byDuration;
 	pQry.SetPacketLen(sizeof(sGQ_ACCOUNT_BANN));
 	app->SendTo(app->GetQueryServerSession(), &pQry);

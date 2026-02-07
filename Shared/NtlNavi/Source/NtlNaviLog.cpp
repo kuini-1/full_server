@@ -38,7 +38,7 @@ void CNtlNaviLog::Log( const char* pFormat, ... )
 		va_list vaList;
 
 		va_start( vaList, pFormat );
-		vsprintf_s( s_szStrBuf, LOG_MAX_BUFFER, pFormat, vaList );
+		vsnprintf( s_szStrBuf, LOG_MAX_BUFFER, pFormat, vaList );
 		va_end( vaList );
 
 		m_pLog->Log( s_szStrBuf );

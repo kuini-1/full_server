@@ -16,8 +16,12 @@
 #include "NtlLog.h"
 
 #include <stdio.h>
+#include <stdarg.h>
 #if defined(_WIN32)
 #include <tchar.h>
+#endif
+#if !defined(_WIN32)
+#include <time.h>
 #endif
 
 
@@ -154,10 +158,11 @@ int CNtlLog::RegisterBaseChannel(DWORD dwSource, LPCTSTR lpszSourceName)
 //-----------------------------------------------------------------------------------
 void CNtlLog::Log(BYTE byLogChannel, bool bDate, LPCTSTR lpszFile, int nLine, LPCTSTR lpszFunc, LPCTSTR lpszText, ...)
 {
-	TCHAR szLogBuffer[BUFSIZE_LOG + 1] = { 0x00, };
-	int nBuffSize = sizeof( szLogBuffer );
+	char szLogBuffer[BUFSIZE_LOG + 1] = { 0x00, };
+	int nBuffSize = (int)sizeof( szLogBuffer );
 	int nWriteSize = 0;
 
+#if defined(_WIN32)
 	nWriteSize += _stprintf_s( szLogBuffer, nBuffSize, TEXT("[%s]\t"), GetLogChannelString(byLogChannel) );
 
 	if( bDate )
@@ -185,18 +190,41 @@ void CNtlLog::Log(BYTE byLogChannel, bool bDate, LPCTSTR lpszFile, int nLine, LP
 		nWriteSize += _stprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT(" function[%s]\t"), lpszFunc );
 	}
 
-	if(byLogChannel == LOG_ASSERT)
-	{
-		//CNtlMiniDump::Snapshot();
-		printf( "LOG_ASSERT: %s\n", szLogBuffer);
-	//	Sleep(900000);
-	}
-
 	if( s_log_stream)
 	{
 		_ftprintf( s_log_stream, "%s\n", szLogBuffer );
 		fflush( s_log_stream );
 	}
+#else
+	nWriteSize += snprintf( szLogBuffer, (size_t)nBuffSize, "[%s]\t", GetLogChannelString(byLogChannel) );
+
+	if( bDate )
+	{
+		time_t now = time(NULL);
+		struct tm* t = localtime(&now);
+		if ( t )
+			nWriteSize += snprintf( szLogBuffer + nWriteSize, (size_t)(nBuffSize - nWriteSize), "[%d-%02d-%02d %d:%d:%d]\t", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec );
+	}
+
+	va_list args;
+	va_start( args, lpszText );
+	nWriteSize += vsnprintf( szLogBuffer + nWriteSize, (size_t)(nBuffSize - nWriteSize), lpszText, args );
+	va_end( args );
+
+	if( lpszFile )
+		nWriteSize += snprintf( szLogBuffer + nWriteSize, (size_t)(nBuffSize - nWriteSize), " file[%s]\tline[%d]\t", lpszFile, nLine );
+	if( lpszFunc )
+		nWriteSize += snprintf( szLogBuffer + nWriteSize, (size_t)(nBuffSize - nWriteSize), " function[%s]\t", lpszFunc );
+
+	if(byLogChannel == LOG_ASSERT)
+		printf( "LOG_ASSERT: %s\n", szLogBuffer);
+
+	if( s_log_stream)
+	{
+		fprintf( s_log_stream, "%s\n", szLogBuffer );
+		fflush( s_log_stream );
+	}
+#endif
 }
 
 
@@ -206,10 +234,11 @@ void CNtlLog::Log(BYTE byLogChannel, bool bDate, LPCTSTR lpszFile, int nLine, LP
 //-----------------------------------------------------------------------------------
 void CNtlLog::Log(LPCTSTR lpszText, ...)
 {
-	TCHAR szLogBuffer[BUFSIZE_LOG + 1] = { 0x00, };
-	int nBuffSize = sizeof(szLogBuffer);
+	char szLogBuffer[BUFSIZE_LOG + 1] = { 0x00, };
+	int nBuffSize = (int)sizeof(szLogBuffer);
 	int nWriteSize = 0;
 
+#if defined(_WIN32)
 	nWriteSize += _stprintf_s(szLogBuffer, nBuffSize, TEXT("[%s]\t"), GetLogChannelString(LOG_HACK));
 
 	SYSTEMTIME	systemTime;
@@ -227,6 +256,24 @@ void CNtlLog::Log(LPCTSTR lpszText, ...)
 		_ftprintf(s_log_stream, "%s\n", szLogBuffer);
 		fflush(s_log_stream);
 	}
+#else
+	nWriteSize += snprintf(szLogBuffer, (size_t)nBuffSize, "[%s]\t", GetLogChannelString(LOG_HACK));
+	time_t now = time(NULL);
+	struct tm* t = localtime(&now);
+	if ( t )
+		nWriteSize += snprintf(szLogBuffer + nWriteSize, (size_t)(nBuffSize - nWriteSize), "[%d-%02d-%02d %d:%d:%d]\t", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);
+
+	va_list args;
+	va_start(args, lpszText);
+	nWriteSize += vsnprintf(szLogBuffer + nWriteSize, (size_t)(nBuffSize - nWriteSize), lpszText, args);
+	va_end(args);
+
+	if (s_log_stream)
+	{
+		fprintf(s_log_stream, "%s\n", szLogBuffer);
+		fflush(s_log_stream);
+	}
+#endif
 }
 
 

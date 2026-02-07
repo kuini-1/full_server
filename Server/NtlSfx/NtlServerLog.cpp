@@ -18,6 +18,9 @@
 
 #if defined(_WIN32)
 #include <tchar.h>
+#else
+#include <stdarg.h>
+#include <time.h>
 #endif
 
 
@@ -104,7 +107,7 @@ void CNtlServerLog::Log(BYTE byLogChannel, bool bDate, LPCTSTR lpszFile, int nLi
 	pLogData->dwSource = GetDefaultLogSource();
 	pLogData->byChannel = byLogChannel;
 
-
+#if defined(_WIN32)
 	if( bDate )
 	{
 		SYSTEMTIME	systemTime;
@@ -112,24 +115,34 @@ void CNtlServerLog::Log(BYTE byLogChannel, bool bDate, LPCTSTR lpszFile, int nLi
 		nWriteSize += _stprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT("%d-%02d-%02d %02d:%02d:%02d,"), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond );
 	}
 
-
 	va_list args;
 	va_start( args, lpszText );
 	nWriteSize += _vstprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, lpszText, args );
 	va_end( args );
 
+	if( lpszFile )
+		nWriteSize += _stprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT(" file:%s\t(line:%d)"), lpszFile, nLine );
+	if( lpszFunc )
+		nWriteSize += _stprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT(" function[%s]\t"), lpszFunc );
+#else
+	if( bDate )
+	{
+		time_t now = time(NULL);
+		struct tm* t = localtime(&now);
+		if ( t )
+			nWriteSize += snprintf( pLogData->achLogText + nWriteSize, (size_t)(nBuffSize - nWriteSize), "%d-%02d-%02d %02d:%02d:%02d,", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec );
+	}
+
+	va_list args;
+	va_start( args, lpszText );
+	nWriteSize += vsnprintf( pLogData->achLogText + nWriteSize, (size_t)(nBuffSize - nWriteSize), lpszText, args );
+	va_end( args );
 
 	if( lpszFile )
-	{
-		nWriteSize += _stprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT(" file:%s\t(line:%d)"), lpszFile, nLine );
-	}
-
-
+		nWriteSize += snprintf( pLogData->achLogText + nWriteSize, (size_t)(nBuffSize - nWriteSize), " file:%s\t(line:%d)", lpszFile, nLine );
 	if( lpszFunc )
-	{
-		nWriteSize += _stprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT(" function[%s]\t"), lpszFunc );
-	}
-
+		nWriteSize += snprintf( pLogData->achLogText + nWriteSize, (size_t)(nBuffSize - nWriteSize), " function[%s]\t", lpszFunc );
+#endif
 
 	pLogData->wStrLen = (WORD) nWriteSize;
 

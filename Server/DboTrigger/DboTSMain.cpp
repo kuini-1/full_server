@@ -497,7 +497,7 @@ bool CDboTSMain::LoadTriggerObjectFromUnZip( NTL_TS_T_ID tID, CNtlUnzip* pclUnzi
 	return false;
 #else
     char szFileName[128] = {0,};
-	sprintf_s( szFileName, "%d.t", tID );
+	snprintf( szFileName, sizeof(szFileName), "%d.t", tID );
 
 	if ( !pclUnzip->GotoFirstFile() )
 	{

@@ -69,7 +69,7 @@ bool CNtlNaviFieldGroup_PE::ImportPathData( const char* pPath, unsigned char /*b
 
 	std::string strMeshFile = strPathEngineFolder;
 
-	sprintf_s( szTempBuff, 256, "%d.%s", m_uiGroupID, PE_FIELD_GROUP_MESH_EXT );
+	snprintf( szTempBuff, 256, "%d.%s", m_uiGroupID, PE_FIELD_GROUP_MESH_EXT );
 	strMeshFile += szTempBuff;
 
 	sFILE_CHUNK_INFO sMeshChunk = LoadFileChunk( strMeshFile.c_str() );
@@ -107,7 +107,7 @@ bool CNtlNaviFieldGroup_PE::ImportPathData( const char* pPath, unsigned char /*b
 
 		std::string strColFile = strPathEngineFolder;
 
-		sprintf_s( szTempBuff, 256, "%d_%d.%s", m_uiGroupID, itAgent->first, PE_FIELD_GROUP_COL_PRE_EXT );
+		snprintf( szTempBuff, 256, "%d_%d.%s", m_uiGroupID, itAgent->first, PE_FIELD_GROUP_COL_PRE_EXT );
 		strColFile += szTempBuff;
 
 		sFILE_CHUNK_INFO sColChunk = LoadFileChunk( strColFile.c_str() );
@@ -130,7 +130,7 @@ bool CNtlNaviFieldGroup_PE::ImportPathData( const char* pPath, unsigned char /*b
 
 		std::string strPFFile = strPathEngineFolder;
 
-		sprintf_s( szTempBuff, 256, "%d_%d.%s", m_uiGroupID, itAgent->first, PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
+		snprintf( szTempBuff, 256, "%d_%d.%s", m_uiGroupID, itAgent->first, PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
 		strPFFile += szTempBuff;
 
 		sFILE_CHUNK_INFO sPFChunk = LoadFileChunk( strPFFile.c_str() );

@@ -382,7 +382,7 @@ void CClientSession::SendCharDeleteReq(CNtlPacket * pPacket)
 			Field* delpw = delpwcheck->Fetch();
 			MD5 md;
 			char md5pwd[NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER];
-			strcpy_s(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, md.digestString(password));
+			snprintf(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, "%s", md.digestString(password));
 
 			if (0 != _stricmp(delpw[0].GetString(), md5pwd)) //check password
 				resultcode = CHARACTER_DELETE_CHAR_FAIL_NOT_MATCH_CODE;
@@ -458,7 +458,7 @@ void CClientSession::SendCancelCharDeleteReq(CNtlPacket * pPacket)
 
 			MD5 md;
 			char md5pwd[NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER];
-			strcpy_s(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, md.digestString(password));
+			snprintf(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, "%s", md.digestString(password));
 
 			if (0 != _stricmp(delpw[0].GetString(), md5pwd)) //check password
 				resultcode = CHARACTER_DELETE_CHAR_FAIL_NOT_MATCH_CODE;

@@ -23,6 +23,8 @@
 #include <string.h>
 #if defined(_WIN32)
 #include <tchar.h>
+#else
+#include <time.h>
 #endif
 
 
@@ -62,10 +64,11 @@ void NtlDebugPrint(unsigned int dwFlag, LPCTSTR lpszText, ...)
 {
 	if( dwFlag & s_dwCurFlag )
 	{
-		TCHAR szLogBuffer[PRINT_BUF_SIZE + 1] = { 0x00, };
-		int nBuffSize = sizeof( szLogBuffer );
+		char szLogBuffer[PRINT_BUF_SIZE + 1] = { 0x00, };
+		int nBuffSize = (int)sizeof( szLogBuffer );
 		int nWriteSize = 0;
 
+#if defined(_WIN32)
 		SYSTEMTIME	systemTime;
 		GetLocalTime( &systemTime );
 		nWriteSize += _stprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT("[%d-%02d-%02d %d:%d:%d:%d] "), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds );
@@ -74,6 +77,17 @@ void NtlDebugPrint(unsigned int dwFlag, LPCTSTR lpszText, ...)
 		va_start( args, lpszText );
 		nWriteSize += _vstprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, lpszText, args );
 		va_end( args );
+#else
+		time_t now = time(NULL);
+		struct tm* t = localtime(&now);
+		if ( t )
+			nWriteSize += snprintf( szLogBuffer + nWriteSize, (size_t)(nBuffSize - nWriteSize), "[%d-%02d-%02d %d:%d:%d] ", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec );
+
+		va_list args;
+		va_start( args, lpszText );
+		nWriteSize += vsnprintf( szLogBuffer + nWriteSize, (size_t)(nBuffSize - nWriteSize), lpszText, args );
+		va_end( args );
+#endif
 
 		fprintf( stderr, "%s\n", szLogBuffer );
 		fflush( stderr );

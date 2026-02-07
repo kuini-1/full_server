@@ -26,7 +26,7 @@ public:
 		}
 
 		char title[1000];
-		sprintf_s(title, 1000, "Error, type: %s", type);
+		snprintf(title, 1000, "Error, type: %s", type);
 
 		CNtlNaviLog::GetInstance()->Log( title );
 		CNtlNaviLog::GetInstance()->Log( displayString.c_str() );
@@ -154,7 +154,7 @@ iErrorHandler::eAction CNtlNaviPathEngine::handle( const char* type, const char*
 	}
 
 	char title[1000];
-	sprintf_s(title, 1000, "Error, type: %s", type);
+	snprintf(title, 1000, "Error, type: %s", type);
 
 	CNtlNaviLog::GetInstance()->Log( title );
 	CNtlNaviLog::GetInstance()->Log( displayString.c_str() );

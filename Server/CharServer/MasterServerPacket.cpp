@@ -212,7 +212,7 @@ void CMasterServerSession::RecvCharExit(CNtlPacket * pPacket)
 		res->wResultCode = CHARACTER_SUCCESS;
 		res->lastServerFarmId = player->GetServerFarmID();
 		res->byMoveType = req->byMoveType;
-		strcpy_s((char*)res->abyAuthKey, NTL_MAX_SIZE_AUTH_KEY, "548CaAutfgfdey6");
+		snprintf((char*)res->abyAuthKey, NTL_MAX_SIZE_AUTH_KEY, "%s", "548CaAutfgfdey6");
 		packet.SetPacketLen( sizeof(sCU_CHARACTER_EXIT_RES) );
 		g_pApp->Send(player->GetSessionHandle(), &packet);
 	}
@@ -248,7 +248,7 @@ void CMasterServerSession::RecvUserMove(CNtlPacket * pPacket)
 					//	printf("player online %u in channel %u \n", pChannel->dwLoad, pServerInfo->byServerChannelIndex);
 
 						memcpy(res->abyAuthKey, req->abyAuthKey, sizeof(res->abyAuthKey));
-						strcpy_s(res->szGameServerIP, NTL_MAX_LENGTH_OF_IP + 1, pServerInfo->achPublicAddress);
+						snprintf(res->szGameServerIP, NTL_MAX_LENGTH_OF_IP + 1, "%s", pServerInfo->achPublicAddress);
 						res->wGameServerPortForClient = pServerInfo->wPortForClient;
 					}
 					else resultcode = GAME_SERVER_LOCKED;

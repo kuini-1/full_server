@@ -137,7 +137,7 @@ void CPlayer::Bann(std::string strReason, BYTE byDuration, ACCOUNTID gmAccountID
 		qRes->wOpCode = GQ_ACCOUNT_BANN;
 		qRes->gmAccountID = gmAccountID;
 		qRes->targetAccountID = GetAccountID();
-		strcpy_s(qRes->szReason, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, strReason.c_str());
+		snprintf(qRes->szReason, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, "%s", strReason.c_str());
 		qRes->byDuration = byDuration;
 		pQry.SetPacketLen(sizeof(sGQ_ACCOUNT_BANN));
 		app->SendTo(app->GetQueryServerSession(), &pQry);
@@ -861,7 +861,7 @@ void CPlayer::CopyDestServerInfo(sSERVER_INFO * pServerInfo, char* pchAuthKey)
 {
 	if (pServerInfo)
 	{
-		strcpy_s(pServerInfo->szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, m_pDestServerInfo->szCharacterServerIP);
+		snprintf(pServerInfo->szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, "%s", m_pDestServerInfo->szCharacterServerIP);
 		pServerInfo->wCharacterServerPortForClient = m_pDestServerInfo->wCharacterServerPortForClient;
 		pServerInfo->dwLoad = m_pDestServerInfo->dwLoad;
 		pServerInfo->serverchannelID = m_pDestServerInfo->serverchannelID;

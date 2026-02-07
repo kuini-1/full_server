@@ -85,7 +85,7 @@ const SERVERINDEX DEFAULT_SERVERINDEX = 0;
 typedef unsigned int MAILID;
 const MAILID INVALID_MAILID = 0xFFFFFFFF;
 //
-const unsigned char INVALID_BYTE		= 0xffui8;
+const unsigned char INVALID_BYTE		= (unsigned char)0xff;
 const unsigned short INVALID_WORD		= 0xffffui16;
 const unsigned int INVALID_DWORD		= 0xffffffffui32;
 const float INVALID_FLOAT				= 3.402823466e+38F;

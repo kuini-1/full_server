@@ -78,10 +78,10 @@ int CNtlString::Format(const char *format, ...)
 
     va_start(valist, format);
 
-#if ( _MSC_VER >= 1400 ) // VS8+
+#if defined(_WIN32) && ( _MSC_VER >= 1400 ) // VS8+
     nRV = vsprintf_s(szBuf, MAX_FORMAT_STR_BUFF, format, valist);
 #else
-    nRV = vsprintf(szBuf, format, valist);
+    nRV = vsnprintf(szBuf, MAX_FORMAT_STR_BUFF, format, valist);
 #endif
 
     va_end(valist);

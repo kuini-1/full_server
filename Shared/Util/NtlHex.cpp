@@ -32,7 +32,7 @@ bool WideCharToHex(WCHAR* pwszString, DWORD dwBufferSize, char* pszBuffer)
 	DWORD dwCurrentIndex = 0;
 	DWORD dwBufferIndex = 0;
 
-	strcpy_s(pszBuffer, dwBufferSize, "0x");
+	snprintf(pszBuffer, dwBufferSize, "0x");
 	dwBufferIndex += 2;
 
 	while (dwBufferIndex + 4 <= dwBufferSize - 1)
@@ -127,7 +127,7 @@ bool StreamToHex(BYTE* pbyStream, DWORD dwStreamLength, char* pszBuffer, DWORD d
 	DWORD dwCurrentIndex = 0;
 	DWORD dwBufferIndex = 0;
 
-	strcpy_s(pszBuffer, dwBufferSize, "0x");
+	snprintf(pszBuffer, dwBufferSize, "0x");
 	dwBufferIndex += 2;
 
 	while (dwCurrentIndex < dwStreamLength)

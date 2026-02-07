@@ -199,7 +199,7 @@ void CNtlTSGroup::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEntity::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetID() );
+	snprintf( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetID() );
 	clProperty.m_defProperty["gid"] = g_NtlTSString;
 }
 

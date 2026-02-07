@@ -22,7 +22,7 @@ int CMasterServerSession::OnConnect()
 	res->sServerInfo.dwLoad = 0;
 	res->sServerInfo.dwMaxLoad = (DWORD)((float)app->m_config.nMaxConnection * 0.9f);
 	res->sServerInfo.wPortForClient = app->m_config.wClientAcceptPort;
-	strcpy_s(res->sServerInfo.achPublicAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strClientAcceptAddr.c_str());
+	snprintf(res->sServerInfo.achPublicAddress, NTL_MAX_LENGTH_OF_IP + 1, "%s", app->m_config.strClientAcceptAddr.c_str());
 	res->sServerInfo.byServerType = NTL_SERVER_TYPE_AUTH;
 	packet.SetPacketLen(sizeof(sAM_NOTIFY_SERVER_BEGIN));
 	app->Send(GetHandle(), &packet);

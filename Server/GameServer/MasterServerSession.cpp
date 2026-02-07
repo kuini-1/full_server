@@ -52,7 +52,7 @@ int CMasterServerSession::OnConnect()
 	res->serverInfo.dwLoad = 0;
 	res->serverInfo.dwMaxLoad = DWORD((float)app->m_config.nMaxConnection * 0.95f); //set max connections to 95% limit
 	res->serverInfo.wPortForClient = app->m_config.wClientAcceptPort;
-	strcpy_s(res->serverInfo.achPublicAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strPublicClientAcceptAddr.c_str());
+	snprintf(res->serverInfo.achPublicAddress, NTL_MAX_LENGTH_OF_IP + 1, "%s", app->m_config.strPublicClientAcceptAddr.c_str());
 	res->serverInfo.byGameServerRole = DBO_GAME_SERVER_ROLE_GENERAL;
 	res->serverInfo.byServerType = NTL_SERVER_TYPE_GAME;
 
@@ -72,7 +72,7 @@ int CMasterServerSession::OnConnect()
 	res->gameServerChannelInfo.dwLoad = 0;
 	res->gameServerChannelInfo.bIsScrambleChannel = false;
 	wcscpy_s(res->gameServerChannelInfo.sChannelBuff.wszServerChannelName, NTL_MAX_SIZE_SERVER_CHANNEL_NAME_UNICODE + 1, s2ws(app->m_config.ChannelName.c_str()).c_str());
-	strcpy_s(res->gameServerChannelInfo.sChannelBuff.szServerChannelName, NTL_MAX_SIZE_SERVER_CHANNEL_NAME_UNICODE + 1, app->m_config.ChannelName.c_str());
+	snprintf(res->gameServerChannelInfo.sChannelBuff.szServerChannelName, NTL_MAX_SIZE_SERVER_CHANNEL_NAME_UNICODE + 1, "%s", app->m_config.ChannelName.c_str());
 
 	g_pServerInfoManager->RefreshServerFarmInfo(&res->gameServerFarmInfo); //add server farm info
 	g_pServerInfoManager->RefreshServerChannelInfo(&res->gameServerChannelInfo); //add server channel info
