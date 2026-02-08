@@ -2,7 +2,7 @@
 #pragma warning(4:4596)
 #include "NtlSharedType.h"
 #include "NtlVector.h"
-enum eAIR_STATE;
+enum eAIR_STATE : int;
 class CNtlBitFlagManager;
 
 

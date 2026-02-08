@@ -136,9 +136,13 @@ typedef long LPARAM;
 #endif
 
 typedef char CHAR;
+typedef short SHORT;
 typedef int INT;
 typedef void VOID;
 typedef long LONG;
+#ifndef DWORD64
+typedef unsigned long long DWORD64;
+#endif
 #ifndef ULONG
 typedef unsigned long ULONG;
 #endif
