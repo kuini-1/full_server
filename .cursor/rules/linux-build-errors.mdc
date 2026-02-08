@@ -8,10 +8,12 @@ alwaysApply: true
 When the user provides **build errors from a Linux (or non-Windows) build** of this project:
 
 1. **Read** the Cursor rules in `.cursor/rules/`, especially `cross-platform-headers.mdc`.
-2. **Fix** using the canonical cross-platform layer: use or add types/macros in **Shared/NtlSharedCommon.h** or **Shared/Util/NtlPortable.h** (prefer macros). Avoid editing many source files; prefer one change in the canonical headers that resolves the pattern everywhere.
-3. **Patterns**:
+2. **Fix the reported error** using the canonical cross-platform layer or the pattern below.
+3. **Scan the same folder**: After fixing the file mentioned in the error, **check all other files in that folder** (same directory as the failing file) for the **same or similar problems** (e.g. same include casing, same Win32-only API, same -Wwrite-strings / const correctness, same missing NTL_* macro) and fix them **in one pass** so the user does not hit the next file one-by-one. Use grep/search over that directory to find identical or related patterns and fix every affected file.
+4. **Patterns**:
    - Undefined symbol or wrong type → add typedef, macro, or inline in NtlSharedCommon.h.
    - Missing "safe" CRT (e.g. `fopen_s`, `strncpy_s`) → use existing `NTL_*` macro or add one in NtlPortable.h.
-   - Win32-only API (e.g. FindFirstFile, CRITICAL_SECTION) → ensure code includes NtlSharedCommon.h and use the Linux branch/equivalents already there, or extend NtlSharedCommon.h with a new macro/wrapper.
+   - Win32-only API (e.g. FindFirstFile, CRITICAL_SECTION, FormatMessage) → ensure code includes NtlSharedCommon.h and use the Linux branch/equivalents already there, or extend NtlSharedCommon.h with a new macro/wrapper; in source files use `#if defined(_WIN32)` / `#else` with a Linux implementation (e.g. strerror_r instead of FormatMessage).
    - MSVC-only syntax: `for each ( Type var in container )` is not standard C++; replace with `for ( const auto& var : container )`. In functions that return a pointer, use `return NULL` or `return nullptr`, not `return false`.
    - **Include casing**: Linux is case-sensitive. If the build fails with "No such file or directory" for a header, the `#include` name must match the actual filename exactly (e.g. `NtlErrorcodes.h` not `NtlErrorCodes.h`, `stdafx.h` not `StdAfx.h`). Check with `git ls-files` or the repo for exact casing.
+   - **-Wwrite-strings**: String literals are `const char[]` in C++; use `const char*` for arrays or parameters that hold them (e.g. `const char *ntl_error_string[]`).

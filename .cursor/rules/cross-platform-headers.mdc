@@ -1,7 +1,7 @@
 ---
 description: Canonical Win/Linux layer; use only NtlSharedCommon.h and NtlPortable.h
 globs: "**/*.cpp,**/*.c,**/*.h"
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Cross-Platform Canonical Headers
