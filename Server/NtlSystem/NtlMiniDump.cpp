@@ -263,7 +263,7 @@ int CNtlMiniDump::UnitTest()
 
 void CNtlMiniDump::SetDumpPath( const char * lptFilePath )
 {
-	_tcscpy_s( m_szDumpPath, MAX_PATH, lptFilePath );
+	NTL_STRNCPY_S( m_szDumpPath, _countof(m_szDumpPath), lptFilePath, MAX_PATH );
 }
 
 #endif // _WIN32

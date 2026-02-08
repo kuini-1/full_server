@@ -145,7 +145,7 @@ inline CNtlLock::~CNtlLock()
 
 #else
 // Linux: pthread-based mutex (CRITICAL_SECTION and wrappers from NtlSharedCommon.h)
-#include "NtlSharedCommon.h"
+#include "../../Shared/NtlSharedCommon.h"
 
 class CNtlMutex
 {

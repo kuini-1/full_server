@@ -19,6 +19,7 @@
 #include "NtlMiniDump.h"
 #include "NtlBase.h"
 #include "NtlString.h"
+#include "NtlDebug.h"
 #include <list>
 #if defined(_WIN32)
 #include <crtdbg.h>

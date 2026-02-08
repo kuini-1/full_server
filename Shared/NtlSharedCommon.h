@@ -140,6 +140,21 @@ typedef unsigned long long ntl_uint64;
 typedef unsigned long long QWORD;
 typedef QWORD DWORDLONG;
 
+/* LARGE_INTEGER / QueryPerformanceCounter / QueryPerformanceFrequency: Win32 API; on Linux use clock_gettime */
+typedef union _LARGE_INTEGER {
+	long long QuadPart;
+} LARGE_INTEGER;
+static inline void QueryPerformanceCounter(LARGE_INTEGER* lpPerformanceCount)
+{
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	lpPerformanceCount->QuadPart = (long long)ts.tv_sec * 1000000000LL + (long long)ts.tv_nsec;
+}
+static inline void QueryPerformanceFrequency(LARGE_INTEGER* lpFrequency)
+{
+	lpFrequency->QuadPart = 1000000000LL; /* nanoseconds per second, matches QueryPerformanceCounter */
+}
+
 /* SYSTEMTIME / GetLocalTime: Win32 API; on Linux use time + localtime_r */
 typedef struct _SYSTEMTIME {
 	WORD wYear, wMonth, wDayOfWeek, wDay, wHour, wMinute, wSecond, wMilliseconds;

@@ -1,4 +1,4 @@
-﻿//***********************************************************************************
+//***********************************************************************************
 //
 //	File		:	MemoryLeakChecker.h
 //
@@ -118,4 +118,12 @@ public:
 static CNtlMemoryChecker __sMemoryLeakChecker;
 
 
-#endif // defined(_MSC_VER) && defined (_DEBUG)
+#else
+// Stub for Linux or non-Debug: no-op so header can be included safely
+class CNtlMemoryChecker
+{
+public:
+	CNtlMemoryChecker() {}
+	void Test() {}
+};
+#endif // defined(__MEMORY_LEAK_CHECK__) && defined(_MSC_VER) && defined (_DEBUG)
