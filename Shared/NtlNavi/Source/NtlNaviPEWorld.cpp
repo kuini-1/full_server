@@ -83,7 +83,7 @@ bool CNtlNaviPEWorld::ImportPathData( const char* pPath, unsigned char byLoadFla
 
 	if ( byLoadFlags & ePATH_DATA_LOAD_FLAG_LOAD_ONLY_WORLD )
 	{
-		// 해당 폴더가 존재하는지 검사한다
+		// ??? ?????? ????????? ??????
 		bool bFindPathFolder = false;
 
 		{
@@ -115,7 +115,7 @@ bool CNtlNaviPEWorld::ImportPathData( const char* pPath, unsigned char byLoadFla
 			}
 		}
 
-		// 해당 패스를 못찾으면 패스 데이터만 사용하지 않는 것으로 처리한다
+		// ??? ????? ??????? ??? ??????? ??????? ??? ?????? ??????
 		if ( !bFindPathFolder )
 		{
 			return true;
@@ -135,7 +135,7 @@ bool CNtlNaviPEWorld::ImportPathData( const char* pPath, unsigned char byLoadFla
 
 	SetCurState( eNAVI_PE_STATE_LOADING );
 
-	// Multi-thread 로딩이 아닌 경우
+	// Multi-thread ????? ??? ???
 	if ( NULL == CNtlLoadingQueue::GetInstance() )
 	{
 		return CheckLoadComplete();
@@ -262,7 +262,7 @@ unsigned int CNtlNaviPEWorld::GetAttribute( float x, float z )
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 
 				float fFieldSize = pODInfo->GetFieldSize();
 
@@ -278,7 +278,7 @@ unsigned int CNtlNaviPEWorld::GetAttribute( float x, float z )
 					return 0;
 				}
 
-				// Tile id 계산
+				// Tile id ???
 
 				float fTileSize = pODInfo->GetTileSize();
 
@@ -306,7 +306,7 @@ unsigned int CNtlNaviPEWorld::GetAttribute( float x, float z )
 				pIDInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pIDInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Block id 계산
+				// Block id ???
 
 				float fBlockSize = pIDInfo->GetBlockSize();
 
@@ -386,7 +386,7 @@ unsigned int CNtlNaviPEWorld::GetTextAllIndex( float x, float z )
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 
 				float fFieldSize = pODInfo->GetFieldSize();
 
@@ -423,7 +423,7 @@ unsigned int CNtlNaviPEWorld::GetTextAllIndex( float x, float z )
 				pIDInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pIDInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Block id 계산
+				// Block id ???
 
 				float fBlockSize = pIDInfo->GetBlockSize();
 
@@ -473,7 +473,7 @@ unsigned int CNtlNaviPEWorld::GetZoneIndex( float x, float z )
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 
 				float fFieldSize = pODInfo->GetFieldSize();
 
@@ -510,7 +510,7 @@ unsigned int CNtlNaviPEWorld::GetZoneIndex( float x, float z )
 				pIDInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pIDInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Block id 계산
+				// Block id ???
 
 				float fBlockSize = pIDInfo->GetBlockSize();
 
@@ -560,7 +560,7 @@ float CNtlNaviPEWorld::GetHeight( float x, float y, float z )
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 
 				float fFieldSize = pODInfo->GetFieldSize();
 				float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -608,7 +608,7 @@ float CNtlNaviPEWorld::GetHeight( float x, float y, float z )
 
 			if ( pIDInfo )
 			{
-				// 인도워의 경우 하나의 navigation mesh 만 존재함
+				// ??????? ??? ????? navigation mesh ?? ??????
 				if ( m_defGroupDataList.size() != 1 )
 				{
 					return NAVI_FLT_MAX;
@@ -696,7 +696,7 @@ float CNtlNaviPEWorld::GetGuaranteedHeight( float x, float y, float z )
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 
 				float fFieldSize = pODInfo->GetFieldSize();
 				float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -744,7 +744,7 @@ float CNtlNaviPEWorld::GetGuaranteedHeight( float x, float y, float z )
 
 			if ( pIDInfo )
 			{
-				// 인도워의 경우 하나의 navigation mesh 만 존재함
+				// ??????? ??? ????? navigation mesh ?? ??????
 				if ( m_defGroupDataList.size() != 1 )
 				{
 					return NAVI_FLT_MAX;
@@ -810,7 +810,7 @@ bool CNtlNaviPEWorld::FindNearestPos( NAVI_INST_HANDLE hHandle, float fAgentRadi
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 
 				float fFieldSize = pODInfo->GetFieldSize();
 				float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -896,7 +896,7 @@ bool CNtlNaviPEWorld::FindNearestPos( NAVI_INST_HANDLE hHandle, float fAgentRadi
 					return false;
 				}
 
-				// 인도워의 경우 하나의 navigation mesh 만 존재함
+				// ??????? ??? ????? navigation mesh ?? ??????
 				if ( m_defGroupDataList.size() != 1 )
 				{
 					return false;
@@ -992,7 +992,7 @@ bool CNtlNaviPEWorld::FindNearestPos(NAVI_INST_HANDLE hHandle, float fAgentRadiu
 			pODInfo->GetWorldMinPos(fMinPosX, fMinPosZ);
 			pODInfo->GetWorldMaxPos(fMaxPosX, fMaxPosZ);
 
-			// Field id 계산
+			// Field id ???
 
 			float fFieldSize = pODInfo->GetFieldSize();
 			float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -1082,7 +1082,7 @@ bool CNtlNaviPEWorld::FindNearestPos(NAVI_INST_HANDLE hHandle, float fAgentRadiu
 				return false;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함
+			// ??????? ??? ????? navigation mesh ?? ??????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return false;
@@ -1152,17 +1152,17 @@ bool CNtlNaviPEWorld::FindNearestPos(NAVI_INST_HANDLE hHandle, float fAgentRadiu
 }
 
 /**
-* \brief 충돌 검사
-* \remark Agent의 반지름을 굵기로 가지는 하나의 라인이 Obstacle이나 Navigation mesh에서 충돌이 되는지 안되는지의 여부를 Test 한다.
-* \param nHandle WORLD의 ID와 iMesh Data를 가지는 구조체를 ( void* ) 으로 캐스팅하기 위해 사용되는 Handle
-* \param fAgentRadius Agent의 반지름
-* \param vSourcePos	시작 좌표
-* \param vTargetPos 끝 좌표
-* \return 충돌 결과를 나타내는 eCOL_TEST_RESULT 열거형
+* \brief ?? ???
+* \remark Agent?? ???????? ????? ?????? ????? ?????? Obstacle??? Navigation mesh???? ???? ????? ???????? ????? Test ???.
+* \param nHandle WORLD?? ID?? iMesh Data?? ?????? ??????? ( void* ) ???? ???????? ???? ????? Handle
+* \param fAgentRadius Agent?? ??????
+* \param vSourcePos	???? ???
+* \param vTargetPos ?? ???
+* \return ?? ????? ??????? eCOL_TEST_RESULT ??????
 */
 eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float fAgentRadius, CNtlNaviVector3& vSourcePos, CNtlNaviVector3& vTargetPos )
 {
-	// 현재 PathEngine data가 완전히 로딩되어 있지 않다면 연산을 수행할 수 없다.
+	// ???? PathEngine data?? ?????? ?????? ???? ???? ?????? ?????? ?? ????.
 	if ( eNAVI_PE_STATE_COMPLETE != GetCurState() )
 	{
 		return eCOL_TEST_RESULT_FAILED;
@@ -1177,40 +1177,40 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float
 		{
 			CNtlNaviWorldOutDoorInfo* pODInfo = (CNtlNaviWorldOutDoorInfo*)m_pNaviDataMng->GetLoadedWorld();
 
-			// OutDoor 정보를 가져와서 유효할 때만 검사한다.
+			// OutDoor ?????? ??????? ????? ???? ??????.
 			if ( pODInfo )
 			{
-				// 현재 Agent list에서 유효한 반지름의 Agent를 꺼내온다. 없다면 충돌 실패를 리턴한다.
+				// ???? Agent list???? ????? ???????? Agent?? ???????. ????? ?? ????? ???????.
 				mapdef_AgentList::iterator itAgent = m_defAgentList.find( fAgentRadius );
 				if ( itAgent == m_defAgentList.end() )
 				{
 					return eCOL_TEST_RESULT_FAILED;
 				}
 
-				// 현재 OutDoor의 전체 크기 계산
+				// ???? OutDoor?? ??? ??? ???
 				float fMinPosX, fMinPosZ;
 				float fMaxPosX, fMaxPosZ;
 
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 				float fFieldSize = pODInfo->GetFieldSize();
 				float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
 
-				unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group의 행 계산
-				unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group의 X 계산
-				unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group의 Z 계산
+				unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group?? ?? ???
+				unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group?? X ???
+				unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group?? Z ???
 				unsigned int uiGroupID = uiGroupX + uiGroupZ * uiCrossGroupCnt;						// Group ID
 
-				// Group의 ID로 현재 X Y 가 속해 있는 Group을 꺼내온다.
+				// Group?? ID?? ???? X Y ?? ???? ??? Group?? ???????.
 				mapdef_GroupDataList::iterator itGroup = m_defGroupDataList.find( uiGroupID );
 				if ( itGroup == m_defGroupDataList.end() )
 				{
 					return eCOL_TEST_RESULT_FAILED;
 				}
 
-				// Group Data를 꺼내온다.
+				// Group Data?? ???????.
 				sGROUP_DATA& sGroupData = itGroup->second;
 				if ( NULL == sGroupData.pGroundMesh )
 				{
@@ -1219,7 +1219,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float
 
 				tSigned32 arTemp[3];
 
-				// Source의 월드 좌표 -> 패스엔진 좌표
+				// Source?? ???? ??? -> ??????? ???
 				arTemp[0] = (tSigned32) WORLD_COORD_TO_PATH_COORD( x );
 				arTemp[1] = (tSigned32) WORLD_COORD_TO_PATH_COORD( z );
 				arTemp[2] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vSourcePos.GetY() );
@@ -1229,7 +1229,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float
 					return eCOL_TEST_RESULT_INVALID_SRC_POS;
 				}
 
-				// Target의 월드 좌표 -> 패스엔진 좌표
+				// Target?? ???? ??? -> ??????? ???
 				arTemp[0] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetX() );
 				arTemp[1] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetZ() );
 				arTemp[2] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetY() );
@@ -1239,7 +1239,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float
 					return eCOL_TEST_RESULT_INVALID_DEST_POS;
 				}
 
-				// 현재 GroupID의 알맞는 Collision context 를 꺼내온다.
+				// ???? GroupID?? ???? Collision context ?? ???????.
 				iCollisionContext* pContext = NULL;
 				if ( hHandle )
 				{
@@ -1256,7 +1256,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float
 					}
 				}
 
-				// Source 와 Target 을 잇는 Line이 충돌되는지 안되는지 테스트한다.
+				// Source ?? Target ?? ??? Line?? ??????? ?????? ???????.
 				eCOL_TEST_RESULT eTestResult = eCOL_TEST_RESULT_FAILED;
 				if( sGroupData.pGroundMesh->testLineCollision( itAgent->second.pShape, pContext, cSourcePos, cTargetPos ) )
 					eTestResult = eCOL_TEST_RESULT_COL;
@@ -1279,7 +1279,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float
 					return eCOL_TEST_RESULT_FAILED;
 				}
 
-				// 인도워의 경우 하나의 navigation mesh 만 존재함. 그렇지 않는 경우의 Data가 잘못된 것임
+				// ??????? ??? ????? navigation mesh ?? ??????. ????? ??? ????? Data?? ????? ????
 				if ( m_defGroupDataList.size() != 1 )
 				{
 					return eCOL_TEST_RESULT_FAILED;
@@ -1296,7 +1296,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float
 				arTemp[1] = (tSigned32) WORLD_COORD_TO_PATH_COORD( z );
 				arTemp[2] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vSourcePos.GetY() );
 
-				// PathEngine상의 좌표로 변환
+				// PathEngine???? ????? ???
 				cPosition cSourcePos = sGroupData.pGroundMesh->positionNear3DPoint( arTemp, PATH_HORIZ_RANGE, PATH_VERT_RANGE );
 				if ( cSourcePos.cell == -1 )
 				{
@@ -1347,7 +1347,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest( NAVI_INST_HANDLE hHandle, float
 
 eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest(NAVI_INST_HANDLE hHandle, float fAgentRadius, sNAVI_FAST_POS & sSrcFastPos, sNAVI_FAST_POS & sDestFastPos)
 {
-	// 현재 PathEngine data가 완전히 로딩되어 있지 않다면 연산을 수행할 수 없다.
+	// ???? PathEngine data?? ?????? ?????? ???? ???? ?????? ?????? ?? ????.
 	if (eNAVI_PE_STATE_COMPLETE != GetCurState())
 	{
 		return eCOL_TEST_RESULT_FAILED;
@@ -1375,10 +1375,10 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest(NAVI_INST_HANDLE hHandle, float 
 	{
 		CNtlNaviWorldOutDoorInfo* pODInfo = (CNtlNaviWorldOutDoorInfo*)m_pNaviDataMng->GetLoadedWorld();
 
-		// OutDoor 정보를 가져와서 유효할 때만 검사한다.
+		// OutDoor ?????? ??????? ????? ???? ??????.
 		if (pODInfo)
 		{
-			// 현재 GroupID의 알맞는 Collision context 를 꺼내온다.
+			// ???? GroupID?? ???? Collision context ?? ???????.
 			iCollisionContext* pContext = NULL;
 			if (hHandle)
 			{
@@ -1395,7 +1395,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest(NAVI_INST_HANDLE hHandle, float 
 				}
 			}
 
-			// Source 와 Target 을 잇는 Line이 충돌되는지 안되는지 테스트한다.
+			// Source ?? Target ?? ??? Line?? ??????? ?????? ???????.
 			eCOL_TEST_RESULT eTestResult = eCOL_TEST_RESULT_FAILED;
 			if (sSrcFastPos.pGround->testLineCollision(itAgent->second.pShape, pContext, sSrcFastPos.pos, sDestFastPos.pos))
 				eTestResult = eCOL_TEST_RESULT_COL;
@@ -1449,7 +1449,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::CollisionTest(NAVI_INST_HANDLE hHandle, float 
 */
 eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, float fAgentRadius, CNtlNaviVector3& vSourcePos, CNtlNaviVector3& vTargetPos, CNtlNaviVector3& vFirstCollison )
 {
-	// 현재 PathEngine data가 완전히 로딩되어 있지 않다면 연산을 수행할 수 없다.
+	// ???? PathEngine data?? ?????? ?????? ???? ???? ?????? ?????? ?? ????.
 	if ( eNAVI_PE_STATE_COMPLETE != GetCurState() )
 	{
 		return eCOL_TEST_RESULT_FAILED;
@@ -1464,40 +1464,40 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 		{
 			CNtlNaviWorldOutDoorInfo* pODInfo = (CNtlNaviWorldOutDoorInfo*)m_pNaviDataMng->GetLoadedWorld();
 
-			// OutDoor 정보를 가져와서 유효할 때만 검사한다.
+			// OutDoor ?????? ??????? ????? ???? ??????.
 			if ( pODInfo )
 			{
-				// 현재 Agent list에서 유효한 반지름의 Agent를 꺼내온다. 없다면 충돌 실패를 리턴한다.
+				// ???? Agent list???? ????? ???????? Agent?? ???????. ????? ?? ????? ???????.
 				mapdef_AgentList::iterator itAgent = m_defAgentList.find( fAgentRadius );
 				if ( itAgent == m_defAgentList.end() )
 				{
 					return eCOL_TEST_RESULT_FAILED;
 				}
 
-				// 현재 OutDoor의 전체 크기 계산
+				// ???? OutDoor?? ??? ??? ???
 				float fMinPosX, fMinPosZ;
 				float fMaxPosX, fMaxPosZ;
 
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 				float fFieldSize = pODInfo->GetFieldSize();
 				float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
 
-				unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group의 행 계산
-				unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group의 X 계산
-				unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group의 Z 계산
+				unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group?? ?? ???
+				unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group?? X ???
+				unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group?? Z ???
 				unsigned int uiGroupID = uiGroupX + uiGroupZ * uiCrossGroupCnt;						// Group ID
 
-				// Group의 ID로 현재 X Y 가 속해 있는 Group을 꺼내온다.
+				// Group?? ID?? ???? X Y ?? ???? ??? Group?? ???????.
 				mapdef_GroupDataList::iterator itGroup = m_defGroupDataList.find( uiGroupID );
 				if ( itGroup == m_defGroupDataList.end() )
 				{
 					return eCOL_TEST_RESULT_FAILED;
 				}
 
-				// Group Data를 꺼내온다.
+				// Group Data?? ???????.
 				sGROUP_DATA& sGroupData = itGroup->second;
 				if ( NULL == sGroupData.pGroundMesh )
 				{
@@ -1506,7 +1506,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 
 				tSigned32 arTemp[3];
 
-				// Source의 월드 좌표 -> 패스엔진 좌표
+				// Source?? ???? ??? -> ??????? ???
 				arTemp[0] = (tSigned32) WORLD_COORD_TO_PATH_COORD( x );
 				arTemp[1] = (tSigned32) WORLD_COORD_TO_PATH_COORD( z );
 				arTemp[2] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vSourcePos.GetY() );
@@ -1516,7 +1516,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 					return eCOL_TEST_RESULT_INVALID_SRC_POS;
 				}
 
-				// Target의 월드 좌표 -> 패스엔진 좌표
+				// Target?? ???? ??? -> ??????? ???
 				/*arTemp[0] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetX() );
 				arTemp[1] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetZ() );
 				arTemp[2] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetY() );
@@ -1526,12 +1526,12 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 					return eCOL_TEST_RESULT_INVALID_DEST_POS;
 				}*/
 
-				// FirstCollisionTest에서는 TargetPos가 Valid 할 필요가 없다.
+				// FirstCollisionTest?????? TargetPos?? Valid ?? ??? ????.
 				cPosition cTargetPos;
 				cTargetPos.x = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetX() );
 				cTargetPos.y = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetZ() );
 				
-				// 현재 GroupID의 알맞는 Collision context 를 꺼내온다.
+				// ???? GroupID?? ???? Collision context ?? ???????.
 				iCollisionContext* pContext = NULL;
 				if ( hHandle )
 				{
@@ -1552,12 +1552,12 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 				iCollisionInfo* pCollisionInfo = sGroupData.pGroundMesh->firstCollision( itAgent->second.pShape, pContext, cSourcePos, cTargetPos.x, cTargetPos.y, cTargetPos.cell );
 				if( pCollisionInfo )
 				{
-					// 충돌된 면의 Edge가 리턴된다.
-					long lCollisionCoord[4];
+					// ???? ???? Edge?? ??????.
+					tSigned32 lCollisionCoord[4];
 					pCollisionInfo->getCollidingLine(lCollisionCoord);
 					delete pCollisionInfo;
 
-					// Source와 Dest의 라인 과 충돌된 면의 Edge의 교점을 구한다.
+					// Source?? Dest?? ???? ?? ???? ???? Edge?? ?????? ?????.
 					float fSourceLineStartX = vSourcePos.GetX();
 					float fSourceLineStartY = vSourcePos.GetZ();
 					float fSourceLineEndX = vTargetPos.GetX();
@@ -1578,7 +1578,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 					arTemp2[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossX);
 					arTemp2[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossY);
 
-					// PathEngine상의 좌표로 변환
+					// PathEngine???? ????? ???
 					cPosition cDestPos = sGroupData.pGroundMesh->positionNear3DPoint(arTemp2, PATH_HORIZ_RANGE, PATH_VERT_RANGE * 10);
 					if (cDestPos.cell == -1)
 					{
@@ -1621,7 +1621,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 					return eCOL_TEST_RESULT_FAILED;
 				}
 
-				// 인도워의 경우 하나의 navigation mesh 만 존재함. 그렇지 않는 경우의 Data가 잘못된 것임
+				// ??????? ??? ????? navigation mesh ?? ??????. ????? ??? ????? Data?? ????? ????
 				if ( m_defGroupDataList.size() != 1 )
 				{
 					return eCOL_TEST_RESULT_FAILED;
@@ -1638,7 +1638,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 				arTemp[1] = (tSigned32) WORLD_COORD_TO_PATH_COORD( z );
 				arTemp[2] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vSourcePos.GetY() );
 
-				// PathEngine상의 좌표로 변환
+				// PathEngine???? ????? ???
 				cPosition cSourcePos = sGroupData.pGroundMesh->positionNear3DPoint( arTemp, PATH_HORIZ_RANGE, PATH_VERT_RANGE );
 				if ( cSourcePos.cell == -1 )
 				{
@@ -1655,7 +1655,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 					return eCOL_TEST_RESULT_INVALID_DEST_POS;
 				}*/
 
-				// FirstCollisionTest에서는 TargetPos가 Valid 할 필요가 없다.
+				// FirstCollisionTest?????? TargetPos?? Valid ?? ??? ????.
 				cPosition cTargetPos;
 				cTargetPos.x = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetX() );
 				cTargetPos.y = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetZ() );
@@ -1681,11 +1681,11 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 				iCollisionInfo* pCollisionInfo = sGroupData.pGroundMesh->firstCollision( itAgent->second.pShape, pContext, cSourcePos, cTargetPos.x, cTargetPos.y, cTargetPos.cell );
 				if( pCollisionInfo )
 				{
-					long lCollisionCoord[4];
+					tSigned32 lCollisionCoord[4];
 					pCollisionInfo->getCollidingLine(lCollisionCoord);
 					delete pCollisionInfo;
 
-					// Source와 Dest의 라인 과 충돌된 면의 Edge의 교점을 구한다.
+					// Source?? Dest?? ???? ?? ???? ???? Edge?? ?????? ?????.
 					float fSourceLineStartX = vSourcePos.GetX();
 					float fSourceLineStartY = vSourcePos.GetZ();
 					float fSourceLineEndX = vTargetPos.GetX();
@@ -1706,7 +1706,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 					arTemp2[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossX);
 					arTemp2[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossY);
 
-					// PathEngine상의 좌표로 변환
+					// PathEngine???? ????? ???
 					cPosition cDestPos = sGroupData.pGroundMesh->positionNear3DPoint(arTemp2, PATH_HORIZ_RANGE, PATH_VERT_RANGE * 10);
 					if (cDestPos.cell == -1)
 					{
@@ -1743,7 +1743,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest( NAVI_INST_HANDLE hHandle, 
 
 eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest(NAVI_INST_HANDLE hHandle, float fAgentRadius, sNAVI_FAST_POS & vSourcePos, CNtlNaviVector3 & vTargetPos, CNtlNaviVector3 & vFirstCollison)
 {
-	// 현재 PathEngine data가 완전히 로딩되어 있지 않다면 연산을 수행할 수 없다.
+	// ???? PathEngine data?? ?????? ?????? ???? ???? ?????? ?????? ?? ????.
 	if (eNAVI_PE_STATE_COMPLETE != GetCurState())
 	{
 		return eCOL_TEST_RESULT_FAILED;
@@ -1758,17 +1758,17 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest(NAVI_INST_HANDLE hHandle, f
 	{
 		CNtlNaviWorldOutDoorInfo* pODInfo = (CNtlNaviWorldOutDoorInfo*)m_pNaviDataMng->GetLoadedWorld();
 
-		// OutDoor 정보를 가져와서 유효할 때만 검사한다.
+		// OutDoor ?????? ??????? ????? ???? ??????.
 		if (pODInfo)
 		{
-			// 현재 Agent list에서 유효한 반지름의 Agent를 꺼내온다. 없다면 충돌 실패를 리턴한다.
+			// ???? Agent list???? ????? ???????? Agent?? ???????. ????? ?? ????? ???????.
 			mapdef_AgentList::iterator itAgent = m_defAgentList.find(fAgentRadius);
 			if (itAgent == m_defAgentList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 현재 GroupID의 알맞는 Collision context 를 꺼내온다.
+			// ???? GroupID?? ???? Collision context ?? ???????.
 			iCollisionContext* pContext = NULL;
 			if (hHandle)
 			{
@@ -1799,12 +1799,12 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest(NAVI_INST_HANDLE hHandle, f
 			iCollisionInfo* pCollisionInfo = vSourcePos.pGround->firstCollision(itAgent->second.pShape, pContext, vSourcePos.pos, cTargetPos.x, cTargetPos.y, cTargetPos.cell);
 			if (pCollisionInfo)
 			{
-				// 충돌된 면의 Edge가 리턴된다.
-				long lCollisionCoord[4];
+				// ???? ???? Edge?? ??????.
+				tSigned32 lCollisionCoord[4];
 				pCollisionInfo->getCollidingLine(lCollisionCoord);
 				delete pCollisionInfo;
 
-				// Source와 Dest의 라인 과 충돌된 면의 Edge의 교점을 구한다.
+				// Source?? Dest?? ???? ?? ???? ???? Edge?? ?????? ?????.
 				float fSourceLineStartX = (float)vSourcePos.pos.x;
 				float fSourceLineStartY = (float)vSourcePos.pos.y;
 				float fSourceLineEndX = (float)cTargetPos.x;
@@ -1826,7 +1826,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest(NAVI_INST_HANDLE hHandle, f
 				arTemp[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossX);
 				arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossY);
 
-				// PathEngine상의 좌표로 변환
+				// PathEngine???? ????? ???
 				cPosition cSourcePos = vSourcePos.pGround->positionNear3DPoint(arTemp, PATH_HORIZ_RANGE, PATH_VERT_RANGE * 10);
 				if (cSourcePos.cell == -1)
 				{
@@ -1891,7 +1891,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest(NAVI_INST_HANDLE hHandle, f
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// FirstCollisionTest에서는 TargetPos가 Valid 할 필요가 없다.
+			// FirstCollisionTest?????? TargetPos?? Valid ?? ??? ????.
 			cPosition cTargetPos;
 			cTargetPos.x = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetX());
 			cTargetPos.y = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetZ());
@@ -1901,11 +1901,11 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest(NAVI_INST_HANDLE hHandle, f
 			iCollisionInfo* pCollisionInfo = vSourcePos.pGround->firstCollision(itAgent->second.pShape, pContext, vSourcePos.pos, cTargetPos.x, cTargetPos.y, cTargetPos.cell);
 			if (pCollisionInfo)
 			{
-				long lCollisionCoord[4];
+				tSigned32 lCollisionCoord[4];
 				pCollisionInfo->getCollidingLine(lCollisionCoord);
 				delete pCollisionInfo;
 
-				// Source와 Dest의 라인 과 충돌된 면의 Edge의 교점을 구한다.
+				// Source?? Dest?? ???? ?? ???? ???? Edge?? ?????? ?????.
 				float fSourceLineStartX = (float)vSourcePos.pos.x;
 				float fSourceLineStartY = (float)vSourcePos.pos.y;
 				float fSourceLineEndX = (float)cTargetPos.x;
@@ -1927,7 +1927,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FirstCollisionTest(NAVI_INST_HANDLE hHandle, f
 				arTemp[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossX);
 				arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossY);
 
-				// PathEngine상의 좌표로 변환
+				// PathEngine???? ????? ???
 				cPosition cSourcePos = vSourcePos.pGround->positionNear3DPoint(arTemp, PATH_HORIZ_RANGE, PATH_VERT_RANGE * 10);
 				if (cSourcePos.cell == -1)
 				{
@@ -1994,7 +1994,7 @@ bool CNtlNaviPEWorld::FindPath( NAVI_INST_HANDLE hHandle, float fAgentRadius, CN
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 
 				float fFieldSize = pODInfo->GetFieldSize();
 				float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -2105,7 +2105,7 @@ bool CNtlNaviPEWorld::FindPath( NAVI_INST_HANDLE hHandle, float fAgentRadius, CN
 					return false;
 				}
 
-				// 인도워의 경우 하나의 navigation mesh 만 존재함
+				// ??????? ??? ????? navigation mesh ?? ??????
 				if ( m_defGroupDataList.size() != 1 )
 				{
 					return false;
@@ -2292,7 +2292,7 @@ bool CNtlNaviPEWorld::FindPath(NAVI_INST_HANDLE hHandle, float fAgentRadius, sNA
 				return false;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함
+			// ??????? ??? ????? navigation mesh ?? ??????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return false;
@@ -2385,7 +2385,7 @@ bool CNtlNaviPEWorld::FastFindNearestPos(NAVI_INST_HANDLE hHandle, float fAgentR
 			pODInfo->GetWorldMinPos(fMinPosX, fMinPosZ);
 			pODInfo->GetWorldMaxPos(fMaxPosX, fMaxPosZ);
 
-			// Field id 계산
+			// Field id ???
 
 			float fFieldSize = pODInfo->GetFieldSize();
 			float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -2471,7 +2471,7 @@ bool CNtlNaviPEWorld::FastFindNearestPos(NAVI_INST_HANDLE hHandle, float fAgentR
 				return false;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함
+			// ??????? ??? ????? navigation mesh ?? ??????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return false;
@@ -2538,7 +2538,7 @@ bool CNtlNaviPEWorld::FastFindNearestPos(NAVI_INST_HANDLE hHandle, float fAgentR
 
 eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandle, float fAgentRadius, CNtlNaviVector3 & vSourcePos, CNtlNaviVector3 & vTargetPos, CNtlNaviVector3 & vFirstCollison)
 {
-	// 현재 PathEngine data가 완전히 로딩되어 있지 않다면 연산을 수행할 수 없다.
+	// ???? PathEngine data?? ?????? ?????? ???? ???? ?????? ?????? ?? ????.
 	if (eNAVI_PE_STATE_COMPLETE != GetCurState())
 	{
 		return eCOL_TEST_RESULT_FAILED;
@@ -2553,40 +2553,40 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 	{
 		CNtlNaviWorldOutDoorInfo* pODInfo = (CNtlNaviWorldOutDoorInfo*)m_pNaviDataMng->GetLoadedWorld();
 
-		// OutDoor 정보를 가져와서 유효할 때만 검사한다.
+		// OutDoor ?????? ??????? ????? ???? ??????.
 		if (pODInfo)
 		{
-			// 현재 Agent list에서 유효한 반지름의 Agent를 꺼내온다. 없다면 충돌 실패를 리턴한다.
+			// ???? Agent list???? ????? ???????? Agent?? ???????. ????? ?? ????? ???????.
 			mapdef_AgentList::iterator itAgent = m_defAgentList.find(fAgentRadius);
 			if (itAgent == m_defAgentList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 현재 OutDoor의 전체 크기 계산
+			// ???? OutDoor?? ??? ??? ???
 			float fMinPosX, fMinPosZ;
 			float fMaxPosX, fMaxPosZ;
 
 			pODInfo->GetWorldMinPos(fMinPosX, fMinPosZ);
 			pODInfo->GetWorldMaxPos(fMaxPosX, fMaxPosZ);
 
-			// Field id 계산
+			// Field id ???
 			float fFieldSize = pODInfo->GetFieldSize();
 			float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
 
-			unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group의 행 계산
-			unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group의 X 계산
-			unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group의 Z 계산
+			unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group?? ?? ???
+			unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group?? X ???
+			unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group?? Z ???
 			unsigned int uiGroupID = uiGroupX + uiGroupZ * uiCrossGroupCnt;						// Group ID
 
-																								// Group의 ID로 현재 X Y 가 속해 있는 Group을 꺼내온다.
+																								// Group?? ID?? ???? X Y ?? ???? ??? Group?? ???????.
 			mapdef_GroupDataList::iterator itGroup = m_defGroupDataList.find(uiGroupID);
 			if (itGroup == m_defGroupDataList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// Group Data를 꺼내온다.
+			// Group Data?? ???????.
 			sGROUP_DATA& sGroupData = itGroup->second;
 			if (NULL == sGroupData.pGroundMesh)
 			{
@@ -2595,7 +2595,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 
 			tSigned32 arTemp[3];
 
-			// Source의 월드 좌표 -> 패스엔진 좌표
+			// Source?? ???? ??? -> ??????? ???
 			arTemp[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(x);
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(z);
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vSourcePos.GetY());
@@ -2605,12 +2605,12 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 				return eCOL_TEST_RESULT_INVALID_SRC_POS;
 			}
 
-			// FirstCollisionTest에서는 TargetPos가 Valid 할 필요가 없다.
+			// FirstCollisionTest?????? TargetPos?? Valid ?? ??? ????.
 			cPosition cTargetPos;
 			cTargetPos.x = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetX());
 			cTargetPos.y = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetZ());
 
-			// 현재 GroupID의 알맞는 Collision context 를 꺼내온다.
+			// ???? GroupID?? ???? Collision context ?? ???????.
 			iCollisionContext* pContext = NULL;
 			if (hHandle)
 			{
@@ -2631,12 +2631,12 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 			iCollisionInfo* pCollisionInfo = sGroupData.pGroundMesh->firstCollision(itAgent->second.pShape, pContext, cSourcePos, cTargetPos.x, cTargetPos.y, cTargetPos.cell);
 			if (pCollisionInfo)
 			{
-				// 충돌된 면의 Edge가 리턴된다.
-				long lCollisionCoord[4];
+				// ???? ???? Edge?? ??????.
+				tSigned32 lCollisionCoord[4];
 				pCollisionInfo->getCollidingLine(lCollisionCoord);
 				delete pCollisionInfo;
 
-				// Source와 Dest의 라인 과 충돌된 면의 Edge의 교점을 구한다.
+				// Source?? Dest?? ???? ?? ???? ???? Edge?? ?????? ?????.
 				float fSourceLineStartX = vSourcePos.GetX();
 				float fSourceLineStartY = vSourcePos.GetZ();
 				float fSourceLineEndX = vTargetPos.GetX();
@@ -2657,7 +2657,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 				arTemp2[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossX);
 				arTemp2[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossY);
 
-				// PathEngine상의 좌표로 변환
+				// PathEngine???? ????? ???
 				cPosition cDestPos = sGroupData.pGroundMesh->positionNear3DPoint(arTemp2, 500, PATH_VERT_RANGE * 10);
 				if (cDestPos.cell == -1)
 				{
@@ -2700,7 +2700,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함. 그렇지 않는 경우의 Data가 잘못된 것임
+			// ??????? ??? ????? navigation mesh ?? ??????. ????? ??? ????? Data?? ????? ????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return eCOL_TEST_RESULT_FAILED;
@@ -2717,14 +2717,14 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(z);
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vSourcePos.GetY());
 
-			// PathEngine상의 좌표로 변환
+			// PathEngine???? ????? ???
 			cPosition cSourcePos = sGroupData.pGroundMesh->positionNear3DPoint(arTemp, 10, PATH_VERT_RANGE);
 			if (cSourcePos.cell == -1)
 			{
 				return eCOL_TEST_RESULT_INVALID_SRC_POS;
 			}
 
-			// FirstCollisionTest에서는 TargetPos가 Valid 할 필요가 없다.
+			// FirstCollisionTest?????? TargetPos?? Valid ?? ??? ????.
 			cPosition cTargetPos;
 			cTargetPos.x = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetX());
 			cTargetPos.y = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetZ());
@@ -2750,11 +2750,11 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 			iCollisionInfo* pCollisionInfo = sGroupData.pGroundMesh->firstCollision(itAgent->second.pShape, pContext, cSourcePos, cTargetPos.x, cTargetPos.y, cTargetPos.cell);
 			if (pCollisionInfo)
 			{
-				long lCollisionCoord[4];
+				tSigned32 lCollisionCoord[4];
 				pCollisionInfo->getCollidingLine(lCollisionCoord);
 				delete pCollisionInfo;
 
-				// Source와 Dest의 라인 과 충돌된 면의 Edge의 교점을 구한다.
+				// Source?? Dest?? ???? ?? ???? ???? Edge?? ?????? ?????.
 				float fSourceLineStartX = vSourcePos.GetX();
 				float fSourceLineStartY = vSourcePos.GetZ();
 				float fSourceLineEndX = vTargetPos.GetX();
@@ -2775,7 +2775,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 				arTemp2[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossX);
 				arTemp2[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(fCrossY);
 
-				// PathEngine상의 좌표로 변환
+				// PathEngine???? ????? ???
 				cPosition cDestPos = sGroupData.pGroundMesh->positionNear3DPoint(arTemp2, 500, PATH_VERT_RANGE * 10);
 				if (cDestPos.cell == -1)
 				{
@@ -2812,7 +2812,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastFirstCollisionTest(NAVI_INST_HANDLE hHandl
 
 eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, float fAgentRadius, CNtlNaviVector3 & vSourcePos, CNtlNaviVector3 & vTargetPos)
 {
-	// 현재 PathEngine data가 완전히 로딩되어 있지 않다면 연산을 수행할 수 없다.
+	// ???? PathEngine data?? ?????? ?????? ???? ???? ?????? ?????? ?? ????.
 	if (eNAVI_PE_STATE_COMPLETE != GetCurState())
 	{
 		return eCOL_TEST_RESULT_FAILED;
@@ -2828,40 +2828,40 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 	{
 		CNtlNaviWorldOutDoorInfo* pODInfo = (CNtlNaviWorldOutDoorInfo*)m_pNaviDataMng->GetLoadedWorld();
 
-		// OutDoor 정보를 가져와서 유효할 때만 검사한다.
+		// OutDoor ?????? ??????? ????? ???? ??????.
 		if (pODInfo)
 		{
-			// 현재 Agent list에서 유효한 반지름의 Agent를 꺼내온다. 없다면 충돌 실패를 리턴한다.
+			// ???? Agent list???? ????? ???????? Agent?? ???????. ????? ?? ????? ???????.
 			mapdef_AgentList::iterator itAgent = m_defAgentList.find(fAgentRadius);
 			if (itAgent == m_defAgentList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 현재 OutDoor의 전체 크기 계산
+			// ???? OutDoor?? ??? ??? ???
 			float fMinPosX, fMinPosZ;
 			float fMaxPosX, fMaxPosZ;
 
 			pODInfo->GetWorldMinPos(fMinPosX, fMinPosZ);
 			pODInfo->GetWorldMaxPos(fMaxPosX, fMaxPosZ);
 
-			// Field id 계산
+			// Field id ???
 			float fFieldSize = pODInfo->GetFieldSize();
 			float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
 
-			unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group의 행 계산
-			unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group의 X 계산
-			unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group의 Z 계산
+			unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group?? ?? ???
+			unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group?? X ???
+			unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group?? Z ???
 			unsigned int uiGroupID = uiGroupX + uiGroupZ * uiCrossGroupCnt;						// Group ID
 
-																								// Group의 ID로 현재 X Y 가 속해 있는 Group을 꺼내온다.
+																								// Group?? ID?? ???? X Y ?? ???? ??? Group?? ???????.
 			mapdef_GroupDataList::iterator itGroup = m_defGroupDataList.find(uiGroupID);
 			if (itGroup == m_defGroupDataList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// Group Data를 꺼내온다.
+			// Group Data?? ???????.
 			sGROUP_DATA& sGroupData = itGroup->second;
 			if (NULL == sGroupData.pGroundMesh)
 			{
@@ -2870,7 +2870,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 
 			tSigned32 arTemp[3];
 
-			// Source의 월드 좌표 -> 패스엔진 좌표
+			// Source?? ???? ??? -> ??????? ???
 			arTemp[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(x);
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(z);
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vSourcePos.GetY());
@@ -2880,7 +2880,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 				return eCOL_TEST_RESULT_INVALID_SRC_POS;
 			}
 
-			// Target의 월드 좌표 -> 패스엔진 좌표
+			// Target?? ???? ??? -> ??????? ???
 			arTemp[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetX());
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetZ());
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetY());
@@ -2890,7 +2890,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 				return eCOL_TEST_RESULT_INVALID_DEST_POS;
 			}
 
-			// 현재 GroupID의 알맞는 Collision context 를 꺼내온다.
+			// ???? GroupID?? ???? Collision context ?? ???????.
 			iCollisionContext* pContext = NULL;
 			if (hHandle)
 			{
@@ -2907,7 +2907,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 				}
 			}
 
-			// Source 와 Target 을 잇는 Line이 충돌되는지 안되는지 테스트한다.
+			// Source ?? Target ?? ??? Line?? ??????? ?????? ???????.
 			eCOL_TEST_RESULT eTestResult = eCOL_TEST_RESULT_FAILED;
 			if (sGroupData.pGroundMesh->testLineCollision(itAgent->second.pShape, pContext, cSourcePos, cTargetPos))
 				eTestResult = eCOL_TEST_RESULT_COL;
@@ -2930,7 +2930,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함. 그렇지 않는 경우의 Data가 잘못된 것임
+			// ??????? ??? ????? navigation mesh ?? ??????. ????? ??? ????? Data?? ????? ????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return eCOL_TEST_RESULT_FAILED;
@@ -2947,7 +2947,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(z);
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vSourcePos.GetY());
 
-			// PathEngine상의 좌표로 변환
+			// PathEngine???? ????? ???
 			cPosition cSourcePos = sGroupData.pGroundMesh->positionNear3DPoint(arTemp, nHorizRange, PATH_VERT_RANGE * 2);
 			if (cSourcePos.cell == -1)
 			{
@@ -2998,7 +2998,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 
 eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, float fAgentRadius, CNtlNaviVector3 & vSourcePos, CNtlNaviVector3 & vTargetPos, CNtlNaviVector3 & vNewTargetPos)
 {
-	// 현재 PathEngine data가 완전히 로딩되어 있지 않다면 연산을 수행할 수 없다.
+	// ???? PathEngine data?? ?????? ?????? ???? ???? ?????? ?????? ?? ????.
 	if (eNAVI_PE_STATE_COMPLETE != GetCurState())
 	{
 		return eCOL_TEST_RESULT_FAILED;
@@ -3014,40 +3014,40 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 	{
 		CNtlNaviWorldOutDoorInfo* pODInfo = (CNtlNaviWorldOutDoorInfo*)m_pNaviDataMng->GetLoadedWorld();
 
-		// OutDoor 정보를 가져와서 유효할 때만 검사한다.
+		// OutDoor ?????? ??????? ????? ???? ??????.
 		if (pODInfo)
 		{
-			// 현재 Agent list에서 유효한 반지름의 Agent를 꺼내온다. 없다면 충돌 실패를 리턴한다.
+			// ???? Agent list???? ????? ???????? Agent?? ???????. ????? ?? ????? ???????.
 			mapdef_AgentList::iterator itAgent = m_defAgentList.find(fAgentRadius);
 			if (itAgent == m_defAgentList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 현재 OutDoor의 전체 크기 계산
+			// ???? OutDoor?? ??? ??? ???
 			float fMinPosX, fMinPosZ;
 			float fMaxPosX, fMaxPosZ;
 
 			pODInfo->GetWorldMinPos(fMinPosX, fMinPosZ);
 			pODInfo->GetWorldMaxPos(fMaxPosX, fMaxPosZ);
 
-			// Field id 계산
+			// Field id ???
 			float fFieldSize = pODInfo->GetFieldSize();
 			float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
 
-			unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group의 행 계산
-			unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group의 X 계산
-			unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group의 Z 계산
+			unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group?? ?? ???
+			unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group?? X ???
+			unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group?? Z ???
 			unsigned int uiGroupID = uiGroupX + uiGroupZ * uiCrossGroupCnt;						// Group ID
 
-																								// Group의 ID로 현재 X Y 가 속해 있는 Group을 꺼내온다.
+																								// Group?? ID?? ???? X Y ?? ???? ??? Group?? ???????.
 			mapdef_GroupDataList::iterator itGroup = m_defGroupDataList.find(uiGroupID);
 			if (itGroup == m_defGroupDataList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// Group Data를 꺼내온다.
+			// Group Data?? ???????.
 			sGROUP_DATA& sGroupData = itGroup->second;
 			if (NULL == sGroupData.pGroundMesh)
 			{
@@ -3056,7 +3056,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 
 			tSigned32 arTemp[3];
 
-			// Source의 월드 좌표 -> 패스엔진 좌표
+			// Source?? ???? ??? -> ??????? ???
 			arTemp[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(x);
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(z);
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vSourcePos.GetY());
@@ -3066,7 +3066,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 				return eCOL_TEST_RESULT_INVALID_SRC_POS;
 			}
 
-			// Target의 월드 좌표 -> 패스엔진 좌표
+			// Target?? ???? ??? -> ??????? ???
 			arTemp[0] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetX() );
 			arTemp[1] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetZ() );
 			arTemp[2] = (tSigned32) WORLD_COORD_TO_PATH_COORD( vTargetPos.GetY() );
@@ -3076,7 +3076,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 				return eCOL_TEST_RESULT_INVALID_DEST_POS;
 			}
 
-			// 현재 GroupID의 알맞는 Collision context 를 꺼내온다.
+			// ???? GroupID?? ???? Collision context ?? ???????.
 			iCollisionContext* pContext = NULL;
 			if (hHandle)
 			{
@@ -3121,7 +3121,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함. 그렇지 않는 경우의 Data가 잘못된 것임
+			// ??????? ??? ????? navigation mesh ?? ??????. ????? ??? ????? Data?? ????? ????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return eCOL_TEST_RESULT_FAILED;
@@ -3138,7 +3138,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCollisionTest(NAVI_INST_HANDLE hHandle, fl
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(z);
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vSourcePos.GetY());
 
-			// PathEngine상의 좌표로 변환
+			// PathEngine???? ????? ???
 			cPosition cSourcePos = sGroupData.pGroundMesh->positionNear3DPoint(arTemp, nHorizRange, PATH_VERT_RANGE * 2);
 			if (cSourcePos.cell == -1)
 			{
@@ -3225,7 +3225,7 @@ bool CNtlNaviPEWorld::FastFindPath(NAVI_INST_HANDLE hHandle, float fAgentRadius,
 			pODInfo->GetWorldMinPos(fMinPosX, fMinPosZ);
 			pODInfo->GetWorldMaxPos(fMaxPosX, fMaxPosZ);
 
-			// Field id 계산
+			// Field id ???
 
 			float fFieldSize = pODInfo->GetFieldSize();
 			float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -3342,7 +3342,7 @@ bool CNtlNaviPEWorld::FastFindPath(NAVI_INST_HANDLE hHandle, float fAgentRadius,
 				return false;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함
+			// ??????? ??? ????? navigation mesh ?? ??????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return false;
@@ -3471,7 +3471,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastChaseFindPath(NAVI_INST_HANDLE hHandle, fl
 			pODInfo->GetWorldMinPos(fMinPosX, fMinPosZ);
 			pODInfo->GetWorldMaxPos(fMaxPosX, fMaxPosZ);
 
-			// Field id 계산
+			// Field id ???
 
 			float fFieldSize = pODInfo->GetFieldSize();
 			float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -3604,7 +3604,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastChaseFindPath(NAVI_INST_HANDLE hHandle, fl
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함
+			// ??????? ??? ????? navigation mesh ?? ??????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return eCOL_TEST_RESULT_FAILED;
@@ -3718,7 +3718,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastChaseFindPath(NAVI_INST_HANDLE hHandle, fl
 
 eCOL_TEST_RESULT CNtlNaviPEWorld::FastCanMoveNearestDest(NAVI_INST_HANDLE hHandle, float fAgentRadius, CNtlNaviVector3 & vSourcePos, CNtlNaviVector3 & vTargetPos)
 {
-	// 현재 PathEngine data가 완전히 로딩되어 있지 않다면 연산을 수행할 수 없다.
+	// ???? PathEngine data?? ?????? ?????? ???? ???? ?????? ?????? ?? ????.
 	if (eNAVI_PE_STATE_COMPLETE != GetCurState())
 	{
 		return eCOL_TEST_RESULT_FAILED;
@@ -3734,40 +3734,40 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCanMoveNearestDest(NAVI_INST_HANDLE hHandl
 	{
 		CNtlNaviWorldOutDoorInfo* pODInfo = (CNtlNaviWorldOutDoorInfo*)m_pNaviDataMng->GetLoadedWorld();
 
-		// OutDoor 정보를 가져와서 유효할 때만 검사한다.
+		// OutDoor ?????? ??????? ????? ???? ??????.
 		if (pODInfo)
 		{
-			// 현재 Agent list에서 유효한 반지름의 Agent를 꺼내온다. 없다면 충돌 실패를 리턴한다.
+			// ???? Agent list???? ????? ???????? Agent?? ???????. ????? ?? ????? ???????.
 			mapdef_AgentList::iterator itAgent = m_defAgentList.find(fAgentRadius);
 			if (itAgent == m_defAgentList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 현재 OutDoor의 전체 크기 계산
+			// ???? OutDoor?? ??? ??? ???
 			float fMinPosX, fMinPosZ;
 			float fMaxPosX, fMaxPosZ;
 
 			pODInfo->GetWorldMinPos(fMinPosX, fMinPosZ);
 			pODInfo->GetWorldMaxPos(fMaxPosX, fMaxPosZ);
 
-			// Field id 계산
+			// Field id ???
 			float fFieldSize = pODInfo->GetFieldSize();
 			float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
 
-			unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group의 행 계산
-			unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group의 X 계산
-			unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group의 Z 계산
+			unsigned int uiCrossGroupCnt = (unsigned int)((fMaxPosX - fMinPosX) / fGroupSize);	// Group?? ?? ???
+			unsigned int uiGroupX = (unsigned int)((x - fMinPosX) / fGroupSize);				// Group?? X ???
+			unsigned int uiGroupZ = (unsigned int)((z - fMinPosZ) / fGroupSize);				// Group?? Z ???
 			unsigned int uiGroupID = uiGroupX + uiGroupZ * uiCrossGroupCnt;						// Group ID
 
-																								// Group의 ID로 현재 X Y 가 속해 있는 Group을 꺼내온다.
+																								// Group?? ID?? ???? X Y ?? ???? ??? Group?? ???????.
 			mapdef_GroupDataList::iterator itGroup = m_defGroupDataList.find(uiGroupID);
 			if (itGroup == m_defGroupDataList.end())
 			{
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// Group Data를 꺼내온다.
+			// Group Data?? ???????.
 			sGROUP_DATA& sGroupData = itGroup->second;
 			if (NULL == sGroupData.pGroundMesh)
 			{
@@ -3776,7 +3776,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCanMoveNearestDest(NAVI_INST_HANDLE hHandl
 
 			tSigned32 arTemp[3];
 
-			// Source의 월드 좌표 -> 패스엔진 좌표
+			// Source?? ???? ??? -> ??????? ???
 			arTemp[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(x);
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(z);
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vSourcePos.GetY());
@@ -3786,7 +3786,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCanMoveNearestDest(NAVI_INST_HANDLE hHandl
 				return eCOL_TEST_RESULT_INVALID_SRC_POS;
 			}
 
-			// Target의 월드 좌표 -> 패스엔진 좌표
+			// Target?? ???? ??? -> ??????? ???
 			arTemp[0] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetX());
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetZ());
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vTargetPos.GetY());
@@ -3796,7 +3796,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCanMoveNearestDest(NAVI_INST_HANDLE hHandl
 				return eCOL_TEST_RESULT_INVALID_DEST_POS;
 			}
 
-			// 현재 GroupID의 알맞는 Collision context 를 꺼내온다.
+			// ???? GroupID?? ???? Collision context ?? ???????.
 			iCollisionContext* pContext = NULL;
 			if (hHandle)
 			{
@@ -3819,7 +3819,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCanMoveNearestDest(NAVI_INST_HANDLE hHandl
 				return eCOL_TEST_RESULT_INVALID_DEST_POS;
 			}
 
-			// Source 와 Target 을 잇는 Line이 충돌되는지 안되는지 테스트한다.
+			// Source ?? Target ?? ??? Line?? ??????? ?????? ???????.
 			eCOL_TEST_RESULT eTestResult = eCOL_TEST_RESULT_FAILED;
 			if (sGroupData.pGroundMesh->testLineCollision(itAgent->second.pShape, pContext, cSourcePos, cDestPos))
 				eTestResult = eCOL_TEST_RESULT_COL;
@@ -3842,7 +3842,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCanMoveNearestDest(NAVI_INST_HANDLE hHandl
 				return eCOL_TEST_RESULT_FAILED;
 			}
 
-			// 인도워의 경우 하나의 navigation mesh 만 존재함. 그렇지 않는 경우의 Data가 잘못된 것임
+			// ??????? ??? ????? navigation mesh ?? ??????. ????? ??? ????? Data?? ????? ????
 			if (m_defGroupDataList.size() != 1)
 			{
 				return eCOL_TEST_RESULT_FAILED;
@@ -3859,7 +3859,7 @@ eCOL_TEST_RESULT CNtlNaviPEWorld::FastCanMoveNearestDest(NAVI_INST_HANDLE hHandl
 			arTemp[1] = (tSigned32)WORLD_COORD_TO_PATH_COORD(z);
 			arTemp[2] = (tSigned32)WORLD_COORD_TO_PATH_COORD(vSourcePos.GetY());
 
-			// PathEngine상의 좌표로 변환
+			// PathEngine???? ????? ???
 			cPosition cSourcePos = sGroupData.pGroundMesh->positionNear3DPoint(arTemp, nHorizRange, PATH_VERT_RANGE);
 			if (cSourcePos.cell == -1)
 			{
@@ -3945,7 +3945,7 @@ bool CNtlNaviPEWorld::IsValidPos(sNAVI_POS & sSrcPos)
 
 			mapdef_GroupDataList::iterator itGroup = m_defGroupDataList.find(uiGroupID);
 
-			// 해당하는 Group ID를 찾지 못함
+			// ?????? Group ID?? ??? ????
 			if (itGroup == m_defGroupDataList.end())
 			{
 				return NULL;
@@ -3994,7 +3994,7 @@ bool CNtlNaviPEWorld::IsValidPos(sNAVI_POS & sSrcPos)
 int CNtlNaviPEWorld::GetGroundVertexCount()
 {
 	int nFacesCount = 0;
-	for each( std::pair< unsigned int, sGROUP_DATA > pair in m_defGroupDataList )
+	for ( const auto& pair : m_defGroupDataList )
 	{
 		iMesh* pMesh = pair.second.pGroundMesh;
 		nFacesCount += pMesh->getNumberOf3DFaces();
@@ -4007,7 +4007,7 @@ bool CNtlNaviPEWorld::GetGroundVertexToBuffer( sNAVI_VERTEX* pBuffer )
 {
 	int nVertexCount = 0;
 	sNAVI_PE_VERTEX sPEVertex;
-	for each( std::pair< unsigned int, sGROUP_DATA > pair in m_defGroupDataList )
+	for ( const auto& pair : m_defGroupDataList )
 	{
 		iMesh* pMesh = pair.second.pGroundMesh;
 		int nFaceCount = pMesh->getNumberOf3DFaces();
@@ -4035,7 +4035,7 @@ iMesh* CNtlNaviPEWorld::GetNearestMesh( CNtlNaviVector3& vPos )
 {
 	if ( eNAVI_PE_STATE_COMPLETE != GetCurState() )
 	{
-		return false;
+		return NULL;
 	}
 
 	float x = vPos.GetX();
@@ -4062,7 +4062,7 @@ iMesh* CNtlNaviPEWorld::GetNearestMesh( CNtlNaviVector3& vPos )
 				pODInfo->GetWorldMinPos( fMinPosX, fMinPosZ );
 				pODInfo->GetWorldMaxPos( fMaxPosX, fMaxPosZ );
 
-				// Field id 계산
+				// Field id ???
 
 				float fFieldSize = pODInfo->GetFieldSize();
 				float fGroupSize = fFieldSize * pODInfo->GetCrossFieldCntOfGroup();
@@ -4074,7 +4074,7 @@ iMesh* CNtlNaviPEWorld::GetNearestMesh( CNtlNaviVector3& vPos )
 
 				mapdef_GroupDataList::iterator itGroup = m_defGroupDataList.find( uiGroupID );
 
-				// 해당하는 Group ID를 찾지 못함
+				// ?????? Group ID?? ??? ????
 				if ( itGroup == m_defGroupDataList.end() )
 				{
 					return NULL;
@@ -4088,7 +4088,7 @@ iMesh* CNtlNaviPEWorld::GetNearestMesh( CNtlNaviVector3& vPos )
 
 	case eNAVI_INFO_WORLD_INDOOR:
 		{
-			// 인도워의 경우 하나의 navigation mesh 만 존재함
+			// ??????? ??? ????? navigation mesh ?? ??????
 			if ( m_defGroupDataList.size() != 1 )
 			{
 				return NULL;
@@ -4150,7 +4150,7 @@ void CNtlNaviPEWorld::Destroy( void )
 
 bool CNtlNaviPEWorld::ImportWorldInfo( const char* pPath )
 {
-	// Navigation data manager 생성
+	// Navigation data manager ????
 	if ( !m_pNaviDataMng->Create( pPath ) )
 	{
 		CNtlNaviLog::GetInstance()->Log( "[IMPORT] Creating the navi data manager failed. [%s]", pPath );
@@ -4158,7 +4158,7 @@ bool CNtlNaviPEWorld::ImportWorldInfo( const char* pPath )
 		return false;
 	}
 
-	// Navigation world info 로딩
+	// Navigation world info ???
 	if ( NULL == m_pNaviDataMng->Load_World() )
 	{
 		CNtlNaviLog::GetInstance()->Log( "[IMPORT] Can not import world info data. [%s]", pPath );
@@ -4440,12 +4440,12 @@ void CNtlNaviPEWorld::AttachEntityToLoad( CNtlNaviLoadingEntity* pEntity )
 
 	m_defLoadingEntityList.push_back( pEntity );
 
-	// Multi-thread을 사용한 로딩
+	// Multi-thread?? ????? ???
 	if ( CNtlLoadingQueue::GetInstance() )
 	{
 		CNtlLoadingQueue::GetInstance()->AttachEntityToLoad( pEntity );
 	}
-	// Multi-thread을 사용하지 않는 로딩
+	// Multi-thread?? ??????? ??? ???
 	else
 	{
 		pEntity->RunMultiThread();

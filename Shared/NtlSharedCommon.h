@@ -243,8 +243,8 @@ static inline HANDLE FindFirstFile(const char* lpFileName, WIN32_FIND_DATAA_LINU
 	lpFindFileData->dwFileAttributes = 0;
 	if (ent->d_type == DT_DIR) lpFindFileData->dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
 	else if (ent->d_type == DT_UNKNOWN) {
-		char full[512];
-		snprintf(full, sizeof(full), "%s/%s", dirpath, ent->d_name);
+		char full[MAX_PATH * 2 + 2];
+		snprintf(full, sizeof(full), "%.*s/%.*s", (int)(sizeof(dirpath) - 1), dirpath, 255, ent->d_name);
 		struct stat st;
 		if (stat(full, &st) == 0 && S_ISDIR(st.st_mode))
 			lpFindFileData->dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
