@@ -42,6 +42,7 @@ typedef unsigned __int64 ntl_uint64;
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
 #include <cstring>
@@ -116,7 +117,18 @@ typedef unsigned long DWORD;
 #endif
 typedef void* HANDLE;
 typedef void* LPVOID;
+typedef const void* LPCVOID;
+typedef void* PVOID;
 typedef unsigned char* LPBYTE;
+
+typedef unsigned int UINT32;
+typedef unsigned long long UINT64;
+#ifndef WPARAM
+typedef unsigned long WPARAM;
+#endif
+#ifndef LPARAM
+typedef long LPARAM;
+#endif
 
 typedef char CHAR;
 typedef int INT;
@@ -224,6 +236,25 @@ typedef struct _OVERLAPPED {
 	union { struct { DWORD Offset; DWORD OffsetHigh; }; void* Pointer; };
 	HANDLE hEvent;
 } OVERLAPPED;
+typedef OVERLAPPED* LPOVERLAPPED;
+
+#ifndef LPTSTR
+#define LPTSTR char*
+#endif
+
+#define SOCKADDR_IN struct sockaddr_in
+
+#include <stdint.h>
+
+static inline LONG InterlockedIncrement(volatile LONG* p) {
+	return __sync_add_and_fetch(p, 1);
+}
+static inline LONG InterlockedDecrement(volatile LONG* p) {
+	return __sync_sub_and_fetch(p, 1);
+}
+static inline LONG InterlockedExchangeAdd(volatile LONG* p, LONG val) {
+	return __sync_fetch_and_add(p, val);
+}
 
 typedef struct _WSABUF {
 	unsigned long len;

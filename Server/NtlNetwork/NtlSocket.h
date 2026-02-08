@@ -18,7 +18,6 @@
 #include <mswsock.h>
 #else
 #include "../../Shared/NtlSharedCommon.h"
-typedef void* PVOID;
 typedef struct _GUID { unsigned long Data1; unsigned short Data2; unsigned short Data3; unsigned char Data4[8]; } GUID;
 typedef int* LPINT;
 typedef DWORD* LPDWORD;

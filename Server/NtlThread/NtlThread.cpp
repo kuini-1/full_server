@@ -404,7 +404,7 @@ int CNtlThread::Wait(unsigned int millisecs)
 //-----------------------------------------------------------------------------------
 void CNtlThread::Notify(CNtlThread * pThread)
 {
-	pThread->m_event.Notify();
+	pThread->m_event.Signal();
 }
 
 

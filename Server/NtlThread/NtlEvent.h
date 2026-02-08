@@ -36,16 +36,12 @@ public:
 
 
 
-	// ?̺?Ʈ ?ʱ?ȭ
 	void			Reset();
 
-	//  ?̺?Ʈ ?뺸
-	void			Notify();
+	void			Signal();
 
-	// ?̺?Ʈ ??? ( unconditional )
 	void			Wait();
 
-	// ?̺?Ʈ ??? ( conditional )
 	int				Wait( unsigned int millisecs );
 
 

@@ -17,105 +17,61 @@
 #include "NtlEvent.h"
 #include "NtlThreadException.h"
 
-#if !defined(_WIN32)
 
 CNtlEvent::CNtlEvent()
-:m_hEvent( INVALID_HANDLE_VALUE )
+	: m_hEvent( INVALID_HANDLE_VALUE )
 {
-}
-
-CNtlEvent::~CNtlEvent(void)
-{
-	m_hEvent = INVALID_HANDLE_VALUE;
-}
-
-void CNtlEvent::Reset()
-{
-}
-
-void CNtlEvent::Wait()
-{
-}
-
-int CNtlEvent::Wait( unsigned int millisecs )
-{
-	(void)millisecs;
-	return 0;
-}
-
-void CNtlEvent::Notify()
-{
-}
-
-#else // _WIN32
-
-//-----------------------------------------------------------------------------------
-//		Purpose	:
-//		Return	:
-//-----------------------------------------------------------------------------------
-CNtlEvent::CNtlEvent()
-:
-m_hEvent( INVALID_HANDLE_VALUE )
-{
+#if defined(_WIN32)
 	m_hEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 	if( NULL == m_hEvent )
 	{
 		DWORD rc = GetLastError();
 		THROW_THREAD_EXCEPTION(eTHREAD_ERR_EVENT_CREATE, rc);
 	}
+#endif
 }
 
 
-//-----------------------------------------------------------------------------------
-//		Purpose	:
-//		Return	:
-//-----------------------------------------------------------------------------------
 CNtlEvent::~CNtlEvent(void)
 {
+#if defined(_WIN32)
 	if( false == CloseHandle( m_hEvent ) )
 	{
 		DWORD rc = GetLastError();
 		THROW_THREAD_EXCEPTION((int)eTHREAD_ERR_EVENT_DESTROY, (int)rc);
 	}
-
+#endif
 	m_hEvent = INVALID_HANDLE_VALUE;
 }
 
 
-//-----------------------------------------------------------------------------------
-//		Purpose	:
-//		Return	:
-//-----------------------------------------------------------------------------------
 void CNtlEvent::Reset()
 {
+#if defined(_WIN32)
 	if( false == ResetEvent( m_hEvent ) )
 	{
 		DWORD rc = GetLastError();
 		THROW_THREAD_EXCEPTION(eTHREAD_ERR_EVENT_RESET, rc);
 	}
+#endif
 }
 
 
-//-----------------------------------------------------------------------------------
-//		Purpose	:
-//		Return	:
-//-----------------------------------------------------------------------------------
 void CNtlEvent::Wait()
 {
+#if defined(_WIN32)
 	if( WAIT_FAILED == WaitForSingleObject( m_hEvent, INFINITE ) )
 	{
 		DWORD rc = GetLastError();
 		THROW_THREAD_EXCEPTION(eTHREAD_ERR_EVENT_WAIT, rc);
 	}
+#endif
 }
 
 
-//-----------------------------------------------------------------------------------
-//		Purpose	:
-//		Return	:
-//-----------------------------------------------------------------------------------
 int CNtlEvent::Wait( unsigned int millisecs )
 {
+#if defined(_WIN32)
 	DWORD rc = NO_ERROR;
 	DWORD status = WaitForSingleObject( m_hEvent, millisecs );
 
@@ -130,20 +86,20 @@ int CNtlEvent::Wait( unsigned int millisecs )
 	}
 
 	return rc;
+#else
+	(void)millisecs;
+	return 0;
+#endif
 }
 
 
-//-----------------------------------------------------------------------------------
-//		Purpose	:
-//		Return	:
-//-----------------------------------------------------------------------------------
-void CNtlEvent::Notify()
+void CNtlEvent::Signal()
 {
+#if defined(_WIN32)
 	if( !SetEvent( m_hEvent ) )
 	{
 		DWORD rc = GetLastError();
 		THROW_THREAD_EXCEPTION(eTHREAD_ERR_EVENT_NOTIFY, rc);
 	}
+#endif
 }
-
-#endif // _WIN32

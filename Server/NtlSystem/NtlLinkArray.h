@@ -37,11 +37,11 @@ protected:
 		TYPE			data;
 
 		bool			IsEmpty() const { return empty; }
-		bool			SetEmpty(const bool flag) { empty = flag; }
+		bool			SetEmpty(const bool flag) { empty = flag; return flag; }
 		POSITION		GetPrev() const { return prev; }
 		POSITION		GetNext() const { return next; }
-		POSITION		SetPrev(const POSITION pos) { prev = pos; }
-		POSITION		SetNext(const POSITION pos) { next = pos; }
+		POSITION		SetPrev(const POSITION pos) { prev = pos; return pos; }
+		POSITION		SetNext(const POSITION pos) { next = pos; return pos; }
 		void			SetData(const TYPE& t) { data = t; }
 		TYPE&			GetData() { return data; }
 	};
@@ -377,11 +377,11 @@ protected:
 		TYPE			data;
 
 		bool			IsEmpty() const { return empty; }
-		bool			SetEmpty(const bool flag) { empty = flag; }
+		bool			SetEmpty(const bool flag) { empty = flag; return flag; }
 		POSITION		GetPrev() const { return prev; }
 		POSITION		GetNext() const { return next; }
-		POSITION		SetPrev(const POSITION pos) { prev = pos; }
-		POSITION		SetNext(const POSITION pos) { next = pos; }
+		POSITION		SetPrev(const POSITION pos) { prev = pos; return pos; }
+		POSITION		SetNext(const POSITION pos) { next = pos; return pos; }
 		void			SetData(const TYPE& t) { data = t; }
 		TYPE&			GetData() { return data; }
 	};
@@ -778,11 +778,11 @@ protected:
 		TYPE*			data;
 
 		bool			IsEmpty() const { return empty; }
-		bool			SetEmpty(const bool flag) { empty = flag; }
+		bool			SetEmpty(const bool flag) { empty = flag; return flag; }
 		POSITION		GetPrev() const { return prev; }
 		POSITION		GetNext() const { return next; }
-		POSITION		SetPrev(const POSITION pos) { prev = pos; }
-		POSITION		SetNext(const POSITION pos) { next = pos; }
+		POSITION		SetPrev(const POSITION pos) { prev = pos; return pos; }
+		POSITION		SetNext(const POSITION pos) { next = pos; return pos; }
 		void			SetData(const TYPE& t) { data = t; }
 		TYPE&			GetData() { return data; }
 	};
