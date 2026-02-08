@@ -1,6 +1,8 @@
 #ifndef _NTL_TSCONT_H_
 #define _NTL_TSCONT_H_
 
+#include <list>
+#include <deque>
 
 #include "NtlTSEntity.h"
 
