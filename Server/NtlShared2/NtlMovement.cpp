@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include <Math.h>
+#include <cmath>
 #include "NtlMovement.h"
 #include "NtlVector.h"
 

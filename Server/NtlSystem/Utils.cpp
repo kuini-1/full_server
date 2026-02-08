@@ -15,6 +15,7 @@
 
 #include "stdafx.h"
 #include <stdlib.h>
+#include <cmath>
 #include "Utils.h"
 
 

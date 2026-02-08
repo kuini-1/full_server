@@ -14,6 +14,7 @@
 
 #include "stdafx.h"
 #include "NtlItem.h"
+#include <cmath>
 #include "NtlBattle.h"
 #include "NtlObject.h"
 #include "NtlStringHandler.h"

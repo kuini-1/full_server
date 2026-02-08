@@ -12,7 +12,10 @@
 //
 //***********************************************************************************
 #include "stdafx.h"
+#if defined(_WIN32)
 #include <crtdbg.h>
+#endif
+#include <cmath>
 #include <stdio.h>
 #include <string.h>
 #include "DboWeInfoGroup.h"
