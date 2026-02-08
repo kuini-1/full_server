@@ -119,7 +119,7 @@ bool	CPlayer::StartTeleportProposal(CPlayer* pSummoner, WORD wTime, BYTE byTelep
 		m_hTeleportProposalRequestor = pSummoner->GetID();
 
 		res->bySummonerNameLength = (BYTE)wcslen(pSummoner->GetCharName());
-		wcscpy_s(res->wszSummonnerName, NTL_MAX_SIZE_CHAR_NAME + 1, pSummoner->GetCharName());
+		NTL_WCSCPY_S(res->wszSummonnerName, NTL_MAX_SIZE_CHAR_NAME + 1, pSummoner->GetCharName());
 	}
 	else
 	{

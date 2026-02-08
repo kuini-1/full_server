@@ -54,7 +54,7 @@ int CWpsScriptAlgoAction_CCBD_reward::OnUpdate(DWORD dwTickDiff, float fMultiple
 		{
 			if (pPlayer->GetWorldID() == GetOwner()->GetWorld()->GetID())
 			{
-				wcscpy_s(rChat->sData.sCCBD.awszMember[rChat->sData.sCCBD.byMemberCount++], NTL_MAX_SIZE_CHAR_NAME + 1, pPlayer->GetCharName());
+				NTL_WCSCPY_S(rChat->sData.sCCBD.awszMember[rChat->sData.sCCBD.byMemberCount++], NTL_MAX_SIZE_CHAR_NAME + 1, pPlayer->GetCharName());
 				rChat->sData.sCCBD.byStage++;
 			}
 

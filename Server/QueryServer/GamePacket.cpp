@@ -2201,7 +2201,7 @@ void CGameServerSession::RecvMailSendReq(CNtlPacket* pPacket, CQueryServer* app)
 	res->handle = req->handle;
 	res->hObject = req->hObject;
 	res->charID = req->charID;
-	wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, req->wszTargetName);
+	NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, req->wszTargetName);
 	res->byMailType = req->byMailType;
 	res->wResultCode = GAME_SUCCESS;
 	res->sItemData = req->sItemData;
@@ -4231,9 +4231,9 @@ void CGameServerSession::RecvCashitemSendGiftReq(CNtlPacket* pPacket, CQueryServ
 	sQG_CASHITEM_SEND_GIFT_RES * res2 = (sQG_CASHITEM_SEND_GIFT_RES *)packet2.GetPacketData();
 	res2->wOpCode = QG_CASHITEM_SEND_GIFT_RES;
 	res2->SenderCharId = req->SenderCharId;
-	wcscpy_s(res2->wchSenderName, NTL_MAX_SIZE_USERID_UNICODE + 1, req->wchSenderName);
+	NTL_WCSCPY_S(res2->wchSenderName, NTL_MAX_SIZE_USERID_UNICODE + 1, req->wchSenderName);
 	res2->DestAccountId = INVALID_ACCOUNTID;
-	wcscpy_s(res2->wchDestName, NTL_MAX_SIZE_USERID_UNICODE + 1, req->wchDestName);
+	NTL_WCSCPY_S(res2->wchDestName, NTL_MAX_SIZE_USERID_UNICODE + 1, req->wchDestName);
 	res2->DestServerFarmId = req->DestServerFarmId;
 	res2->dwIdxHlsTable = req->dwIdxHlsTable;
 	

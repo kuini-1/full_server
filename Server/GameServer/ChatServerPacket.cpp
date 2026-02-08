@@ -98,7 +98,7 @@ void	CChatServerSession::RecGuildInviteRes(CNtlPacket * pPacket)
 		sGU_GUILD_INVITE_RES * res = (sGU_GUILD_INVITE_RES *)packet.GetPacketData();
 		res->wOpCode = GU_GUILD_INVITE_RES;
 		res->wResultCode = req->wResultCode;
-		wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, req->wszTargetName );
+		NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, req->wszTargetName );
 		packet.SetPacketLen( sizeof(sGU_GUILD_INVITE_RES) );
 		g_pApp->Send( invitor->GetClientSessionID(), &packet );
 	}
@@ -180,7 +180,7 @@ void	CChatServerSession::RecGuildIdChangedRes(CNtlPacket * pPacket)
 				sGU_GUILD_NAME_CHANGED_NFY * res = (sGU_GUILD_NAME_CHANGED_NFY *)packet.GetPacketData();
 				res->wOpCode = GU_GUILD_NAME_CHANGED_NFY;
 				res->hSubject = player->GetID();
-				wcscpy_s(res->wszGuildName, NTL_MAX_SIZE_GUILD_NAME_IN_UNICODE + 1, pGuild->GetGuildName());
+				NTL_WCSCPY_S(res->wszGuildName, NTL_MAX_SIZE_GUILD_NAME_IN_UNICODE + 1, pGuild->GetGuildName());
 				packet.SetPacketLen(sizeof(sGU_GUILD_NAME_CHANGED_NFY));
 				player->Broadcast(&packet, player);
 
@@ -659,9 +659,9 @@ void	CChatServerSession::RecAuctionHousePriceInfoRes(CNtlPacket * pPacket)
 			res->itemId = req->itemID;
 			res->nItem = req->nItem;
 			res->dwMoney = req->dwPrice;
-			wcscpy_s(res->awchSystem, NTL_MAX_SIZE_CHAR_NAME + 1, L"[DBOG]System");
-			wcscpy_s(res->awchBuyText, NTL_MAX_LENGTH_OF_MAIL_MESSAGE + 1, L"You have bought an Item");
-			wcscpy_s(res->awchSellText, NTL_MAX_LENGTH_OF_MAIL_MESSAGE + 1, L"You have sold an Item");
+			NTL_WCSCPY_S(res->awchSystem, NTL_MAX_SIZE_CHAR_NAME + 1, L"[DBOG]System");
+			NTL_WCSCPY_S(res->awchBuyText, NTL_MAX_LENGTH_OF_MAIL_MESSAGE + 1, L"You have bought an Item");
+			NTL_WCSCPY_S(res->awchSellText, NTL_MAX_LENGTH_OF_MAIL_MESSAGE + 1, L"You have sold an Item");
 			packet.SetPacketLen(sizeof(sGT_TENKAICHIDAISIJYOU_BUY_REQ));
 			g_pApp->Send(GetHandle(), &packet);
 		}

@@ -74,7 +74,7 @@ void CAccountCache::OnLoadAccountInfo(QueryResultVector & results)
 			pCashItem->byStackCount = f[3].GetBYTE();
 			pCashItem->giftCharId = f[4].GetUInt32();
 			pCashItem->nIsRead = f[5].GetBYTE();
-			wcscpy_s(pCashItem->wchSenderName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[6].GetString()).c_str());
+			NTL_WCSCPY_S(pCashItem->wchSenderName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[6].GetString()).c_str());
 			pCashItem->tRegTime.year = f[7].GetWORD();
 			pCashItem->tRegTime.month = f[8].GetBYTE();
 			pCashItem->tRegTime.day = f[9].GetBYTE();
@@ -125,7 +125,7 @@ void CAccountCache::OnCashShopStorage(QueryResultVector& results)
 			pCashItem->qwProductId = f[0].GetUInt64();
 			pCashItem->HLSitemTblidx = f[2].GetUInt32();
 			pCashItem->byStackCount = f[3].GetBYTE();
-			wcscpy_s(pCashItem->wchSenderName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[6].GetString()).c_str());
+			NTL_WCSCPY_S(pCashItem->wchSenderName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[6].GetString()).c_str());
 			pCashItem->tRegTime.year = f[7].GetWORD();
 			pCashItem->tRegTime.month = f[8].GetBYTE();
 			pCashItem->tRegTime.day = f[9].GetBYTE();
@@ -920,7 +920,7 @@ void CPlayerCache::OnLoadPcData(QueryResultVector & results)
 		Field* f = qrCharacterInfo->Fetch();
 
 		m_sPcData.charId = f[0].GetUInt32();
-		wcscpy_s(m_sPcData.awchName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[1].GetString()).c_str());
+		NTL_WCSCPY_S(m_sPcData.awchName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[1].GetString()).c_str());
 		m_sPcData.byRace = f[5].GetBYTE();
 		m_sPcData.byClass = f[6].GetBYTE();
 		m_sPcData.bIsAdult = f[9].GetBool();
@@ -958,7 +958,7 @@ void CPlayerCache::OnLoadPcData(QueryResultVector & results)
 		m_sPcData.dwMoney = f[23].GetDWORD();
 
 		m_sPcData.guildId = f[32].GetUInt32();
-		wcscpy_s(m_sPcData.awchGuildName, NTL_MAX_SIZE_GUILD_NAME + 1, s2ws(f[33].GetString()).c_str());
+		NTL_WCSCPY_S(m_sPcData.awchGuildName, NTL_MAX_SIZE_GUILD_NAME + 1, s2ws(f[33].GetString()).c_str());
 
 		m_sPcData.dwTutorialHint = f[26].GetDWORD();
 		m_sPcData.dwMapInfoIndex = f[22].GetDWORD();
@@ -1128,7 +1128,7 @@ void CPlayerCache::OnLoadPcData2(QueryResultVector & results)
 			data->byGrade = f[8].GetBYTE();
 			data->bNeedToIdentify = f[9].GetBool();
 			data->byBattleAttribute = f[10].GetBYTE();
-			wcscpy_s(data->awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[11].GetString()).c_str());
+			NTL_WCSCPY_S(data->awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[11].GetString()).c_str());
 			data->sOptionSet.aOptionTblidx[0] = f[12].GetUInt32();
 			data->sOptionSet.aOptionTblidx[1] = f[13].GetUInt32();
 			data->sOptionSet.aRandomOption[0].wOptionIndex = f[14].GetWORD();
@@ -1414,7 +1414,7 @@ void CPlayerCache::OnLoadBank(QueryResultVector & results, CAccountCache * pAcco
 			res->asItemData[i].byGrade = f[8].GetBYTE();
 			res->asItemData[i].bNeedToIdentify = f[9].GetBool();
 			res->asItemData[i].byBattleAttribute = f[10].GetBYTE();
-			wcscpy_s(res->asItemData[i].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[11].GetString()).c_str());
+			NTL_WCSCPY_S(res->asItemData[i].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[11].GetString()).c_str());
 			res->asItemData[i].sOptionSet.aOptionTblidx[0] = f[12].GetUInt32();
 			res->asItemData[i].sOptionSet.aOptionTblidx[1] = f[13].GetUInt32();
 			res->asItemData[i].sOptionSet.aRandomOption[0].wOptionIndex = f[14].GetWORD();
@@ -1485,7 +1485,7 @@ void CPlayerCache::OnLoadBank(QueryResultVector & results, CAccountCache * pAcco
 				res->asItemData[i].byGrade = f[8].GetBYTE();
 				res->asItemData[i].bNeedToIdentify = f[9].GetBool();
 				res->asItemData[i].byBattleAttribute = f[10].GetBYTE();
-				wcscpy_s(res->asItemData[i].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[11].GetString()).c_str());
+				NTL_WCSCPY_S(res->asItemData[i].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[11].GetString()).c_str());
 				res->asItemData[i].sOptionSet.aOptionTblidx[0] = f[12].GetUInt32();
 				res->asItemData[i].sOptionSet.aOptionTblidx[1] = f[13].GetUInt32();
 				res->asItemData[i].sOptionSet.aRandomOption[0].wOptionIndex = f[14].GetWORD();
@@ -2578,7 +2578,7 @@ void CPlayerCache::StartMailResult(QueryResultVector & results, HOBJECT hHandle,
 				res->asData[res->byCount].byTextSize = f[4].GetBYTE();
 				NTL_SAFE_WCSCPY(res->asData[res->byCount].wszText, s2ws(f[5].GetString()).c_str());
 				res->asData[res->byCount].dwZenny = f[6].GetDWORD();
-				wcscpy_s(res->asData[res->byCount].wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[9].GetString()).c_str());
+				NTL_WCSCPY_S(res->asData[res->byCount].wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[9].GetString()).c_str());
 				res->asData[res->byCount].bIsAccept = f[10].GetBool();
 				res->asData[res->byCount].bIsLock = f[11].GetBool();
 				res->asData[res->byCount].bIsRead = f[12].GetBool();
@@ -2614,7 +2614,7 @@ void CPlayerCache::StartMailResult(QueryResultVector & results, HOBJECT hHandle,
 							res->asData[res->byCount].sItemData.byGrade = i[8].GetBYTE();
 							res->asData[res->byCount].sItemData.bNeedToIdentify = i[9].GetBool();
 							res->asData[res->byCount].sItemData.byBattleAttribute = i[10].GetBYTE();
-							wcscpy_s(res->asData[res->byCount].sItemData.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(i[11].GetString()).c_str());
+							NTL_WCSCPY_S(res->asData[res->byCount].sItemData.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(i[11].GetString()).c_str());
 							res->asData[res->byCount].sItemData.sOptionSet.aOptionTblidx[0] = i[12].GetUInt32();
 							res->asData[res->byCount].sItemData.sOptionSet.aOptionTblidx[1] = i[13].GetUInt32();
 							res->asData[res->byCount].sItemData.sOptionSet.aRandomOption[0].wOptionIndex = i[14].GetWORD();
@@ -2699,7 +2699,7 @@ void CPlayerCache::LoadMailResult(QueryResultVector & results, HOBJECT hHandle, 
 				res->asData[res->byCount].byTextSize = f[4].GetBYTE();
 				NTL_SAFE_WCSCPY(res->asData[res->byCount].wszText, s2ws(f[5].GetString()).c_str());
 				res->asData[res->byCount].dwZenny = f[6].GetDWORD();
-				wcscpy_s(res->asData[res->byCount].wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[9].GetString()).c_str());
+				NTL_WCSCPY_S(res->asData[res->byCount].wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[9].GetString()).c_str());
 				res->asData[res->byCount].bIsAccept = f[10].GetBool();
 				res->asData[res->byCount].bIsLock = f[11].GetBool();
 				res->asData[res->byCount].bIsRead = f[12].GetBool();
@@ -2735,7 +2735,7 @@ void CPlayerCache::LoadMailResult(QueryResultVector & results, HOBJECT hHandle, 
 							res->asData[res->byCount].sItemData.byGrade = i[8].GetBYTE();
 							res->asData[res->byCount].sItemData.bNeedToIdentify = i[9].GetBool();
 							res->asData[res->byCount].sItemData.byBattleAttribute = i[10].GetBYTE();
-							wcscpy_s(res->asData[res->byCount].sItemData.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(i[11].GetString()).c_str());
+							NTL_WCSCPY_S(res->asData[res->byCount].sItemData.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(i[11].GetString()).c_str());
 							res->asData[res->byCount].sItemData.sOptionSet.aOptionTblidx[0] = i[12].GetUInt32();
 							res->asData[res->byCount].sItemData.sOptionSet.aOptionTblidx[1] = i[13].GetUInt32();
 							res->asData[res->byCount].sItemData.sOptionSet.aRandomOption[0].wOptionIndex = i[14].GetWORD();

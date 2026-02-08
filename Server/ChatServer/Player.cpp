@@ -319,7 +319,7 @@ void CPlayer::Logout(bool bForce/* = false*/)
 //--------------------------------------------------------------------------------------//
 void CPlayer::SetCharName(WCHAR* awchName)
 {
-	wcscpy_s(m_awchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, awchName);
+	NTL_WCSCPY_S(m_awchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, awchName);
 }
 
 
@@ -564,7 +564,7 @@ void CPlayer::SetGuild(CGuild* _guild)
 	if (_guild)
 	{
 		m_pGuild = _guild;
-		wcscpy_s(m_awchGuildName, NTL_MAX_SIZE_GUILD_NAME_IN_UNICODE + 1, _guild->GetInfo()->wszName);
+		NTL_WCSCPY_S(m_awchGuildName, NTL_MAX_SIZE_GUILD_NAME_IN_UNICODE + 1, _guild->GetInfo()->wszName);
 		m_GuildID = _guild->GetInfo()->guildId;
 	}
 	else

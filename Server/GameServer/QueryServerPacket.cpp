@@ -307,7 +307,7 @@ void CQueryServerSession::RecvLoadBankData(CNtlPacket* pPacket)
 		res->aBankProfile[i].byGrade = req->asItemData[i].byGrade;
 		res->aBankProfile[i].bNeedToIdentify = req->asItemData[i].bNeedToIdentify;
 		res->aBankProfile[i].byBattleAttribute = req->asItemData[i].byBattleAttribute;
-		wcscpy_s(res->aBankProfile[i].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, req->asItemData[i].awchMaker);
+		NTL_WCSCPY_S(res->aBankProfile[i].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, req->asItemData[i].awchMaker);
 		res->aBankProfile[i].sOptionSet = req->asItemData[i].sOptionSet;
 		res->aBankProfile[i].nUseStartTime = req->asItemData[i].nUseStartTime;
 		res->aBankProfile[i].nUseEndTime = req->asItemData[i].nUseEndTime;
@@ -2347,7 +2347,7 @@ void CQueryServerSession::RecvMailStartInfo(CNtlPacket * pPacket)
 		res->byTextSize = req->asData[i].byTextSize;
 		NTL_SAFE_WCSCPY(res->wszText, req->asData[i].wszText);
 		res->sData.dwZenny = req->asData[i].dwZenny;
-		wcscpy_s(res->sData.wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, req->asData[i].wszFromName);
+		NTL_WCSCPY_S(res->sData.wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, req->asData[i].wszFromName);
 		res->sData.bIsAccept = req->asData[i].bIsAccept;
 		res->sData.bIsLock = req->asData[i].bIsLock;
 		res->sData.bIsRead = req->asData[i].bIsRead;
@@ -2367,7 +2367,7 @@ void CQueryServerSession::RecvMailStartInfo(CNtlPacket * pPacket)
 			res->sData.sItemProfile.byGrade = req->asData[i].sItemData.byGrade;
 			res->sData.sItemProfile.bNeedToIdentify = req->asData[i].sItemData.bNeedToIdentify;
 			res->sData.sItemProfile.byBattleAttribute = req->asData[i].sItemData.byBattleAttribute;
-			wcscpy_s(res->sData.sItemProfile.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, req->asData[i].sItemData.awchMaker);
+			NTL_WCSCPY_S(res->sData.sItemProfile.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, req->asData[i].sItemData.awchMaker);
 			memcpy(&res->sData.sItemProfile.sOptionSet, &req->asData[i].sItemData.sOptionSet, sizeof(sITEM_OPTION_SET));
 			res->sData.sItemProfile.nUseStartTime = req->asData[i].sItemData.nUseStartTime;
 			res->sData.sItemProfile.nUseEndTime = req->asData[i].sItemData.nUseEndTime;
@@ -2408,7 +2408,7 @@ void CQueryServerSession::RecvMailLoadInfo(CNtlPacket * pPacket)
 		res->byTextSize = req->asData[i].byTextSize;
 		NTL_SAFE_WCSCPY(res->wszText, req->asData[i].wszText);
 		res->sData.dwZenny = req->asData[i].dwZenny;
-		wcscpy_s(res->sData.wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, req->asData[i].wszFromName);
+		NTL_WCSCPY_S(res->sData.wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, req->asData[i].wszFromName);
 		res->sData.bIsAccept = req->asData[i].bIsAccept;
 		res->sData.bIsLock = req->asData[i].bIsLock;
 		res->sData.bIsRead = req->asData[i].bIsRead;
@@ -2428,7 +2428,7 @@ void CQueryServerSession::RecvMailLoadInfo(CNtlPacket * pPacket)
 			res->sData.sItemProfile.byGrade = req->asData[i].sItemData.byGrade;
 			res->sData.sItemProfile.bNeedToIdentify = req->asData[i].sItemData.bNeedToIdentify;
 			res->sData.sItemProfile.byBattleAttribute = req->asData[i].sItemData.byBattleAttribute;
-			wcscpy_s(res->sData.sItemProfile.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, req->asData[i].sItemData.awchMaker);
+			NTL_WCSCPY_S(res->sData.sItemProfile.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, req->asData[i].sItemData.awchMaker);
 			memcpy(&res->sData.sItemProfile.sOptionSet, &req->asData[i].sItemData.sOptionSet, sizeof(sITEM_OPTION_SET));
 			res->sData.sItemProfile.nUseStartTime = req->asData[i].sItemData.nUseStartTime;
 			res->sData.sItemProfile.nUseEndTime = req->asData[i].sItemData.nUseEndTime;
@@ -2677,7 +2677,7 @@ void CQueryServerSession::RecvCashitemSendGiftRes(CNtlPacket* pPacket)
 		res->dwRemainAmount = pSender->GetItemShopCash();
 		res->serverFarmId = req->DestServerFarmId;
 		res->dwIdxHlsTable = req->dwIdxHlsTable;
-		wcscpy_s(res->wchName, NTL_MAX_SIZE_CHAR_NAME + 1, req->wchDestName);
+		NTL_WCSCPY_S(res->wchName, NTL_MAX_SIZE_CHAR_NAME + 1, req->wchDestName);
 		packet.SetPacketLen(sizeof(sGU_CASHITEM_SEND_GIFT_RES));
 		pSender->SendPacket(&packet);
 
@@ -2696,7 +2696,7 @@ void CQueryServerSession::RecvCashitemSendGiftRes(CNtlPacket* pPacket)
 		res2->wOpCode = GU_CASHITEM_RECV_GIFT_NFY;
 		res2->dwIdxHlsTable = req->dwIdxHlsTable;
 		res2->serverFarmId = req->DestServerFarmId;
-		wcscpy_s(res2->wchName, NTL_MAX_SIZE_CHAR_NAME + 1, req->wchSenderName);
+		NTL_WCSCPY_S(res2->wchName, NTL_MAX_SIZE_CHAR_NAME + 1, req->wchSenderName);
 		packet2.SetPacketLen(sizeof(sGU_CASHITEM_RECV_GIFT_NFY));
 		pReceiver->SendPacket(&packet2);
 
@@ -2714,7 +2714,7 @@ void CQueryServerSession::RecvCashitemSendGiftRes(CNtlPacket* pPacket)
 		res->sInfo.tRegTime.month = req->tRegTime.month;
 		res->sInfo.tRegTime.second = req->tRegTime.second;
 		res->sInfo.tRegTime.year = req->tRegTime.year;
-		wcscpy_s(res->sInfo.wchSenderName, NTL_MAX_SIZE_USERID_UNICODE + 1, req->wchSenderName);
+		NTL_WCSCPY_S(res->sInfo.wchSenderName, NTL_MAX_SIZE_USERID_UNICODE + 1, req->wchSenderName);
 		packet.SetPacketLen(sizeof(sGU_CASHITEM_ADD_NFY));
 		pReceiver->SendPacket(&packet);
 

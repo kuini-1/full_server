@@ -277,10 +277,10 @@ void CPrivateShop::OpenShop(bool bIsOwnerEmpty, BYTE byNoticeSize, WCHAR* wcNoti
 	res->wOpCode = GU_PRIVATESHOP_OPEN_RES;
 	res->wResultCode = wResultCode;
 	res->byNoticeSize = byNoticeSize;
-	wcscpy_s(res->wcNotice, NTL_MAX_PRIVATESHOP_NOTICE_IN_UNICODE + 1, wcNotice);
+	NTL_WCSCPY_S(res->wcNotice, NTL_MAX_PRIVATESHOP_NOTICE_IN_UNICODE + 1, wcNotice);
 	res->sSummaryPrivateShopData.bIsOwnerEmpty = bIsOwnerEmpty;
 	res->sSummaryPrivateShopData.byShopState = PRIVATESHOP_STATE_OPEN;
-	wcscpy_s(res->sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, wcPrivateShopName);
+	NTL_WCSCPY_S(res->sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, wcPrivateShopName);
 	packet.SetPacketLen(sizeof(sGU_PRIVATESHOP_OPEN_RES));
 	m_pkPC->SendPacket(&packet);
 
@@ -292,15 +292,15 @@ void CPrivateShop::OpenShop(bool bIsOwnerEmpty, BYTE byNoticeSize, WCHAR* wcNoti
 		res2->hOwner = m_pkPC->GetID();
 		res2->sSummaryPrivateShopData.bIsOwnerEmpty = bIsOwnerEmpty;
 		res2->sSummaryPrivateShopData.byShopState = PRIVATESHOP_STATE_OPEN;
-		wcscpy_s(res2->sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, wcPrivateShopName);
+		NTL_WCSCPY_S(res2->sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, wcPrivateShopName);
 		packet2.SetPacketLen(sizeof(sGU_PRIVATESHOP_OPEN_NFY));
 		m_pkPC->Broadcast(&packet2);
 
 		shop_data.byNoticeSize = byNoticeSize;
-		wcscpy_s(shop_data.wcNotice, NTL_MAX_PRIVATESHOP_NOTICE_IN_UNICODE + 1, wcNotice);
+		NTL_WCSCPY_S(shop_data.wcNotice, NTL_MAX_PRIVATESHOP_NOTICE_IN_UNICODE + 1, wcNotice);
 		shop_data.sSummaryPrivateShopData.bIsOwnerEmpty = bIsOwnerEmpty;
 		shop_data.sSummaryPrivateShopData.byShopState = PRIVATESHOP_STATE_OPEN;
-		wcscpy_s(shop_data.sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, wcPrivateShopName);
+		NTL_WCSCPY_S(shop_data.sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, wcPrivateShopName);
 		shop_data.hOwner = m_pkPC->GetID();
 
 		m_pkPC->SendCharStatePrivateShop(bIsOwnerEmpty, PRIVATESHOP_STATE_OPEN, wcPrivateShopName);

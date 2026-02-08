@@ -37,9 +37,9 @@ enum eNtlServerGroupType
 {
 	NTL_SERVER_GROUP_TYPE_AUTH = 0,
 	NTL_SERVER_GROUP_TYPE_CHARACTER,
-	NTL_SERVER_GROUP_TYPE_SERVERFARM_TOP,//¸ðµç ¼­¹öÆÊ¿¡ ÃÖ»óÀ§
-	NTL_SERVER_GROUP_TYPE_SERVERFARM, //°¢°¢ÀÇ ¼­¹öÆÊ
-	NTL_SERVER_GROUP_TYPE_CHANNEL,//¼­¹öÆÊ ¹Ø¿¡ Ã¤³Î
+	NTL_SERVER_GROUP_TYPE_SERVERFARM_TOP,//??? ??????? ?????
+	NTL_SERVER_GROUP_TYPE_SERVERFARM, //?????? ??????
+	NTL_SERVER_GROUP_TYPE_CHANNEL,//?????? ??? ä??
 
 	NTL_SERVER_GROUP_TYPE_INVALID = 0xFF,
 
@@ -54,9 +54,9 @@ enum eNtlServerGroupType
 
 enum eDBO_SERVER_STATUS
 {
-	DBO_SERVER_STATUS_UP = 0,			//Á¤»ó µ¿ÀÛ
-	DBO_SERVER_STATUS_DOWN,				//Á¡°ËÁß
-	DBO_SERVER_STATUS_LOCKED,			//Àá±è
+	DBO_SERVER_STATUS_UP = 0,			//???? ????
+	DBO_SERVER_STATUS_DOWN,				//??????
+	DBO_SERVER_STATUS_LOCKED,			//???
 	DBO_SERVER_STATUS_OPEN
 };
 
@@ -447,7 +447,7 @@ struct sSERVER_FARM_INFO : public sDBO_GAME_SERVER_FARM_INFO
 		bIsLocked(false)
 	{
 		serverFarmId = pGameServerFarmInfo->serverFarmId;
-		wcscpy_s(wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pGameServerFarmInfo->wszGameServerFarmName);
+		NTL_WCSCPY_S(wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pGameServerFarmInfo->wszGameServerFarmName);
 		byServerStatus = pGameServerFarmInfo->byServerStatus;
 		dwMaxLoad = pGameServerFarmInfo->dwMaxLoad;
 		dwLoad = pGameServerFarmInfo->dwLoad;
@@ -460,7 +460,7 @@ struct sSERVER_FARM_INFO : public sDBO_GAME_SERVER_FARM_INFO
 	sSERVER_FARM_INFO& operator = (sDBO_GAME_SERVER_FARM_INFO& rServerFarmInfo)
 	{
 		serverFarmId = rServerFarmInfo.serverFarmId;
-		wcscpy_s(wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, rServerFarmInfo.wszGameServerFarmName);
+		NTL_WCSCPY_S(wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, rServerFarmInfo.wszGameServerFarmName);
 		byServerStatus = rServerFarmInfo.byServerStatus;
 		dwMaxLoad = rServerFarmInfo.dwMaxLoad;
 		dwLoad = rServerFarmInfo.dwLoad;

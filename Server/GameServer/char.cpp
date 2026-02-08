@@ -1825,7 +1825,7 @@ void CCharacter::SendCharStatePrivateShop(bool bIsOwnerEmpty, BYTE byShopState, 
 	res->sCharState.sCharStateBase.dwStateTime = 0;
 	res->sCharState.sCharStateDetail.sCharStatePrivateShop.sSummaryPrivateShopData.bIsOwnerEmpty = bIsOwnerEmpty;
 	res->sCharState.sCharStateDetail.sCharStatePrivateShop.sSummaryPrivateShopData.byShopState = byShopState;
-	wcscpy_s(res->sCharState.sCharStateDetail.sCharStatePrivateShop.sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, wcPrivateShopName);
+	NTL_WCSCPY_S(res->sCharState.sCharStateDetail.sCharStatePrivateShop.sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, wcPrivateShopName);
 	packet.SetPacketLen(sizeof(sGU_UPDATE_CHAR_STATE));
 
 	if (GetStateManager()->CopyFrom(&res->sCharState))	//if change state success then broadcast

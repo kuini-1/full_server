@@ -1114,7 +1114,7 @@ bool CBudokaiTable::ReadSTR( WCHAR * pDest, DWORD dwDestLength, std::wstring & w
 		}
 		else
 		{
-			wcscpy_s( pDest, dwDestLength, wstrSrc.c_str());
+			NTL_WCSCPY_S( pDest, dwDestLength, wstrSrc.c_str());
 		}
 	}
 	else

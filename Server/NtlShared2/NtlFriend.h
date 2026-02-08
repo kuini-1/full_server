@@ -28,7 +28,7 @@ struct sFRIEND_FULL_INFO
 	{
 		bIsBlack = pFriend->bIsBlack;
 		charID = pFriend->charID;
-		wcscpy_s(wchName, NTL_MAX_SIZE_CHAR_NAME + 1, pFriend->wchName);
+		NTL_WCSCPY_S(wchName, NTL_MAX_SIZE_CHAR_NAME + 1, pFriend->wchName);
 	}
 
 	bool		bIsBlack;

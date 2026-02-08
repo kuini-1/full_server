@@ -97,7 +97,7 @@ void CPlayer::LoadFromDBProc(QueryResultVector & results, ACCOUNTID accountID)
 
 				m_sPcData[m_byCharCount].charId = charId;
 
-				wcscpy_s(m_sPcData[m_byCharCount].awchName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[1].GetString()).c_str());
+				NTL_WCSCPY_S(m_sPcData[m_byCharCount].awchName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(f[1].GetString()).c_str());
 				m_sPcData[m_byCharCount].byLevel = f[2].GetBYTE();
 				m_sPcData[m_byCharCount].byRace = f[3].GetBYTE();
 				m_sPcData[m_byCharCount].byClass = f[4].GetBYTE();
@@ -331,7 +331,7 @@ void CPlayer::SetNewCharName(CHARACTERID charId, WCHAR * wchCharName)
 	{
 		if (m_sPcData[i].charId == charId)
 		{
-			wcscpy_s(m_sPcData[i].awchName, NTL_MAX_SIZE_CHAR_NAME + 1, wchCharName);
+			NTL_WCSCPY_S(m_sPcData[i].awchName, NTL_MAX_SIZE_CHAR_NAME + 1, wchCharName);
 
 			break;
 		}

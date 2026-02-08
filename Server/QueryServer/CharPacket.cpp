@@ -47,7 +47,7 @@ void CCharServerSession::RecvCreateCharReq(CNtlPacket * pPacket, CQueryServer* a
 		res->wResultCode = CHARACTER_SUCCESS;
 		res->accountId = req->accountId;
 		res->sPcDataSummary.charId = newCharId;
-		wcscpy_s(res->sPcDataSummary.awchName, NTL_MAX_SIZE_CHAR_NAME + 1, req->awchCharName);
+		NTL_WCSCPY_S(res->sPcDataSummary.awchName, NTL_MAX_SIZE_CHAR_NAME + 1, req->awchCharName);
 		res->sPcDataSummary.byRace = req->byRace;
 		res->sPcDataSummary.byClass = req->byClass;
 		res->sPcDataSummary.bIsAdult = false;

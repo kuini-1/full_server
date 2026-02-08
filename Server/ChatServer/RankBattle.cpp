@@ -59,8 +59,8 @@ void CRankBattle::OnLoadRankBattleList(QueryResultVector & results, HSESSION hSe
 					rankInfo[byListNum].nPoint = f[1].GetINT();
 					rankInfo[byListNum].wStraightWinCount = f[2].GetWORD();
 
-					wcscpy_s(wchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(i[0].GetString()).c_str());
-					wcscpy_s(wchGuildName, NTL_MAX_SIZE_GUILD_NAME_IN_UNICODE + 1, s2ws(i[3].GetString()).c_str());
+					NTL_WCSCPY_S(wchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(i[0].GetString()).c_str());
+					NTL_WCSCPY_S(wchGuildName, NTL_MAX_SIZE_GUILD_NAME_IN_UNICODE + 1, s2ws(i[3].GetString()).c_str());
 
 
 					rankInfo[byListNum].wCharName = sData.Write(sizeof(wchCharName), wchCharName);
@@ -152,8 +152,8 @@ void CRankBattle::OnLoadRankBattleListFindName(QueryResultVector & results, HSES
 					rankInfo[byListNum].nPoint = f[1].GetINT();
 					rankInfo[byListNum].wStraightWinCount = f[2].GetWORD();
 
-					wcscpy_s(wchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(i[0].GetString()).c_str());
-					wcscpy_s(wchGuildName, NTL_MAX_SIZE_GUILD_NAME_IN_UNICODE + 1, s2ws(i[3].GetString()).c_str());
+					NTL_WCSCPY_S(wchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, s2ws(i[0].GetString()).c_str());
+					NTL_WCSCPY_S(wchGuildName, NTL_MAX_SIZE_GUILD_NAME_IN_UNICODE + 1, s2ws(i[3].GetString()).c_str());
 
 
 					rankInfo[byListNum].wCharName = sData.Write(sizeof(wchCharName), wchCharName);

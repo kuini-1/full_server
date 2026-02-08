@@ -327,7 +327,7 @@ void CPartyMatching::GetPartyInfo(CPlayer* player, PARTYID partyid, BYTE byDunge
 			{
 				sPARTY_MEMBER_INFO* memberinfo = &matching->pkParty->GetMemberInfo(i);
 
-				wcscpy_s(res->member[i].awchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, memberinfo->awchMemberName);
+				NTL_WCSCPY_S(res->member[i].awchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, memberinfo->awchMemberName);
 				res->member[i].bPartyLeader = memberinfo->hHandle == matching->pkParty->GetPartyLeaderID() ? true : false;
 				res->member[i].byLevel = memberinfo->byLevel;
 				res->member[i].byRoleplay = GetRole(memberinfo->byClass);

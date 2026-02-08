@@ -542,7 +542,7 @@ bool CSubNeighborServerInfoManager::OnServerTurnedOn(sDBO_SERVER_INFO *pServerIn
 					sMC_GAME_SERVER_FARM_INFO * cRes = (sMC_GAME_SERVER_FARM_INFO *)cPacket.GetPacketData();
 					cRes->wOpCode = MC_GAME_SERVER_FARM_INFO;
 					cRes->gameServerFarmInfo.serverFarmId = pServerFarm->serverFarmId;
-					wcscpy_s(cRes->gameServerFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pServerFarm->wszGameServerFarmName);
+					NTL_WCSCPY_S(cRes->gameServerFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pServerFarm->wszGameServerFarmName);
 					cRes->gameServerFarmInfo.byServerStatus = pServerFarm->byServerStatus;
 					cRes->gameServerFarmInfo.dwMaxLoad = pServerFarm->dwMaxLoad;
 					cRes->gameServerFarmInfo.dwLoad = pServerFarm->dwLoad;
@@ -684,7 +684,7 @@ bool CSubNeighborServerInfoManager::OnServerTurnedOn(sDBO_SERVER_INFO *pServerIn
 					sMC_GAME_SERVER_FARM_INFO * cRes = (sMC_GAME_SERVER_FARM_INFO *)cPacket.GetPacketData();
 					cRes->wOpCode = MC_GAME_SERVER_FARM_INFO;
 					cRes->gameServerFarmInfo.serverFarmId = pFarm->serverFarmId;
-					wcscpy_s(cRes->gameServerFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pFarm->wszGameServerFarmName);
+					NTL_WCSCPY_S(cRes->gameServerFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pFarm->wszGameServerFarmName);
 					cRes->gameServerFarmInfo.byServerStatus = pFarm->byServerStatus;
 					cRes->gameServerFarmInfo.dwMaxLoad = pFarm->dwMaxLoad;
 					cRes->gameServerFarmInfo.dwLoad = pFarm->dwLoad;

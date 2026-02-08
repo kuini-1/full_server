@@ -84,7 +84,7 @@ CParty*	CPartyManager::CreateParty(CPlayer* player, WCHAR* name, bool bSendCreat
 		res->wOpCode = GU_PARTY_CREATE_RES;
 		res->wResultCode = 500;
 		res->partyID = partyid;
-		wcscpy_s(res->wszPartyName, NTL_MAX_SIZE_PARTY_NAME + 1, name);
+		NTL_WCSCPY_S(res->wszPartyName, NTL_MAX_SIZE_PARTY_NAME + 1, name);
 		packet.SetPacketLen(sizeof(sGU_PARTY_CREATE_RES));
 		g_pApp->Send(player->GetClientSessionID(), &packet);
 	}
@@ -446,7 +446,7 @@ bool CParty::AddPartyMember(CPlayer* player)
 	CNtlPacket pPartyInfo(sizeof(sGU_PARTY_INFO));
 	sGU_PARTY_INFO * rPartyInfo = (sGU_PARTY_INFO *)pPartyInfo.GetPacketData();
 	rPartyInfo->wOpCode = GU_PARTY_INFO;
-	wcscpy_s(rPartyInfo->awchPartyName, NTL_MAX_SIZE_PARTY_NAME + 1, m_awchPartyName);
+	NTL_WCSCPY_S(rPartyInfo->awchPartyName, NTL_MAX_SIZE_PARTY_NAME + 1, m_awchPartyName);
 	rPartyInfo->byItemLootingMethod = m_byItemLootingMethod;
 	rPartyInfo->byMemberInfoCount = m_byMemberInfoCount;
 	rPartyInfo->byZennyLootingMethod = m_byZennyLootingMethod;
@@ -624,7 +624,7 @@ void CParty::SetMemberInfo(CPlayer* pPlayer, int nMemberCount)
 {
 	if (pPlayer)
 	{
-		wcscpy_s(m_memberInfo[nMemberCount].awchMemberName, NTL_MAX_SIZE_CHAR_NAME + 1, pPlayer->GetCharName());
+		NTL_WCSCPY_S(m_memberInfo[nMemberCount].awchMemberName, NTL_MAX_SIZE_CHAR_NAME + 1, pPlayer->GetCharName());
 		m_memberInfo[nMemberCount].byClass = pPlayer->GetClass();
 		m_memberInfo[nMemberCount].byLevel = pPlayer->GetLevel();
 		m_memberInfo[nMemberCount].byRace = pPlayer->GetRace();

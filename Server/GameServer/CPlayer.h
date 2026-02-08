@@ -796,7 +796,7 @@ public:
 	void				SetGuildID(GUILDID id);
 	GUILDID				GetGuildID() const { return m_guildId; }
 
-	void				SetGuildName(WCHAR* name)	{ wcscpy_s(m_wszGuildName, NTL_MAX_SIZE_GUILD_NAME + 1, name); }
+	void				SetGuildName(WCHAR* name)	{ NTL_WCSCPY_S(m_wszGuildName, NTL_MAX_SIZE_GUILD_NAME + 1, name); }
 	WCHAR*				GetGuildName()	{ return m_wszGuildName; }
 
 	void				SetGuildDogiMark(sDBO_GUILD_MARK& sMark, sDBO_DOGI_DATA& sDogi);

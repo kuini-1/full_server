@@ -49,7 +49,7 @@ int CBotState_PrivateShop::CopyTo(sCHARSTATE_DETAIL* pStateDetail)
 	{
 		pStateDetail->sCharStatePrivateShop.sSummaryPrivateShopData.bIsOwnerEmpty = pShop->GetShopData()->sSummaryPrivateShopData.bIsOwnerEmpty;
 		pStateDetail->sCharStatePrivateShop.sSummaryPrivateShopData.byShopState = pShop->GetShopData()->sSummaryPrivateShopData.byShopState;
-		wcscpy_s(pStateDetail->sCharStatePrivateShop.sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, pShop->GetShopData()->sSummaryPrivateShopData.wcPrivateShopName);
+		NTL_WCSCPY_S(pStateDetail->sCharStatePrivateShop.sSummaryPrivateShopData.wcPrivateShopName, NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE + 1, pShop->GetShopData()->sSummaryPrivateShopData.wcPrivateShopName);
 	}
 
 	return NULL;

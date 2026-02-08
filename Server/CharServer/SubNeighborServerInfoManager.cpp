@@ -50,7 +50,7 @@ void CSubNeighborServerInfoManager::LoadServerList(HSESSION hSession)
 			sCU_SERVER_FARM_INFO_NFY * res = (sCU_SERVER_FARM_INFO_NFY *)packet.GetPacketData();
 			res->wOpCode = CU_SERVER_FARM_INFO_NFY;
 			res->serverFarmInfo.serverFarmId = pFarm->serverFarmId;
-			wcscpy_s(res->serverFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pFarm->wszGameServerFarmName);
+			NTL_WCSCPY_S(res->serverFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pFarm->wszGameServerFarmName);
 			res->serverFarmInfo.byServerStatus = pFarm->byServerStatus;
 			res->serverFarmInfo.dwLoad = DWORD((float)pFarm->dwLoad / (float)pFarm->dwMaxLoad * 100.f);
 			res->serverFarmInfo.dwMaxLoad = 100;

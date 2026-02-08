@@ -64,7 +64,7 @@ int CBotAiAction_Say::OnUpdate(DWORD dwTickDiff, float fMultiple)
 
 	res->wTextLen = (WORD)m_strText.GetString().length();
 
-	wcscpy_s(res->awchText, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, m_strText.c_str());
+	NTL_WCSCPY_S(res->awchText, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, m_strText.c_str());
 	packet.SetPacketLen(sizeof(sGU_CHAR_DIALOG));
 	GetBot()->Broadcast(&packet, GetBot());
 
