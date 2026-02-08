@@ -298,6 +298,10 @@ static inline void DeleteCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_de
 static inline void EnterCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_lock(p); }
 static inline void LeaveCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_unlock(p); }
 
+#ifndef INVALID_HANDLE_VALUE
+#define INVALID_HANDLE_VALUE ((HANDLE)(intptr_t)-1)
+#endif
+
 /* INFINITE for Wait* / GetQueuedCompletionStatus timeout (wait forever) */
 #ifndef INFINITE
 #define INFINITE 0xFFFFFFFFUL
