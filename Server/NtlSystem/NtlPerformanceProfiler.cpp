@@ -28,7 +28,7 @@ void CProfileStatistic::BeginProfile( ntl_uint64 )
 {
 }
 
-void CProfileStatistic::EndProfile( const char*, ntl_uint64, const char*, unsigned __int16 )
+void CProfileStatistic::EndProfile( const char*, ntl_uint64, const char*, unsigned short )
 {
 }
 
@@ -51,7 +51,7 @@ CProfile::CProfile( const char* szToken, const char* szFile )
 	Init(szToken, szFile, 0);
 }
 
-CProfile::CProfile( const char* szToken, const char* szFile, unsigned __int16 nLine )
+CProfile::CProfile( const char* szToken, const char* szFile, unsigned short nLine )
 {
 	Init(szToken, szFile, nLine);
 }
@@ -60,11 +60,11 @@ CProfile::~CProfile( void )
 {
 }
 
-void CProfile::Init( const char*, const char*, unsigned __int16 )
+void CProfile::Init( const char*, const char*, unsigned short )
 {
 }
 
-void CProfile::Create( unsigned __int16 )
+void CProfile::Create( unsigned short )
 {
 }
 
@@ -131,7 +131,7 @@ void CProfileStatistic::BeginProfile( ntl_uint64 startCycle )
 void CProfileStatistic::EndProfile( const char* pszToken
 								   , ntl_uint64 endCycle
 								   , const char* pszFile
-								   , unsigned __int16 nLine )
+								   , unsigned short nLine )
 {
 	if( NULL == pszToken )
 	{
@@ -178,7 +178,7 @@ void CProfileStatistic::EndProfile( const char* pszToken
 	{
 		PROFILEUNIT& profile = find_iter->second;
 
-		static const unsigned __int32 INVALID_INT32 = unsigned __int32(-1);
+		static const unsigned int INVALID_INT32 = (unsigned int)(-1);
 		static const ntl_uint64 INVALID_INT64 = ntl_uint64(-1);
 
 		if( INVALID_INT32 == profile.m_uiCalledCount + 1 )
@@ -286,7 +286,7 @@ void CProfileStatistic::CheckCpuCycle( void )
 {
 	ntl_uint64 nTotal = 0;
 
-	for( unsigned __int32 nT1 = 0
+	for( unsigned int nT1 = 0
 		; 10 > nT1
 		; ++nT1 )
 	{
@@ -338,7 +338,7 @@ CProfile::CProfile( const char * szToken, const char * szFile )
 //  Purpose :
 //  Return  :
 //-----------------------------------------------------------------------------------
-CProfile::CProfile( const char * szToken, const char * szFile, unsigned __int16 nLine )
+CProfile::CProfile( const char * szToken, const char * szFile, unsigned short nLine )
 : m_mutex()
 { 
 	Init( szToken, szFile, nLine );
@@ -360,7 +360,7 @@ CProfile::~CProfile( void )
 //  Purpose :
 //  Return  :
 //-----------------------------------------------------------------------------------
-void CProfile::Init( const char * szToken, const char * szFile, unsigned __int16 nLine )
+void CProfile::Init( const char * szToken, const char * szFile, unsigned short nLine )
 {
 	{
 		CNtlAutoMutex mutex( &m_mutex );
@@ -380,7 +380,7 @@ void CProfile::Init( const char * szToken, const char * szFile, unsigned __int16
 //  Purpose :
 //  Return  :
 //-----------------------------------------------------------------------------------
-void CProfile::Create( unsigned __int16 nLine )
+void CProfile::Create( unsigned short nLine )
 {
 	CNtlAutoMutex mutex( &m_mutex );
 	mutex.Lock();

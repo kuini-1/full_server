@@ -130,7 +130,7 @@ void EventableObject::event_ModifyTimeLeft(unsigned int EventType, DWORD TimeLef
 		{
 			if(unconditioned)
 				itr->second->currTime = TimeLeft;
-			else itr->second->currTime = ((signed __int32)TimeLeft > itr->second->msTime) ? itr->second->msTime : (signed __int32)TimeLeft;
+			else itr->second->currTime = ((signed int)TimeLeft > itr->second->msTime) ? itr->second->msTime : (signed int)TimeLeft;
 			++itr;
 		} while(itr != m_events.upper_bound(EventType));
 	}

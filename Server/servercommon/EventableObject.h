@@ -34,7 +34,7 @@ protected:
 	DWORD event_GetTimeLeft(unsigned int EventType);
 	DWORD event_GetRepeatLeft(unsigned int EventType);
 	void event_RemoveByPointer(TimedEvent * ev);
-	inline signed __int32 event_GetCurrentInstanceId() { return m_event_Instanceid; }
+	inline signed int event_GetCurrentInstanceId() { return m_event_Instanceid; }
 	bool event_GetTimeLeft(unsigned int EventType, unsigned int * Time);
 
 public:
@@ -54,7 +54,7 @@ public:
 
 protected:
 
-	signed __int32 m_event_Instanceid;
+	signed int m_event_Instanceid;
 	EventMap m_events;
 	EventableObjectHolder * m_holder;
 	

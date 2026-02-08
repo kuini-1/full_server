@@ -24,13 +24,13 @@ protected:
 		ntl_uint64 m_uiTotalCycle;
 		ntl_uint64 m_uiMinCycle;
 		ntl_uint64 m_uiMaxCycle;
-		unsigned __int32 m_uiCalledCount;
-		unsigned __int32 m_uiTurnCount_TotalCycle;
-		unsigned __int32 m_uiTurnCount_CalledCount;
+		unsigned int m_uiCalledCount;
+		unsigned int m_uiTurnCount_TotalCycle;
+		unsigned int m_uiTurnCount_CalledCount;
 
 	protected:
 		string m_strFilename;
-		unsigned __int32 m_uiLine;
+		unsigned int m_uiLine;
 
 	public:
 		PROFILEUNIT()
@@ -45,7 +45,7 @@ protected:
 		{
 		}
 
-		PROFILEUNIT( const char * szFilename, unsigned __int16 line, ntl_uint64 cycle )
+		PROFILEUNIT( const char * szFilename, unsigned short line, ntl_uint64 cycle )
 			: m_uiTotalCycle( cycle )
 			, m_uiMinCycle( cycle )
 			, m_uiMaxCycle( cycle )
@@ -80,7 +80,7 @@ public:
 	~CProfileStatistic( void );
 
 	void BeginProfile( ntl_uint64 startCycle );
-	void EndProfile( const char* strToken, ntl_uint64 endCycle, const char* strFile, unsigned __int16 nLine );
+	void EndProfile( const char* strToken, ntl_uint64 endCycle, const char* strFile, unsigned short nLine );
 	void Save( void );
 	void SetFileName( const char* pszFileName ) { m_strFilename = pszFileName; return; }
 	void CheckCpuCycle( void );
@@ -102,21 +102,21 @@ class CProfile
 
 public:
 	CProfile( const char* szToken, const char* szFile );
-	CProfile( const char* szToken, const char* szFile, unsigned __int16 nLine );	
+	CProfile( const char* szToken, const char* szFile, unsigned short nLine );
 	virtual ~CProfile( void );
 
 public:
-	void Init( const char * szToken, const char * szFile, unsigned __int16 nLine );
+	void Init( const char * szToken, const char * szFile, unsigned short nLine );
 
 public:
-	void Create( unsigned __int16 nLine );
+	void Create( unsigned short nLine );
 	void Destroy( void );
 
 private:
 	ntl_uint64	m_cycle;
 	const char*			m_szToken;
 	const char*			m_szFilename;
-	unsigned __int16	m_nLine;
+	unsigned short	m_nLine;
 	CNtlMutex			m_mutex;
 };
 
@@ -134,7 +134,7 @@ private:
 //-----------------------------------------------------------------------------------------
 
 #ifdef __USE_PERFORMANCE_PROFILER__
-	#define PROFILE(token) CProfile _tagPROFILE_CLASS(token, __FILE__, unsigned __int16(__LINE__) )
+	#define PROFILE(token) CProfile _tagPROFILE_CLASS(token, __FILE__, (unsigned short)(__LINE__) )
 #else
 	#define PROFILE(token) ((void)0)
 #endif

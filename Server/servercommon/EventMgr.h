@@ -198,7 +198,7 @@ public:
 		obj->event_AddEvent(event);
 	}
 	template <class Class> void RemoveEvents(Class *obj) { obj->event_RemoveEvents(-1); }
-	template <class Class> void RemoveEvents(Class *obj, signed __int32 type)
+	template <class Class> void RemoveEvents(Class *obj, signed int type)
 	{
 		obj->event_RemoveEvents(type);
 	}
@@ -232,19 +232,19 @@ public:
 		return obj->event_GetRepeatLeft(type);
 	}
 
-	EventableObjectHolder * GetEventHolder(signed __int32 InstanceId)
+	EventableObjectHolder * GetEventHolder(signed int InstanceId)
 	{
 		HolderMap::iterator itr = mHolders.find(InstanceId);
 		if(itr == mHolders.end()) return 0;
 		return itr->second;
 	}
 
-	void AddEventHolder(EventableObjectHolder * holder, signed __int32 InstanceId)
+	void AddEventHolder(EventableObjectHolder * holder, signed int InstanceId)
 	{
 		mHolders.insert( HolderMap::value_type( InstanceId, holder) );
 	}
 
-	void RemoveEventHolder(signed __int32 InstanceId)
+	void RemoveEventHolder(signed int InstanceId)
 	{
 		mHolders.erase(InstanceId);
 	}
