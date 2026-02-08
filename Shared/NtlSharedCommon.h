@@ -282,6 +282,7 @@ typedef struct _WSABUF {
 	unsigned long len;
 	char* buf;
 } WSABUF;
+typedef WSABUF* LPWSABUF;
 
 // Map Win32 error APIs to errno for compatibility
 #define GetLastError() (errno)
