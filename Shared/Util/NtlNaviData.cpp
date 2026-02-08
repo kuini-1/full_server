@@ -6,11 +6,6 @@
 #include <strings.h>
 #define _ASSERT(x) assert(x)
 #define stricmp strcasecmp
-static inline int navi_NTL_FOPEN(FILE** pFile, const char* path, const char* mode) {
-	*pFile = fopen(path, mode);
-	return *pFile ? 0 : 1;
-}
-#define NTL_FOPEN navi_NTL_FOPEN
 #endif
 
 

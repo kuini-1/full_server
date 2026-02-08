@@ -182,6 +182,9 @@ static inline void LeaveCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_unl
 #ifndef LPCTSTR
 #define LPCTSTR const char*
 #endif
+#ifndef UNREFERENCED_PARAMETER
+#define UNREFERENCED_PARAMETER(x) ((void)(x))
+#endif
 #ifndef TEXT
 #define TEXT(x) x
 #endif
