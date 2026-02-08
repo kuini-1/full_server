@@ -186,11 +186,11 @@ END_PROTOCOL()
 /* Named union with default ctor so MSVC can default-construct; Linux allows non-trivial members in named unions. */
 union sGN_ENTER_GAME_RES_data
 {
-	struct { sNPC_PROFILE sNpcProfile; sCHARSTATE sNpcState; } npc;
-	struct { sMOB_PROFILE sMobProfile; sCHARSTATE sMobState; } mob;
-	struct { sPET_PROFILE sPetProfile; sCHARSTATE sPetState; } pet;
-	sGN_ENTER_GAME_RES_data() { new (&npc) decltype(npc)(); }
-	~sGN_ENTER_GAME_RES_data() { npc.~decltype(npc)(); }
+	struct npc_t { sNPC_PROFILE sNpcProfile; sCHARSTATE sNpcState; } npc;
+	struct mob_t { sMOB_PROFILE sMobProfile; sCHARSTATE sMobState; } mob;
+	struct pet_t { sPET_PROFILE sPetProfile; sCHARSTATE sPetState; } pet;
+	sGN_ENTER_GAME_RES_data() { new (&npc) npc_t(); }
+	~sGN_ENTER_GAME_RES_data() { npc.~npc_t(); }
 };
 BEGIN_PROTOCOL( GN_ENTER_GAME_RES )
 	HOBJECT			handle;
