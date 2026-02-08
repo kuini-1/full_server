@@ -13,7 +13,7 @@
 //***********************************************************************************
 
 
-#include "stdAfx.h"
+#include "stdafx.h"
 #include "NtlPdh.h"
 
 #include "NtlError.h"

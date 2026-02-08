@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlDebug.h"
 
 #include "HTBSetTable.h"

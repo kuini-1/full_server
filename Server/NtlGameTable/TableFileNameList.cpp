@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "TableFileNameList.h"
 
 #include "NtlStringHandler.h"

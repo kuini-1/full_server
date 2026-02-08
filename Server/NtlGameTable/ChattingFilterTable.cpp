@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "ChattingFilterTable.h"
 #include "NtlDebug.h"
 #include "NtlSerializer.h"

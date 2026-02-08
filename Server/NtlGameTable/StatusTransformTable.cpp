@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "StatusTransformTable.h"
 
 #include "NtlSerializer.h"

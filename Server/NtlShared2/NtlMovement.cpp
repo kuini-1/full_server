@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include <Math.h>
 #include "NtlMovement.h"
 #include "NtlVector.h"

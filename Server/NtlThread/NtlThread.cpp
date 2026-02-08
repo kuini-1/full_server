@@ -13,7 +13,7 @@
 //***********************************************************************************
 
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlThread.h"
 #include "NtlThreadException.h"
 #include "NtlLog.h"

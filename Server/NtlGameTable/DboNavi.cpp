@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "DboNavi.h"
 
 DWORD CDboNavi::CREATE_INVALID = 0x00000000;

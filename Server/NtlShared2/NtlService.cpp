@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlService.h"
 #include "NtlSharedDef.h"
 

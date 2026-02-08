@@ -13,7 +13,7 @@
 //***********************************************************************************
 
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlServerLog.h"
 
 #if defined(_WIN32)

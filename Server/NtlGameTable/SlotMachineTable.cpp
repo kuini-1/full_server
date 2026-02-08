@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "SlotMachineTable.h"
 #include "NtlDebug.h"
 #include "NtlSerializer.h"

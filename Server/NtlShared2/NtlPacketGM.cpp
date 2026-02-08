@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlPacketGM.h"
 
 const char * s_packetName_GM[] =

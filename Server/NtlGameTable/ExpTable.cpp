@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "ExpTable.h"
 #include "NtlDebug.h"
 #include "NtlSerializer.h"

@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NormalDropTable.h"
 #include "NtlDebug.h"
 #include "NtlSerializer.h"

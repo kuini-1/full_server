@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlPacketMT.h"
 
 const char * s_packetName_MT[] =

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlPacketUT.h"
 
 const char * s_packetName_UT[] =

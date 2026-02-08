@@ -11,7 +11,7 @@
 //	Desc		:	
 //
 //***********************************************************************************
-#include "StdAfx.h"
+#include "stdafx.h"
 #include <crtdbg.h>
 #include <stdio.h>
 #include <string.h>

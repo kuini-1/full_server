@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #if defined(_WIN32)
 #include <direct.h>
 #else

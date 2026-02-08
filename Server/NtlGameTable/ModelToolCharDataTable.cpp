@@ -13,7 +13,7 @@
 //***********************************************************************************
 
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "ModelToolCharDataTable.h"
 #include "NtlXMLDoc.h"
 #include "NtlItem.h"

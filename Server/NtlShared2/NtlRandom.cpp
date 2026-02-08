@@ -13,7 +13,7 @@
 //***********************************************************************************
 
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include <stdlib.h>
 #include "NtlRandom.h"
 

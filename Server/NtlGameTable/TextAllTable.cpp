@@ -418,7 +418,7 @@ bool CTextTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, 
 
 				pCellNode->Release();
 				DeallocNewTable( pvTable, ppwszSheetList[dwSheetIndex] );
-				_ASSERT( 0 );		// Index�� �ְ� Data�� �����ΰ��.
+				_ASSERT( 0 );		// Index�� �ְ� Data�� �����ΰ��?
 				break;
 				#endif
 

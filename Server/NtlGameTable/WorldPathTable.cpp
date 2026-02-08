@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "WorldPathTable.h"
 #include "NtlSerializer.h"
 #include <string>

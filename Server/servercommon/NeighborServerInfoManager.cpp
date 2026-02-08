@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "NeighborServerInfoManager.h"
 #include "Utils.h"
 #include <time.h>
@@ -262,7 +262,7 @@ bool CNeighborServerInfoManager::RefreshServerFarmInfo(sDBO_GAME_SERVER_FARM_INF
 	printf("Add new Server farm. ID %u \n", pServerFarmInfoRef->serverFarmId);
 
 	//escapeTarget.c_str()
-	WCHAR* name = L"내및";
+	WCHAR* name = L"??";
 	char* target = Ntl_WC2MB(name);
 	std::string charname = target;
 	//std::string escapeTarget = GetCharDB.EscapeString(target);

@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 #pragma once
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlGuild.h"
 #include "NtlResultCode.h"
 #include "NtlBitFlag.h"

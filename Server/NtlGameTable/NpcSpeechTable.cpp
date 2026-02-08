@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NpcSpeechTable.h"
 
 #include "NtlDebug.h"

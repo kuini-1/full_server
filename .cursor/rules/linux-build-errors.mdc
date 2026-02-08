@@ -14,3 +14,4 @@ When the user provides **build errors from a Linux (or non-Windows) build** of t
    - Missing "safe" CRT (e.g. `fopen_s`, `strncpy_s`) → use existing `NTL_*` macro or add one in NtlPortable.h.
    - Win32-only API (e.g. FindFirstFile, CRITICAL_SECTION) → ensure code includes NtlSharedCommon.h and use the Linux branch/equivalents already there, or extend NtlSharedCommon.h with a new macro/wrapper.
    - MSVC-only syntax: `for each ( Type var in container )` is not standard C++; replace with `for ( const auto& var : container )`. In functions that return a pointer, use `return NULL` or `return nullptr`, not `return false`.
+   - **Include casing**: Linux is case-sensitive. If the build fails with "No such file or directory" for a header, the `#include` name must match the actual filename exactly (e.g. `NtlErrorcodes.h` not `NtlErrorCodes.h`, `stdafx.h` not `StdAfx.h`). Check with `git ls-files` or the repo for exact casing.

@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "WorldPlayTable.h"
 #include "NtlDebug.h"
 

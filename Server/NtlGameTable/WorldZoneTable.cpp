@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "WorldZoneTable.h"
 
 #include "NtlSerializer.h"

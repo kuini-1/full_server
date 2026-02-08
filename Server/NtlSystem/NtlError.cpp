@@ -24,7 +24,7 @@ char * ntl_error_string[ MAX_NTL_ERROR - NTL_ERR_BEGIN ] =
 {
 	"NTL_ERR_BEGIN",
 
-	#include "NtlErrorCodes.h"
+	#include "NtlErrorcodes.h"
 };
 
 const char * GetNtlErrorString(int nErrorCode )

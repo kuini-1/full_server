@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlItem.h"
 #include "NtlBattle.h"
 #include "NtlObject.h"

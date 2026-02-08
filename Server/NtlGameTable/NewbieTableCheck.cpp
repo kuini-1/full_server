@@ -13,7 +13,7 @@
 //
 //************************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NewbieTableCheck.h"
 #include "NtlDebug.h"
 #include "NtlCharacter.h"

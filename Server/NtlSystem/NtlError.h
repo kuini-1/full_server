@@ -23,7 +23,7 @@ enum
 {
 	NTL_ERR_BEGIN = 100000,
 
-	#include "NtlErrorCodes.h"
+	#include "NtlErrorcodes.h"
 
 	MAX_NTL_ERROR
 };

@@ -171,7 +171,7 @@ public:
 			}
 
 
-			// Close상태로 변경되고 바로 Session이 Shutdown으로 변경 될 수 있으므로 위치를 이전
+			// Close상태�?변경되�?바로 Session�?Shutdown으로 변�?�?�?있으므�?위치�?이전
 			pSession->DecreasePostIoCount();
 
 		} // end while(1)

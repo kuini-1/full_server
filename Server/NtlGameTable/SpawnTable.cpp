@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlCharacter.h"
 #include "SpawnTable.h"
 #include "NtlDebug.h"
