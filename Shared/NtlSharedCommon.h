@@ -122,8 +122,17 @@ typedef int INT;
 typedef void VOID;
 typedef long LONG;
 
-// Wide char and 64-bit types (MSVC uses __int64; use standard types on Linux)
+// Wide char and fixed-width types (MSVC __int8/16/32/64; use standard types on Linux)
 typedef wchar_t WCHAR;
+#ifndef __int8
+typedef signed char __int8;
+#endif
+#ifndef __int16
+typedef short __int16;
+#endif
+#ifndef __int32
+typedef int __int32;
+#endif
 #ifndef __int64
 typedef long long __int64;
 #endif

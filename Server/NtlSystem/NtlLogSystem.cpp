@@ -693,12 +693,12 @@ bool CNtlLogSystem::OpenLogFile(sLOG_FILE_INFO* pLogFileInfo)
 	GetLocalTime(&localTime);
 
 	char szLogFilePathFinal[MAX_PATH_FULL_NAME + 1] = { 0x00, };
+	unsigned uYear = (unsigned)(localTime.wYear % 10000u);
+	unsigned uMonth = (unsigned)(localTime.wMonth % 100u);
+	unsigned uDay = (unsigned)(localTime.wDay % 100u);
 	NTL_SNPRINTF(szLogFilePathFinal, sizeof(szLogFilePathFinal),
-											"%s" NTL_PATH_SEP "%04d%02d%02d",
-											m_szLogPath,
-											localTime.wYear,
-											localTime.wMonth,	
-											localTime.wDay);
+											"%s" NTL_PATH_SEP "%04u%02u%02u",
+											m_szLogPath, uYear, uMonth, uDay);
 
 	if (false == MakeSurePathIsValid(szLogFilePathFinal))
 	{
@@ -706,11 +706,9 @@ bool CNtlLogSystem::OpenLogFile(sLOG_FILE_INFO* pLogFileInfo)
 	}
 
 	NTL_SNPRINTF(pLogFileInfo->szLogFileFullName, _countof(pLogFileInfo->szLogFileFullName),
-													"%s" NTL_PATH_SEP "%04d%02d%02d_%s_%s.%s",
+													"%s" NTL_PATH_SEP "%04u%02u%02u_%s_%s.%s",
 													szLogFilePathFinal,
-													localTime.wYear,
-													localTime.wMonth,
-													localTime.wDay,
+													uYear, uMonth, uDay,
 													pLogFileInfo->szLogFileNamePrefix,
 													pLogFileInfo->szLogFileNameSuffix,
 													pLogFileInfo->szLogFileExtName);
