@@ -47,7 +47,7 @@ public:
 	int					GetTotalCount() { return m_nTotalCount; }
 
 	// 할당 가능한 공간 반환(리스트에 있는 여분의 공간의 개수)
-	int					GetAvailableCount()	{ return store.size(); }
+	int					GetAvailableCount()	{ return m_store.size(); }
 
 	// 처음 생성시 예약한 개수 
 	int					GetReservedCount() { return m_nReserved; }
