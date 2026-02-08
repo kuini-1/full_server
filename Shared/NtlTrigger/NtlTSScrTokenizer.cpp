@@ -118,7 +118,7 @@ bool CNtlTSScrTokenizer::Load( const std::string& strFileName, const char* pBuff
 	{
 		m_nMode = eTOKENIZER_MODE_INNER_BUFFER;
 
-		// «ÿ¥Á ∆ƒ¿œ¿ª ø¨¥Ÿ
+		// ??? ?????? ????
 		FILE *pFile;
 		if ( 0 != NTL_FOPEN( &pFile, strFileName.c_str(), "rb" ) )
 		{
@@ -126,20 +126,20 @@ bool CNtlTSScrTokenizer::Load( const std::string& strFileName, const char* pBuff
 			return false;
 		}
 
-		// ∆ƒ¿œ¿« ≈©±‚∏¶ æÀæ∆≥Ω¥Ÿ
+		// ?????? ??? ??????
 		fseek( pFile, 0, SEEK_END );
 		m_nFileSize = ftell( pFile );
 		fseek( pFile, 0, SEEK_SET );
 
-		// ∆ƒ¿œ¿« ≈©±‚∏∏≈≠ ∏ﬁ∏∏Æ∏¶ «“¥Á«—¥Ÿ
+		// ?????? ???? ????? ??????
 		m_pFileBuffer = (char*)malloc( m_nFileSize*sizeof(char) );
 		if ( 0 == m_pFileBuffer )
 		{
-			printf( "Allocating a memory is failed. Info[%I64u]. [%s]", (int)m_nFileSize*sizeof(char), TS_CODE_TRACE() );
+			printf( "Allocating a memory is failed. Info[%zu]. [%s]", (size_t)m_nFileSize*sizeof(char), TS_CODE_TRACE() );
 			return false;
 		}
 
-		// «“¥Áµ» ∏ﬁ∏∏Æ øµø™¿∏∑Œ µ•¿Ã≈Õ∏¶ ¿˙¿Â«—¥Ÿ
+		// ???? ??? ???????? ??????? ???????
 		fread( m_pFileBuffer, 1, m_nFileSize, pFile );
 
 		fclose( pFile );
@@ -172,20 +172,20 @@ bool CNtlTSScrTokenizer::Tokenize( void )
 	int nCurLine = 0;
 	while ( nCurPos < m_nFileSize )
 	{
-		// Comment, Space¥¬ ≥—æÓ∞£¥Ÿ
+		// Comment, Space?? ?????
 		while ( nCurPos < m_nFileSize && ( IsComment( m_pFileBuffer[nCurPos], nCurPos ) || IsSpace( m_pFileBuffer[nCurPos] ) ) )
 		{
 			if ( '\n' == m_pFileBuffer[nCurPos] ) nCurLine++;
 			nCurPos++;
 		}
 
-		// nCurPos ∞° ∆ƒ¿œ ªÁ¿Ã¡Ó «œ∞Ì ∞∞¥Ÿ∏È while¿ª ∫¸¡Æ ≥™∞£¥Ÿ
+		// nCurPos ?? ???? ?????? ??? ????? while?? ???? ??????
 		if ( nCurPos == m_nFileSize ) break;
 
-		// Operator ¿˙¿Â
+		// Operator ????
 		if ( IsOperator( m_pFileBuffer[nCurPos] ) )
 		{
-			// Operator∂Û∏È «ˆ¿Á ¿ßƒ°øÕ ∂Û¿Œ, ±◊∏Æ∞Ì «ÿ¥Á Operator∏¶ Token¿∏∑Œ ¿˙¿Â«—¥Ÿ
+			// Operator??? ???? ????? ????, ????? ??? Operator?? Token???? ???????
 			m_defTokens.push_back( CToken( std::string( &m_pFileBuffer[nCurPos], 1 ), nCurPos, nCurLine ) );
 			nCurPos++;
 		}
@@ -193,7 +193,7 @@ bool CNtlTSScrTokenizer::Tokenize( void )
 		{
 			int nTempPos = nCurPos;
 
-			// πÆ¿⁄ø≠ √≥∏Æ
+			// ????? Û??
 			if ( '"' == m_pFileBuffer[nTempPos] )
 			{
 				int nNumChars = 0;
@@ -226,7 +226,7 @@ bool CNtlTSScrTokenizer::Tokenize( void )
 				pTemp = (char*)malloc( (nNumChars+1)*sizeof(char) );
 				if ( 0 == pTemp )
 				{
-					printf( "Allocating a memory is failed. Info[%I64u]. [%s]", (int)(nNumChars+1)*sizeof(char), TS_CODE_TRACE() );
+					printf( "Allocating a memory is failed. Info[%zu]. [%s]", (size_t)(nNumChars+1)*sizeof(char), TS_CODE_TRACE() );
 					return false;
 				}
 				pTemp[nNumChars] = 0;
