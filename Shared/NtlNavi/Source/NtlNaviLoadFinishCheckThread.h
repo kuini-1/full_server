@@ -36,6 +36,10 @@ public:
 
 	HANDLE							GetLoadingFinishEvent( void );
 
+#if !defined(_WIN32)
+	static unsigned int				WaitForEvent( HANDLE hEvent, unsigned int ms );
+#endif
+
 	bool							IsExit( void );
 
 	void							SetExit( bool bExit );
@@ -44,7 +48,11 @@ public:
 
 
 protected:
+#if defined(_WIN32)
 	static unsigned int __stdcall	ThreaFuncCB( void* pParam );
+#else
+	static void*					ThreaFuncCB( void* pParam );
+#endif
 };
 
 

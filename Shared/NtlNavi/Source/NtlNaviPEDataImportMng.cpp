@@ -37,7 +37,11 @@ bool CNtlNaviPEDataImportMng::WaitUntilLoadingFinish( unsigned int uiWaitTime, u
 
 	if ( hEvent )
 	{
+#if defined(_WIN32)
 		uiResult = WaitForSingleObjectEx( hEvent, uiWaitTime, FALSE );
+#else
+		uiResult = CNtlNaviLoadFinishCheckThread::WaitForEvent( hEvent, uiWaitTime );
+#endif
 	}
 	else
 	{
