@@ -1,6 +1,18 @@
 #include "precomp_navi.h"
 #include "NtlNaviLoadingQueue.h"
+#if defined(_WIN32)
 #include <process.h>
+#else
+#include <pthread.h>
+#include <unistd.h>
+
+struct AutoResetEvent
+{
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+	volatile int signaled;
+};
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,6 +83,7 @@ bool CNtlLoadingQueue::Create( void )
 
 	m_bExit = false;
 
+#if defined(_WIN32)
 	m_hEvent = CreateEvent( NULL, FALSE, FALSE, NULL );
 
 	if ( NULL == m_hEvent )
@@ -116,6 +129,54 @@ error:
 	m_bCreated = false;
 
 	return false;
+#else
+	/* Linux: auto-reset event using pthread mutex + cond */
+	AutoResetEvent* ev = new AutoResetEvent;
+	pthread_mutex_init(&ev->mutex, NULL);
+	pthread_cond_init(&ev->cond, NULL);
+	ev->signaled = 0;
+	m_hEvent = ev;
+
+	for ( int i = 0; i < eMAX_THREAD_CNT; ++i )
+	{
+		pthread_t* th = new pthread_t;
+		if ( 0 != pthread_create( th, NULL, (void*(*)(void*))ThreaFuncCB, this ) )
+		{
+			delete th;
+			goto error_linux;
+		}
+		m_arhThread[i] = th;
+	}
+
+	usleep( 15000 );
+
+	m_bCreated = true;
+
+	return true;
+
+error_linux:
+	SetExit();
+	for ( int i = 0; i < eMAX_THREAD_CNT; ++i )
+	{
+		if ( m_arhThread[i] )
+		{
+			pthread_join( *(pthread_t*)m_arhThread[i], NULL );
+			delete (pthread_t*)m_arhThread[i];
+			m_arhThread[i] = NULL;
+		}
+	}
+	if ( m_hEvent )
+	{
+		AutoResetEvent* ev = (AutoResetEvent*)m_hEvent;
+		pthread_cond_destroy(&ev->cond);
+		pthread_mutex_destroy(&ev->mutex);
+		delete ev;
+		m_hEvent = NULL;
+	}
+	m_bExit = false;
+	m_bCreated = false;
+	return false;
+#endif
 }
 
 void CNtlLoadingQueue::Delete( void )
@@ -124,6 +185,7 @@ void CNtlLoadingQueue::Delete( void )
 	{
 		SetExit();
 
+#if defined(_WIN32)
 		WaitForMultipleObjectsEx( eMAX_THREAD_CNT, m_arhThread, TRUE, INFINITE, FALSE );
 
 		Sleep( 15 );
@@ -142,6 +204,28 @@ void CNtlLoadingQueue::Delete( void )
 			CloseHandle( m_hEvent );
 			m_hEvent = NULL;
 		}
+#else
+		for ( int i = 0; i < eMAX_THREAD_CNT; ++i )
+		{
+			if ( m_arhThread[i] )
+			{
+				pthread_join( *(pthread_t*)m_arhThread[i], NULL );
+				delete (pthread_t*)m_arhThread[i];
+				m_arhThread[i] = NULL;
+			}
+		}
+
+		usleep( 15000 );
+
+		if ( m_hEvent )
+		{
+			AutoResetEvent* ev = (AutoResetEvent*)m_hEvent;
+			pthread_cond_destroy(&ev->cond);
+			pthread_mutex_destroy(&ev->mutex);
+			delete ev;
+			m_hEvent = NULL;
+		}
+#endif
 
 		m_bExit = false;
 
@@ -164,7 +248,18 @@ void CNtlLoadingQueue::SetExit( void )
 	m_bExit = true;
 	m_clExitCS.Unlock();
 
+#if defined(_WIN32)
 	SetEvent( m_hEvent );
+#else
+	if ( m_hEvent )
+	{
+		AutoResetEvent* ev = (AutoResetEvent*)m_hEvent;
+		pthread_mutex_lock(&ev->mutex);
+		ev->signaled = 1;
+		pthread_cond_broadcast(&ev->cond);
+		pthread_mutex_unlock(&ev->mutex);
+	}
+#endif
 }
 
 bool CNtlLoadingQueue::IsEmptyEntityToLoad( void )
@@ -182,7 +277,18 @@ void CNtlLoadingQueue::AttachEntityToLoad( CNtlNaviLoadingEntity* pEntity )
 	m_defEntityToLoadList.push_back( pEntity );
 	m_clEntityToLoadCS.Unlock();
 
+#if defined(_WIN32)
 	SetEvent( m_hEvent );
+#else
+	if ( m_hEvent )
+	{
+		AutoResetEvent* ev = (AutoResetEvent*)m_hEvent;
+		pthread_mutex_lock(&ev->mutex);
+		ev->signaled = 1;
+		pthread_cond_signal(&ev->cond);
+		pthread_mutex_unlock(&ev->mutex);
+	}
+#endif
 }
 
 bool CNtlLoadingQueue::DetachEntityToLoad( CNtlNaviLoadingEntity* pEntity )
@@ -264,6 +370,7 @@ bool CNtlLoadingQueue::DetachEntityLoaded( CNtlNaviLoadingEntity* pEntity )
 
 unsigned int CNtlLoadingQueue::ThreadCallBackFunc( void )
 {
+#if defined(_WIN32)
 	while ( !IsExit() )
 	{
 		WaitForSingleObjectEx( m_hEvent, INFINITE, FALSE );
@@ -286,9 +393,57 @@ unsigned int CNtlLoadingQueue::ThreadCallBackFunc( void )
 	}
 
 	return 0;
+#else
+	while ( !IsExit() )
+	{
+		AutoResetEvent* ev = (AutoResetEvent*)m_hEvent;
+		pthread_mutex_lock(&ev->mutex);
+		while ( !ev->signaled && !IsExit() )
+			pthread_cond_wait(&ev->cond, &ev->mutex);
+		int was_signaled = ev->signaled;
+		ev->signaled = 0;
+		pthread_mutex_unlock(&ev->mutex);
+
+		if ( IsExit() )
+		{
+			pthread_mutex_lock(&ev->mutex);
+			ev->signaled = 1;
+			pthread_cond_broadcast(&ev->cond);
+			pthread_mutex_unlock(&ev->mutex);
+			break;
+		}
+
+		if ( !was_signaled )
+			continue;
+
+		CNtlNaviLoadingEntity* pEntity = TakeEntityToLoad();
+
+		if ( pEntity )
+		{
+			pthread_mutex_lock(&ev->mutex);
+			ev->signaled = 1;
+			pthread_cond_signal(&ev->cond);
+			pthread_mutex_unlock(&ev->mutex);
+
+			pEntity->RunMultiThread();
+			AttachEntityLoaded( pEntity );
+		}
+	}
+
+	return 0;
+#endif
 }
 
+#if defined(_WIN32)
 unsigned int __stdcall CNtlLoadingQueue::ThreaFuncCB( void* pParam )
+#else
+void* CNtlLoadingQueue::ThreaFuncCB( void* pParam )
+#endif
 {
-	return ((CNtlLoadingQueue*)pParam)->ThreadCallBackFunc();
+	((CNtlLoadingQueue*)pParam)->ThreadCallBackFunc();
+#if defined(_WIN32)
+	return 0;
+#else
+	return NULL;
+#endif
 }

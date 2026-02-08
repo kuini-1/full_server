@@ -95,7 +95,11 @@ public:
 protected:
 	CNtlNaviLoadingEntity*			TakeEntityToLoad( void );
 
+#if defined(_WIN32)
 	static unsigned int __stdcall	ThreaFuncCB( void* pParam );
+#else
+	static void*					ThreaFuncCB( void* pParam );
+#endif
 };
 
 
