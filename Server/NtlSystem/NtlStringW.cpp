@@ -119,11 +119,7 @@ int CNtlStringW::Format(const WCHAR *format, ...)
 
 	va_start(valist, format);
 
-#if ( _MSC_VER >= 1400 ) // VS8+
-	nRV = vswprintf_s(szBuf, MAX_FORMAT_STR_BUFF, format, valist);
-#else
-	nRV = vswprintf(szBuf, format, valist);
-#endif
+	nRV = NTL_VSWPRINTF(szBuf, MAX_FORMAT_STR_BUFF, format, valist);
 
 	va_end(valist);
 

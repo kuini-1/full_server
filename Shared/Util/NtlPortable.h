@@ -54,6 +54,9 @@
 /* swprintf_s(buf, size, fmt, ...) -> swprintf */
 #define NTL_SWPRINTF(buf, size, fmt, ...)  swprintf((buf), (size_t)(size), (fmt), ##__VA_ARGS__)
 
+/* vswprintf_s(buf, size, fmt, args) -> vswprintf */
+#define NTL_VSWPRINTF(buf, size, fmt, args)  vswprintf((buf), (size_t)(size), (fmt), (args))
+
 /* strncpy_s with _TRUNCATE (4th arg) - same as NTL_STRNCPY_S_FULL */
 #ifndef _TRUNCATE
 #define _TRUNCATE ((size_t)-1)
@@ -83,6 +86,7 @@
 #define NTL_STRCPY_S(dest, size, src)          strcpy_s((dest), (size), (src))
 #define NTL_STRTOK(str, delim, ctx)            strtok_s((str), (delim), (ctx))
 #define NTL_SWPRINTF(buf, size, fmt, ...)      swprintf_s((buf), (size), (fmt), ##__VA_ARGS__)
+#define NTL_VSWPRINTF(buf, size, fmt, args)    vswprintf_s((buf), (size), (fmt), (args))
 
 /* _stricmp / NTL_STRICMP: case-insensitive string compare (CRT) */
 #define NTL_STRICMP(s1, s2) _stricmp((s1), (s2))

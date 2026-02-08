@@ -7,7 +7,7 @@
 /***************************************************************/
 CNtlRandomSheet::CNtlRandomSheet()
 {
-	state = 0x91AB248980AC1937ui64;
+	state = 0x91AB248980AC1937ULL;
 	GenerateSeeds();
 }
 /***************************************************************/
@@ -41,8 +41,8 @@ void CNtlRandomSheet::GenerateSeeds()
 		}
 
 		n = 3;
-		msk = -1i64;
-		bit = 0x8000000000000000i64;
+		msk = (uint64_t)-1LL;
+		bit = 0x8000000000000000ULL;
 		while (bit && n < TABLE_SIZE)
 		{
 			nSheetNo = (j * TABLE_SIZE) + n;
@@ -65,7 +65,7 @@ uint64_t CNtlRandomSheet::GenerateSimple()
 	for (n = 0; n < 64; n++)
 	{
 		value1 = ((temp >> 7) ^ ((temp >> 5) ^ (temp >> 3) ^ (temp >> 2) ^ (temp >> 1) ^ temp)) & 1;
-		temp = value1 | ((temp << 63) | (temp >> 1)) & 0xFFFFFFFFFFFFFFFEui64;
+		temp = value1 | ((temp << 63) | (temp >> 1)) & 0xFFFFFFFFFFFFFFFEULL;
 	}
 
 	state = temp;
@@ -153,8 +153,8 @@ void CNtlRandomChecksum::GenerateSeeds()
 			table[n] = GenerateSimple();
 
 		n = 3;
-		msk2 = 0xFFFFFFFFFFFFFFFEui64;
-		bit2 = 0x8000000000000000ui64;
+		msk2 = 0xFFFFFFFFFFFFFFFEULL;
+		bit2 = 0x8000000000000000ULL;
 		while (bit2 && n < TABLE_SIZE)
 		{
 			table[n] = bit2 | table[n] & msk2;
@@ -173,7 +173,7 @@ uint64_t CNtlRandomChecksum::GenerateSimple()
 	for (n = 0; n < 64; n++)
 	{
 		value1 = ((temp >> 7) ^ ((temp >> 5) ^ (temp >> 3) ^ (temp >> 2) ^ (temp >> 1) ^ temp)) & 1;
-		temp = value1 | ((temp << 63) | (temp >> 1)) & 0xFFFFFFFFFFFFFFFEui64;
+		temp = value1 | ((temp << 63) | (temp >> 1)) & 0xFFFFFFFFFFFFFFFEULL;
 	}
 
 	state = temp;

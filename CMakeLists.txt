@@ -159,8 +159,7 @@ endif()
 
 dbo_collect_sources(_dbo_ntlsystem_src "${CMAKE_CURRENT_SOURCE_DIR}/Server/NtlSystem")
 if(NOT WIN32)
-  list(FILTER _dbo_ntlsystem_src EXCLUDE REGEX ".*[/\\\\]NtlPdh\\.cpp$")
-  list(FILTER _dbo_ntlsystem_src EXCLUDE REGEX ".*[/\\\\]NtlMiniDump\\.cpp$")
+  # NtlPdh.cpp and NtlMiniDump.cpp have Linux stubs (#if !defined(_WIN32)) and must be built on both platforms
 endif()
 add_library(NtlSystem STATIC ${_dbo_ntlsystem_src})
 target_link_libraries(NtlSystem PUBLIC dbo_includes)

@@ -52,6 +52,7 @@ typedef unsigned __int64 ntl_uint64;
 #include <dirent.h>
 #include <time.h>
 #include <cstdio>
+#include <sys/time.h>
 
 #ifndef _MAX_DIR
 #define _MAX_DIR 256
@@ -344,5 +345,55 @@ static inline BOOL CreateDirectory(const char* path, void* unused)
 	(void)unused;
 	return mkdir(path, 0755) == 0 ? TRUE : FALSE;
 }
+
+/* FILETIME / GetSystemTimeAsFileTime: for code that needs time-based seeds */
+typedef struct _FILETIME_LINUX {
+	DWORD dwLowDateTime;
+	DWORD dwHighDateTime;
+} FILETIME;
+static inline void GetSystemTimeAsFileTime(FILETIME* lpSystemTimeAsFileTime)
+{
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	/* Convert to 100-ns units since Unix epoch for compatibility; callers typically use dwLowDateTime for seeding */
+	unsigned long long ns = (unsigned long long)tv.tv_sec * 10000000ULL + (unsigned long long)tv.tv_usec * 10ULL;
+	lpSystemTimeAsFileTime->dwLowDateTime = (DWORD)(ns & 0xFFFFFFFFUL);
+	lpSystemTimeAsFileTime->dwHighDateTime = (DWORD)(ns >> 32);
+}
+
+/* IsBadWritePtr: deprecated on Windows; on Linux use NULL check only */
+#define IsBadWritePtr(ptr, size) ((ptr) == NULL ? 1 : 0)
+
+/* GetACP: active code page; on Linux return 0 (use locale) */
+#define GetACP() 0
+
+/* WideCharToMultiByte / MultiByteToWideChar: minimal wrappers for wchar_t <-> char conversion */
+#include <cwchar>
+#include <stdlib.h>
+static inline int WideCharToMultiByte_linux(int, unsigned long, const WCHAR* src, int srcLen, char* dst, int dstSize, const char*, void*)
+{
+	if (!src) return 0;
+	size_t wlen = (srcLen < 0) ? wcslen(src) + 1 : (size_t)(srcLen + 1);
+	if (dst && dstSize > 0) {
+		size_t r = wcstombs(dst, src, (size_t)dstSize);
+		if (r == (size_t)-1) return 0;
+		return (int)r + (r > 0 && dst[r - 1] != '\0' ? 1 : 0);
+	}
+	/* Get required size: use upper bound wcslen*MB_CUR_MAX+1 */
+	return (int)(wcslen(src) * (size_t)MB_CUR_MAX + 1);
+}
+static inline int MultiByteToWideChar_linux(int, unsigned long, const char* src, int srcLen, WCHAR* dst, int dstSize)
+{
+	if (!src) return 0;
+	if (dst && dstSize > 0) {
+		size_t r = mbstowcs(dst, src, (size_t)dstSize);
+		if (r == (size_t)-1) return 0;
+		return (int)r + (r > 0 && dst[r - 1] != L'\0' ? 1 : 0);
+	}
+	/* Get required size: use upper bound strlen+1 */
+	return (int)(strlen(src) + 1);
+}
+#define WideCharToMultiByte(cp, flags, src, srcLen, dst, dstSize, def, used) WideCharToMultiByte_linux(cp, flags, src, srcLen, dst, dstSize, def, used)
+#define MultiByteToWideChar(cp, flags, src, srcLen, dst, dstSize) MultiByteToWideChar_linux(cp, flags, src, srcLen, dst, dstSize)
 
 #endif // _WIN32
