@@ -147,14 +147,14 @@ public:
 	// "PszLogPath" can be NULL.
 	// In this case, the log file directory is created in the default working directory.
 	// In this case, log file directories will be created in the default work directory.
-	bool SetLogPath(char* pszLogPath);
+	bool SetLogPath(const char* pszLogPath);
 
-	bool RegisterSource(DWORD dwSource, char* pszSourceName);
+	bool RegisterSource(DWORD dwSource, const char* pszSourceName);
 	bool RegisterSource(DWORD dwSource, CNtlString strSourceName);
 
 	bool RegisterChannel(
-				DWORD dwSource, BYTE byChannel, char* pszChannelName,
-				char* pszLogFileNamePrefix, char* pszLogFileNameSuffix, char* pszLogFileExtName = "txt", bool bIsOn = true);
+				DWORD dwSource, BYTE byChannel, const char* pszChannelName,
+				const char* pszLogFileNamePrefix, const char* pszLogFileNameSuffix, const char* pszLogFileExtName = "txt", bool bIsOn = true);
 	bool RegisterChannel(
 				DWORD dwSource, BYTE byChannel, CNtlString strChannelName,
 				CNtlString strLogFileNamePrefix, CNtlString strLogFileNameSuffix, CNtlString strLogFileExtName, bool bIsOn = true);
@@ -165,8 +165,7 @@ public:
 	bool IsChannelOn(DWORD dwSource, BYTE byChannel);
 
 	bool AddLog(DWORD dwSource, BYTE byChannel, const char* pszFormatString, ...);
-	bool AddLog(DWORD dwSource, BYTE byChannel, char* pszFormatString, ...);
-	bool AddLogAlternative(DWORD dwSource, BYTE byChannel, char* pszFormatString, va_list args);
+	bool AddLogAlternative(DWORD dwSource, BYTE byChannel, const char* pszFormatString, va_list args);
 
 public:
 	static bool UnitTest();
@@ -181,7 +180,7 @@ protected:
 	bool OpenLogFile(sLOG_FILE_INFO* pLogFileInfo);
 	bool CloseLogFile(sLOG_FILE_INFO* pLogFileInfo);
 
-	bool MakeSurePathIsValid(char* pszLogFilePath);
+	bool MakeSurePathIsValid(const char* pszLogFilePath);
 
 private:
 	const static char* m_pszShortMonthName[];

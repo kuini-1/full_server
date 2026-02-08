@@ -104,7 +104,7 @@ bool CNtlLogSystem::Init()
 	return true;
 }
 
-bool CNtlLogSystem::SetLogPath(char* pszLogPath)
+bool CNtlLogSystem::SetLogPath(const char* pszLogPath)
 {
 	::EnterCriticalSection(&m_lock);
 
@@ -123,7 +123,7 @@ bool CNtlLogSystem::SetLogPath(char* pszLogPath)
 		size_t logPathLength = strlen(szLogPathRefined);
 
 		// Eliminates back-slash character.
-		if ('\\' == szLogPathRefined[logPathLength - 1])
+		if (szLogPathRefined[logPathLength - 1] == '\\' || szLogPathRefined[logPathLength - 1] == '/')
 		{
 			szLogPathRefined[logPathLength - 1] = '\0';
 		}
@@ -143,7 +143,7 @@ bool CNtlLogSystem::SetLogPath(char* pszLogPath)
 	return true;
 }
 
-bool CNtlLogSystem::RegisterSource(DWORD dwSource, char* pszSourceName)
+bool CNtlLogSystem::RegisterSource(DWORD dwSource, const char* pszSourceName)
 {
 	if (NULL == pszSourceName)
 	{
@@ -184,12 +184,12 @@ bool CNtlLogSystem::RegisterSource(DWORD dwSource, char* pszSourceName)
 
 bool CNtlLogSystem::RegisterSource(DWORD dwSource, CNtlString strSourceName)
 {
-	return RegisterSource(dwSource, (char*)(strSourceName.c_str()));
+	return RegisterSource(dwSource, strSourceName.c_str());
 }
 
 bool CNtlLogSystem::RegisterChannel(
-						DWORD dwSource, BYTE byChannel, char* pszChannelName,
-						char* pszLogFileNamePrefix, char* pszLogFileNameSuffix, char* pszLogFileExtName, bool bIsOn)
+							DWORD dwSource, BYTE byChannel, const char* pszChannelName,
+							const char* pszLogFileNamePrefix, const char* pszLogFileNameSuffix, const char* pszLogFileExtName, bool bIsOn)
 {
 	if (NULL == pszChannelName || NULL == pszLogFileNamePrefix || NULL == pszLogFileNameSuffix || NULL == pszLogFileExtName)
 	{
@@ -334,11 +334,11 @@ bool CNtlLogSystem::RegisterChannel(
 {
 	if (0 == strLogFileExtName.GetString().length())
 	{
-		return RegisterChannel(dwSource, byChannel, (char*)(strChannelName.c_str()), (char*)(strLogFileNamePrefix.c_str()), (char*)(strLogFileNameSuffix.c_str()), "csv", bIsOn);
+		return RegisterChannel(dwSource, byChannel, strChannelName.c_str(), strLogFileNamePrefix.c_str(), strLogFileNameSuffix.c_str(), "csv", bIsOn);
 	}
 	else
 	{
-		return RegisterChannel(dwSource, byChannel, (char*)(strChannelName.c_str()), (char*)(strLogFileNamePrefix.c_str()), (char*)(strLogFileNameSuffix.c_str()), (char*)(strLogFileExtName.c_str()), bIsOn);
+		return RegisterChannel(dwSource, byChannel, strChannelName.c_str(), strLogFileNamePrefix.c_str(), strLogFileNameSuffix.c_str(), strLogFileExtName.c_str(), bIsOn);
 	}
 }
 
@@ -420,25 +420,13 @@ bool CNtlLogSystem::AddLog(DWORD dwSource, BYTE byChannel, const char* pszFormat
 	va_list args;
 
 	va_start(args, pszFormatString);
-	bResult = AddLogAlternative(dwSource, byChannel, (char*)pszFormatString, args);
-	va_end(args);
-
-	return bResult;
-}
-
-bool CNtlLogSystem::AddLog(DWORD dwSource, BYTE byChannel, char* pszFormatString, ...)
-{
-	bool bResult = false;
-	va_list args;
-
-	va_start(args, pszFormatString);
 	bResult = AddLogAlternative(dwSource, byChannel, pszFormatString, args);
 	va_end(args);
 
 	return bResult;
 }
 
-bool CNtlLogSystem::AddLogAlternative(DWORD dwSource, BYTE byChannel, char* pszFormatString, va_list args)
+bool CNtlLogSystem::AddLogAlternative(DWORD dwSource, BYTE byChannel, const char* pszFormatString, va_list args)
 {
 	if (NULL == pszFormatString)
 	{
@@ -706,7 +694,7 @@ bool CNtlLogSystem::OpenLogFile(sLOG_FILE_INFO* pLogFileInfo)
 
 	char szLogFilePathFinal[MAX_PATH_FULL_NAME + 1] = { 0x00, };
 	NTL_SNPRINTF(szLogFilePathFinal, sizeof(szLogFilePathFinal),
-											"%s\\%04d%02d%02d",
+											"%s" NTL_PATH_SEP "%04d%02d%02d",
 											m_szLogPath,
 											localTime.wYear,
 											localTime.wMonth,	
@@ -718,7 +706,7 @@ bool CNtlLogSystem::OpenLogFile(sLOG_FILE_INFO* pLogFileInfo)
 	}
 
 	NTL_SNPRINTF(pLogFileInfo->szLogFileFullName, _countof(pLogFileInfo->szLogFileFullName),
-													"%s\\%04d%02d%02d_%s_%s.%s",
+													"%s" NTL_PATH_SEP "%04d%02d%02d_%s_%s.%s",
 													szLogFilePathFinal,
 													localTime.wYear,
 													localTime.wMonth,
@@ -759,7 +747,7 @@ bool CNtlLogSystem::CloseLogFile(sLOG_FILE_INFO* pLogFileInfo)
 	return true;
 }
 
-bool CNtlLogSystem::MakeSurePathIsValid(char* pszLogFilePath)
+bool CNtlLogSystem::MakeSurePathIsValid(const char* pszLogFilePath)
 {
 	int nResult = _mkdir(pszLogFilePath);
 	if (0 == nResult)

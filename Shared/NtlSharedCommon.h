@@ -16,6 +16,9 @@
 
 typedef unsigned __int64 ntl_uint64;
 
+/* Path separator for format strings (e.g. "%s" NTL_PATH_SEP "%04d") */
+#define NTL_PATH_SEP "\\"
+
 //typedef char Char;
 //typedef unsigned char Byte;
 
@@ -124,6 +127,35 @@ typedef wchar_t WCHAR;
 typedef long long __int64;
 #endif
 typedef unsigned long long ntl_uint64;
+
+/* SYSTEMTIME / GetLocalTime: Win32 API; on Linux use time + localtime_r */
+typedef struct _SYSTEMTIME {
+	WORD wYear, wMonth, wDayOfWeek, wDay, wHour, wMinute, wSecond, wMilliseconds;
+} SYSTEMTIME;
+static inline void GetLocalTime(SYSTEMTIME* pst)
+{
+	time_t t = time(NULL);
+	struct tm tm_buf;
+	struct tm* pt = localtime_r(&t, &tm_buf);
+	if (pt) {
+		pst->wYear = (WORD)(pt->tm_year + 1900);
+		pst->wMonth = (WORD)(pt->tm_mon + 1);
+		pst->wDayOfWeek = (WORD)pt->tm_wday;
+		pst->wDay = (WORD)pt->tm_mday;
+		pst->wHour = (WORD)pt->tm_hour;
+		pst->wMinute = (WORD)pt->tm_min;
+		pst->wSecond = (WORD)pt->tm_sec;
+		pst->wMilliseconds = 0;
+	} else {
+		memset(pst, 0, sizeof(SYSTEMTIME));
+	}
+}
+
+/* _mkdir: Win32; on Linux use mkdir(path, 0755) */
+#define _mkdir(path) mkdir((path), 0755)
+
+/* Path separator for format strings (e.g. "%s" NTL_PATH_SEP "%04d") */
+#define NTL_PATH_SEP "/"
 
 #include <cassert>
 #define _ASSERTE(x) assert(x)
