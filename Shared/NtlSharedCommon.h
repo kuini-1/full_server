@@ -365,7 +365,7 @@ static inline void GetSystemTimeAsFileTime(FILETIME* lpSystemTimeAsFileTime)
 #define IsBadWritePtr(ptr, size) ((ptr) == NULL ? 1 : 0)
 
 /* GetACP: active code page; on Linux return 0 (use locale) */
-#define GetACP() 0
+static inline int GetACP(void) { return 0; }
 
 /* WideCharToMultiByte / MultiByteToWideChar: minimal wrappers for wchar_t <-> char conversion */
 #include <cwchar>
