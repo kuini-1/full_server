@@ -111,38 +111,38 @@ void CDboTSActDirIndicator::TakeScriptDataForScript( CNtlTSScrProperty& clProper
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", m_bSelfDirIndicator );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_bSelfDirIndicator);
 	clProperty.m_defProperty["self"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_bDirIndicatorStart );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_bDirIndicatorStart);
 	clProperty.m_defProperty["stype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_byDirType );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_byDirType);
 	clProperty.m_defProperty["dtype"] = g_NtlTSString;
 
 	switch ( m_byDirType )
 	{
 	case DIRECTION_INDICATE_TYPE_TOBJECT:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uiData.sTObj.uiObjTblIdx );
+			snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiData.sTObj.uiObjTblIdx);
 			clProperty.m_defProperty["tblidx"] = g_NtlTSString;
 		}
 		break;
 	case DIRECTION_INDICATE_TYPE_NPC:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uiData.sNPC.uiNPCTblIdx );
+			snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiData.sNPC.uiNPCTblIdx);
 			clProperty.m_defProperty["tblidx"] = g_NtlTSString;
 		}
 		break;
 	case DIRECTION_INDICATE_TYPE_POINT:
 		{
-			sprintf_s( g_NtlTSString, "%f", m_uiData.sPos.fX );
+			snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiData.sPos.fX);
 			clProperty.m_defProperty["x"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uiData.sPos.fY );
+			snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiData.sPos.fY);
 			clProperty.m_defProperty["y"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uiData.sPos.fZ );
+			snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiData.sPos.fZ);
 			clProperty.m_defProperty["z"] = g_NtlTSString;
 		}
 		break;

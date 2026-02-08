@@ -5,6 +5,7 @@
 #include <deque>
 #include "NtlSingleton.h"
 #include "NtlMutex.h"
+#include "../../Shared/NtlSharedCommon.h"
 //-----------------------------------------------------------------------------------
 
 using namespace std;
@@ -20,9 +21,9 @@ protected:
 	struct PROFILEUNIT
 	{
 	public:
-		unsigned __int64 m_uiTotalCycle;
-		unsigned __int64 m_uiMinCycle;
-		unsigned __int64 m_uiMaxCycle;
+		ntl_uint64 m_uiTotalCycle;
+		ntl_uint64 m_uiMinCycle;
+		ntl_uint64 m_uiMaxCycle;
 		unsigned __int32 m_uiCalledCount;
 		unsigned __int32 m_uiTurnCount_TotalCycle;
 		unsigned __int32 m_uiTurnCount_CalledCount;
@@ -44,7 +45,7 @@ protected:
 		{
 		}
 
-		PROFILEUNIT( const char * szFilename, unsigned __int16 line, unsigned __int64 cycle )
+		PROFILEUNIT( const char * szFilename, unsigned __int16 line, ntl_uint64 cycle )
 			: m_uiTotalCycle( cycle )
 			, m_uiMinCycle( cycle )
 			, m_uiMaxCycle( cycle )
@@ -63,8 +64,8 @@ protected:
 
 	struct FUNC
 	{
-		unsigned __int64 m_uiStartCycle;
-		unsigned __int64 m_uiChildCycle;
+		ntl_uint64 m_uiStartCycle;
+		ntl_uint64 m_uiChildCycle;
 	};
 
 public:
@@ -78,15 +79,15 @@ public:
 	CProfileStatistic( void );
 	~CProfileStatistic( void );
 
-	void BeginProfile( unsigned __int64 startCycle );
-	void EndProfile( const char* strToken, unsigned __int64 endCycle, const char* strFile, unsigned __int16 nLine );
+	void BeginProfile( ntl_uint64 startCycle );
+	void EndProfile( const char* strToken, ntl_uint64 endCycle, const char* strFile, unsigned __int16 nLine );
 	void Save( void );
 	void SetFileName( const char* pszFileName ) { m_strFilename = pszFileName; return; }
 	void CheckCpuCycle( void );
 	void ClearProfile( void );
 
 private:
-	unsigned __int64	m_uCpuCycle;
+	ntl_uint64	m_uCpuCycle;
 	PROFILES_MAP		m_mapProfiles;
 	FUNC_DEQUE			m_dequeFunc;
 	string				m_strFilename;
@@ -112,7 +113,7 @@ public:
 	void Destroy( void );
 
 private:
-	unsigned __int64	m_cycle;
+	ntl_uint64	m_cycle;
 	const char*			m_szToken;
 	const char*			m_szFilename;
 	unsigned __int16	m_nLine;

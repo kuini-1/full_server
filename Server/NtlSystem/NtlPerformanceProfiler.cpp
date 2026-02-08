@@ -24,11 +24,11 @@ CProfileStatistic::~CProfileStatistic( void )
 {
 }
 
-void CProfileStatistic::BeginProfile( unsigned __int64 )
+void CProfileStatistic::BeginProfile( ntl_uint64 )
 {
 }
 
-void CProfileStatistic::EndProfile( const char*, unsigned __int64, const char*, unsigned __int16 )
+void CProfileStatistic::EndProfile( const char*, ntl_uint64, const char*, unsigned __int16 )
 {
 }
 
@@ -114,7 +114,7 @@ CProfileStatistic::~CProfileStatistic( void )
 //  Purpose :
 //  Return  :
 //-----------------------------------------------------------------------------------
-void CProfileStatistic::BeginProfile( unsigned __int64 startCycle )
+void CProfileStatistic::BeginProfile( ntl_uint64 startCycle )
 {
 	CNtlAutoMutex mutex( &m_mutex );
 	mutex.Lock();
@@ -129,7 +129,7 @@ void CProfileStatistic::BeginProfile( unsigned __int64 startCycle )
 //  Return  :
 //-----------------------------------------------------------------------------------
 void CProfileStatistic::EndProfile( const char* pszToken
-								   , unsigned __int64 endCycle
+								   , ntl_uint64 endCycle
 								   , const char* pszFile
 								   , unsigned __int16 nLine )
 {
@@ -155,8 +155,8 @@ void CProfileStatistic::EndProfile( const char* pszToken
 	mutex.Lock();
 
 	FUNC& func = m_dequeFunc.front();
-	unsigned __int64 total_cycle = endCycle - func.m_uiStartCycle;
-	unsigned __int64 pure_cycle = total_cycle - func.m_uiChildCycle;
+	ntl_uint64 total_cycle = endCycle - func.m_uiStartCycle;
+	ntl_uint64 pure_cycle = total_cycle - func.m_uiChildCycle;
 	m_dequeFunc.pop_front();
 
 	if( false == m_dequeFunc.empty() )
@@ -179,7 +179,7 @@ void CProfileStatistic::EndProfile( const char* pszToken
 		PROFILEUNIT& profile = find_iter->second;
 
 		static const unsigned __int32 INVALID_INT32 = unsigned __int32(-1);
-		static const unsigned __int64 INVALID_INT64 = unsigned __int64(-1);
+		static const ntl_uint64 INVALID_INT64 = ntl_uint64(-1);
 
 		if( INVALID_INT32 == profile.m_uiCalledCount + 1 )
 		{
@@ -284,18 +284,18 @@ void CProfileStatistic::Save( void )
 //-----------------------------------------------------------------------------------
 void CProfileStatistic::CheckCpuCycle( void )
 {
-	unsigned __int64 nTotal = 0;
+	ntl_uint64 nTotal = 0;
 
 	for( unsigned __int32 nT1 = 0
 		; 10 > nT1
 		; ++nT1 )
 	{
-		unsigned __int64 nStart;
+		ntl_uint64 nStart;
 		QueryPerformanceCounter( ( LARGE_INTEGER* )&nStart );
 
 		Sleep( 1000 );
 
-		unsigned __int64 nEnd;
+		ntl_uint64 nEnd;
 		QueryPerformanceCounter( ( LARGE_INTEGER* )&nEnd );
 		nTotal += nEnd - nStart;
 	}//end of for
@@ -387,7 +387,7 @@ void CProfile::Create( unsigned __int16 nLine )
 
 	m_nLine = nLine;
 
-	unsigned __int64 nStart;
+	ntl_uint64 nStart;
 	QueryPerformanceCounter( ( LARGE_INTEGER* )&nStart );
 
 	m_cycle = nStart;
@@ -404,7 +404,7 @@ void CProfile::Destroy( void )
 	CNtlAutoMutex mutex( &m_mutex );
 	mutex.Lock();	
 
-	unsigned __int64 nEnd;
+	ntl_uint64 nEnd;
 	QueryPerformanceCounter( ( LARGE_INTEGER* )&nEnd );
 
 	CProfileStatistic::GetInstance()->EndProfile( m_szToken, nEnd, m_szFilename, m_nLine );

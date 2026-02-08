@@ -34,6 +34,6 @@ void CDboTSActCustomEvt::TakeScriptDataForScript( CNtlTSScrProperty& clProperty 
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetCustomEvtID() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetCustomEvtID());
 	clProperty.m_defProperty["ceid"] = g_NtlTSString;
 }

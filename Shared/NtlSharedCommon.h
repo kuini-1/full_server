@@ -5,12 +5,15 @@
 // - YOSHIKI
 
 #ifdef _WIN32
-#include <ws2tcpip.h> //includes winsock2.h
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 
 #if defined(_MSC_VER)
 #pragma warning(disable:4819) // vs2005 codepage bug disable
 #endif
+
+typedef unsigned __int64 ntl_uint64;
 
 //typedef char Char;
 //typedef unsigned char Byte;
@@ -64,6 +67,20 @@ typedef unsigned long DWORD;
 typedef void* HANDLE;
 typedef void* LPVOID;
 typedef unsigned char* LPBYTE;
+
+typedef char CHAR;
+typedef int INT;
+typedef void VOID;
+
+// Wide char and 64-bit types (MSVC uses __int64; use standard types on Linux)
+typedef wchar_t WCHAR;
+#ifndef __int64
+typedef long long __int64;
+#endif
+typedef unsigned long long ntl_uint64;
+
+#include <cassert>
+#define _ASSERTE(x) assert(x)
 
 // Windows error code equivalents for compatibility
 #ifndef ERROR_SUCCESS

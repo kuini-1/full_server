@@ -40,9 +40,9 @@ void CDboTSActDojo::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetDungeonType() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDungeonType());
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetDojoTblIdx() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDojoTblIdx());
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 }

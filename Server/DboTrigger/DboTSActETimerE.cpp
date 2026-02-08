@@ -45,9 +45,9 @@ void CDboTSActETimerE::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetTCId() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTCId());
 	clProperty.m_defProperty["tceid"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTAId() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTAId());
 	clProperty.m_defProperty["taeid"] = g_NtlTSString;
 }

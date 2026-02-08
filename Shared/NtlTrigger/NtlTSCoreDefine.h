@@ -1,6 +1,7 @@
 #ifndef _NTLTSCORETDEFINE_H_
 #define _NTLTSCORETDEFINE_H_
 
+#include <cstdio>
 
 /** 
 	Code position trace 
@@ -8,7 +9,12 @@
 
 #define LINE_IMP(l)				#l
 #define LINE(l)					LINE_IMP( l )
+#if defined(_WIN32)
 #define TS_CODE_TRACE()			"[" __FILE__ "] [" __FUNCTION__ "] [" LINE( __LINE__ ) "]"
+#else
+/* On Linux/GCC __FUNCTION__ is not a string literal; use a buffer for %s. */
+#define TS_CODE_TRACE()			({ static char _ts_trace_buf[512]; snprintf(_ts_trace_buf, sizeof(_ts_trace_buf), "[%s] [%s] [%d]", __FILE__, __func__, __LINE__); _ts_trace_buf; })
+#endif
 
 
 /** 
@@ -18,11 +24,11 @@
 
 typedef unsigned int NTL_TSRESULT;
 
-#define NTL_TSRESULT_TYPE_SUCCESS				(0x00000000)	// ¼º°ø
-#define NTL_TSRESULT_TYPE_ERROR					(0x10000000)	// ÇÁ·Î±×·¥ÀûÀÎ ½ÇÆÐ
+#define NTL_TSRESULT_TYPE_SUCCESS				(0x00000000)	// ï¿½ï¿½ï¿½ï¿½
+#define NTL_TSRESULT_TYPE_ERROR					(0x10000000)	// ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-#define NTL_TSRESULT_TYPE_COND_CAN_PROGRESS		(0x00000001)	// Á¶°Ç °Ë»ç¿¡¼­ Á¶°ÇÀº ¸¸Á·ÇÏÁö ¸øÇßÁö¸¸ ¾ÕÀ¸·Î ¸¸Á·ÇÒ °¡´É¼º ÀÖÀ½
-#define NTL_TSRESULT_TYPE_COND_CANT_PROGRESS	(0x00000002)	// Á¶°Ç °Ë»ç¿¡¼­ ¾ÕÀ¸·Î Á¶°Ç °Ë»ç¸¦ ÇØµµ ¹«Á¶°Ç False °¡ ³ª¿À´Â »óÈ²
+#define NTL_TSRESULT_TYPE_COND_CAN_PROGRESS		(0x00000001)	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ç¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define NTL_TSRESULT_TYPE_COND_CANT_PROGRESS	(0x00000002)	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ç¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ç¸¦ ï¿½Øµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ False ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È²
 
 
 /** 

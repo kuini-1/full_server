@@ -2,7 +2,7 @@
 *
 * File			: NtlSerializer.h
 * Author		: HyungSuk, Jang
-* Copyright	: (аж)NTL
+* Copyright	: (??)NTL
 * Date			: 2006. 12. 09	
 * Abstract		: system event definition.
 *****************************************************************************
@@ -14,6 +14,7 @@
 #define __NTL_SERIALIZER__
 
 #include <string>
+#include "../NtlSharedCommon.h"
 
 class CNtlSerializer
 {
@@ -58,7 +59,7 @@ public:
 	CNtlSerializer& operator << (long lData);
     CNtlSerializer& operator << (unsigned long ulData);
 	CNtlSerializer& operator << (__int64 i64Data);
-	CNtlSerializer& operator << (unsigned __int64 ui64Data);
+	CNtlSerializer& operator << (ntl_uint64 ui64Data);
 	CNtlSerializer& operator << (float fData);
 	CNtlSerializer& operator << (double dData);
 	CNtlSerializer& operator << (char *pData);
@@ -74,7 +75,7 @@ public:
 	CNtlSerializer& operator >> (long& lData);
     CNtlSerializer& operator >> (unsigned long& ulData);
 	CNtlSerializer& operator >> (__int64& i64Data);
-	CNtlSerializer& operator >> (unsigned __int64& ui64Data);
+	CNtlSerializer& operator >> (ntl_uint64& ui64Data);
 	CNtlSerializer& operator >> (float& fData);
 	CNtlSerializer& operator >> (double& dData);
 	CNtlSerializer& operator >> (std::string& str);	

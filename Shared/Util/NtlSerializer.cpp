@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "NtlSerializer.h"
+#include <cstdarg>
 
 #define NTL_SERIALIZER_GROW_SIZE		1024
 
@@ -237,14 +238,14 @@ CNtlSerializer& CNtlSerializer::operator<<(__int64 i64Data)
 	return *this;
 }
 
-CNtlSerializer& CNtlSerializer::operator<<(unsigned __int64 ui64Data)
+CNtlSerializer& CNtlSerializer::operator<<(ntl_uint64 ui64Data)
 {
-	int iTypeSize = sizeof(unsigned __int64);
+	int iTypeSize = sizeof(ntl_uint64);
 
 	if(!CheckInBuffer(iTypeSize))
 		return *this;
 
-	*((unsigned __int64*)&m_pBuffer[m_iEndPointer]) = ui64Data;
+	*((ntl_uint64*)&m_pBuffer[m_iEndPointer]) = ui64Data;
 	m_iEndPointer += iTypeSize;
 
 	return *this;
@@ -319,7 +320,7 @@ CNtlSerializer& CNtlSerializer::operator<<(std::string	&str)
 		m_iEndPointer += iTypeSize;
 	}
 
-	// 끝에 널문자를 넣어준다.
+	// ???? ?????? ??????.
 	operator<<('\0');
 
 	return *this;
@@ -444,14 +445,14 @@ CNtlSerializer& CNtlSerializer::operator >> (__int64& i64Data)
 	return *this;
 }
 
-CNtlSerializer& CNtlSerializer::operator >> (unsigned __int64& ui64Data)
+CNtlSerializer& CNtlSerializer::operator >> (ntl_uint64& ui64Data)
 {
-	int iTypeSize = sizeof(unsigned __int64);
+	int iTypeSize = sizeof(ntl_uint64);
 
 	if(!CheckOutBuffer(iTypeSize))
 		return *this;
 
-	ui64Data = *((unsigned __int64*)&m_pBuffer[m_iStartPointer]);
+	ui64Data = *((ntl_uint64*)&m_pBuffer[m_iStartPointer]);
 	m_iStartPointer += iTypeSize;
 
 	return *this;

@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Tripledes.h"
+#include "TripleDes.h"
 
 uint32 SB1[64] =
 {

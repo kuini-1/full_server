@@ -12,3 +12,6 @@ DboServerFiles.sln
 /Server/test
 /Server/Tools
 /Server/web-bridge
+*.pdb
+
+/out

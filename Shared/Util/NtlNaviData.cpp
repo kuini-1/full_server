@@ -1,6 +1,17 @@
 #include "stdafx.h"
 #include "NtlNaviData.h"
 #include <float.h>
+#if !defined(_WIN32)
+#include <cassert>
+#include <strings.h>
+#define _ASSERT(x) assert(x)
+#define stricmp strcasecmp
+static inline int navi_fopen_s(FILE** pFile, const char* path, const char* mode) {
+	*pFile = fopen(path, mode);
+	return *pFile ? 0 : 1;
+}
+#define fopen_s navi_fopen_s
+#endif
 
 
 void Util_Add_Inv_Slash( std::string& strString )

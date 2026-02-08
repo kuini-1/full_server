@@ -48,10 +48,12 @@ BEGIN_NAMESPACE( uda )
 	#define ASSERT_MODE							( ASSERT_MODE_USER_DEFINED_ASSERT )
 #endif //_DEBUG
 
+#if defined(_WIN32)
 #ifndef MB_CANCELTRYCONTINUE
 	#define MB_CANCELTRYCONTINUE				MB_ABORTRETRYIGNORE
 	#define IDTRYAGAIN							IDRETRY
 #endif //MB_CANCELTRYCONTINUE
+#endif // _WIN32
 
 
 #define ASSERT_MODE_NO_OPERATION				( 0 )
@@ -84,6 +86,7 @@ BEGIN_NAMESPACE( uda )
 // Author     : 
 //=============================================================================
 
+#if defined(_WIN32)
 inline bool UserDefinedAssert( const TCHAR * lptExpression, const TCHAR * lptFileName, int nLine )
 {
 	int			nResult;
@@ -111,6 +114,16 @@ inline bool UserDefinedAssert( const TCHAR * lptExpression, const TCHAR * lptFil
 		return false;
 	}
 }
+#else
+inline bool UserDefinedAssert( const char * lptExpression, const char * lptFileName, int nLine )
+{
+	fprintf( stderr, "Assert: File %s Line %d Expr %s\n", lptFileName, nLine, lptExpression );
+	(void)lptExpression;
+	(void)lptFileName;
+	(void)nLine;
+	return false;
+}
+#endif // _WIN32
 
 END_NAMESPACE( uda )
 

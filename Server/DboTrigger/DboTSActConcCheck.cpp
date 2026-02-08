@@ -63,15 +63,15 @@ void CDboTSActConcCheck::TakeScriptDataForScript( CNtlTSScrProperty& clProperty 
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetConcurrencyCnt() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetConcurrencyCnt());
 	clProperty.m_defProperty["ccnt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetResetTime() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetResetTime());
 	clProperty.m_defProperty["rtime"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetExcuteObjTblIdx() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetExcuteObjTblIdx());
 	clProperty.m_defProperty["eobjidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetExcuteTID() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetExcuteTID());
 	clProperty.m_defProperty["etsid"] = g_NtlTSString;
 }

@@ -4,6 +4,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 #include <unordered_map>
 #include "NtlNaviDataDefine.h"
 
@@ -128,9 +129,9 @@ inline void CNtlNaviWorldInfo::GetWorldMaxPos( float& fWorldMaxPosX, float& fWor
 class CNtlNaviWorldOutDoorInfo : public CNtlNaviWorldInfo
 {
 protected:
-	float							m_fTileSize;				// ½ÇÁ¦ ¿ùµåÀÇ Å¸ÀÏ »çÀÌÁî
-	float							m_fFieldSize;				// ½ÇÁ¦ ¿ùµåÀÇ ÇÊµå »çÀÌÁî
-	unsigned int					m_uiCrossFieldCntOfGroup;	// Group ´ç ÇÊµåÀÇ °¹¼ö
+	float							m_fTileSize;				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	float							m_fFieldSize;				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned int					m_uiCrossFieldCntOfGroup;	// Group ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	float							m_fOverlapSize;
 
 public:

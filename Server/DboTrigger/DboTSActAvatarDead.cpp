@@ -34,9 +34,9 @@ void CDboTSActAvatarDead::TakeScriptDataForScript( CNtlTSScrProperty& clProperty
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", m_ucStart );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_ucStart);
 	clProperty.m_defProperty["start"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_TaIdx );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_TaIdx);
 	clProperty.m_defProperty["taid"] = g_NtlTSString;
 }

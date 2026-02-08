@@ -1,6 +1,6 @@
 
 #include "stdafx.h"	
-#include "Twofishcipher.h"
+#include "TwofishCipher.h"
 /* These two tables are the q0 and q1 permutations, exactly as described in
  * the Twofish paper. */
 

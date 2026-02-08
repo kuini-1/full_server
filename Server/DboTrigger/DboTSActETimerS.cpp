@@ -56,12 +56,12 @@ void CDboTSActETimerS::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetTimerSort() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTimerSort());
 	clProperty.m_defProperty["sort"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTime() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTime());
 	clProperty.m_defProperty["time"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTGId() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTGId());
 	clProperty.m_defProperty["tgid"] = g_NtlTSString;
 }

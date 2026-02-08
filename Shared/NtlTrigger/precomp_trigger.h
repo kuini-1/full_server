@@ -2,11 +2,7 @@
 #define _PRECOMP_TRIGGER_H_
 
 
-#if defined(_WIN32)
-#include <windows.h>
-#else
 #include "../NtlSharedCommon.h"
-#endif
 #include <assert.h>
 
 #include <string>

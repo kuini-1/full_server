@@ -56,12 +56,12 @@ void CDboTSActDir::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%f", GetRange() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetRange());
 	clProperty.m_defProperty["rng"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetDirectionType() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDirectionType());
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetDirectionTblIdx() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDirectionTblIdx());
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 }

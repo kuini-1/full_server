@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-11-20
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	ï¿½ï¿½ NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -85,7 +85,7 @@ int RandomRange(int nMinVal, int nMaxVal)
 		nLessValue = nMaxVal;
 	}
 
-	return (int)((double)nDiff * (unsigned int)NtlRand() / ((unsigned __int64)UINT_MAX + 1) + nLessValue);
+	return (int)((double)nDiff * (unsigned int)NtlRand() / ((ntl_uint64)UINT_MAX + 1) + nLessValue);
 }
 
 
@@ -109,7 +109,7 @@ DWORD RandomRangeU(DWORD dwMinVal, DWORD dwMaxVal)
 		dwLessValue = dwMaxVal;
 	}
 
-	return (DWORD)((double)nDiff * (unsigned int)NtlRand() / ((unsigned __int64)UINT_MAX + 1) + dwLessValue);
+	return (DWORD)((double)nDiff * (unsigned int)NtlRand() / ((ntl_uint64)UINT_MAX + 1) + dwLessValue);
 }
 
 

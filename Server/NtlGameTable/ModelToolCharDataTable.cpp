@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-03-08
 //
-//	Copyright	:	�� NTL-Inc Co., Ltd
+//	Copyright	:	NTL-Inc Co., Ltd
 //
 //	Author		:	Hong Ho Dong   ( battery@ntl-inc.com )
 //
@@ -141,7 +141,6 @@ sCHAR_DATA_INFO *sMODELTOOL_CHAR_TBLDAT::GetChainAttack(BYTE byClass, BYTE byWea
 			break;
 	}
 	
-	// Human Fighter�� ��� �׻� Glove �̴�.
 	if(byClass == PC_CLASS_STREET_FIGHTER)
 		nRemapAnimKeyID = NTL_ST_INDEX_ANIM_ATTACK_GLOVE + byChainSequence - NTL_ST_CHAIN_SEQUENCE;
 	
@@ -182,7 +181,6 @@ bool CModelToolCharDataTable::Create(const char *lpszPath, bool bIsSharedAccess,
 	UNREFERENCED_PARAMETER(szCryptPassword);
 	std::string strPath( lpszPath );
 
-	////3���� Xml�� ��� �е��� ������ �Ѵ�.
 	//if(LoadPropertyList(lpszPath, "CharacterPropertyList.xml") == false)
 	//	return false;
 
@@ -1105,8 +1103,8 @@ BYTE sMODELTOOL_CHAR_TBLDAT::GetSkillAnimationPushCount(ANIMATIONID skillAnimati
 
 
 //-----------------------------------------------------------------------------------
-//		Purpose	: Animation�� Hit Time�� ���´�.                
-//		Return	: Hit�� ù��° Time (Skill �������� ù��° Hit�� �ʿ�)
+//		Purpose	: Animation Hit Time.                
+//		Return	: Hit Time (Skill Hit)
 //-----------------------------------------------------------------------------------
 DWORD sMODELTOOL_CHAR_TBLDAT::GetSkillAnimationFirstHitTime(ANIMATIONID skillAnimationId)
 {
@@ -1125,8 +1123,8 @@ DWORD sMODELTOOL_CHAR_TBLDAT::GetSkillAnimationFirstHitTime(ANIMATIONID skillAni
 
 
 //-----------------------------------------------------------------------------------
-//		Purpose	: Animation�� Hit Time�� ���´�.                
-//		Return	: Hit�� ������ Time (Skill �������� ������ Hit�� �ʿ�)
+//		Purpose	: Animation Hit Time.                
+//		Return	: Hit Time (Skill Hit)
 //-----------------------------------------------------------------------------------
 DWORD sMODELTOOL_CHAR_TBLDAT::GetSkillAnimationSkillCancelTime(ANIMATIONID skillAnimationId)
 {

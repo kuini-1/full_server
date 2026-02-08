@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-03-24
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:
 //
@@ -25,8 +25,13 @@ bool WideCharToHex(WCHAR* pwszString, DWORD dwBufferSize, char* pszBuffer)
 {
 	if (NULL == pwszString || 3 > dwBufferSize)
 		return false;
+#if defined(_WIN32)
 	if (FALSE != IsBadWritePtr(pszBuffer, dwBufferSize))
 		return false;
+#else
+	if (NULL == pszBuffer)
+		return false;
+#endif
 
 	BYTE* pbyOriginalPosition = (BYTE*)pwszString;
 	DWORD dwCurrentIndex = 0;
@@ -68,8 +73,13 @@ bool HexToWideChar(char* pszHex, DWORD dwBufferSize, WCHAR* pwszBuffer)
 {
 	if (NULL == pszHex || 0 == dwBufferSize)
 		return false;
+#if defined(_WIN32)
 	if (FALSE != IsBadWritePtr(pwszBuffer, dwBufferSize * sizeof(WCHAR)))
 		return false;
+#else
+	if (NULL == pwszBuffer)
+		return false;
+#endif
 
 	if (0 != strncmp(pszHex, "0x", 2))
 		return false;
@@ -113,10 +123,14 @@ bool StreamToHex(BYTE* pbyStream, DWORD dwStreamLength, char* pszBuffer, DWORD d
 	{
 		return false;
 	}
+#if defined(_WIN32)
 	if (FALSE != IsBadWritePtr(pszBuffer, dwBufferSize * sizeof(char)))
 	{
 		return false;
 	}
+#else
+	(void)dwBufferSize;
+#endif
 
 	DWORD dwRequiredBufferSize = dwStreamLength * 2 + 2 + 1;
 	if (dwBufferSize < dwRequiredBufferSize)
@@ -158,10 +172,15 @@ bool HexToStream(char* pszHex, BYTE* pbyBuffer, DWORD dwBufferSize)
 	{
 		return false;
 	}
+#if defined(_WIN32)
 	if (FALSE != IsBadWritePtr(pbyBuffer, dwBufferSize * sizeof(BYTE)))
 	{
 		return false;
 	}
+#else
+	if (NULL == pbyBuffer)
+		return false;
+#endif
 
 	if (0 != strncmp(pszHex, "0x", 2))
 	{

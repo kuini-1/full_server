@@ -107,31 +107,25 @@ public:
 
 
 protected:
-	// ����
 	eEXPORT_STATE					m_eCurState;
 
-	// �ܺ� �Է� ������
 	std::string						m_strExportPath;
 	CNtlNaviResMng*					m_pNaviResMng;
 	CNtlNaviDataMng*				m_pNaviDataMng;
 	sINPUT_PARAM					m_sInputParam;
 
-	// �⺻�� ���� ������
 	unsigned int					m_uiCrossTileCntOfSector;
 	float							m_fInvalidTile;
 
-	// Import ������
 	hashdef_OD_INFO_LIST			m_defODInfoList;
 	vecdef_NAVIOBJ_LIST				m_defNaviMeshInfoList;
 	vecdef_NAVIOBJ_LIST				m_defObsMeshInfoList;
 
-	// ���带 ���� �ʿ��� ������
 	mapdef_NAVI_RES_ENTITY_LIST		m_defNaviEntityResList;
 	vecdef_FACE_VERTEX_MESH_LIST	m_defPEGroundFVMeshList;
 	vecdef_OBS_ENTITY_LIST			m_defPEObsList;
 	vecdef_AGENT_ENTITY_LIST		m_defAgentList;
 
-	// ����� �н� ���� ������
 	iMesh*							m_pMesh;
 	iCollisionContext*				m_pColContext;
 
@@ -163,7 +157,7 @@ protected:
 
 	//////////////////////////////////////////////////////////////////////////
 	//
-	// World group ���� ( Height map, Navigation mesh, Obstacle mesh )
+	// World group ( Height map, Navigation mesh, Obstacle mesh )
 	//
 	//////////////////////////////////////////////////////////////////////////
 

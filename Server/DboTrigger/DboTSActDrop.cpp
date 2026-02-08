@@ -40,9 +40,9 @@ void CDboTSActDrop::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetPermissionType() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetPermissionType());
 	clProperty.m_defProperty["ptype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTableIndex() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTableIndex());
 	clProperty.m_defProperty["tblidx"] = g_NtlTSString;
 }

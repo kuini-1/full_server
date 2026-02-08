@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#if !defined(_WIN32)
+#include "../NtlSharedCommon.h"
+#endif
 
 #define NTL_SAFE_STRCPY(buffer, original_string) \
 	if ( NULL==(char*)original_string ) buffer[0] = '\0'; \

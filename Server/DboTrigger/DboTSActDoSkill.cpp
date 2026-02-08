@@ -34,6 +34,6 @@ void CDboTSActDoSkill::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetSkillIdx() );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", GetSkillIdx());
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 }

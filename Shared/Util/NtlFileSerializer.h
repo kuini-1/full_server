@@ -2,7 +2,7 @@
  *
  * File			: NtlFileSerializer.h
  * Author		: 
- * Copyright	: (аж)NTL
+ * Copyright	: (??)NTL
  * Date			: 2007. 02. 06
  * Abstract		: 
  *****************************************************************************
@@ -13,6 +13,9 @@
 #pragma once
 
 #include "NtlSerializer.h"
+#if !defined(_WIN32)
+#include "../NtlSharedCommon.h"
+#endif
 
 class CNtlFileSerializer : public CNtlSerializer
 {

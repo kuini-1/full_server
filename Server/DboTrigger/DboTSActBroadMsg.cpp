@@ -74,33 +74,33 @@ void CDboTSActBroadMsg::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", m_eExcuteType );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_eExcuteType);
 	clProperty.m_defProperty["et"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_eUIDirType );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_eUIDirType);
 	clProperty.m_defProperty["uidt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_eUIShowHideDirType );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_eUIShowHideDirType);
 	clProperty.m_defProperty["uisht"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_eUIBalloonShapeType );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_eUIBalloonShapeType);
 	clProperty.m_defProperty["uibst"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_eUISpeechDirType );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_eUISpeechDirType);
 	clProperty.m_defProperty["uisdt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_eOwnerCondition );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_eOwnerCondition);
 	clProperty.m_defProperty["oc"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_eOwnerType );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_eOwnerType);
 	clProperty.m_defProperty["ot"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_uiOwnerTblIdx );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiOwnerTblIdx);
 	clProperty.m_defProperty["oidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_uiQTextTblIdx );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiQTextTblIdx);
 	clProperty.m_defProperty["oqtidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_uiDisplayTime );
+	snprintf(g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiDisplayTime);
 	clProperty.m_defProperty["dt"] = g_NtlTSString;
 }

@@ -114,7 +114,7 @@ typedef struct SIZES
 	short			sx;
 	short			sy;
 } SIZES;
-#endif SIZES
+#endif // SIZES
 
 
 #ifndef SVersionInfo
@@ -302,7 +302,7 @@ BYTE inline ForceByte( TCLASS tVal )
 	int inline AfxMessageBoxA( const char*, const char* = nullptr, unsigned int = 0 ) { return 0; }
 	int inline AfxMessageBoxW( const wchar_t*, const wchar_t* = nullptr, unsigned int = 0 ) { return 0; }
 #endif
-#endif AfxMessageBox
+#endif // AfxMessageBox
 
 
 #ifndef IsEqualString
@@ -317,7 +317,7 @@ BYTE inline ForceByte( TCLASS tVal )
 		return ( pchString1 && pchString2 && strcmp( pchString1, pchString2 ) == 0 );
 	}
 #endif
-#endif IsEqualString
+#endif // IsEqualString
 
 
 #ifndef Swap
@@ -387,6 +387,7 @@ template<class TCLASS> inline TCLASS Med( TCLASS tVal1, TCLASS tVal2, TCLASS tVa
 
 
 #ifndef GetElapsedTickCount
+#if defined(_WIN32)
 inline DWORD GetElapsedTickCount( void )
 {
 	static DWORD	dwUpdatedCount = GetTickCount();
@@ -396,9 +397,25 @@ inline DWORD GetElapsedTickCount( void )
 
 	return dwElapsedTickCount;
 }
+#else
+#include <sys/time.h>
+inline DWORD GetElapsedTickCount( void )
+{
+	static struct timeval tvPrev = { 0, 0 };
+	struct timeval tvNow;
+	gettimeofday( &tvNow, NULL );
+	DWORD dwPrev = (DWORD)(tvPrev.tv_sec * 1000 + tvPrev.tv_usec / 1000);
+	DWORD dwNow = (DWORD)(tvNow.tv_sec * 1000 + tvNow.tv_usec / 1000);
+	tvPrev = tvNow;
+	if ( dwPrev == 0 )
+		return 0;
+	return dwNow - dwPrev;
+}
+#endif
 #endif //GetElapsedTickCount
 
 
+#if defined(_WIN32)
 #define FILE_SHARE_DEFAULT		( 0L )
 #define CREATE_DEFAULT			( 0L )
 #define FILE_ATTRIBUTE_DEFAULT	( 0L )
@@ -560,6 +577,7 @@ inline HANDLE CreateFileSafe( LPCTSTR lpcFileName,
 }
 #endif //_UNICODE
 #endif //CreateFileSafe
+#endif // _WIN32
 
 
 inline UInt32 Power10( UInt32 nPower )

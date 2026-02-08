@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "NtlNaviDataMng.h"
 #include "UserDefinedAssert.h"
+#if !defined(_WIN32)
+#include <sys/stat.h>
+#endif
 
 
 CNtlNaviDataMng::CNtlNaviDataMng( void )
@@ -22,7 +25,11 @@ bool CNtlNaviDataMng::Create( const char* pPathName )
 {
 	Delete();
 
+#if defined(_WIN32)
 	CreateDirectory( pPathName, NULL );
+#else
+	mkdir( pPathName, 0755 );
+#endif
 
 	m_strPathName = pPathName;
 

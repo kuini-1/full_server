@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "NtlTokenizer.h"
+#include <cwchar>
 
 CNtlTokenizer::CNtlTokenizer(const std::string &strFileName, CallTokenPack fnCallPack /* = NULL */)
 {
@@ -364,7 +365,11 @@ BOOL CNtlTokenizerW::Load(const char *pFileName, CallTokenPack fnCallPack)
 			m_pData = new WCHAR[m_iTotalSize+1];
 			m_pData[m_iTotalSize] = '\0';
 
+#if defined(_WIN32)
 			::MultiByteToWideChar( GetACP(), 0, pData, -1, m_pData, m_iTotalSize + 1 );
+#else
+			mbstowcs( m_pData, pData, m_iTotalSize + 1 );
+#endif
 		}
 
 		delete [] pData;
@@ -415,7 +420,11 @@ BOOL CNtlTokenizerW::Load(const char *pFileName, CallTokenPack fnCallPack)
 			m_pData = new wchar_t[nSize];
 			m_iTotalSize = nSize;
 
-			::MultiByteToWideChar( GetACP(), 0,pData, -1, m_pData, nSize );
+#if defined(_WIN32)
+			::MultiByteToWideChar( GetACP(), 0, pData, -1, m_pData, nSize );
+#else
+			mbstowcs( m_pData, pData, nSize );
+#endif
 
 			delete [] pData;
 			pData = NULL;

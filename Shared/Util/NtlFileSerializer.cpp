@@ -2,7 +2,12 @@
 #include "NtlFileSerializer.h"
 #include "NtlStringHandler.h"
 #include "NtlCipher.h"
+#if defined(_WIN32)
 #include <atlbase.h>
+#else
+#include <cstdlib>
+#include <cwchar>
+#endif
 
 CNtlFileSerializer::CNtlFileSerializer() :
 							CNtlSerializer()
@@ -35,6 +40,7 @@ bool CNtlFileSerializer::SaveFile(char* pszFullPathFileName, bool bCrypt /* = FA
 	if(!pszFullPathFileName)
 		return false;
 
+#if defined(_WIN32)
 	DWORD dwFileAttribute = ::GetFileAttributes(pszFullPathFileName);
 	if (INVALID_FILE_ATTRIBUTES != dwFileAttribute)
 	{
@@ -45,10 +51,16 @@ bool CNtlFileSerializer::SaveFile(char* pszFullPathFileName, bool bCrypt /* = FA
 			::SetFileAttributes(pszFullPathFileName, dwFileAttribute);
 		}
 	}
+#endif
 
 	FILE *pFile = NULL;
 
+#if defined(_WIN32)
 	if (0 != fopen_s(&pFile, pszFullPathFileName, "wb"))
+#else
+	pFile = fopen(pszFullPathFileName, "wb");
+	if (NULL == pFile)
+#endif
 	{
 		return false;
 	}
@@ -84,9 +96,27 @@ bool CNtlFileSerializer::SaveFile(char* pszFullPathFileName, bool bCrypt /* = FA
 
 bool CNtlFileSerializer::SaveFile(WCHAR* pwszFullPathFileName, bool bCrypt /* = FALSE */, WCHAR* szCryptPassword /* = NULL */)
 {
+#if defined(_WIN32)
 	USES_CONVERSION;
-
 	return SaveFile(W2A(pwszFullPathFileName), bCrypt, W2A(szCryptPassword));
+#else
+	if (!pwszFullPathFileName)
+		return false;
+	char path[1024];
+	path[0] = '\0';
+	if (wcstombs(path, pwszFullPathFileName, sizeof(path)) == (size_t)-1)
+		return false;
+	char pass[256];
+	char* pPass = NULL;
+	if (szCryptPassword)
+	{
+		pass[0] = '\0';
+		if (wcstombs(pass, szCryptPassword, sizeof(pass)) == (size_t)-1)
+			return false;
+		pPass = pass;
+	}
+	return SaveFile(path, bCrypt, pPass);
+#endif
 }
 
 bool CNtlFileSerializer::LoadFile(char* pszFullPathFileName, bool bCrypt /* = FALSE */, char* szCryptPassword /* = NULL */)
@@ -96,7 +126,12 @@ bool CNtlFileSerializer::LoadFile(char* pszFullPathFileName, bool bCrypt /* = FA
 
 	FILE *pFile = NULL;
 
+#if defined(_WIN32)
 	if (0 != fopen_s(&pFile, pszFullPathFileName, "rb"))
+#else
+	pFile = fopen(pszFullPathFileName, "rb");
+	if (NULL == pFile)
+#endif
 	{
 		return false;
 	}
@@ -187,7 +222,25 @@ bool CNtlFileSerializer::LoadFile(char* pszBuffer, int nSize, bool bCrypt /*= FA
 
 bool CNtlFileSerializer::LoadFile(WCHAR* pwszFullPathFileName, bool bCrypt /* = FALSE */, WCHAR* szCryptPassword /* = NULL */)
 {
+#if defined(_WIN32)
 	USES_CONVERSION;
-
 	return LoadFile(W2A(pwszFullPathFileName), bCrypt, W2A(szCryptPassword));
+#else
+	if (!pwszFullPathFileName)
+		return false;
+	char path[1024];
+	path[0] = '\0';
+	if (wcstombs(path, pwszFullPathFileName, sizeof(path)) == (size_t)-1)
+		return false;
+	char pass[256];
+	char* pPass = NULL;
+	if (szCryptPassword)
+	{
+		pass[0] = '\0';
+		if (wcstombs(pass, szCryptPassword, sizeof(pass)) == (size_t)-1)
+			return false;
+		pPass = pass;
+	}
+	return LoadFile(path, bCrypt, pPass);
+#endif
 }
