@@ -1084,7 +1084,7 @@ void CWorld::RemAllScript()
 {
 	if (m_mapScript.size() > 0)
 	{
-		ERR_LOG(LOG_GENERAL, "Remove all script from WorldIdx %u, scriptcount %I64u", GetID(), m_mapScript.size());
+		ERR_LOG(LOG_GENERAL, "Remove all script from WorldIdx %u, scriptcount %zu", GetID(), m_mapScript.size());
 		for (std::map<DWORD, CScriptAlgoObject*>::iterator it = m_mapScript.begin(); it != m_mapScript.end(); it++)
 		{
 			ERR_LOG(LOG_GENERAL, "Script Idx %u", it->first);

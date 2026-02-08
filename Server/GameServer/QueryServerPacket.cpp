@@ -314,11 +314,11 @@ void CQueryServerSession::RecvLoadBankData(CNtlPacket* pPacket)
 		res->aBankProfile[i].byRestrictState = req->asItemData[i].byRestrictState;
 		res->aBankProfile[i].byDurationType = req->asItemData[i].byDurationType;
 
-		//printf("%I64u, %u,byPlace %u, byPosition %u\n", req->asItemData[i].itemId, res->aBankProfile[i].handle, req->asItemData[i].byPlace, req->asItemData[i].byPosition);
+		//printf("%zu, %u,byPlace %u, byPosition %u\n", req->asItemData[i].itemId, res->aBankProfile[i].handle, req->asItemData[i].byPlace, req->asItemData[i].byPosition);
 
 		if (g_pItemManager->CreateFromDB(res->aBankProfile[i].handle, req->asItemData[i], pOwner) == NULL)
 		{
-			ERR_LOG(LOG_USER, "cannot create item by tblidx %u (id %I64u)", req->asItemData[i].itemNo, req->asItemData[i].itemId);
+			ERR_LOG(LOG_USER, "cannot create item by tblidx %u (id %zu)", req->asItemData[i].itemNo, req->asItemData[i].itemId);
 			g_pObjectManager->DeleteUID(res->aBankProfile[i].handle);
 		}
 	}
@@ -692,7 +692,7 @@ void CQueryServerSession::RecvTradeRes(CNtlPacket * pPacket)
 				pItem->SetItemID(req->asRecvData[i].itemNewSerial);
 				pItem->AddToCharacter(pOwner);
 
-				ERR_LOG(LOG_USER, "ITEM-TRADE: Owner: %u, ItemID %I64u, Tblidx %u, Target %u", req->charID, req->asRecvData[i].itemNewSerial, pItem->GetTblidx(), req->dstcharID);
+				ERR_LOG(LOG_USER, "ITEM-TRADE: Owner: %u, ItemID %zu, Tblidx %u, Target %u", req->charID, req->asRecvData[i].itemNewSerial, pItem->GetTblidx(), req->dstcharID);
 
 				CNtlPacket packet2(sizeof(sGU_ITEM_CREATE));
 				sGU_ITEM_CREATE * res2 = (sGU_ITEM_CREATE *)packet2.GetPacketData();
@@ -758,13 +758,13 @@ void CQueryServerSession::RecvMailSendRes(CNtlPacket* pPacket)
 			}
 			else
 			{
-				ERR_LOG(LOG_USER, "ERROR Item dont exist anymore after send mail ResultCode %u, Player %u Target %u Zeni %u Item %I64u. This error can appear when sending invalid items to mail when player login", req->wResultCode, req->charID, req->targetCharID, req->dwZenny, req->sItemData.itemID);
+				ERR_LOG(LOG_USER, "ERROR Item dont exist anymore after send mail ResultCode %u, Player %u Target %u Zeni %u Item %zu. This error can appear when sending invalid items to mail when player login", req->wResultCode, req->charID, req->targetCharID, req->dwZenny, req->sItemData.itemID);
 			}
 		}
 	}
 	else
 	{
-		ERR_LOG(LOG_USER, "Send mail != GAME_SUCCESS. ResultCode %u, Player %u Target %u Zeni %u Item %I64u", req->wResultCode, req->charID, req->targetCharID, req->dwZenny, req->sItemData.itemID);
+		ERR_LOG(LOG_USER, "Send mail != GAME_SUCCESS. ResultCode %u, Player %u Target %u Zeni %u Item %zu", req->wResultCode, req->charID, req->targetCharID, req->dwZenny, req->sItemData.itemID);
 	}
 
 
@@ -932,7 +932,7 @@ void CQueryServerSession::RecvMailItemReceiveRes(CNtlPacket* pPacket)
 					app->Send(pOwner->GetClientSessionID(), &packet2);
 				}
 				else
-					ERR_LOG(LOG_GENERAL, "Receive item/zeni from mail failed. Item is null. Receiver %u Sender %u Result %u ItemIdx %u ItemID %I64u, Mail %u", req->charID, req->fromCharId, req->wResultCode, req->sItemData.itemNo, req->sItemData.itemId, req->mailID);
+					ERR_LOG(LOG_GENERAL, "Receive item/zeni from mail failed. Item is null. Receiver %u Sender %u Result %u ItemIdx %u ItemID %zu, Mail %u", req->charID, req->fromCharId, req->wResultCode, req->sItemData.itemNo, req->sItemData.itemId, req->mailID);
 
 				pOwner->GetPlayerItemContainer()->RemoveReservedInventory(req->sItemData.byPlace, req->sItemData.byPosition);
 			}
@@ -1028,7 +1028,7 @@ void CQueryServerSession::RecvGuildBankMoveRes(CNtlPacket * pPacket)
 		CItem* pSrcItem = pOwner->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
 		if (pSrcItem)
 		{
-			ERR_LOG(LOG_USER, "<GUILD_STORAGE>Player: %u move item %I64u. Guild:%u SrcPlace:%u,SrcPos:%u,DstPlace:%u,DstPos:%u", req->charID, pSrcItem->GetItemID(), pOwner->GetGuildID(), req->bySrcPlace, req->bySrcPos, req->byDstPlace, req->byDstPos);
+			ERR_LOG(LOG_USER, "<GUILD_STORAGE>Player: %u move item %zu. Guild:%u SrcPlace:%u,SrcPos:%u,DstPlace:%u,DstPos:%u", req->charID, pSrcItem->GetItemID(), pOwner->GetGuildID(), req->bySrcPlace, req->bySrcPos, req->byDstPlace, req->byDstPos);
 
 			if (IsBagContainer(req->byDstPlace)) //check if moving item to bag slot
 			{
@@ -1290,7 +1290,7 @@ void CQueryServerSession::RecvGuildBankLoadData(CNtlPacket * pPacket)
 
 		if (g_pItemManager->CreateFromDB(res->aItemProfile[i].handle, req->asItemData[i], pOwner) == NULL)
 		{
-			ERR_LOG(LOG_USER, "cannot create item by tblidx %u (id %I64u)", req->asItemData[i].itemNo, req->asItemData[i].itemId);
+			ERR_LOG(LOG_USER, "cannot create item by tblidx %u (id %zu)", req->asItemData[i].itemNo, req->asItemData[i].itemId);
 			g_pObjectManager->DeleteUID(res->aItemProfile[i].handle);
 		}
 	}
@@ -2589,7 +2589,7 @@ void CQueryServerSession::RecvCashItemMoveRes(CNtlPacket * pPacket)
 	
 	if (req->wResultCode == GAME_SUCCESS)
 	{
-		ERR_LOG(LOG_USER, "Account %u Char %u move %I64u from cash shop to inventory.", pOwner->GetAccountID(), pOwner->GetCharID(), req->qwProductId);
+		ERR_LOG(LOG_USER, "Account %u Char %u move %zu from cash shop to inventory.", pOwner->GetAccountID(), pOwner->GetCharID(), req->qwProductId);
 
 		//create item and shit
 
@@ -2846,7 +2846,7 @@ void CQueryServerSession::RecvItemSocketInsertBeadRes(CNtlPacket* pPacket)
 		}
 		else
 		{
-			ERR_LOG(LOG_SYSTEM, "ERROR ITEM NOT FOUND !!! Player %u Item ID %I64u", req->charId, req->ItemId);
+			ERR_LOG(LOG_SYSTEM, "ERROR ITEM NOT FOUND !!! Player %u Item ID %zu", req->charId, req->ItemId);
 			res->wResultCode = GAME_ITEM_NOT_FOUND;
 		}
 	}
@@ -2887,7 +2887,7 @@ void CQueryServerSession::RecvItemSocketDestroyBeadRes(CNtlPacket* pPacket)
 		}
 		else
 		{
-			ERR_LOG(LOG_SYSTEM, "ERROR ITEM NOT FOUND !!! Player %u Item ID %I64u", req->charId, req->ItemId);
+			ERR_LOG(LOG_SYSTEM, "ERROR ITEM NOT FOUND !!! Player %u Item ID %zu", req->charId, req->ItemId);
 			res->wResultCode = GAME_ITEM_NOT_FOUND;
 		}
 	}
@@ -3306,7 +3306,7 @@ void CQueryServerSession::RecvItemUpgradeByCouponRes(CNtlPacket * pPacket)
 		}
 		else
 		{
-			ERR_LOG(LOG_USER, "Could not find coupon. User %u, Coupon %I64u", req->charId, req->couponId);
+			ERR_LOG(LOG_USER, "Could not find coupon. User %u, Coupon %zu", req->charId, req->couponId);
 		}
 
 		if (pEquipmentItem)

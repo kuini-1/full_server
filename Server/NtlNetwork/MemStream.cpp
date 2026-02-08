@@ -59,7 +59,7 @@ CMemStream & CMemStream::Push(BYTE * p, DWORD dwSize)
 	memcpy(m_pDataPosEnd, p, dwSize);
 
 	m_pDataPosEnd += dwSize;
-//	printf("CMemStream::Push: %I64u, %i %lu \n", sizeof(m_pDataPosEnd), m_pDataPosEnd, dwSize);
+//	printf("CMemStream::Push: %zu, %i %lu \n", sizeof(m_pDataPosEnd), m_pDataPosEnd, dwSize);
 	return *this;
 }
 

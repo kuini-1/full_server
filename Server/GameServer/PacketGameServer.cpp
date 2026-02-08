@@ -8574,7 +8574,7 @@ void CClientSession::RecvBankMoveReq(CNtlPacket * pPacket)
 		}
 		else if (req->byDestPlace == CONTAINER_TYPE_SCOUT) //dont allow to use scouter chips
 			item_move_res = GAME_ITEM_NOT_GO_THERE;
-		//printf("item_move_res %u, curPos %u, curPlace %u, bySrcPlace %u, bySrcPos %u, byDestPlace %u, byDestPos %u, itemid %I64u, GetID %u\n", item_move_res, src_item->GetPos(), src_item->GetPlace(), req->bySrcPlace, req->bySrcPos, req->byDestPlace, req->byDestPos, src_item->GetItemID(), src_item->GetID());
+		//printf("item_move_res %u, curPos %u, curPlace %u, bySrcPlace %u, bySrcPos %u, byDestPlace %u, byDestPos %u, itemid %zu, GetID %u\n", item_move_res, src_item->GetPos(), src_item->GetPlace(), req->bySrcPlace, req->bySrcPos, req->byDestPlace, req->byDestPos, src_item->GetItemID(), src_item->GetID());
 		/*Update item in map and database if move success*/
 		if (item_move_res == GAME_SUCCESS)
 		{
@@ -9627,7 +9627,7 @@ void CClientSession::RecvItemUpgradeWorkReq(CNtlPacket * pPacket)
 					if (res->byItemGrade >= 12 && res->byItemGrade > equipdata->GetGrade())
 					{
 						if (res->byItemGrade == NTL_ITEM_MAX_GRADE)
-							ERR_LOG(LOG_HACK, "Player %u upgraded %I64u (%u) to +15 from %u . stoneId %I64u (%u)", cPlayer->GetCharID(), equipdata->GetItemID(), equipdata->GetTblidx(), equipdata->GetGrade(), hpstonedata->GetItemID(), hpstonedata->GetTblidx());
+							ERR_LOG(LOG_HACK, "Player %u upgraded %zu (%u) to +15 from %u . stoneId %zu (%u)", cPlayer->GetCharID(), equipdata->GetItemID(), equipdata->GetTblidx(), equipdata->GetGrade(), hpstonedata->GetItemID(), hpstonedata->GetTblidx());
 
 						CNtlPacket pChat(sizeof(sGT_BROADCASTING_SYSTEM_NFY));
 						sGT_BROADCASTING_SYSTEM_NFY * rChat = (sGT_BROADCASTING_SYSTEM_NFY *)pChat.GetPacketData();
@@ -16654,7 +16654,7 @@ void	CClientSession::RecvItemUseReq(CNtlPacket * pPacket)
 				//printf("pUseItemTbldat->dwUse_Restriction_Rule_Bit_Flag %u, dwUse_Allow_Rule_Bit_Flag %u \n", pUseItemTbldat->dwUse_Restriction_Rule_Bit_Flag, pUseItemTbldat->dwUse_Allow_Rule_Bit_Flag);
 				if (resultcode == GAME_SUCCESS || resultcode == GAME_CLOSED_BOX_SUCCESS)
 				{
-				//	NTL_PRINT(PRINT_APP, "USE-ITEM: hRefObject %u pItem->GetID() %u item-tblidx %u ItemID %I64u. Player %u", req->hRefObject, pItem->GetID(), pItem->GetTblidx(), pItem->GetItemID(), cPlayer->GetCharID());
+				//	NTL_PRINT(PRINT_APP, "USE-ITEM: hRefObject %u pItem->GetID() %u item-tblidx %u ItemID %zu. Player %u", req->hRefObject, pItem->GetID(), pItem->GetTblidx(), pItem->GetItemID(), cPlayer->GetCharID());
 				//	printf("%u %u %u %u \n", req->byApplyTargetCount, req->ahApplyTarget[0], req->ahApplyTarget[1], req->hTarget);
 
 					BYTE byTargetCount = req->byApplyTargetCount;

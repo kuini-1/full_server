@@ -30,7 +30,7 @@ bool CWorldPathTable::CreateWorldPath(TBLIDX _TblIdx, LPCSTR _pWorldName)
 	strPathFileName = m_strDataPath + strTheFormer + strFileName + strTheLatter;
 
 	FILE* pFile = NULL;
-	if(NTL_FOPEN(&pFile, strPathFileName.c_str(), "rb") != 0)
+	if(!NTL_FOPEN(&pFile, strPathFileName.c_str(), "rb"))
 	{
 	//	printf("CANT OPEN FILE %s \n", strPathFileName);
 		return false;

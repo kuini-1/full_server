@@ -65,7 +65,7 @@ void CDojo::TickProcess(DWORD dwTickDiff)
 	if (m_matchStateInfo.tmNextStepTime > curTime)
 		return;
 
-	//printf("eState %u, tmNextStepTime %I64u, m_dwNextUpdate %u, curTime %I64u \n", m_matchStateInfo.eState, m_matchStateInfo.tmNextStepTime, m_dwNextUpdate, curTime);
+	//printf("eState %u, tmNextStepTime %zu, m_dwNextUpdate %u, curTime %zu \n", m_matchStateInfo.eState, m_matchStateInfo.tmNextStepTime, m_dwNextUpdate, curTime);
 
 	switch (m_matchStateInfo.eState)
 	{

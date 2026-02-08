@@ -391,7 +391,7 @@ void CChatServerSession::RecGuildChangeNameRes(CNtlPacket * pPacket)
 			}
 			else
 			{
-				ERR_LOG(LOG_HACK, "HACKER: ChaneGuildName Item does not exist anymore. ItemID %I64u, Place %u, Pos %u, Char %u, GuildID %u", req->itemId, req->byPlace, req->byPos, req->charId, req->guildId);
+				ERR_LOG(LOG_HACK, "HACKER: ChaneGuildName Item does not exist anymore. ItemID %zu, Place %u, Pos %u, Char %u, GuildID %u", req->itemId, req->byPlace, req->byPos, req->charId, req->guildId);
 			}
 		}
 	}

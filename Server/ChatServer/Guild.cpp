@@ -526,7 +526,7 @@ WORD	CGuild::AddFunction(CPlayer* pMaster, DWORD dwZeniCost, BYTE byFunction, bo
 		g_pApp->Send(pMaster->GetClientSessionID(), &packet2);
 
 		//do query
-		GetCharDB.Execute("UPDATE guilds SET FunctionFlag=%I64u WHERE GuildID=%u", guildInfo.qwGuildFunctionFlag, guildInfo.guildId);
+		GetCharDB.Execute("UPDATE guilds SET FunctionFlag=%zu WHERE GuildID=%u", guildInfo.qwGuildFunctionFlag, guildInfo.guildId);
 
 		if (!bIsGuildFunction && GetDojo())
 		{

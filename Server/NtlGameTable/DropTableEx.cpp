@@ -148,7 +148,7 @@ void CDropTableEx::Init(CTableTmp<sTBLDAT_DropItem>* pDropItem)
 	if (pDropItem)
 	{
 		ClearNorBag();
-	//	printf("pDropItem->GetNumberOfTables() %I64u \n", pDropItem->GetNumberOfTables());
+	//	printf("pDropItem->GetNumberOfTables() %zu \n", pDropItem->GetNumberOfTables());
 		for (CTable::TABLEIT iter = pDropItem->Begin(); iter != pDropItem->End(); iter++)
 		{
 			sTBLDAT_DropItem* pItem = (sTBLDAT_DropItem*)iter->second;
@@ -164,7 +164,7 @@ void CDropTableEx::Init(CTableTmp<sTBLDAT_DropBag> * pDropBag)
 	if (pDropBag)
 	{
 		ClearGrpBag();
-	//	printf("pDropBag->GetNumberOfTables() %I64u \n", pDropBag->GetNumberOfTables());
+	//	printf("pDropBag->GetNumberOfTables() %zu \n", pDropBag->GetNumberOfTables());
 		for (CTable::TABLEIT iter = pDropBag->Begin(); iter != pDropBag->End(); iter++)
 		{
 			sTBLDAT_DropBag* pItem = (sTBLDAT_DropBag*)iter->second;

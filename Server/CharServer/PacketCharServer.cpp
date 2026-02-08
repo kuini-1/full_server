@@ -395,7 +395,7 @@ void CClientSession::SendCharDeleteReq(CNtlPacket * pPacket)
 					if (f[0].GetUInt32() == 0)
 					{
 						time_t DelTime = time(0) + 43200;
-						if (GetCharDB.Execute("UPDATE characters SET DelCharTime=%I64u WHERE CharID=%u AND AccountID=%u LIMIT 1", DelTime, req->charId, GetPlayer()->GetAccountID()) == false)
+						if (GetCharDB.Execute("UPDATE characters SET DelCharTime=%zu WHERE CharID=%u AND AccountID=%u LIMIT 1", DelTime, req->charId, GetPlayer()->GetAccountID()) == false)
 							resultcode = CHARACTER_DELETE_CHAR_FAIL;
 						else
 						{

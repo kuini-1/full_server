@@ -156,7 +156,7 @@ void CDragonballHunt::StartEvent(bool bStartByCommand/* = true*/)
 		m_timeEnd = m_timeStart + 7200;
 	}
 
-	ERR_LOG(LOG_GENERAL, "<Dragonball Hunt Event> Start %I64u, End %I64u, Duration in seconds %I64u", m_timeStart, m_timeEnd, m_timeEnd - m_timeStart);
+	ERR_LOG(LOG_GENERAL, "<Dragonball Hunt Event> Start %zu, End %zu, Duration in seconds %zu", m_timeStart, m_timeEnd, m_timeEnd - m_timeStart);
 
 	CNtlPacket packet(sizeof(sGU_DRAGONBALL_SCHEDULE_INFO));
 	sGU_DRAGONBALL_SCHEDULE_INFO * res = (sGU_DRAGONBALL_SCHEDULE_INFO *)packet.GetPacketData();

@@ -375,7 +375,7 @@ void CDojo::Reset(BYTE byState, DOJOTIME tmNextStepTime)
 
 void CDojo::SendDojoState(HSESSION hSession)
 {
-	//printf("send dojo shit. GuildID %u, tblidx %u, state %u, nextStep %I64u, hSession %u\n", dojoData.guildId, dojoData.dojoTblidx, m_eDojoState, m_tmNextStepTime, hSession);
+	//printf("send dojo shit. GuildID %u, tblidx %u, state %u, nextStep %zu, hSession %u\n", dojoData.guildId, dojoData.dojoTblidx, m_eDojoState, m_tmNextStepTime, hSession);
 
 	if (m_eDojoState == eDBO_DOJO_STATUS_NORMAL)
 		return;

@@ -129,7 +129,7 @@ bool CPeeker::ReadyForSending(LPWSABUF wb)
 	wb->buf = (char*)m_pStart;
 	m_pEnd = m_pBlock->GetEndPos();
 	wb->len = (ULONG)(m_pEnd - m_pStart);
-	//printf("m_pEnd %I64u, m_pStart %i64u, m_pEnd %i,  m_pStart %i\n", sizeof(m_pEnd), sizeof(m_pStart), m_pEnd, m_pStart);
+	//printf("m_pEnd %zu, m_pStart %i64u, m_pEnd %i,  m_pStart %i\n", sizeof(m_pEnd), sizeof(m_pStart), m_pEnd, m_pStart);
 
 	return wb->len != 0;
 }

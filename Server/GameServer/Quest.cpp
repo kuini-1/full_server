@@ -2856,7 +2856,7 @@ void CQuest::LeaveWorld(bool bLogout/* = false*/, bool bLeaveTMQ/* = false*/)
 
 		m_pkOwner->SendPacket(&packet);
 
-	//	printf("m_vErasedDungeonQuestIDs.size() = %I64u, res->startResetQID = %u, res->endResetQID = %u\n", m_vErasedDungeonQuestIDs.size(), res->startResetQID, res->endResetQID);
+	//	printf("m_vErasedDungeonQuestIDs.size() = %zu, res->startResetQID = %u, res->endResetQID = %u\n", m_vErasedDungeonQuestIDs.size(), res->startResetQID, res->endResetQID);
 	}
 
 	m_vErasedDungeonQuestIDs.clear();

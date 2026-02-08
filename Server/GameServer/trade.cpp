@@ -416,7 +416,7 @@ void CTrade::Trade()
 			}
 			else
 			{
-				ERR_LOG(LOG_USER,"<TRADE>Player: %u Could not find real item.. ItemID: %I64u", m_pOwner->GetCharID(), item->GetItemID());
+				ERR_LOG(LOG_USER,"<TRADE>Player: %u Could not find real item.. ItemID: %zu", m_pOwner->GetCharID(), item->GetItemID());
 			}
 		}
 

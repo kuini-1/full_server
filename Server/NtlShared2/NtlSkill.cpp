@@ -317,7 +317,7 @@ bool Dbo_IsValidStateToUseSkill(DWORD dwTransformUseInfoBitFlag, BYTE byCurState
 					{
 						if (pwResultCode)
 							*pwResultCode = 500; // GAME_SUCCESS;
-					//	printf("qwInvalidCharConditionNew %I64u, qwCurCharCondition %I64u, %I64u \n", qwInvalidCharConditionNew, qwCurCharCondition, qwCurCharCondition | qwInvalidCharConditionNew);
+					//	printf("qwInvalidCharConditionNew %zu, qwCurCharCondition %zu, %zu \n", qwInvalidCharConditionNew, qwCurCharCondition, qwCurCharCondition | qwInvalidCharConditionNew);
 						return true;
 					}
 				}

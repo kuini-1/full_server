@@ -178,7 +178,7 @@ sDBO_GUILD_DATA * CGuild::CreateGuild(CHARACTERID guildMaster, WCHAR * wszName, 
 
 	m_mapGuild.insert(std::make_pair(pData->guildId, pData));
 
-	GetCharDB.WaitExecute("INSERT INTO guilds(GuildID,GuildName,GuildMaster,FunctionFlag)VALUES(%u, \"%ls\", %u, %I64u)", pData->guildId, pData->wszName, guildMaster, qwGuildFunctionFlag);
+	GetCharDB.WaitExecute("INSERT INTO guilds(GuildID,GuildName,GuildMaster,FunctionFlag)VALUES(%u, \"%ls\", %u, %zu)", pData->guildId, pData->wszName, guildMaster, qwGuildFunctionFlag);
 
 	return pData;
 }

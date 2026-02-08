@@ -1409,7 +1409,7 @@ void CPlayer::RecvPcItemLoadRes(sITEM_DATA * pData, BYTE byCount, WORD wCurPacke
 
 		if (pItemTbldat == NULL || DeleteItemUponLogin(pData[i].itemNo))
 		{
-			ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %I64u. Item tblidx %u does not exist", GetCharID(), itemId, pData[i].itemNo);
+			ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %zu. Item tblidx %u does not exist", GetCharID(), itemId, pData[i].itemNo);
 
 			CNtlPacket packet2(sizeof(sGQ_ITEM_DELETE_REQ));
 			sGQ_ITEM_DELETE_REQ * res2 = (sGQ_ITEM_DELETE_REQ *)packet2.GetPacketData();
@@ -1427,7 +1427,7 @@ void CPlayer::RecvPcItemLoadRes(sITEM_DATA * pData, BYTE byCount, WORD wCurPacke
 
 		if (pData[i].byStackcount == 0)
 		{
-			ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %I64u (tblidx:%u). Stack count is 0", GetCharID(), itemId, pData[i].itemNo);
+			ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %zu (tblidx:%u). Stack count is 0", GetCharID(), itemId, pData[i].itemNo);
 
 			CNtlPacket packet2(sizeof(sGQ_ITEM_DELETE_REQ));
 			sGQ_ITEM_DELETE_REQ * res2 = (sGQ_ITEM_DELETE_REQ *)packet2.GetPacketData();
@@ -1448,7 +1448,7 @@ void CPlayer::RecvPcItemLoadRes(sITEM_DATA * pData, BYTE byCount, WORD wCurPacke
 		{
 			if (pItemTbldat->byItem_Type != ITEM_TYPE_BAG)
 			{
-				ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %I64u. Item is on bagslot but is not a bag", GetCharID(), itemId);
+				ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %zu. Item is on bagslot but is not a bag", GetCharID(), itemId);
 
 				CNtlPacket packet2(sizeof(sGQ_ITEM_DELETE_REQ));
 				sGQ_ITEM_DELETE_REQ * res2 = (sGQ_ITEM_DELETE_REQ *)packet2.GetPacketData();
@@ -1473,7 +1473,7 @@ void CPlayer::RecvPcItemLoadRes(sITEM_DATA * pData, BYTE byCount, WORD wCurPacke
 			{
 				if (pBag->GetPlace() != CONTAINER_TYPE_BAGSLOT || pBag->GetPos() != byPlace - 1)
 				{
-					ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %I64u. Bag (id %I64u) invalid place %u != %u / pos %u != %u", GetCharID(), itemId, pBag->GetItemID(), pBag->GetPlace(), CONTAINER_TYPE_BAGSLOT, pBag->GetPos(), byPlace - 1);
+					ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %zu. Bag (id %zu) invalid place %u != %u / pos %u != %u", GetCharID(), itemId, pBag->GetItemID(), pBag->GetPlace(), CONTAINER_TYPE_BAGSLOT, pBag->GetPos(), byPlace - 1);
 
 					CNtlPacket packet2(sizeof(sGQ_ITEM_DELETE_REQ));
 					sGQ_ITEM_DELETE_REQ * res2 = (sGQ_ITEM_DELETE_REQ *)packet2.GetPacketData();
@@ -1492,7 +1492,7 @@ void CPlayer::RecvPcItemLoadRes(sITEM_DATA * pData, BYTE byCount, WORD wCurPacke
 				//check if the item position is out of inventory range
 				if (pBag->GetBagSize() <= byPos)
 				{
-					ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %I64u. Item is in wrong Position. Bag (id %I64u) max size %u. Item place %u pos %u", GetCharID(), itemId, pBag->GetItemID(), pBag->GetBagSize(), byPlace, byPos);
+					ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %zu. Item is in wrong Position. Bag (id %zu) max size %u. Item place %u pos %u", GetCharID(), itemId, pBag->GetItemID(), pBag->GetBagSize(), byPlace, byPos);
 
 					CNtlPacket packet2(sizeof(sGQ_ITEM_DELETE_REQ));
 					sGQ_ITEM_DELETE_REQ * res2 = (sGQ_ITEM_DELETE_REQ *)packet2.GetPacketData();
@@ -1510,7 +1510,7 @@ void CPlayer::RecvPcItemLoadRes(sITEM_DATA * pData, BYTE byCount, WORD wCurPacke
 			}
 			else
 			{
-				ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %I64u no such bag exist on pos %u. Item place %u, pos %u", GetCharID(), itemId, byPlace - 1, byPlace, byPos);
+				ERR_LOG(LOG_USER, "ERROR: Player %u cannot load item id %zu no such bag exist on pos %u. Item place %u, pos %u", GetCharID(), itemId, byPlace - 1, byPlace, byPos);
 
 				CNtlPacket packet2(sizeof(sGQ_ITEM_DELETE_REQ));
 				sGQ_ITEM_DELETE_REQ * res2 = (sGQ_ITEM_DELETE_REQ *)packet2.GetPacketData();
@@ -1548,7 +1548,7 @@ void CPlayer::RecvPcItemLoadRes(sITEM_DATA * pData, BYTE byCount, WORD wCurPacke
 		CItem* pItem = g_pItemManager->CreateFromDB(res->aItemProfile[res->byItemCount].handle, pData[i], this);
 		if (pItem == NULL)
 		{
-			ERR_LOG(LOG_USER, "cannot create item by tblidx %u (id %I64u)", res->aItemProfile[res->byItemCount].tblidx, itemId);
+			ERR_LOG(LOG_USER, "cannot create item by tblidx %u (id %zu)", res->aItemProfile[res->byItemCount].tblidx, itemId);
 			g_pObjectManager->DeleteUID(res->aItemProfile[res->byItemCount].handle);
 
 			continue;

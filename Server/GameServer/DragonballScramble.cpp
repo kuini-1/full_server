@@ -164,7 +164,7 @@ void CDragonballScramble::StartEvent(bool bStartByCommand/* = true*/)
 		}
 	}
 
-	ERR_LOG(LOG_GENERAL, "<Dragonball Scramble Event> Start %I64u, End %I64u, Duration in seconds %I64u", m_timeStart, m_timeEnd, m_timeEnd - m_timeStart);
+	ERR_LOG(LOG_GENERAL, "<Dragonball Scramble Event> Start %zu, End %zu, Duration in seconds %zu", m_timeStart, m_timeEnd, m_timeEnd - m_timeStart);
 
 	CNtlPacket packet(sizeof(sGU_DRAGONBALL_SCRAMBLE_SEASON_STATE_NFY));
 	sGU_DRAGONBALL_SCRAMBLE_SEASON_STATE_NFY * res = (sGU_DRAGONBALL_SCRAMBLE_SEASON_STATE_NFY *)packet.GetPacketData();

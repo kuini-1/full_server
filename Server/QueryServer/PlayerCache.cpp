@@ -2597,7 +2597,7 @@ void CPlayerCache::StartMailResult(QueryResultVector & results, HOBJECT hHandle,
 
 				if (itemid > 0)
 				{
-					smart_ptr<QueryResult> item = GetCharDB.Query("SELECT * FROM items WHERE id=%I64u LIMIT 1", itemid);
+					smart_ptr<QueryResult> item = GetCharDB.Query("SELECT * FROM items WHERE id=%zu LIMIT 1", itemid);
 					if (item)
 					{
 						Field* i = item->Fetch();
@@ -2718,7 +2718,7 @@ void CPlayerCache::LoadMailResult(QueryResultVector & results, HOBJECT hHandle, 
 
 				if (itemid > 0)
 				{
-					smart_ptr<QueryResult> item = GetCharDB.Query("SELECT * FROM items WHERE id=%I64u LIMIT 1", itemid);
+					smart_ptr<QueryResult> item = GetCharDB.Query("SELECT * FROM items WHERE id=%zu LIMIT 1", itemid);
 					if (item)
 					{
 						Field* i = item->Fetch();

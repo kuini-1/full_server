@@ -315,7 +315,7 @@ bool CSvrScrFormulaExpress::AnalyzeExpress(sSSD_FORMULA& rFormula, CSvrScrFormul
 		++itRef;
 	}
 
-	printf("omg rFormula.vecEntities size %I64u\n", rFormula.vecEntities.size());
+	printf("omg rFormula.vecEntities size %zu\n", rFormula.vecEntities.size());
 	return false;
 }
 
@@ -399,7 +399,7 @@ bool CSvrScrFormulaExpress::AnalyzeFunction(sSSD_FORMULA_FUNCTION& rFunc, sFUNC_
 
 				if (nCurParamCount >= rFuncInfo.vecParameter.size())
 				{
-					sprintf_s(m_szMsg, sizeof(m_szMsg), "Param Count is over. cur[%d] > max param[%I64u].", nCurParamCount, rFuncInfo.vecParameter.size());
+					sprintf_s(m_szMsg, sizeof(m_szMsg), "Param Count is over. cur[%d] > max param[%zu].", nCurParamCount, rFuncInfo.vecParameter.size());
 					return false;
 				}
 

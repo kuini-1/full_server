@@ -34,7 +34,7 @@ void CCharacterManager::CreateCharacter(ACCOUNTID accountId, sPC_SUMMARY& sSum, 
 	UNREFERENCED_PARAMETER(serverFarmId);
 
 	GetCharDB.Execute("INSERT INTO characters (CharID,CharName,AccountID,Race,Class,Gender,Face,Hair,HairColor,SkinColor,CurLocX,CurLocY,CurLocZ,WorldID,WorldTable,MapInfoIndex,CreateTime)"
-		"VALUES (%u,'%ls',%u,%u,%u,%u,%u,%u,%u,%u,%f,%f,%f,%u,%u,%u,%I64u)",
+		"VALUES (%u,'%ls',%u,%u,%u,%u,%u,%u,%u,%u,%f,%f,%f,%u,%u,%u,%zu)",
 		sSum.charId, sSum.awchName, accountId, sSum.byRace, sSum.byClass, sSum.byGender, sSum.byFace, sSum.byHair, sSum.byHairColor, sSum.bySkinColor,
 		sSum.fPositionX, sSum.fPositionY, sSum.fPositionZ,
 		sSum.worldId, sSum.worldTblidx, sSum.dwMapInfoIndex, time(0));

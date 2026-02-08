@@ -240,7 +240,7 @@ void CPlayer::UpdateVehicleFuel(bool bInsert, BYTE byItemPlace/* = INVALID_BYTE*
 			{
 				if (item->GetTbldat()->byItem_Type == ITEM_TYPE_FUEL)
 				{
-					//	printf("add vehicle fuel | item GetID = %u | GetItemID = %I64u | GetTblidx = %u \n", item->GetID(), item->GetItemID(), item->GetTblidx());
+					//	printf("add vehicle fuel | item GetID = %u | GetItemID = %zu | GetTblidx = %u \n", item->GetID(), item->GetItemID(), item->GetTblidx());
 					res->wResultCode = GAME_SUCCESS;
 					SetVehicleFuelId(item->GetID());
 					item->SetLocked(true);

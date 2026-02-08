@@ -748,7 +748,7 @@ void CPrivateShop::BuyItem(BYTE* byPos, CPlayer* visitor)
 			qRes->asEmpty[qRes->byCount].itemID = item->sItem.itemId;
 			qRes->byCount++;
 
-			ERR_LOG(LOG_GENERAL, "<PRIVATE-SHOP>Player %u bought Item %I64u(idx: %u) from Owner %u for Zeni: %u. Shop ID %u. Shop Pos %u", 
+			ERR_LOG(LOG_GENERAL, "<PRIVATE-SHOP>Player %u bought Item %zu(idx: %u) from Owner %u for Zeni: %u. Shop ID %u. Shop Pos %u", 
 				visitor->GetCharID(), item->sItem.itemId, item->sItem.itemNo, GetOwner()->GetCharID(), item->dwZenny, GetOwner()->GetID(), item->byPrivateShopInventorySlotPos);
 
 

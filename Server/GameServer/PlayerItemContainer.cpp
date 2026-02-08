@@ -133,7 +133,7 @@ void CPlayerItemContainer::AddItem(CItem * pItem)
 		}
 		break;
 
-		default: ERR_LOG(LOG_USER, "ERROR: Invalid Place. Place = %u, ItemID = %I64u", rItemData.byPlace, pItem->GetItemID()); break;
+		default: ERR_LOG(LOG_USER, "ERROR: Invalid Place. Place = %u, ItemID = %zu", rItemData.byPlace, pItem->GetItemID()); break;
 	}
 }
 
@@ -595,7 +595,7 @@ void CPlayerItemContainer::SortInventory(BYTE byInventoryType, HOBJECT hNpcHandl
 	//memset(res->moveItem, 1, sizeof(res->moveItem));
 	//memset(res->delItem, 1, sizeof(res->delItem));
 
-	//printf("sGU_INVENTORY_SORT_RES size = %I64u, %I64u, %I64u \n", sizeof(sGU_INVENTORY_SORT_RES), sizeof(res->moveItem), sizeof(res->delItem));
+	//printf("sGU_INVENTORY_SORT_RES size = %zu, %zu, %zu \n", sizeof(sGU_INVENTORY_SORT_RES), sizeof(res->moveItem), sizeof(res->delItem));
 	//if (byInventoryType == 0)
 	//{
 	//	for (TItemsMap::iterator it = m_map_CharItems.begin(); it != m_map_CharItems.end(); it++)

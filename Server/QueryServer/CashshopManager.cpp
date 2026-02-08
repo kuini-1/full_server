@@ -25,7 +25,7 @@ void CCashshopManager::Init()
 		m_qwLastProductId = f[0].GetUInt64();
 	}
 
-	ERR_LOG(LOG_GENERAL, "Last Product-ID %I64u", m_qwLastProductId);
+	ERR_LOG(LOG_GENERAL, "Last Product-ID %zu", m_qwLastProductId);
 }
 
 

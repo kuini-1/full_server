@@ -25,7 +25,7 @@ void CAutionhouse::Init()
 		{
 			Field* f = result->Fetch();
 
-			smart_ptr<QueryResult> item = GetCharDB.Query("SELECT * FROM items WHERE id=%I64u", f[6].GetUInt64());
+			smart_ptr<QueryResult> item = GetCharDB.Query("SELECT * FROM items WHERE id=%zu", f[6].GetUInt64());
 			if (item)
 			{
 				Field* fi = item->Fetch();
@@ -79,7 +79,7 @@ void CAutionhouse::Init()
 			}
 			else
 			{
-				GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%I64u", f[0].GetUInt64());
+				GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%zu", f[0].GetUInt64());
 			}
 
 		} while (result->NextRow());
@@ -124,7 +124,7 @@ void CAutionhouse::DeleteAllItems(CHARACTERID charid)
 
 		if (data->charId == charid)
 		{
-			GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%I64u", data->nItem);
+			GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%zu", data->nItem);
 
 			delete data;
 			it = m_mapAuctionhouse.erase(it);

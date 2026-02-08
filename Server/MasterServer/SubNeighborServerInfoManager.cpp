@@ -235,7 +235,7 @@ bool CSubNeighborServerInfoManager::IsPlayerOnline(ACCOUNTID AccID)
 
 void CSubNeighborServerInfoManager::PrintOnlinePlayers()
 {
-	ERR_LOG(LOG_GENERAL, "PRINT %I64u ONLINE PLAYERS - BEGIN", m_map_GameServerPlayers.size());
+	ERR_LOG(LOG_GENERAL, "PRINT %zu ONLINE PLAYERS - BEGIN", m_map_GameServerPlayers.size());
 
 	for (std::unordered_map<ACCOUNTID, _SERVER_PAIR_ID>::iterator it = m_map_GameServerPlayers.begin(); it != m_map_GameServerPlayers.end(); it++)
 	{

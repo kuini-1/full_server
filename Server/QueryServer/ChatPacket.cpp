@@ -420,7 +420,7 @@ void CChatServerSession::RecvGuildFunctionAddReq(CNtlPacket * pPacket, CQuerySer
 				pGuildData->dwGuildReputation = UnsignedSafeDecrease<DWORD>(pGuildData->dwGuildReputation, Dbo_GetGuildFunctionInfo(static_cast<eDBO_GUILD_FUNCTION>(req->byFunction))->dwRequiredPoint);
 				pGuildData->qwGuildFunctionFlag = req->qwGuildFunctionFlag;
 
-				GetCharDB.Execute("UPDATE guilds SET GuildReputation=%u, FunctionFlag=%I64u WHERE GuildID=%u", pGuildData->dwGuildReputation, pGuildData->qwGuildFunctionFlag, req->guildId);
+				GetCharDB.Execute("UPDATE guilds SET GuildReputation=%u, FunctionFlag=%zu WHERE GuildID=%u", pGuildData->dwGuildReputation, pGuildData->qwGuildFunctionFlag, req->guildId);
 
 				if (req->dwZenny > 0)
 				{
@@ -598,7 +598,7 @@ void CChatServerSession::RecvGuildChangeNameRes(CNtlPacket * pPacket, CQueryServ
 		{
 			if (pCache->RemoveItem(req->itemId))
 			{
-				GetCharDB.Execute("DELETE FROM items WHERE id=%I64u", req->itemId);
+				GetCharDB.Execute("DELETE FROM items WHERE id=%zu", req->itemId);
 
 				GetLogDB.Execute("INSERT INTO guild_name_change_log (GuildID,CurrentName,NewName) VALUES (%u,\"%ls\",\"%ls\")", req->guildId, pGuild->wszName, req->wszGuildName);
 
@@ -738,7 +738,7 @@ void CChatServerSession::RecvDojoFunctionAddReq(CNtlPacket * pPacket, CQueryServ
 				pGuildData->dwGuildReputation = UnsignedSafeDecrease<DWORD>(pGuildData->dwGuildReputation, Dbo_GetGuildFunctionInfo(static_cast<eDBO_GUILD_FUNCTION>(req->byFunction))->dwRequiredPoint);
 				pGuildData->qwGuildFunctionFlag = req->qwGuildFunctionFlag;
 
-				GetCharDB.Execute("UPDATE guilds SET GuildReputation=%u, FunctionFlag=%I64u WHERE GuildID=%u", pGuildData->dwGuildReputation, pGuildData->qwGuildFunctionFlag, req->guildId);
+				GetCharDB.Execute("UPDATE guilds SET GuildReputation=%u, FunctionFlag=%zu WHERE GuildID=%u", pGuildData->dwGuildReputation, pGuildData->qwGuildFunctionFlag, req->guildId);
 
 				BYTE byNewDojoLevel = Dbo_GetDojoLevel(req->byFunction);
 				if (byNewDojoLevel > 0)
@@ -941,12 +941,12 @@ void CChatServerSession::RecvAuctionHouseSellReq(CNtlPacket * pPacket, CQuerySer
 					pCache->RemoveItem(req->itemId);
 
 					//unset owner
-					GetCharDB.Execute("UPDATE items SET owner_id=0 WHERE id=%I64u", req->itemId);
+					GetCharDB.Execute("UPDATE items SET owner_id=0 WHERE id=%zu", req->itemId);
 
 					char* ccName = Ntl_WC2MB(req->awchItemName); //server crashes when try to use awchItemname.. So convert from wchar to char.
 
 					//add to db
-					GetCharDB.Execute("INSERT INTO auctionhouse (id,CharID,TabType,ItemName,Seller,Price,ItemID,TimeStart,TimeEnd,ItemLevel,NeedClass,ItemType) VALUES (%I64u, %u, %u,\"%s\",\"%ls\", %u, %I64u, %I64u, %u, %u, %u, %u)",
+					GetCharDB.Execute("INSERT INTO auctionhouse (id,CharID,TabType,ItemName,Seller,Price,ItemID,TimeStart,TimeEnd,ItemLevel,NeedClass,ItemType) VALUES (%zu, %u, %u,\"%s\",\"%ls\", %u, %zu, %zu, %u, %u, %u, %u)",
 						pData->nItem, req->charId, req->byTabType, ccName, pData->awchSeller, req->dwPrice, req->itemId, req->nStartSellTime, req->nEndSellTime, req->byItemLevel, req->dwClassBitFlag, req->byItemType);
 
 					Ntl_CleanUpHeapString(ccName);	//free memory
@@ -1002,13 +1002,13 @@ void CChatServerSession::RecvAuctionHouseSellCancelReq(CNtlPacket * pPacket, CQu
 				GetLocalTime(&ti);
 
 				//enter email to database
-				GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, itemId, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%I64u,'[DBOG]System',%I64u,%I64u,%u,%u,%u,%u,%u,%u,%u)",
+				GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, itemId, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%zu,'[DBOG]System',%zu,%zu,%u,%u,%u,%u,%u,%u,%u)",
 					req->charId, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_ITEM, mailtextsize, req->wchText, req->itemId, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
 
 				//delete & remove from AH & DB
 				delete pData;
 				g_pAH->EraseItem(req->nItem);
-				GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%I64u", req->nItem);
+				GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%zu", req->nItem);
 			}
 			else res->wResultCode = TENKAICHIDAISIJYOU_CANNOT_NOT_EXIST;
 		}
@@ -1044,7 +1044,7 @@ void CChatServerSession::RecvAuctionHouseBuyReq(CNtlPacket * pPacket, CQueryServ
 		{
 			if (sTENKAICHIDAISIJYOU_DATA* pData = g_pAH->GetItem(req->nItem))
 			{
-				GetLogDB.Execute("INSERT INTO auctionhouse_log (Seller,Buyer,Price,ItemTblidx,ItemID) VALUES (%u,%u,%u,%u,%I64u)", res->sellcharId, res->charId, res->dwMoney, pData->itemNo, req->itemId);
+				GetLogDB.Execute("INSERT INTO auctionhouse_log (Seller,Buyer,Price,ItemTblidx,ItemID) VALUES (%u,%u,%u,%u,%zu)", res->sellcharId, res->charId, res->dwMoney, pData->itemNo, req->itemId);
 
 				//insert into log
 
@@ -1058,17 +1058,17 @@ void CChatServerSession::RecvAuctionHouseBuyReq(CNtlPacket * pPacket, CQueryServ
 				int sellTextSize = (int)wcslen(req->wchSellText);
 
 				//enter email to database <buyer>
-				GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, itemId, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%I64u,'[DBOG]System',%I64u,%I64u,%u,%u,%u,%u,%u,%u,%u)",
+				GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, itemId, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%zu,'[DBOG]System',%zu,%zu,%u,%u,%u,%u,%u,%u,%u)",
 					req->charId, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_ITEM, buyTextSize, req->wchBuyText, req->itemId, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
 
 				//enter email to database <seller>
-				GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, Zenny, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%u,'[DBOG]System',%I64u,%I64u,%u,%u,%u,%u,%u,%u,%u)",
+				GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, Zenny, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%u,'[DBOG]System',%zu,%zu,%u,%u,%u,%u,%u,%u,%u)",
 					req->sellcharId, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_ZENNY, sellTextSize, req->wchSellText, req->dwMoney, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
 
 				//delete & remove from AH & DB
 				delete pData;
 				g_pAH->EraseItem(req->nItem);
-				GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%I64u", req->nItem);
+				GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%zu", req->nItem);
 
 				//remove & update zeni from buyer
 				pCache->SetZeni(pCache->GetZeni() - req->dwMoney);
@@ -1146,14 +1146,14 @@ void CChatServerSession::RecvAuctionHousePeriodEndReq(CNtlPacket * pPacket, CQue
 		GetLocalTime(&ti);
 
 		//enter email to database
-		GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, itemId, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%I64u,'[DBOG]System',%I64u,%I64u,%u,%u,%u,%u,%u,%u,%u)",
+		GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, itemId, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%zu,'[DBOG]System',%zu,%zu,%u,%u,%u,%u,%u,%u,%u)",
 			pData->charId, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_ITEM, (int)wcslen(req->wchText), req->wchText, pData->itemId, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
 
 
 		//delete & remove from AH & DB
 		delete pData;
 		g_pAH->EraseItem(req->nItem);
-		GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%I64u", req->nItem);
+		GetCharDB.Execute("DELETE FROM auctionhouse WHERE id=%zu", req->nItem);
 	}
 	else res->wResultCode = TENKAICHIDAISIJYOU_CANNOT_NOT_EXIST;
 
@@ -1196,11 +1196,11 @@ void CChatServerSession::RecvMutePlayerNfy(CNtlPacket * pPacket, CQueryServer * 
 
 
 		//enter log
-		GetLogDB.Execute("INSERT INTO mute_log (CharID,GmAccountID,DurationInMinutes,Reason,muteUntil) values (%u, %u, %u, \"%ls\", %I64u)",
+		GetLogDB.Execute("INSERT INTO mute_log (CharID,GmAccountID,DurationInMinutes,Reason,muteUntil) values (%u, %u, %u, \"%ls\", %zu)",
 			charid, req->accountId, req->dwDurationInMinute, req->wchReason, muteDuration);
 
 		//enter mail
-		GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u, \"%ls\", \"%ls\", %I64u,%I64u,%u,%u,%u,%u,%u,%u,%u)",
+		GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u, \"%ls\", \"%ls\", %zu,%zu,%u,%u,%u,%u,%u,%u,%u)",
 			charid, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_BASIC, (int)wcslen(req->wchReason), req->wchReason, req->awchGmCharName, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
 	}
 	else // unmute
@@ -1258,11 +1258,11 @@ void CChatServerSession::RecvHlsSlotMachineExtractReq(CNtlPacket * pPacket, CQue
 					pBrief->tRegTime.year = ti.wYear;
 					pCache->InsertCashItem(pBrief);
 
-					GetAccDB.Execute("INSERT INTO cashshop_storage (ProductId,AccountID,HLSitemTblidx,StackCount,year,month,day,hour,minute,second,millisecond,Buyer,price)VALUES(%I64u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u)",
+					GetAccDB.Execute("INSERT INTO cashshop_storage (ProductId,AccountID,HLSitemTblidx,StackCount,year,month,day,hour,minute,second,millisecond,Buyer,price)VALUES(%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u)",
 						res->aProductId[i], req->accountId, pBrief->HLSitemTblidx, pBrief->byStackCount, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond, ti.wMilliseconds, req->accountId, 1);
 				}
 
-				GetLogDB.Execute("INSERT INTO slot_machine_log (accountid,charid,extractCount,type,coin,currentPoints,newPoints,ProductId1,ProductId2,ProductId3,ProductId4,ProductId5,ProductId6,ProductId7,ProductId8,ProductId9,ProductId10)VALUES(%u,%u,%u,%u,%u,%u,%u,%I64u,%I64u,%I64u,%I64u,%I64u,%I64u,%I64u,%I64u,%I64u,%I64u)",
+				GetLogDB.Execute("INSERT INTO slot_machine_log (accountid,charid,extractCount,type,coin,currentPoints,newPoints,ProductId1,ProductId2,ProductId3,ProductId4,ProductId5,ProductId6,ProductId7,ProductId8,ProductId9,ProductId10)VALUES(%u,%u,%u,%u,%u,%u,%u,%zu,%zu,%zu,%zu,%zu,%zu,%zu,%zu,%zu,%zu)",
 					req->accountId, req->charId, req->byExtractCount, req->byHlsMachineType, req->wCoin, pCache->GetWaguCoin(), pCache->GetWaguCoin() - (DWORD)req->wCoin, res->aProductId[0], res->aProductId[1], res->aProductId[2], res->aProductId[3], res->aProductId[4], res->aProductId[5], res->aProductId[6], res->aProductId[7], res->aProductId[8], res->aProductId[9]);
 
 				pCache->SetWaguCoin(pCache->GetWaguCoin() - (DWORD)req->wCoin);
