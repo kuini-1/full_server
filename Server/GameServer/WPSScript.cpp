@@ -32,7 +32,7 @@ void LuaScript_ErrorHandler_WPS(const char *pError)
 
 	FILE *fp = NULL;
 
-	if (fopen_s(&fp, "WorldPlayScriptLog.txt", "a+") != 0)
+	if (NTL_FOPEN(&fp, "WorldPlayScriptLog.txt", "a+") != 0)
 		return;
 
 	fprintf(fp, pError);

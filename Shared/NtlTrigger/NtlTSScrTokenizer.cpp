@@ -120,7 +120,7 @@ bool CNtlTSScrTokenizer::Load( const std::string& strFileName, const char* pBuff
 
 		// 해당 파일을 연다
 		FILE *pFile;
-		if ( 0 != fopen_s( &pFile, strFileName.c_str(), "rb" ) )
+		if ( 0 != NTL_FOPEN( &pFile, strFileName.c_str(), "rb" ) )
 		{
 			printf( "Can not open the file. Info[%s]. [%s]", strFileName.c_str(), TS_CODE_TRACE() );
 			return false;

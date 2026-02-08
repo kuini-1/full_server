@@ -6,11 +6,11 @@
 #include <strings.h>
 #define _ASSERT(x) assert(x)
 #define stricmp strcasecmp
-static inline int navi_fopen_s(FILE** pFile, const char* path, const char* mode) {
+static inline int navi_NTL_FOPEN(FILE** pFile, const char* path, const char* mode) {
 	*pFile = fopen(path, mode);
 	return *pFile ? 0 : 1;
 }
-#define fopen_s navi_fopen_s
+#define NTL_FOPEN navi_NTL_FOPEN
 #endif
 
 
@@ -162,7 +162,7 @@ bool CNtlNaviWorldOutDoorInfo::Import( const char* pPathName )
 	strPathName += NAVI_WORLD_NAME;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "rb" );
 
 	if ( pFile )
 	{
@@ -241,7 +241,7 @@ bool CNtlNaviWorldOutDoorInfo::Export( const char* pPathName )
 	strPathName += NAVI_WORLD_NAME;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "wb" );
 
 	if ( pFile )
 	{
@@ -319,7 +319,7 @@ bool CNtlNaviWorldInDoorInfo::Import( const char* pPathName )
 	strPathName += NAVI_WORLD_NAME;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "rb" );
 
 	if ( pFile )
 	{
@@ -392,7 +392,7 @@ bool CNtlNaviWorldInDoorInfo::Export( const char* pPathName )
 	strPathName += NAVI_WORLD_NAME;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "wb" );
 
 	if ( pFile )
 	{
@@ -583,7 +583,7 @@ bool CNtlNaviGroupOutDoorInfo::Import( const char* pPathName )
 	strPathName += buf;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "rb" );
 
 	if ( pFile )
 	{
@@ -699,7 +699,7 @@ bool CNtlNaviGroupOutDoorInfo::Export( const char* pPathName )
 	strPathName += buf;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "wb" );
 
 	if ( pFile )
 	{
@@ -880,7 +880,7 @@ bool CNtlNaviGroupInDoorInfo::Import( const char* pPathName )
 	strPathName += buf;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "rb" );
 
 	if ( pFile )
 	{
@@ -981,7 +981,7 @@ bool CNtlNaviGroupInDoorInfo::Export( const char* pPathName )
 	strPathName += buf;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "wb" );
 
 	if ( pFile )
 	{
@@ -1102,7 +1102,7 @@ bool CNtlNaviPropOutDoorInfo::Import( const char* pPathName )
 	strPathName += buf;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "rb" );
 
 	if ( pFile )
 	{
@@ -1147,7 +1147,7 @@ bool CNtlNaviPropOutDoorInfo::Export( const char* pPathName )
 	strPathName += buf;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "wb" );
 
 	if ( pFile )
 	{
@@ -1257,7 +1257,7 @@ bool CNtlNaviPropInDoorInfo::Import( const char* pPathName )
 	strPathName += buf;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "rb" );
 
 	if ( pFile )
 	{
@@ -1339,7 +1339,7 @@ bool CNtlNaviPropInDoorInfo::Export( const char* pPathName )
 	strPathName += buf;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPathName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strPathName.c_str(), "wb" );
 
 	if ( pFile )
 	{

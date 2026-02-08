@@ -334,7 +334,7 @@ int	CNtlProfiler::OpenProfiler(const char * lpszFileName)
 		return NTL_ERR_SYS_PROFILE_INITIALIZE_FAIL;
 	}
 
-	int rc = fopen_s( &m_file, lpszFileName, "w" );
+	int rc = NTL_FOPEN( &m_file, lpszFileName, "w" );
 	if( NTL_SUCCESS != rc )
 	{
 		return rc;

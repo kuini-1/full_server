@@ -63,7 +63,7 @@ void CDboTSEMSearchQuest::Clear( void )
 bool CDboTSEMSearchQuest::Load( const std::string& strFileName )
 {
 	FILE* pFile = NULL;
-	fopen_s( &pFile, strFileName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strFileName.c_str(), "rb" );
 
 	if ( NULL == pFile )
 	{
@@ -201,7 +201,7 @@ bool CDboTSEMSearchQuest::Load( const char* pData, int nDataSize )
 bool CDboTSEMSearchQuest::Save( const std::string& strFileName )
 {
 	FILE* pFile = NULL;
-	fopen_s( &pFile, strFileName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strFileName.c_str(), "wb" );
 
 	if ( NULL == pFile )
 	{

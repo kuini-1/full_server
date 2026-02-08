@@ -29,7 +29,7 @@ void LuaScript_ErrorHandler_SP(const char *pError)
 
 	FILE *fp = NULL;
 
-	if (fopen_s(&fp, "PlayScriptLog.txt", "a+") != 0)
+	if (NTL_FOPEN(&fp, "PlayScriptLog.txt", "a+") != 0)
 		return;
 
 	fprintf(fp, pError);

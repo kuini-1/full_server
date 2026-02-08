@@ -32,7 +32,7 @@ void LuaScript_ErrorHandler_TQS(const char *pError)
 
 	FILE *fp = NULL;
 
-	if (fopen_s(&fp, "TimeQuestScriptLog.txt", "a+") != 0)
+	if (NTL_FOPEN(&fp, "TimeQuestScriptLog.txt", "a+") != 0)
 		return;
 
 	fprintf(fp, pError);

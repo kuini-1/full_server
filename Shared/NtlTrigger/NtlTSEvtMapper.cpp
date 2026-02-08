@@ -30,7 +30,7 @@ void CNtlTSEvtMapper::Clear( void )
 bool CNtlTSEvtMapper::Load( const std::string& strFileName )
 {
 	FILE* pFile = NULL;
-	fopen_s( &pFile, strFileName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strFileName.c_str(), "rb" );
 
 	if ( NULL == pFile )
 	{
@@ -202,7 +202,7 @@ bool CNtlTSEvtMapper::Load( const char* pData, int nDataSize )
 bool CNtlTSEvtMapper::Save( const std::string& strFileName )
 {
 	FILE* pFile = NULL;
-	fopen_s( &pFile, strFileName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strFileName.c_str(), "wb" );
 
 	if ( NULL == pFile )
 	{

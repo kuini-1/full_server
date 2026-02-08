@@ -67,7 +67,7 @@ void CDboTSEMColRgn::Clear( void )
 bool CDboTSEMColRgn::Load( const std::string& strFileName )
 {
 	FILE* pFile = NULL;
-	fopen_s( &pFile, strFileName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strFileName.c_str(), "rb" );
 
 	if ( NULL == pFile )
 	{
@@ -205,7 +205,7 @@ bool CDboTSEMColRgn::Load( const char* pData, int nDataSize )
 bool CDboTSEMColRgn::Save( const std::string& strFileName )
 {
 	FILE* pFile = NULL;
-	fopen_s( &pFile, strFileName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strFileName.c_str(), "wb" );
 
 	if ( NULL == pFile )
 	{

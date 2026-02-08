@@ -19,7 +19,7 @@ sFILE_CHUNK_INFO LoadFileChunk( const char* pFileName )
 
 	sFILE_CHUNK_INFO sFileChunkInfo( 0, NULL );
 
-	fopen_s( &pFile, pFileName, "rb" );
+	NTL_FOPEN( &pFile, pFileName, "rb" );
 
 	if ( NULL == pFile )
 	{

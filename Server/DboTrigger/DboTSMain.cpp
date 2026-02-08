@@ -293,7 +293,7 @@ bool CDboTSMain::LoadTSCryptoData( std::string strFile, mapdef_TLIST& defTList )
 
 	// ???? ???
 	FILE* pFile;
-	fopen_s( &pFile, strFile.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strFile.c_str(), "rb" );
 	if(NULL == pFile)
 	{
 		return false;
@@ -384,7 +384,7 @@ bool CDboTSMain::LoadTSCryptoData_UnZip( std::string strFile, CNtlUnzip* pclUnzi
 
 	// ???? ???
 	FILE* pFile;
-	fopen_s( &pFile, strFile.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strFile.c_str(), "rb" );
 	if(NULL == pFile)
 	{
 		return false;

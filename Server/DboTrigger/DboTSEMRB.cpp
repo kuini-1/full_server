@@ -77,7 +77,7 @@ const CNtlTSEvtMapper::vecdef_TID_LIST* CDboTSEMRB::FindTSList( unsigned int uiI
 bool CDboTSEMRB::Load( const std::string& strFileName )
 {
 	FILE* pFile = NULL;
-	fopen_s( &pFile, strFileName.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strFileName.c_str(), "rb" );
 
 	if ( NULL == pFile )
 	{
@@ -207,7 +207,7 @@ bool CDboTSEMRB::Load( const char* pData, int nDataSize )
 bool CDboTSEMRB::Save( const std::string& strFileName )
 {
 	FILE* pFile = NULL;
-	fopen_s( &pFile, strFileName.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strFileName.c_str(), "wb" );
 
 	if ( NULL == pFile )
 	{

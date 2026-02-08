@@ -31,7 +31,7 @@ void LuaScript_ErrorHandler_AI(const char *pError)
 
 	FILE *fp = NULL;
 
-	if (fopen_s(&fp, "AiScriptLog.txt", "a+") != 0)
+	if (NTL_FOPEN(&fp, "AiScriptLog.txt", "a+") != 0)
 		return;
 
 	fprintf(fp, pError);

@@ -126,7 +126,7 @@ bool CNtlTSScrSaver::BuildObjectInfoTree( CNtlTSScrObject* pRootObj, mapdef_ObjI
 bool CNtlTSScrSaver::WriteToFile( const std::string& strScriptName )
 {
 	FILE* pFile;
-	if ( 0 != fopen_s( &pFile, strScriptName.c_str(), "wb" ) )
+	if ( 0 != NTL_FOPEN( &pFile, strScriptName.c_str(), "wb" ) )
 	{
 		printf( "Can not open the file. [%s]. [%s]", strScriptName.c_str(), TS_CODE_TRACE() );
 		return false;
