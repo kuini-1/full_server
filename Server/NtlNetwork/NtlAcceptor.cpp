@@ -4,17 +4,18 @@
 //
 //	Begin		:	2005-12-13
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
-//	Desc		:	Network 접속을 받아들이는 Acceptor 클래스
+//	Desc		:	Network ?????? ??????? Acceptor ?????
 //
 //***********************************************************************************
 
 #include "stdafx.h"
 #include "NtlAcceptor.h"
 
+#include <algorithm>
 #include "NtlSession.h"
 #include "NtlSessionList.h"
 #include "NtlSessionFactory.h"
@@ -35,7 +36,7 @@ const unsigned int ACCEPT_RESERVE_CHECK_TIME = 5000;
 
 
 //---------------------------------------------------------------------------------------
-// Acceptor Running class ( Network 클래스 내부용 )
+// Acceptor Running class ( Network ????? ????? )
 //---------------------------------------------------------------------------------------
 class CAcceptorThread : public CNtlRunObject
 {
@@ -462,7 +463,7 @@ int CNtlAcceptor::ReserveAccept(int nReserveCount)
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-// Accept 하려는 개수와 Accept 가능 개수를 조사해 가능한 Accept개수를 반환한다 
+// Accept ????? ?????? Accept ???? ?????? ?????? ?????? Accept?????? ?????? 
 //-----------------------------------------------------------------------------------
 int CNtlAcceptor::GetReserveAcceptCount()
 {
@@ -474,7 +475,7 @@ int CNtlAcceptor::GetReserveAcceptCount()
 		int nAcceptDiff = m_nPostAcceptCount - m_nAcceptingCount;
 		int nAvailableAccept = m_nMaxAcceptCount - ( m_nAcceptingCount + m_nAcceptedCount );
 
-		return min( nAvailableAccept, nAcceptDiff );
+		return (int)(std::min)( (int)nAvailableAccept, (int)nAcceptDiff );
 	}
 
 	return 0;

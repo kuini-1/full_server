@@ -300,12 +300,6 @@ typedef char TCHAR;
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(x) ((void)(x))
 #endif
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#endif
-#ifndef max
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#endif
 #ifndef TEXT
 #define TEXT(x) x
 #endif
