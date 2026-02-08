@@ -60,6 +60,16 @@ typedef unsigned __int64 ntl_uint64;
 #include <cstdlib>
 #include <sys/time.h>
 
+/* Time/CRT compatibility: __time32_t, errno_t, _localtime32_s */
+typedef time_t __time32_t;
+#ifndef _ERRNO_T_DEFINED
+#define _ERRNO_T_DEFINED
+typedef int errno_t;
+#endif
+static inline int _localtime32_s(struct tm* _tm, const __time32_t* _t) {
+	return localtime_r(_t, _tm) ? 0 : (errno ? errno : -1);
+}
+
 #ifndef _MAX_DIR
 #define _MAX_DIR 256
 #endif
