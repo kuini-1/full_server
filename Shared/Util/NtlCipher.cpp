@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "CDes.h"
 #include "TwofishCipher.h"
 #include "AESCipher.h"

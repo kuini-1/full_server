@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "NtlFileSerializer.h"
 #include "NtlStringHandler.h"
 #include "NtlCipher.h"

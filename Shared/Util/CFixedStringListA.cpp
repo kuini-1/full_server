@@ -9,7 +9,7 @@
 // Header Table
 //-----------------------------------------------------------------------------
 
-#include "StdAfx.h"
+#include "stdafx.h"
 
 #include "VersionLog.h"
 
