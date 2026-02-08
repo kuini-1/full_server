@@ -131,6 +131,12 @@ add_library(NtlTrigger STATIC ${_dbo_ntltrigger_src})
 target_link_libraries(NtlTrigger PUBLIC dbo_includes)
 
 dbo_collect_sources(_dbo_ntlxmlloader_src "${CMAKE_CURRENT_SOURCE_DIR}/Shared/NtlXMLLoader")
+# msxml2_i.c and xmlparser_i.c are MIDL-generated Windows RPC/COM interface stubs;
+# NtlXMLDoc has Linux stubs that don't use MSXML.
+if(NOT WIN32)
+  list(FILTER _dbo_ntlxmlloader_src EXCLUDE REGEX ".*[/\\\\]msxml2_i\\.c$")
+  list(FILTER _dbo_ntlxmlloader_src EXCLUDE REGEX ".*[/\\\\]xmlparser_i\\.c$")
+endif()
 add_library(NtlXMLLoader STATIC ${_dbo_ntlxmlloader_src})
 target_link_libraries(NtlXMLLoader PUBLIC dbo_includes)
 
