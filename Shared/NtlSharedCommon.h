@@ -120,6 +120,7 @@ typedef unsigned char* LPBYTE;
 typedef char CHAR;
 typedef int INT;
 typedef void VOID;
+typedef long LONG;
 
 // Wide char and 64-bit types (MSVC uses __int64; use standard types on Linux)
 typedef wchar_t WCHAR;
@@ -127,6 +128,8 @@ typedef wchar_t WCHAR;
 typedef long long __int64;
 #endif
 typedef unsigned long long ntl_uint64;
+typedef unsigned long long QWORD;
+typedef QWORD DWORDLONG;
 
 /* SYSTEMTIME / GetLocalTime: Win32 API; on Linux use time + localtime_r */
 typedef struct _SYSTEMTIME {

@@ -14,10 +14,12 @@
 
 #pragma once
 
+#if !defined(_WIN32)
+#include "../../Shared/NtlSharedCommon.h"
+#endif
 #include "NtlPdh.h"
 
 #if !defined(_WIN32)
-#include "../../Shared/NtlSharedCommon.h"
 typedef struct _SYSTEM_INFO { int dummy; } SYSTEM_INFO;
 typedef struct _MEMORYSTATUSEX
 {
@@ -31,7 +33,6 @@ typedef struct _MEMORYSTATUSEX
 	QWORD ullAvailVirtual;
 	QWORD ullAvailExtendedVirtual;
 } MEMORYSTATUSEX;
-typedef QWORD DWORDLONG;
 #endif
 
 

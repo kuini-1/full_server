@@ -19,6 +19,8 @@
 #if defined(_WIN32)
 #include <windows.h>
 #include <pdh.h>
+#else
+#include "../../Shared/NtlSharedCommon.h"
 #endif
 
 class CNtlPdh
