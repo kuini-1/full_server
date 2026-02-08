@@ -63,6 +63,9 @@
 #define _stricmp strcasecmp
 #define NTL_STRICMP(s1, s2) strcasecmp((s1), (s2))
 
+/* fprintf_s: same signature as fprintf on POSIX */
+#define fprintf_s fprintf
+
 #else
 
 #include <string.h>

@@ -1,6 +1,8 @@
 #ifndef _NTL_TSSCRSAVER_H_
 #define _NTL_TSSCRSAVER_H_
 
+#include <list>
+#include <map>
 
 #include "NtlTSScrProperty.h"
 
