@@ -38,6 +38,10 @@ typedef unsigned __int64 ntl_uint64;
 
 #else
 // Linux / POSIX: do not include Windows headers.
+/* MSVC __unaligned pointer modifier: no-op on Linux (pointers are naturally unaligned-safe in this use) */
+#ifndef __unaligned
+#define __unaligned
+#endif
 #include "Util/NtlPortable.h"
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -137,6 +141,10 @@ typedef void VOID;
 typedef long LONG;
 #ifndef ULONG
 typedef unsigned long ULONG;
+#endif
+/* Windows PtrToUlong: convert pointer to ULONG (e.g. for offsetof-style member offset) */
+#ifndef PtrToUlong
+#define PtrToUlong(ptr) ((ULONG)(uintptr_t)(ptr))
 #endif
 
 // Wide char and fixed-width types (MSVC __int8/16/32/64; use standard types on Linux)

@@ -1,5 +1,9 @@
 #pragma once
 
+#if !defined(_WIN32) && !defined(__unaligned)
+#define __unaligned
+#endif
+
 enum eATTRIBUTE_TO_UPDATE
 {
 	ATTRIBUTE_TO_UPDATE_STR_BASE,
