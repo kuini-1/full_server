@@ -51,7 +51,7 @@ public:
 
 public:
 
-	int				GetBufSize() { return SERVER_BUFSIZE_LOG; }
+	int				GetBufSize() noexcept { return SERVER_BUFSIZE_LOG; }
 
 public:
 

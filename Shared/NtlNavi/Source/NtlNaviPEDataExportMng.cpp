@@ -4,6 +4,10 @@
 #include "NtlNaviUtility.h"
 #include "NtlNaviResMng.h"
 #include "NtlNaviWEWorld.h"
+#if !defined(_WIN32)
+#include <dirent.h>
+#include <sys/stat.h>
+#endif
 
 
 CNtlNaviPEDataExportMng::CNtlNaviPEDataExportMng( void )
@@ -20,7 +24,7 @@ bool CNtlNaviPEDataExportMng::Create( void )
 {
 	m_pNaviResMng = new CNtlNaviResMng;
 
-	// Export Manager에서 
+	// Export Manager???? 
 	if ( !m_pNaviResMng->Load( PE_MODEL_DATA_FOLDER ) )
 	{
 		CNtlNaviLog::GetInstance()->Log( "[EXPORT] Creating path engine export manager failed." );
@@ -73,13 +77,13 @@ bool CNtlNaviPEDataExportMng::UpdateToolData( void )
 }
 
 /**
-* \brief 현재 PEDataExport Manager에 로딩되어 있는 월드의 Resource ID 를 std::list에 출력한다.
-* \remark Resource ID가 하나도 담겨 있지 않다면 로딩되어 있는 월드가 없다는 것이다.
-* \param listOut World의 Resource ID가 출력될 std::list container
+* \brief ???? PEDataExport Manager?? ?????? ??? ?????? Resource ID ?? std::list?? ??????.
+* \remark Resource ID?? ????? ??? ???? ???? ?????? ??? ???? ????? ?????.
+* \param listOut World?? Resource ID?? ???? std::list container
 */
 void CNtlNaviPEDataExportMng::GetListImportedWorldIDList( vecdef_WorldIDList& vecOut )
 {
-	// 월드가 담겨 있는 자료구조를 순회하면서 list에 출력해준다.
+	// ???? ??? ??? ??????? ?????? list?? ????????.
 	mapdef_WE_WORLD_LIST::iterator it = m_defWEWorldList.begin();
 	for ( ; it != m_defWEWorldList.end(); )
 	{
@@ -125,6 +129,7 @@ bool CNtlNaviPEDataExportMng::ImportWorldAll( const char* pRootPath )
 	std::string strRootPath = pRootPath;
 	AttachBackSlash( strRootPath );
 
+#if defined(_WIN32)
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 
@@ -157,6 +162,37 @@ bool CNtlNaviPEDataExportMng::ImportWorldAll( const char* pRootPath )
 	FindClose( hFind );
 
 	return true;
+#else
+	DIR* dir = opendir( strRootPath.c_str() );
+	if ( !dir )
+	{
+		CNtlNaviLog::GetInstance()->Log( "[IMPORT] Can not import world all. [%s]", pRootPath );
+		return false;
+	}
+
+	struct dirent* ent;
+	while ( ( ent = readdir( dir ) ) != NULL )
+	{
+		if ( ent->d_name[0] == '.' )
+			continue;
+
+		std::string fullPath = strRootPath + ent->d_name;
+		struct stat st;
+		if ( stat( fullPath.c_str(), &st ) != 0 )
+			continue;
+		if ( !S_ISDIR( st.st_mode ) )
+			continue;
+
+		if ( !ImportWorld( fullPath.c_str() ) )
+		{
+			closedir( dir );
+			return false;
+		}
+	}
+
+	closedir( dir );
+	return true;
+#endif
 }
 
 bool CNtlNaviPEDataExportMng::ExportWorldList( const char* pRootPath, mapdef_ExportList& list )
@@ -165,7 +201,7 @@ bool CNtlNaviPEDataExportMng::ExportWorldList( const char* pRootPath, mapdef_Exp
 	std::string strRootPath = pRootPath;
 	AttachBackSlash( strRootPath );
 
-	// 익스포트할 리스트가 없다.
+	// ???????? ??????? ????.
 	if( list.empty() )
 	{
 		CNtlNaviLog::GetInstance()->Log( "[EXPORT] Export list is empty." );
@@ -176,7 +212,7 @@ bool CNtlNaviPEDataExportMng::ExportWorldList( const char* pRootPath, mapdef_Exp
 	char szBuffer[1024];
 	std::string strWorldPath;
 
-	for each( std::pair< unsigned int, vecdef_GroupIDList > pair in list )
+	for ( auto& pair : list )
 	{
 		mapdef_WE_WORLD_LIST::iterator it = m_defWEWorldList.find( pair.first );
 		if( it != m_defWEWorldList.end() )
