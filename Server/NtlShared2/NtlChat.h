@@ -57,51 +57,51 @@ enum eDBO_BROADCASTING_MSG_TYPE
 	DBO_BROADCASTING_MSG_TYPE_WAGUWAGU_1ST,
 };
 
+struct sMSG_ITEM_UPGRADE
+{
+	WCHAR		wszName[NTL_MAX_SIZE_CHAR_NAME + 1];
+	TBLIDX		tblidx;
+	BYTE		byGrade;
+};
+struct sMSG_ITEM_MIX
+{
+	WCHAR wszName[NTL_MAX_SIZE_CHAR_NAME + 1];
+	TBLIDX tblidx;
+};
+struct sMSG_TMQ_RECORD
+{
+	TBLIDX tblidx;
+	BYTE byDifficulty;
+	DWORD dwClearTime;
+	BYTE byMemberCount;
+	WCHAR awszMember[5][NTL_MAX_SIZE_CHAR_NAME + 1];
+	bool bIsBestRecord;
+};
+struct sMSG_BUDOKAI_RECORD
+{
+	WORD wSeason;
+	BYTE byRank;
+	BYTE byBudokaiType;
+	BYTE byMatchType;
+	BYTE byMemberCount;
+	WCHAR awszMember[5][NTL_MAX_SIZE_CHAR_NAME + 1];
+};
+struct sMSG_WAGUWAGU_1ST
+{
+	WCHAR wszName[NTL_MAX_SIZE_CHAR_NAME + 1];
+	WCHAR wszItemName[20 + 1];
+};
+struct sMSG_FINISH_CCBD_LAST_STAGE
+{
+	BYTE byStage;
+	BYTE byMemberCount;
+	WCHAR awszMember[5][NTL_MAX_SIZE_CHAR_NAME + 1];
+};
+
 struct sMSG_BROADCAST_DATA
 {
 	union
 	{
-		struct sMSG_ITEM_UPGRADE
-		{
-			WCHAR		wszName[NTL_MAX_SIZE_CHAR_NAME + 1];
-			TBLIDX		tblidx;
-			BYTE		byGrade;
-		};
-		struct sMSG_ITEM_MIX
-		{
-			WCHAR wszName[NTL_MAX_SIZE_CHAR_NAME + 1];
-			TBLIDX tblidx;
-		};
-		struct sMSG_TMQ_RECORD
-		{
-			TBLIDX tblidx;
-			BYTE byDifficulty;
-			DWORD dwClearTime;
-			BYTE byMemberCount;
-			WCHAR awszMember[5][NTL_MAX_SIZE_CHAR_NAME + 1];
-			bool bIsBestRecord;
-		};
-		struct sMSG_BUDOKAI_RECORD
-		{
-			WORD wSeason;
-			BYTE byRank;
-			BYTE byBudokaiType;
-			BYTE byMatchType;
-			BYTE byMemberCount;
-			WCHAR awszMember[5][NTL_MAX_SIZE_CHAR_NAME + 1];
-		};
-		struct sMSG_WAGUWAGU_1ST
-		{
-			WCHAR wszName[NTL_MAX_SIZE_CHAR_NAME + 1];
-			WCHAR wszItemName[20 + 1];
-		};
-		struct sMSG_FINISH_CCBD_LAST_STAGE
-		{
-			BYTE byStage;
-			BYTE byMemberCount;
-			WCHAR awszMember[5][NTL_MAX_SIZE_CHAR_NAME + 1];
-		};
-
 		sMSG_ITEM_UPGRADE sItemUpgrade;
 		sMSG_ITEM_MIX sItemMix;
 		sMSG_TMQ_RECORD sTmqRecord;

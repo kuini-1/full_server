@@ -71,6 +71,9 @@ struct sEVENT_PC_NAME
 	WCHAR			awchName[NTL_MAX_SIZE_CHAR_NAME + 1];
 };
 
+struct sEVENT_NORMAL { };
+struct sEVENT_MOBKILL_COUNT { GROUPID spawnGroupId; WORD wMaxKillCount; };
+struct sEVENT_SCRIPTEVENT_COUNT { TBLIDX eventId; WORD wMaxCount; };
 
 struct sSERVERSCRIPT_EVENTSTATUS_INFO
 {
@@ -81,26 +84,9 @@ struct sSERVERSCRIPT_EVENTSTATUS_INFO
   
 	union
 	{
-		struct sNORMAL
-		{
-		};
-
-		struct sMOBKILL_COUNT
-		{
-			GROUPID spawnGroupId;
-			WORD wMaxKillCount;
-		};
-
-		struct sSCRIPTEVENT_COUNT
-		{
-			TBLIDX eventId;
-			WORD wMaxCount;
-		};
-
-		sNORMAL				sNormal;
-		sMOBKILL_COUNT		sMobKillCount;
-		sSCRIPTEVENT_COUNT	sScriptEventCount;
-
+		sEVENT_NORMAL				sNormal;
+		sEVENT_MOBKILL_COUNT		sMobKillCount;
+		sEVENT_SCRIPTEVENT_COUNT	sScriptEventCount;
 	};
 };
 
@@ -123,27 +109,10 @@ struct sSVRSCR_EVENTSTATUS_DATA
   
 	union
 	{
-		struct sNORMAL
-		{
-		};
-
-		struct sMOBKILL_COUNT
-		{
-			GROUPID spawnGroupId;
-			WORD wMaxKillCount;
-		};
-
-		struct sSCRIPTEVENT_COUNT
-		{
-			TBLIDX eventId;
-			WORD wMaxCount;
-		};
-
-		sNORMAL				sNormal;
-		sMOBKILL_COUNT		sMobKillCount;
-		sSCRIPTEVENT_COUNT	sScriptEventCount;
+		sEVENT_NORMAL				sNormal;
+		sEVENT_MOBKILL_COUNT		sMobKillCount;
+		sEVENT_SCRIPTEVENT_COUNT	sScriptEventCount;
 	};
-
 };
 
 

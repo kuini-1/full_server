@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-05-12
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -26,69 +26,69 @@ enum eOPCODE_GN
 {
 	GN_OPCODE_BEGIN = 36000,
 
-	GN_GAME_DATA_RES = GN_OPCODE_BEGIN, // ÇöÀç±îÁöÀÇ °ÔÀÓ µ¥ÀÌÅ¸ Àü¼Û
-	GN_CHAR_SPAWN_REQ, // ¿ÀºêÁ§Æ® »ý¼º ¿äÃ» : ex) µ¿Àû Ä³¸¯ÅÍµî °ÔÀÓ¼­¹öÀÇ ÇÊ¿äÇÑ Ä³¸¯ÅÍ »ý¼º ¿äÃ»
+	GN_GAME_DATA_RES = GN_OPCODE_BEGIN, // ????????? ???? ????? ????
+	GN_CHAR_SPAWN_REQ, // ??????? ???? ??û : ex) ???? ?????? ????????? ????? ????? ???? ??û
 
-	GN_WORLD_CREATED_NFY, // ¿ùµå »ý¼º ¾Ë¸²
-	GN_WORLD_DESTROYED_NFY, // ¿ùµå »èÁ¦ ¾Ë¸²
-	GN_OBJECT_CREATED_NFY, // ¿ÀºêÁ§Æ® »ý¼º ¾Ë¸²
-	GN_OBJECT_DESTROYED_NFY, // ¿ÀºêÁ§Æ® »èÁ¦ ¾Ë¸²
-	GN_OBJECT_WORLD_ENTERED, // ¿ÀºêÁ§Æ® ¿ùµå ÁøÀÔ ¾Ë¸²
-	GN_OBJECT_WORLD_LEAVED, // ¿ÀºêÁ§Æ® ¿ùµå »èÁ¦ ¾Ë¸²
+	GN_WORLD_CREATED_NFY, // ???? ???? ???
+	GN_WORLD_DESTROYED_NFY, // ???? ???? ???
+	GN_OBJECT_CREATED_NFY, // ??????? ???? ???
+	GN_OBJECT_DESTROYED_NFY, // ??????? ???? ???
+	GN_OBJECT_WORLD_ENTERED, // ??????? ???? ???? ???
+	GN_OBJECT_WORLD_LEAVED, // ??????? ???? ???? ???
 
-	GN_PREPARE_ENTER_GAME,	// ¿ÀºêÁ§Æ® »ý¼ºÀ» ¿äÃ»ÇÏ¶ó°í Áö½Ã
-	GN_ENTER_GAME_RES, // ¿ÀºêÁ§Æ® ÁøÀÔ ÀÀ´ä
-	GN_LEAVE_GAME_RES, // °ÔÀÓ ÁøÀÔ ¿äÃ»
-	GN_ENTER_WORLD_RES, // ¿ÀºêÁ§Æ® ¿ùµå ÁøÀÔ ÀÀ´ä
-	GN_LEAVE_WORLD_RES, // ¿ÀºêÁ§Æ® ¿ùµå ÁøÀÔ ¿äÃ»
+	GN_PREPARE_ENTER_GAME,	// ??????? ?????? ??û???? ????
+	GN_ENTER_GAME_RES, // ??????? ???? ????
+	GN_LEAVE_GAME_RES, // ???? ???? ??û
+	GN_ENTER_WORLD_RES, // ??????? ???? ???? ????
+	GN_LEAVE_WORLD_RES, // ??????? ???? ???? ??û
 
-	GN_CHAR_MOVE, // ÀÌµ¿
-	GN_CHAR_DEST_MOVE, // ¸ñÀûÁöÀÌµ¿
-	GN_CHAR_CHANGE_HEADING, // ¹æÇâ È¸Àü
-	GN_CHAR_FOLLOW_MOVE, // µû¶ó°¡±â
-	GN_CHAR_JUMP, // Á¡ÇÁ
-	GN_CHAR_JUMP_END, // Á¡ÇÁ ³¡
-	GN_CHAR_FIGHTMODE, // °ø°Ý¸ðµå
-	GN_CHAR_MOVE_SYNC, // ÀÌµ¿ µ¿±âÈ­ ( PUSHµî¿¡ ÀÇÇÑ ÀÌµ¿ À§Ä¡ º¯°æ¿¡ »ç¿ë )
-	GN_CHAR_CHANGE_DIRECTION_ON_FLOATING, // Ä³¸¯ÅÍ Á¡ÇÁ/falling ¶§ÀÇ ¹Ù¶óº¸´Â ¹æÇâ
+	GN_CHAR_MOVE, // ???
+	GN_CHAR_DEST_MOVE, // ?????????
+	GN_CHAR_CHANGE_HEADING, // ???? ???
+	GN_CHAR_FOLLOW_MOVE, // ??????
+	GN_CHAR_JUMP, // ????
+	GN_CHAR_JUMP_END, // ???? ??
+	GN_CHAR_FIGHTMODE, // ??????
+	GN_CHAR_MOVE_SYNC, // ??? ????? ( PUSH?? ???? ??? ??? ???? ??? )
+	GN_CHAR_CHANGE_DIRECTION_ON_FLOATING, // ????? ????/falling ???? ????? ????
 
-	GN_CHAR_ACTION_ATTACK, // ¾×¼Ç °á°ú
-	GN_CHAR_ACTION_SKILL, // ½ºÅ³ °á°ú
-	GN_CHAR_ACTION_ITEM, // ¾ÆÀÌÅÛ »ç¿ë °á°ú
+	GN_CHAR_ACTION_ATTACK, // ??? ???
+	GN_CHAR_ACTION_SKILL, // ??? ???
+	GN_CHAR_ACTION_ITEM, // ?????? ??? ???
 	GN_CHAR_ACTION_HTB, // HTB
-	GN_CHAR_TARGET_SELECT, // Å¸°Ù ¼³Á¤ ( Game -> NPC )
-	GN_CHAR_TARGET_FACING, // Å¸°Ù ¼³Á¤ ( Game -> NPC )
+	GN_CHAR_TARGET_SELECT, // ??? ???? ( Game -> NPC )
+	GN_CHAR_TARGET_FACING, // ??? ???? ( Game -> NPC )
 	GN_CHAR_TARGET_LOST_NFY,
-	GN_CHAR_KEEP_AGGRO, // µµ¹ß
-	GN_CHAR_CHANGE_AGGRO, // Aggro °­Á¦ Á¶ÀÛ
-	GN_CHAR_ERASE_AGGRO_AROUND_ME, // ÀÚ±â ÁÖÀ§ÀÇ NPC/Mob¿¡¼­ ÀÚ½ÅÀÇ aggro Á¤º¸¸¦ »èÁ¦
-	GN_CHAR_START_ESCORT_REQ, // ¿¡½ºÄÚÆ® ½ÃÀÛ
-	GN_CHAR_STOP_ESCORT_NFY, // ¿¡½ºÄÚÆ® Á¾·á ( Æ÷±âµî¿¡ ÀÇÇØ )
+	GN_CHAR_KEEP_AGGRO, // ????
+	GN_CHAR_CHANGE_AGGRO, // Aggro ???? ????
+	GN_CHAR_ERASE_AGGRO_AROUND_ME, // ??? ?????? NPC/Mob???? ????? aggro ?????? ????
+	GN_CHAR_START_ESCORT_REQ, // ??????? ????
+	GN_CHAR_STOP_ESCORT_NFY, // ??????? ???? ( ????? ???? )
 
-	GN_BUFF_REGISTERED, // ¹öÇÁ »ý¼º
-	GN_BUFF_DROPPED, // ¹öÇÁ ¼Ò¸ê
-	GN_EFFECT_AFFECTED, // DoT, HoT µî
+	GN_BUFF_REGISTERED, // ???? ????
+	GN_BUFF_DROPPED, // ???? ???
+	GN_EFFECT_AFFECTED, // DoT, HoT ??
 
-	GN_UPDATE_CHAR_STATE, // ¿ÀºêÁ§Æ® »óÅÂ ¾÷µ¥ÀÌÆ®
-	GN_UPDATE_CHAR_ASPECT_STATE, // ¿ÀºêÁ§Æ® Æ¯¼ö »óÅÂ ¾÷µ¥ÀÌÆ®
-	GN_UPDATE_CHAR_CONDITION, // ¿ÀºêÁ§Æ® 
-	GN_UPDATE_CHAR_LEVEL, // ¿ÀºêÁ§Æ® ·¹º§ ¾÷µ¥ÀÌÆ®
-	GN_UPDATE_CHAR_LP, // LP ¾÷µ¥ÀÌÆ®
-	GN_UPDATE_CHAR_EP, // EP ¾÷µ¥ÀÌÆ®
-	GN_UPDATE_CHAR_LP_EP, // LP/EP ¾÷µ¥ÀÌÆ®
-	GN_UPDATE_CHAR_SPEED, // ½ºÇÇµå ¾÷µ¥ÀÌÆ®
-	GN_UPDATE_CHAR_SCALE, // ¿ÀºêÁ§Æ® scale ¾÷µ¥ÀÌÆ®
+	GN_UPDATE_CHAR_STATE, // ??????? ???? ???????
+	GN_UPDATE_CHAR_ASPECT_STATE, // ??????? ??? ???? ???????
+	GN_UPDATE_CHAR_CONDITION, // ??????? 
+	GN_UPDATE_CHAR_LEVEL, // ??????? ???? ???????
+	GN_UPDATE_CHAR_LP, // LP ???????
+	GN_UPDATE_CHAR_EP, // EP ???????
+	GN_UPDATE_CHAR_LP_EP, // LP/EP ???????
+	GN_UPDATE_CHAR_SPEED, // ????? ???????
+	GN_UPDATE_CHAR_SCALE, // ??????? scale ???????
 
-	GN_SERVER_COMMAND, // ¼­¹ö Ä¿¸Çµå
-	GN_TS_SERVER_EVENT, // TS ¼­¹ö ÀÌº¥Æ®
+	GN_SERVER_COMMAND, // ???? ????
+	GN_TS_SERVER_EVENT, // TS ???? ????
 	GN_TQS_SERVER_EVENT,
 
-	GN_BOT_SKILL_RES, // ½ºÅ³ »ç¿ë [2/12/2008 SGpro]
+	GN_BOT_SKILL_RES, // ??? ??? [2/12/2008 SGpro]
 
 	GN_SKILL_TARGET_LIST_REQ,
-	GN_SKILL_COOL_TIME_STARTED_NFY,			// ½ºÅ³ÀÇ cool timeÀÌ ½ÃÀÛµÇ¾úÀ½À» ¾Ë¸²
-	GN_SKILL_CONFUSE_TARGET_NFY,		// Confuse »óÅÂÀÏ ¶§ÀÇ °ø°Ý ´ë»ó ¾Ë¸²
-	GN_SKILL_TERROR_COURSE_CHANGE_NFY,		// Terror »óÅÂÀÏ ¶§ ¹æÇâ ÀüÈ¯ ¾Ë¸²
+	GN_SKILL_COOL_TIME_STARTED_NFY,			// ????? cool time?? ?????????? ???
+	GN_SKILL_CONFUSE_TARGET_NFY,		// Confuse ?????? ???? ???? ??? ???
+	GN_SKILL_TERROR_COURSE_CHANGE_NFY,		// Terror ?????? ?? ???? ??? ???
 
 	GN_CHAR_TELEPORT_RES, // [8/4/2008 SGpro]
 
@@ -98,15 +98,15 @@ enum eOPCODE_GN
 
 	GN_MONSTER_TRANSFORMED_NFY,
 
-	GN_SCRIPT_ITEM_USE,				// ½ºÅ©¸³ °ü·Ã ¾ÆÀÌÅÛÀ» »ç¿ëÇÔ
+	GN_SCRIPT_ITEM_USE,				// ????? ???? ???????? ?????
 
 	GN_CHANGE_SPS_SCENE_REQ,
 
 	GN_WORLD_ADD_BOT_NFY,
 
-	GN_PET_ATTACK_TARGET_NFY,		// ÆêÀÇ ÀüÅõ Âü¿©
+	GN_PET_ATTACK_TARGET_NFY,		// ???? ???? ????
 
-	GN_CHAR_TARGET_CHANGED_NFY,		// Å¸°Ù º¯°æ ¾Ë¸²
+	GN_CHAR_TARGET_CHANGED_NFY,		// ??? ???? ???
 
 	GN_UPDATE_CHAR_MAX_LP,
 	GN_UPDATE_CHAR_MAX_EP,
@@ -183,27 +183,19 @@ BEGIN_PROTOCOL( GN_PREPARE_ENTER_GAME )
 	};
 END_PROTOCOL()
 //------------------------------------------------------------------
+/* Named union with default ctor so MSVC can default-construct; Linux allows non-trivial members in named unions. */
+union sGN_ENTER_GAME_RES_data
+{
+	struct { sNPC_PROFILE sNpcProfile; sCHARSTATE sNpcState; } npc;
+	struct { sMOB_PROFILE sMobProfile; sCHARSTATE sMobState; } mob;
+	struct { sPET_PROFILE sPetProfile; sCHARSTATE sPetState; } pet;
+	sGN_ENTER_GAME_RES_data() { new (&npc) decltype(npc)(); }
+	~sGN_ENTER_GAME_RES_data() { npc.~decltype(npc)(); }
+};
 BEGIN_PROTOCOL( GN_ENTER_GAME_RES )
 	HOBJECT			handle;
 	BYTE			objType;
-	union
-	{
-		struct 
-		{
-			sNPC_PROFILE	sNpcProfile;
-			sCHARSTATE		sNpcState;
-		};
-		struct
-		{
-			sMOB_PROFILE	sMobProfile;
-			sCHARSTATE		sMobState;
-		};
-		struct
-		{
-			sPET_PROFILE	sPetProfile;
-			sCHARSTATE		sPetState;
-		};
-	};
+	sGN_ENTER_GAME_RES_data	data;
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( GN_LEAVE_GAME_RES )
@@ -309,7 +301,7 @@ BEGIN_PROTOCOL( GN_CHAR_KEEP_AGGRO )
 	HOBJECT				hSubject;
 	HOBJECT				hProvoker;
 	WORD				wAggroValue;
-	eSYSTEM_EFFECT_CODE effectCode; // Ãß°¡ [4/1/2008 SGpro]
+	eSYSTEM_EFFECT_CODE effectCode; // ??? [4/1/2008 SGpro]
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( GN_CHAR_CHANGE_AGGRO )
@@ -331,7 +323,7 @@ BEGIN_PROTOCOL( GN_CHAR_START_ESCORT_REQ )
 	PARTYID				partyID;
 	BYTE				byTriggerType;
 	NTL_TS_T_ID			tid;
-	sTSM_SERIAL			sTSMSerial;		// TSMÀ» Á¢±ÙÇÏ±â À§ÇÑ Å°°ª
+	sTSM_SERIAL			sTSMSerial;		// TSM?? ??????? ???? ???
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( GN_CHAR_STOP_ESCORT_NFY )
@@ -451,21 +443,21 @@ BEGIN_PROTOCOL( GN_CHAR_TELEPORT_RES ) // [8/4/2008 SGpro]
 	WORD			wResultCode;
 	sVECTOR3		vNewLoc;
 	sVECTOR3		vNewDir;
-	// NPCÀÇ BotÀº ´Ù¸¥ World·Î ÀÌµ¿ÇÏÁö ¾Ê´Â´Ù.
-	// ±×·¡¼­ sWORLD_INFO¸¦ Game->Npc·Î º¸³»Áö ¾Ê´Â´Ù[8/5/2008 SGpro]
+	// NPC?? Bot?? ??? World?? ??????? ??´?.
+	// ????? sWORLD_INFO?? Game->Npc?? ?????? ??´?[8/5/2008 SGpro]
 	// sWORLD_INFO				sWorldInfo;
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(GN_WPS_SERVER_EVENT)
 	BYTE			byEvtType;			// eWPS_EVENT_TYPE
-	HOBJECT			hTarget;			// ÃßÈÄ »èÁ¦
+	HOBJECT			hTarget;			// ???? ????
 	BYTE			byObjType;			// eOBJTYPE
 	TBLIDX			targetTblidx;
 	DWORD			eventID;
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(GN_SEND_TQS_EVENT)
-	BYTE			byEventType;		// eSSD_SCRIPT_TYPE : SSD_SCRIPT_TYPE_SPS | SSD_SCRIPT_TYPE_AIS ¸¸ »ç¿ë
+	BYTE			byEventType;		// eSSD_SCRIPT_TYPE : SSD_SCRIPT_TYPE_SPS | SSD_SCRIPT_TYPE_AIS ?? ???
 	WORLDID			worldId;
 	HOBJECT			hTarget;
 	BYTE			byTargetType;
@@ -474,11 +466,11 @@ BEGIN_PROTOCOL(GN_SEND_TQS_EVENT)
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(GN_SEND_WPS_EVENT)
-	BYTE			byEventType;	// eSSD_SCRIPT_TYPE : SSD_SCRIPT_TYPE_SPS | SSD_SCRIPT_TYPE_AIS ¸¸ »ç¿ë
+	BYTE			byEventType;	// eSSD_SCRIPT_TYPE : SSD_SCRIPT_TYPE_SPS | SSD_SCRIPT_TYPE_AIS ?? ???
 	HOBJECT			hTarget;
 	DWORD			eventId;
 
-	// Ãß°¡ Á¤º¸ : ÇÊ¿ä¿¡ µû¶ó »ç¿ë
+	// ??? ???? : ??? ???? ???
 	WORLDID			worldId;
 	TBLIDX			wpsTblidx;
 	BYTE			byTargetType;
