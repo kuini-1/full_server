@@ -1159,7 +1159,7 @@ DWORD sMODELTOOL_CHAR_TBLDAT::GetSkillAnimationSkillCancelTime(ANIMATIONID skill
 //-----------------------------------------------------------------------------------
 DWORD sMODELTOOL_CHAR_TBLDAT::GetNpcAttackDurationTime(BYTE byAttackType)
 {
-	sCHAR_DATA_INFO * pCharAnimData = GetAnim( ITEM_TYPE_UNKNOWN, (ANIMATIONID) ( byAttackType + ATTACK_ANIMATION_START ) ); // �ӽ�
+	sCHAR_DATA_INFO * pCharAnimData = GetAnim( ITEM_TYPE_UNKNOWN, (ANIMATIONID) ( byAttackType + ATTACK_ANIMATION_START ) ); // ???
 	if( NULL == pCharAnimData )
 	{
 		return 0;

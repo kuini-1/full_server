@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-11-30
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -26,9 +26,10 @@
 
 class CThreadKey;
 class CThreadHelper;
+class CNtlThread;
 
 //---------------------------------------------------------------------------------------
-// CNtlRunObject : ¾²·¹µå ·ÎÁ÷ °´Ã¼ Å¬·¡½º
+// CNtlRunObject : ?????? ???? ??ü ?????
 //---------------------------------------------------------------------------------------
 class CNtlRunObject
 {
@@ -44,7 +45,7 @@ public:
 
 public:
 
-	// ¾²·¹µå ÇÁ·Î±×·¥Àº ÀÌ ÇÔ¼ö¸¦ OverrideÇÏ¿© Application LogicÀ» ÀÛ¼º
+	// ?????? ???????? ?? ????? Override??? Application Logic?? ???
 	virtual void			Run() {}
 
 	//
@@ -53,7 +54,7 @@ public:
 
 public:
 
-	// ¾²·¹µå ÀÛ¾÷ Á¾·á ¹× ¾²·¹µå °ü·Ã ¸®¼Ò½º ÇØÁ¦
+	// ?????? ??? ???? ?? ?????? ???? ????? ????
 	void					Terminate();
 
 	//
@@ -62,7 +63,7 @@ public:
 	//
 	void 					SetArg(void * arg) { m_arg = arg; }
 
-	// ¼ÒÀ¯ ¾²·¹µå ¹ÝÈ¯
+	// ???? ?????? ???
 	CNtlThread *			GetThread() const { return m_pOwner; }
 
 	// unconditional wait
@@ -71,10 +72,10 @@ public:
 	// conditional wait
 	int						Wait(unsigned int millisecs);
 
-	// ¼ÒÀ¯ ¾²·¹µå¸¦ Á¾·á
+	// ???? ?????? ????
 	void					Exit();
 
-	// ¼ÒÀ¯ ¾²·¹µåÀÇ ÀÌ¸§À» ¹ÝÈ¯ÇÑ´Ù
+	// ???? ???????? ????? ??????
 	const char *			GetName() const;
 
 	//
@@ -86,7 +87,7 @@ public:
 
 private:
 
-	// ¼ÒÀ¯ ¾²·¹µå
+	// ???? ??????
 	void					SetThread(CNtlThread * pOwner) { m_pOwner = pOwner; }
 
 
@@ -104,7 +105,7 @@ private:
 
 
 //---------------------------------------------------------------------------------------
-// CNtlThread : ¾²·¹µå °´Ã¼ Å¬·¡½º
+// CNtlThread : ?????? ??ü ?????
 //---------------------------------------------------------------------------------------
 class CNtlThread : public CNtlLinkObject
 {
@@ -114,14 +115,14 @@ friend class CNtlThreadFactory;
 
 public:
 
-	// ¾²·¹µå »óÅÂ
+	// ?????? ????
 	enum STATUS
 	{
-		eSTATUS_NOT_RUNNING = 0,	// µ¿ÀÛÇÏÁö ¾Ê´Â »óÅÂ ( ÃÊ±â »óÅÂ )
-		eSTATUS_PREPARING_TO_RUN,	// µ¿ÀÛ ÁØºñ »óÅÂ
-		eSTATUS_RUNNING,			// µ¿ÀÛ »óÅÂ
-		eSTATUS_PAUSED,				// ¸ØÃã »óÅÂ
-		eSTATUS_DEAD,				// Á¾·á »óÅÂ
+		eSTATUS_NOT_RUNNING = 0,	// ???????? ??? ???? ( ??? ???? )
+		eSTATUS_PREPARING_TO_RUN,	// ???? ??? ????
+		eSTATUS_RUNNING,			// ???? ????
+		eSTATUS_PAUSED,				// ???? ????
+		eSTATUS_DEAD,				// ???? ????
 
 		MAX_STATUS,
 	};
@@ -129,7 +130,7 @@ public:
 
 public:
 
-	// AutoDeleteÀÇ °æ¿ì RunObject´Â ¹Ýµå½Ã Heap¿¡ »ý¼ºÇÏ°í Á¾·á½Ã »èÁ¦ÇÒ °Í. 
+	// AutoDelete?? ??? RunObject?? ???? Heap?? ??????? ????? ?????? ??. 
 	CNtlThread(CNtlRunObject * pRunObject, const char * name = "Unknown Thread", bool bAutoDelete = false);
 
 	virtual ~CNtlThread(void);
@@ -144,21 +145,21 @@ private:
 
 public:
 
-	// Thread¸¦ Á¾·áÇÏ±âÀ§ÇØ ¿ÜºÎ¿¡¼­ È£ÃâµÇ¾ß ÇÏ´Â ÇÔ¼ö
+	// Thread?? ??????????? ?????? ????? ??? ???
 	void					Close();
 
 public:
 
-	// Thread Á¾·á
+	// Thread ????
 	void					CleanUp();
 
-	// ½ÇÁ¦ Thread Loop¿¡¼­ È£ÃâµÇ´Â ÇÔ¼ö, ³»ºÎÀûÀ¸·Î RunnableÀÇ runÀ» È£ÃâÇÑ´Ù
+	// ???? Thread Loop???? ????? ???, ?????????? Runnable?? run?? ??????
 	void					Execute();
 
 
 public:
 
-	// ÃÊ±âÈ­
+	// ????
 	void					Init();
 
 	// Get Next Thread ( in Current Linked List )
@@ -170,31 +171,31 @@ public:
 	// unconditional wait
 	int						Wait(unsigned int millisecs);
 
-	// Thread¸¦ Á¾·á½ÃÅ²´Ù
+	// Thread?? ????????
 	void					Exit();
 
-	// È£ÃâÀÚ´Â Thread°¡ Á¾·áµÉ¶§±îÁö ºí¶ôµÈ´Ù
+	// ?????? Thread?? ?????????? ???????
 	void					Join();
 
-	// ¾²·¹µå »ý¼ºµÚ¿¡ ¹Ýµå½Ã È£ÃâÇÏ¿©¾ß µ¿ÀÛÇÑ´Ù. ( ½ÇÁ¦ Thread »ý¼º )
+	// ?????? ??????? ???? ???????? ???????. ( ???? Thread ???? )
 	void					Start();
 
-	// ThreadÀÌ¸§ ¹ÝÈ¯
+	// Thread??? ???
 	const char *			GetName() { return m_strName.c_str(); }
 
-	// Thread¿¡ ¿¬°áµÈ Runnable °´Ã¼ ¹ÝÈ¯
+	// Thread?? ????? Runnable ??ü ???
 	CNtlRunObject *			GetRunObject() { return m_pRunObject; }
 
-	// attribute ¼³Á¤
+	// attribute ????
 	void					SetArg(void *arg) { m_pRunObject->SetArg(arg); }
 
-	// attribute ¹ÝÈ¯
+	// attribute ???
 	void *					GetArg() { return m_pRunObject->GetArg(); }
 
 	//
 	bool					IsAutoDelete() { return m_bAutoDelete; }
 
-	// »óÅÂÃ¼Å©
+	// ????ü?
 	bool					IsStatus(STATUS status) { return status == m_status; }
 
 	//
@@ -209,13 +210,13 @@ public:
 
 
 
-	// ÇØ´çµÇ´Â Thread¿¡ ½Ã±×³ÎÀ» º¸³½´Ù ( static )
+	// ????? Thread?? ?ñ???? ?????? ( static )
 	static void				Notify(CNtlThread * pThread);
 
-	// ÇöÀç Thread¸¦ ¹ÝÈ¯ÇÑ´Ù ( static )
+	// ???? Thread?? ?????? ( static )
 	static CNtlThread *		GetCurrentThread();
 
-	// Main Thread¸¦ ¹ÝÈ¯ÇÑ´Ù
+	// Main Thread?? ??????
 	static CNtlThread *		GetMainThread() { return m_pMainThread; }
 
 	//
@@ -254,12 +255,12 @@ protected:
 
 
 //---------------------------------------------------------------------------------------
-// NtlThreadFactory : ¾²·¹µå »ý¼º ¹× ¼Ò¸ê Ã³¸®¸¦ ´ã´çÇÏ´Â Factory Å¬·¡½º
+// NtlThreadFactory : ?????? ???? ?? ??? ó???? ?????? Factory ?????
 //---------------------------------------------------------------------------------------
 class CNtlThreadFactory
 {
 friend class CNtlThread;
-friend class CThreadHelper;	// Å¬·¡½º ³»ºÎ¿ë
+friend class CThreadHelper;	// ????? ?????
 friend class CNtlRunObject;
 
 public:
@@ -304,7 +305,7 @@ protected:
 
 typedef Loki::SingletonHolder<CNtlThreadFactory, Loki::CreateUsingNew, Loki::DefaultLifetime, Loki::ClassLevelLockable> tThreadFactory;
 
-
+#if defined(_WIN32)
 inline void CNtlRunObject::Wait()
 {
 	m_pOwner->Wait();
@@ -341,6 +342,7 @@ inline const char * CNtlRunObject::GetName() const
 {
 	return m_pOwner->GetName();
 }
+#endif // _WIN32
 
 
 #endif // __NTLTHREAD_H__

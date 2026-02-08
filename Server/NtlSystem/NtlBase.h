@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-05
 //
-//	Copyright	:	�� NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //

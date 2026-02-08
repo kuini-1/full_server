@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-08-03
 //
-//	Copyright	:	�� NTL-Inc Co., Ltd
+//	Copyright	:	NTL-Inc Co., Ltd
 //
 //	Desc		:	
 //

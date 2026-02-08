@@ -1,10 +1,10 @@
 
 #pragma once
 
-// AES chiper algorithm�̴�. (FIPS-197)
-// 128 bit block size  ��ȣȭ �˰�����
-// key size �� 16(128 bit), 24(128 bit), 32(256 bit)�� �� �� �ִ�.
-// key size �� ���� number of rounds�� 10,12,14�� �ȴ�.
+// AES chiper algorithm?̴?. (FIPS-197)
+// 128 bit block size  ??ȣȭ ?˰?????
+// key size ?? 16(128 bit), 24(128 bit), 32(256 bit)?? ?? ?? ?ִ?.
+// key size ?? ???? number of rounds?? 10,12,14?? ?ȴ?.
 
 #ifndef		uint8
 #define		uint8		unsigned char

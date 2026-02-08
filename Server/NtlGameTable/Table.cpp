@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-03-09
 //
-//	Copyright	:	�� NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Desc		:	
 //
@@ -548,8 +548,8 @@ bool CTable::READ_BOOL(BSTR bstr, const WCHAR* pwszFieldName, bool bInvalidlValu
 
 
 //-----------------------------------------------------------------------------------
-//		Purpose	: string �б�
-//		Return	: ���� - true, ���� - false
+//		Purpose	: string ?б?
+//		Return	: ???? - true, ???? - false
 //-----------------------------------------------------------------------------------
 bool CTable::READ_STR(std::string & rDest, BSTR bstr, const char * lpszInvalidValue /*= ""*/)
 {
@@ -584,8 +584,8 @@ bool CTable::READ_STR(std::string & rDest, BSTR bstr, const char * lpszInvalidVa
 
 
 //-----------------------------------------------------------------------------------
-//		Purpose	: string �б�
-//		Return	: ���� - true, ���� - false
+//		Purpose	: string ?б?
+//		Return	: ???? - true, ???? - false
 //-----------------------------------------------------------------------------------
 bool CTable::READ_STR(std::wstring & rDest, BSTR bstr, const WCHAR * lpwszInvalidValue /*= ""*/)
 {
@@ -690,7 +690,7 @@ bool CTable::READ_STRINGW(BSTR bstr, WCHAR* pwszBuffer, DWORD dwBufferLength, co
 }
 
 //-----------------------------------------------------------------------------------
-//		Purpose	: @�� ������ �ȵǴ� ���� ������ Assert
+//		Purpose	: @?? ?????? ?ȵǴ? ???? ?????? Assert
 //		Return	:
 //-----------------------------------------------------------------------------------
 /*void CTable::CheckNegativeInvalid(char* pszFormatString, BSTR bstr)
@@ -704,11 +704,11 @@ bool CTable::READ_STRINGW(BSTR bstr, WCHAR* pwszBuffer, DWORD dwBufferLength, co
 		vsnprintf(szErrorMessage, _countof(szErrorMessage), pszFormatString, args);
 		va_end(args);
 		_ASSERTE( pszFormatString );
-		_ASSERTE( !"@�� ���� �� ���� �ʵ��Դϴ�.");
+		_ASSERTE( !"@?? ???? ?? ???? ?ʵ??Դϴ?.");
 	}
 }*/
 //-----------------------------------------------------------------------------------
-//		Purpose	: @�� ������ �ȵǴ� ���� ������ Assert
+//		Purpose	: @?? ?????? ?ȵǴ? ???? ?????? Assert
 //		Return	:
 //-----------------------------------------------------------------------------------
 void CTable::CheckNegativeInvalid(const wchar_t* pwszFormatString, BSTR bstr)
@@ -726,7 +726,7 @@ void CTable::CheckNegativeInvalid(const wchar_t* pwszFormatString, BSTR bstr)
 
 		::WideCharToMultiByte(::GetACP(), 0, wszErrorMessage, -1, szErrorMessage, _countof(szErrorMessage), NULL, NULL);
 		_ASSERTE( szErrorMessage );*/
-		_ASSERTE( !"@�� ���� �� ���� �ʵ��Դϴ�.");
+		_ASSERTE( !"@?? ???? ?? ???? ?ʵ??Դϴ?.");
 	}
 }
 

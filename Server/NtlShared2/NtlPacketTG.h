@@ -50,17 +50,17 @@ enum eOPCODE_TG
 	TG_BUDOKAI_TOURNAMENT_TEAM_LIST_REQ,
 	TG_BUDOKAI_TOURNAMENT_TEAM_INFO_REQ,
 
-	TG_BUDOKAI_MINOR_MATCH_INDIVIDUAL_LIST_NFY,			// ������ ���� ����Ʈ(õ�����Ϲ���ȸ ���� -> �Ϲ� ���Ӽ���)
-	TG_BUDOKAI_MINOR_MATCH_TEAM_LIST_NFY,				// ������ ���� ����Ʈ(õ�����Ϲ���ȸ ���� -> �Ϲ� ���Ӽ���)
+	TG_BUDOKAI_MINOR_MATCH_INDIVIDUAL_LIST_NFY,			// ?????? ???? ????Ʈ(õ?????Ϲ???ȸ ???? -> ?Ϲ? ???Ӽ???)
+	TG_BUDOKAI_MINOR_MATCH_TEAM_LIST_NFY,				// ?????? ???? ????Ʈ(õ?????Ϲ???ȸ ???? -> ?Ϲ? ???Ӽ???)
 
-	TG_BUDOKAI_MINOR_MATCH_TELEPORT_INFO_REQ,			// ������ �ڷ���Ʈ ���� (�Ϲ� ���Ӽ��� -> õ�����Ϲ���ȸ ����)
-	TG_BUDOKAI_MINOR_MATCH_TELEPORT_INFO_RES,			// ������ �ڷ���Ʈ ���� (õ�����Ϲ���ȸ ���� -> �Ϲ� ���Ӽ���)
-	TG_BUDOKAI_PROGRESS_MESSAGE_NFY,					// ���� �޽���,(��������)(õ�����Ϲ���ȸ ���� -> �Ϲ� ���Ӽ���)
+	TG_BUDOKAI_MINOR_MATCH_TELEPORT_INFO_REQ,			// ?????? ?ڷ???Ʈ ???? (?Ϲ? ???Ӽ??? -> õ?????Ϲ???ȸ ????)
+	TG_BUDOKAI_MINOR_MATCH_TELEPORT_INFO_RES,			// ?????? ?ڷ???Ʈ ???? (õ?????Ϲ???ȸ ???? -> ?Ϲ? ???Ӽ???)
+	TG_BUDOKAI_PROGRESS_MESSAGE_NFY,					// ???? ?޽???,(????????)(õ?????Ϲ???ȸ ???? -> ?Ϲ? ???Ӽ???)
 
 	TG_BUDOKAI_GM_BUDOKAI_SERVER_ENTER_REQ,
 	TG_BUDOKAI_GM_BUDOKAI_SERVER_ENTER_RES,
 
-	TG_CHAR_MARKING_UPDATE_NFY,							// Īȣ ������Ʈ
+	TG_CHAR_MARKING_UPDATE_NFY,							// Īȣ ??????Ʈ
 
 	TG_CHAR_SERVER_TELEPORT,							// Teleport player to other channel
 
@@ -286,7 +286,7 @@ END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(TG_BUDOKAI_TOURNAMENT_INDIVIDUAL_LIST_REQ)
 	CHARACTERID					charId;
-	BYTE						byReceivedListCount;		// Ŭ���̾�Ʈ�� �����ϰ� �ִ� ����Ʈ(��� ����)�� ����
+	BYTE						byReceivedListCount;		// Ŭ???̾?Ʈ?? ?????ϰ? ?ִ? ????Ʈ(??? ????)?? ????
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(TG_BUDOKAI_TOURNAMENT_INDIVIDUAL_INFO_REQ)
@@ -296,7 +296,7 @@ END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(TG_BUDOKAI_TOURNAMENT_TEAM_LIST_REQ)
 	CHARACTERID					charId;
-	BYTE						byReceivedListCount;		// Ŭ���̾�Ʈ�� �����ϰ� �ִ� ����Ʈ(��� ����)�� ����
+	BYTE						byReceivedListCount;		// Ŭ???̾?Ʈ?? ?????ϰ? ?ִ? ????Ʈ(??? ????)?? ????
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(TG_BUDOKAI_TOURNAMENT_TEAM_INFO_REQ)
@@ -428,13 +428,13 @@ BEGIN_PROTOCOL( TG_CONNECT_VALID_CHECK_RES )
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( TG_DOJO_SCRAMBLE_RES )
-	HOBJECT								charId;		// ��û��
+	HOBJECT								charId;		// ??û??
 	WORD								wResultCode;
 	DWORD								dwReqZenny;
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( TG_DOJO_SCRAMBLE_RESPONSE )
-	HOBJECT								charId;		// ���帮��
+	HOBJECT								charId;		// ???帮??
 	bool								bIsAccept;	
 	WORD								wResultCode;
 	bool								bIsRetry;
@@ -469,7 +469,7 @@ END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( TG_DOJO_SCRAMBLE_STATE_CHANGE )
 	TBLIDX								dojoTblidx;
-	BYTE								byState;	// ������Ż�� ����
+	BYTE								byState;	// ??????Ż?? ????
 	DOJOTIME							tmNextStepTime;
 END_PROTOCOL()
 //------------------------------------------------------------------

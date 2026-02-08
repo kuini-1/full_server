@@ -4,11 +4,11 @@
 //
 //	Begin		:	2005-11-30
 //
-//	Copyright	:	�� NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
-//	Desc		:	Event ����ȭ ������Ʈ Ŭ����
+//	Desc		:	Event ????ȭ ??????Ʈ Ŭ????
 //
 //***********************************************************************************
 
@@ -35,16 +35,16 @@ public:
 
 
 
-	// �̺�Ʈ �ʱ�ȭ
+	// ?̺?Ʈ ?ʱ?ȭ
 	void			Reset();
 
-	//  �̺�Ʈ �뺸
+	//  ?̺?Ʈ ?뺸
 	void			Notify();
 
-	// �̺�Ʈ ��� ( unconditional )
+	// ?̺?Ʈ ??? ( unconditional )
 	void			Wait();
 
-	// �̺�Ʈ ��� ( conditional )
+	// ?̺?Ʈ ??? ( conditional )
 	int				Wait( unsigned int millisecs );
 
 

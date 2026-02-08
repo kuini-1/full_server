@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-03-07
 //
-//	Copyright	:	�� NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -97,7 +97,7 @@ void CNtlServerLog::Log(BYTE byLogChannel, bool bDate, LPCTSTR lpszFile, int nLi
 	CNtlServerLogData * pLogData = new CNtlServerLogData;
 	if( NULL == pLogData )
 	{
-		// ����ó��
+		// ????ó??
 		return;
 	}
 

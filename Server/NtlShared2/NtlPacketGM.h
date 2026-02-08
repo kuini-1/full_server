@@ -150,7 +150,7 @@ END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( GM_LOGIN_REQ )
 	ACCOUNTID				accountId;
-	BYTE					abyAuthKey[NTL_MAX_SIZE_AUTH_KEY];	// ����?
+	BYTE					abyAuthKey[NTL_MAX_SIZE_AUTH_KEY];	// ?????
 	HOBJECT					handle;
 	SERVERFARMID			serverId;
 	SERVERCHANNELID			serverChannelId;
