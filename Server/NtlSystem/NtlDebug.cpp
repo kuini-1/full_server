@@ -15,6 +15,7 @@
 #include "Stdafx.h"
 #include "NtlDebug.h"
 #include "NtlMutex.h"
+#include <cstdarg>
 
 
 #ifdef __NTL_DEBUG_PRINT__

@@ -15,6 +15,8 @@
 
 #include "CFixedStringW.h"
 
+#include <cstdarg>
+
 
 //-----------------------------------------------------------------------------
 // Name Space Table

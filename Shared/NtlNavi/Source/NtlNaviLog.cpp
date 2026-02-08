@@ -1,5 +1,6 @@
 #include "precomp_navi.h"
 #include "NtlNaviLog.h"
+#include <cstdarg>
 
 
 CNtlNaviLog* CNtlNaviLog::GetInstance( void )

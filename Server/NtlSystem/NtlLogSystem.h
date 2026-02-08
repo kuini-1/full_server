@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <map>
+#include <cstdarg>
 
 class CNtlLogSystem
 {

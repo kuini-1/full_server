@@ -15,6 +15,7 @@
 
 #include "StdAfx.h"
 #include "NtlStringW.h"
+#include <cstdarg>
 
 const unsigned int	MAX_FORMAT_STR_BUFF = 2048;
 

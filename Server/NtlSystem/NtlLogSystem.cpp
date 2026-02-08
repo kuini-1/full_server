@@ -9,6 +9,7 @@
 #include "NtlStringHandler.h"
 
 #include <string.h>
+#include <cstdarg>
 
 const char* CNtlLogSystem::m_pszShortMonthName[] =
 {

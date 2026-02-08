@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <cstdarg>
 
 const unsigned int	MAX_FORMAT_STR_BUFF = 2048;
 

@@ -4,6 +4,7 @@
 #include "QueryResult.h"
 
 #include "NtlLog.h"
+#include <cstdarg>
 
 void AsyncQuery::AddQuery(const char * format, ...)
 {

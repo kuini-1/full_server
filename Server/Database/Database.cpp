@@ -5,6 +5,7 @@
 #include "AsyncQuery.h"
 
 #include "NtlLog.h"
+#include <cstdarg>
 
 std::list<Database*> Database::s_listDatabase;
 volatile bool Database::s_IsQuit = false;

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "QueryBuffer.h"
+#include <cstdarg>
 
 
 void QueryBuffer::AddQuery(const char * format, ...)

@@ -16,6 +16,7 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 #include "NtlStringHandler.h"
+#include <cstdarg>
 
 Dbo_TableErrorCallback CTable::m_pfnErrorCallback = NULL;
 void* CTable::m_pvErrorCallbackArg = NULL;
