@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-06-28
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -34,19 +34,19 @@ WORD Dbo_GetFinalOffence(WORD wBaseOffence, BYTE byGrade)
 		//calc first tier +10% 1-5 level
 		if (gradestep < 1)
 			return finaloffence;
-		finaloffence += (WORD)(floor(wBaseOffence * 0.10) * min(5, gradestep));
+		finaloffence += (WORD)(floor(wBaseOffence * 0.10) * (std::min)(5, gradestep));
 		gradestep -= 5;
 
 		//calc second tier +15% 6-9 level
 		if (gradestep < 1)
 			return finaloffence;
-		finaloffence += (WORD)(floor(wBaseOffence * 0.15) * min(4, gradestep));
+		finaloffence += (WORD)(floor(wBaseOffence * 0.15) * (std::min)(4, gradestep));
 		gradestep -= 4;
 
 		//calc third tier +20% 10-14 level
 		if (gradestep < 1)
 			return finaloffence;
-		finaloffence += (WORD)(floor(wBaseOffence * 0.20) * min(5, gradestep));
+		finaloffence += (WORD)(floor(wBaseOffence * 0.20) * (std::min)(5, gradestep));
 		gradestep -= 5;
 
 		//calc last tier +30% 15 level
@@ -72,25 +72,25 @@ WORD Dbo_GetFinalDefence(WORD wBaseDefence, BYTE byGrade)
 		//calc first tier +5% 1-4 level
 		if (gradestep < 1)
 			return finaldefence;
-		finaldefence += (WORD)(floor(wBaseDefence * 0.05) * min(4, gradestep));
+		finaldefence += (WORD)(floor(wBaseDefence * 0.05) * (std::min)(4, gradestep));
 		gradestep -= 4;
 
 		//calc second tier +10% 5-9 level
 		if (gradestep < 1)
 			return finaldefence;
-		finaldefence += (WORD)(floor(wBaseDefence * 0.10) * min(5, gradestep));
+		finaldefence += (WORD)(floor(wBaseDefence * 0.10) * (std::min)(5, gradestep));
 		gradestep -= 5;
 
 		//calc third tier +15% 10-13 level
 		if (gradestep < 1)
 			return finaldefence;
-		finaldefence += (WORD)(floor(wBaseDefence * 0.15) * min(4, gradestep));
+		finaldefence += (WORD)(floor(wBaseDefence * 0.15) * (std::min)(4, gradestep));
 		gradestep -= 4;
 
 		//calc last tier +20% 14-15 level
 		if (gradestep < 1)
 			return finaldefence;
-		finaldefence += (WORD)(floor(wBaseDefence * 0.20) * min(2, gradestep));
+		finaldefence += (WORD)(floor(wBaseDefence * 0.20) * (std::min)(2, gradestep));
 
 		return finaldefence;
 	}
@@ -99,23 +99,23 @@ WORD Dbo_GetFinalDefence(WORD wBaseDefence, BYTE byGrade)
 
 BYTE Dbo_GetHoipoiStoneCount( const BYTE byStoneType, const BYTE byItemType, BYTE byGrade )
 {
-	// 일반 호이포이 스톤
+	// ??? ??????? ????
 	const static BYTE byNeedCountBasicWeapon[NTL_ITEM_MAX_GRADE]	= {2,2,2,4,4,4,6,6,6,8,8,8,10,10,10};
 	const static BYTE byNeedCountBasicArmor[NTL_ITEM_MAX_GRADE]		= {1,1,1,2,2,2,3,3,3,4,4,4,5, 5, 5};
-	// 퓨어 호이포이 스톤
+	// ??? ??????? ????
 	const static BYTE byNeedCountPureWeapon[NTL_ITEM_MAX_GRADE]		= {2,2,2,4,4,4,6,6,6,8,8,8,10,10,10};
 	const static BYTE byNeedCountPureArmor[NTL_ITEM_MAX_GRADE]		= {1,1,1,2,2,2,3,3,3,4,4,4,5, 5, 5};
-	// 블랙 호이포이 스톤
+	// ???? ??????? ????
 	const static BYTE byNeedCountBlackWeapon[NTL_ITEM_MAX_GRADE]	= {2,2,2,2,2,4,4,4,4,4,6,6,6, 6, 6};
 	const static BYTE byNeedCountBlackArmor[NTL_ITEM_MAX_GRADE]		= {1,1,1,1,1,2,2,2,2,2,3,3,3, 3, 3};
 
-	// 블랙 호이포이 스톤에 대한 처리
+	// ???? ??????? ???? ???? ???
 	if ( ITEM_TYPE_BLACK_STONE == byStoneType )
 	{
 		--byGrade;
 	}
 
-	// 그레이드가 잘못된 경우 인밸리드.
+	// ?????? ????? ??? ?????.
 	if ( byGrade < 0 || byGrade >= NTL_ITEM_MAX_GRADE )
 		return INVALID_BYTE;
 
@@ -132,7 +132,7 @@ BYTE Dbo_GetHoipoiStoneCount( const BYTE byStoneType, const BYTE byItemType, BYT
 		if ( ITEM_TYPE_BLACK_STONE == byStoneType ) return byNeedCountBlackArmor[byGrade];
 	}
 	
-	// 여기까지 왔다면 아이템 타입이 잘못되었기 때문임.
+	// ??????? ???? ?????? ????? ???????? ??????.
 	return INVALID_BYTE;
 }
 
@@ -169,19 +169,19 @@ DWORD Dbo_GetHoipoiMixEXP(bool bIsSuccess, BYTE byMadeLevel, BYTE byNeedMixLevel
 	return 25 - (byDif * 5);
 }
 
-// 아이템 믹스 사용료
+// ?????? ??? ????
 DWORD Dbo_GetHoipoiMixFare( DWORD dwCost, BYTE byDiscountRate /*=0*/ )
 {
 	return static_cast<DWORD>( dwCost * (1.0f- static_cast<float>(byDiscountRate)/100) );
 }
 
 //-----------------------------------------------------------------------------------
-// 아래 함수를 
+// ??? ????? 
 // bool Dbo_SetItemData( sITEM_DATA* const pItemData_Output, sITEM_DATA* const pItemData_Input )
-// 로 안한 이유: 
-// sITEM_DATA의 데이타가 변경되거나 추가될 경우, 작업자에 실수를 컴파일 시점에서 잡기 위함이다. 
-// 디버깅때 고생말고, 코딩때 고생하자~
-// 그래서, 위에처럼 절대 수정하지 말것.
+// ?? ???? ????: 
+// sITEM_DATA?? ??????? ??????? ????? ???, ?????? ????? ?????? ???????? ??? ???????. 
+// ????? ????????, ????? ????????~
+// ?????, ??????? ???? ???????? ????.
 //-----------------------------------------------------------------------------------
 bool Dbo_SetItemData( sITEM_DATA* const pItemData
 					 , ITEMID itemId
@@ -248,12 +248,12 @@ bool Dbo_SetItemData( sITEM_DATA* const pItemData
 }
 
 //-----------------------------------------------------------------------------------
-// 아래 함수를 
+// ??? ????? 
 // bool Dbo_SetItemData_NeedToIdentify( sITEM_DATA* const pItemData_Output, sITEM_DATA* const pItemData_Input )
-// 로 안한 이유: 
-// sITEM_DATA의 데이타가 변경되거나 추가될 경우, 작업자에 실수를 컴파일 시점에서 잡기 위함이다. 
-// 디버깅때 고생말고, 코딩때 고생하자~
-// 그래서, 위에처럼 절대 수정하지 말것.
+// ?? ???? ????: 
+// sITEM_DATA?? ??????? ??????? ????? ???, ?????? ????? ?????? ???????? ??? ???????. 
+// ????? ????????, ????? ????????~
+// ?????, ??????? ???? ???????? ????.
 //-----------------------------------------------------------------------------------
 bool Dbo_SetItemData_CheckNeedToIdentify( sITEM_DATA* const pItemData
 					 , ITEMID itemId
@@ -287,11 +287,11 @@ bool Dbo_SetItemData_CheckNeedToIdentify( sITEM_DATA* const pItemData
 
 	if ( true == pItemData->bNeedToIdentify )
 	{
-		//미확인 아이템일 경우
+		//????? ???????? ???
 		return true;
 	}
 
-	//확인 아이템일 경우
+	//??? ???????? ???
 	pItemData->itemNo = itemNo; 
 	pItemData->byStackcount = byStackcount;
 	pItemData->byRank = byRank;
@@ -329,12 +329,12 @@ bool Dbo_SetItemData_CheckNeedToIdentify( sITEM_DATA* const pItemData
 
 
 //-----------------------------------------------------------------------------------
-// 아래 함수를 
+// ??? ????? 
 // bool Dbo_SetItemProfile( sITEM_PROFILE* const pItemData_Output, sITEM_PROFILE* const pItemData_Input )
-// 로 안한 이유: 
-// sITEM_PROFILE의 데이타가 변경되거나 추가될 경우, 작업자에 실수를 컴파일 시점에서 잡기 위함이다. 
-// 디버깅때 고생말고, 코딩때 고생하자~
-// 그래서, 위에처럼 절대 수정하지 말것.
+// ?? ???? ????: 
+// sITEM_PROFILE?? ??????? ??????? ????? ???, ?????? ????? ?????? ???????? ??? ???????. 
+// ????? ????????, ????? ????????~
+// ?????, ??????? ???? ???????? ????.
 //-----------------------------------------------------------------------------------
 bool Dbo_SetItemProfile( sITEM_PROFILE* const pItemProfile
 						, HOBJECT handle
@@ -367,11 +367,11 @@ bool Dbo_SetItemProfile( sITEM_PROFILE* const pItemProfile
 
 	if( true == bNeedToIdentify )
 	{
-		//미확인 아이템일 경우
+		//????? ???????? ???
 		return true;
 	}
 
-	//확인 아이템일 경우
+	//??? ???????? ???
 	pItemProfile->tblidx = tblidx;
 	pItemProfile->byStackcount = byStackcount;
 	pItemProfile->byRank = byRank;
@@ -409,13 +409,13 @@ bool Dbo_SetItemProfile( sITEM_PROFILE* const pItemProfile
 
 
 //-----------------------------------------------------------------------------------
-// 이넘은 아직 다 수정하지 못했음... ( 보이는데로 수정하길 바래요~ )
-// 아래 함수를 
+// ????? ???? ?? ???????? ??????... ( ???????? ??????? ?????~ )
+// ??? ????? 
 // bool Dbo_SetItemBrief( sITEM_BRIEF* const pItemData_Output, sITEM_BRIEF* const pItemData_Input )
-// 로 안한 이유: 
-// sITEM_BRIEF의 데이타가 변경되거나 추가될 경우, 작업자에 실수를 컴파일 시점에서 잡기 위함이다. 
-// 디버깅때 고생말고, 코딩때 고생하자~
-// 그래서, 위에처럼 절대 수정하지 말것.
+// ?? ???? ????: 
+// sITEM_BRIEF?? ??????? ??????? ????? ???, ?????? ????? ?????? ???????? ??? ???????. 
+// ????? ????????, ????? ????????~
+// ?????, ??????? ???? ???????? ????.
 //-----------------------------------------------------------------------------------
 bool Dbo_SetItemBrief( sITEM_BRIEF* const pItemBrief
 							, TBLIDX tblidx
@@ -437,12 +437,12 @@ bool Dbo_SetItemBrief( sITEM_BRIEF* const pItemBrief
 }
 
 //-----------------------------------------------------------------------------------
-// 아래 함수를 
+// ??? ????? 
 // bool Dbo_SetItemBrief( sITEM_BRIEF* const pItemData_Output, sITEM_BRIEF* const pItemData_Input )
-// 로 안한 이유: 
-// sITEM_BRIEF의 데이타가 변경되거나 추가될 경우, 작업자에 실수를 컴파일 시점에서 잡기 위함이다. 
-// 디버깅때 고생말고, 코딩때 고생하자~
-// 그래서, 위에처럼 절대 수정하지 말것.
+// ?? ???? ????: 
+// sITEM_BRIEF?? ??????? ??????? ????? ???, ?????? ????? ?????? ???????? ??? ???????. 
+// ????? ????????, ????? ????????~
+// ?????, ??????? ???? ???????? ????.
 //-----------------------------------------------------------------------------------
 bool Dbo_SetShopBuyInven( sSHOP_BUY_INVEN* const pShopBuyInven
 						 , BYTE byPlace
@@ -488,8 +488,8 @@ bool Dbo_SetShopBuyInven( sSHOP_BUY_INVEN* const pShopBuyInven
 
 	if( NULL == aOptionTblidx )
 	{
-		memset( pShopBuyInven->sOptionSet.aOptionTblidx, NULL, sizeof( pShopBuyInven->sOptionSet.aOptionTblidx ) );
-		memset( pShopBuyInven->sOptionSet.aRandomOption, NULL, sizeof( pShopBuyInven->sOptionSet.aRandomOption ) );
+		memset( pShopBuyInven->sOptionSet.aOptionTblidx, 0, sizeof( pShopBuyInven->sOptionSet.aOptionTblidx ) );
+		memset( pShopBuyInven->sOptionSet.aRandomOption, 0, sizeof( pShopBuyInven->sOptionSet.aRandomOption ) );
 	}
 	else
 	{

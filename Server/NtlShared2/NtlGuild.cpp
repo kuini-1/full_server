@@ -11,7 +11,7 @@
 //	Desc		:	
 //
 //***********************************************************************************
-#pragma once
+
 #include "stdafx.h"
 #include "NtlGuild.h"
 #include "NtlResultCode.h"
