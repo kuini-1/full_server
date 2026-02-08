@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-01-05
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -22,16 +22,6 @@
 #include <list>
 #if defined(_WIN32)
 #include <crtdbg.h>
-#else
-#include <cassert>
-#ifndef _ASSERT
-#define _ASSERT(x) assert(x)
-#endif
-inline int _CrtDbgReport(int, const char*, int, const char*, const char*, ...) { (void)0; return 0; }
-inline void _CrtDbgBreak(void) {}
-#ifndef _CRT_ASSERT
-#define _CRT_ASSERT 0
-#endif
 #endif
 #include "NtlFile.h"
 
@@ -142,29 +132,29 @@ private:
 
 
 //-----------------------------------------------------------------------------------
-// D ¡æ Date, L ¡æ Location
+// D ?? Date, L ?? Location
 //-----------------------------------------------------------------------------------
 #define g_pLog CNtlLog::GetInstance()
-#define NTL_LOG( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, true, NULL, 0, NULL, LOGMSG, __VA_ARGS__ );
-#define NTL_LOGD( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, true, NULL, 0, NULL, LOGMSG, __VA_ARGS__ )
-#define NTL_LOGL( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, false, __FILE__, __LINE__, __FUNCTION__, LOGMSG, __VA_ARGS__ )
-#define NTL_LOGDL( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, __VA_ARGS__ )
-#define ERR_LOG( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, __VA_ARGS__ )
-#define HACK_LOG(LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGMSG, __VA_ARGS__ )
+#define NTL_LOG( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, true, NULL, 0, NULL, LOGMSG, ##__VA_ARGS__ );
+#define NTL_LOGD( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, true, NULL, 0, NULL, LOGMSG, ##__VA_ARGS__ )
+#define NTL_LOGL( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, false, __FILE__, __LINE__, __FUNCTION__, LOGMSG, ##__VA_ARGS__ )
+#define NTL_LOGDL( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, ##__VA_ARGS__ )
+#define ERR_LOG( LOGCHANNEL, LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGCHANNEL, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, ##__VA_ARGS__ )
+#define HACK_LOG(LOGMSG, ... ) if( g_pLog ) g_pLog->Log( LOGMSG, ##__VA_ARGS__ )
 
 #if defined( _DEBUG ) && defined( _DEVEL )
 	#define NTL_LOG_ASSERT( LOGMSG, ... )																\
 	{																									\
 		if( g_pLog )																					\
-			g_pLog->Log( LOG_ASSERT, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, __VA_ARGS__ );		\
-		if( 1 == _CrtDbgReport( _CRT_ASSERT, __FILE__, __LINE__, __FUNCTION__, LOGMSG, __VA_ARGS__ ) )	\
+			g_pLog->Log( LOG_ASSERT, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, ##__VA_ARGS__ );		\
+		if( 1 == _CrtDbgReport( _CRT_ASSERT, __FILE__, __LINE__, __FUNCTION__, LOGMSG, ##__VA_ARGS__ ) )	\
 			_CrtDbgBreak();																				\
 	}
 #elif defined( _DEBUG )
 	#define NTL_LOG_ASSERT( LOGMSG, ... )																\
 	{																									\
 		if( g_pLog )																					\
-			g_pLog->Log( LOG_ASSERT, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, __VA_ARGS__ );		\
+			g_pLog->Log( LOG_ASSERT, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, ##__VA_ARGS__ );		\
 		if ( g_pLog->IsNew( __FILE__, __LINE__, __FUNCTION__ ) )										\
 		{																								\
 			CNtlMiniDump::Snapshot();																	\
@@ -174,7 +164,7 @@ private:
 	#define NTL_LOG_ASSERT( LOGMSG, ... )																\
 	{																									\
 		if( g_pLog )																					\
-			g_pLog->Log( LOG_ASSERT, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, __VA_ARGS__ );		\
+			g_pLog->Log( LOG_ASSERT, true, __FILE__, __LINE__, __FUNCTION__, LOGMSG, ##__VA_ARGS__ );		\
 		if ( g_pLog->IsNew( __FILE__, __LINE__, __FUNCTION__ ) )										\
 		{																								\
 			CNtlMiniDump::Snapshot();																	\
