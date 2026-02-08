@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+#include "stdafx.h"
 #include "trade.h"
 #include "CPlayer.h"
 #include "item.h"

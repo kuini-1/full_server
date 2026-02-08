@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+#include "stdafx.h"
 #include "Guild.h"
 #include "ChatServer.h"
 #include "NtlResultCode.h"

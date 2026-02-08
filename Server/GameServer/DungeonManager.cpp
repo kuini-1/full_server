@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+#include "stdafx.h"
 #include "DungeonManager.h"
 #include "TimeQuest.h"
 #include "GameServer.h"

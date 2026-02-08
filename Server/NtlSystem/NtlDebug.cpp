@@ -12,7 +12,7 @@
 //
 //***********************************************************************************
 
-#include "Stdafx.h"
+#include "stdafx.h"
 #include "NtlDebug.h"
 #include "NtlMutex.h"
 #include <cstdarg>

@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+#include "stdafx.h"
 #include "CharServer.h"
 #include "NtlPacketCU.h"
 #include "NtlPacketCM.h"
