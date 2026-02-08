@@ -6,7 +6,9 @@
 
 #include <float.h>
 #include <math.h>
+#if defined(_WIN32)
 #include <crtdbg.h>
+#endif
 
 #define NTL_SQRT_OF_2		((float)(1.4142135623730950488016887242097))
 #define NTL_PI		((float)3.1415926535897932384626433832795)

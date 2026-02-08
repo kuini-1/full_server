@@ -21,7 +21,9 @@
 
 #include <float.h>
 #include <math.h>
+#if defined(_WIN32)
 #include <crtdbg.h>
+#endif
 
 
 class CNtlBBox

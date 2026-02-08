@@ -15,7 +15,9 @@
 #include "stdafx.h"
 #include "NtlWorld.h"
 
+#if defined(_WIN32)
 #include <crtdbg.h>
+#endif
 
 
 //-----------------------------------------------------------------------------------

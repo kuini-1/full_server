@@ -69,6 +69,24 @@
 /* fprintf_s: same signature as fprintf on POSIX */
 #define fprintf_s fprintf
 
+/* Raw CRT _s compatibility so code using sprintf_s/strcpy_s etc. compiles on Linux */
+#ifndef sprintf_s
+#define sprintf_s(buf, size, fmt, ...)       snprintf((buf), (size_t)(size), (fmt), ##__VA_ARGS__)
+#endif
+#ifndef vsprintf_s
+#define vsprintf_s(buf, size, fmt, args)    vsnprintf((buf), (size_t)(size), (fmt), (args))
+#endif
+#ifndef strcpy_s
+#define strcpy_s(dest, size, src)            NTL_STRCPY_S((dest), (size), (src))
+#endif
+#ifndef strtok_s
+#define strtok_s(str, delim, ctx)            strtok_r((str), (delim), (ctx))
+#endif
+/* strncpy_s(dest, destSize, src, count); for 3-arg use NTL_STRNCPY_S_FULL */
+#ifndef strncpy_s
+#define strncpy_s(dest, destSize, src, count)  NTL_STRNCPY_S((dest), (destSize), (src), (count))
+#endif
+
 #else
 
 #include <string.h>

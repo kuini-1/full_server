@@ -15,7 +15,9 @@
 #include "stdafx.h"
 #include "NtlBattle.h"
 
+#if defined(_WIN32)
 #include <crtdbg.h>
+#endif
 #include <stdlib.h>
 
 
