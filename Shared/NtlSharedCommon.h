@@ -135,6 +135,9 @@ typedef char CHAR;
 typedef int INT;
 typedef void VOID;
 typedef long LONG;
+#ifndef ULONG
+typedef unsigned long ULONG;
+#endif
 
 // Wide char and fixed-width types (MSVC __int8/16/32/64; use standard types on Linux)
 typedef wchar_t WCHAR;
