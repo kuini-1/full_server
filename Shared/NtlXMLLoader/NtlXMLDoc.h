@@ -6,6 +6,7 @@
 #else
 #include "../NtlSharedCommon.h"
 typedef long LONG;
+typedef wchar_t* BSTR;
 struct IXMLDOMNode;
 struct IXMLDOMNodeList;
 struct IXMLDOMDocument;
