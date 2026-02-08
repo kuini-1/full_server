@@ -34,6 +34,6 @@ void CDboTSCheckCustomEvent::TakeScriptDataForScript( CNtlTSScrProperty& clPrope
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetQuestID() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetQuestID() );
 	clProperty.m_defProperty["qid"] = g_NtlTSString;
 }

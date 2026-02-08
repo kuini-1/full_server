@@ -185,7 +185,7 @@ bool CNtlNaviPEDataImportMng::ImportWorld( const char* pRootPath, unsigned int u
 	AttachBackSlash( strRootPath );
 
 	char szWorldID[128];
-	sprintf_s( szWorldID, 128, "%d", uiWorldID );
+	NTL_SNPRINTF( szWorldID, 128, "%d", uiWorldID );
 
 	std::string strWorldPath = strRootPath + szWorldID;
 

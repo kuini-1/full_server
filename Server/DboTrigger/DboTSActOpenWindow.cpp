@@ -51,12 +51,12 @@ void CDboTSActOpenWindow::TakeScriptDataForScript( CNtlTSScrProperty& clProperty
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", IsShow() ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, "%d", IsShow() ? 1 : 0 );
 	clProperty.m_defProperty["show"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetWindowType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetWindowType() );
 	clProperty.m_defProperty["wtype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTableIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetTableIdx() );
 	clProperty.m_defProperty["tblidx"] = g_NtlTSString;
 }

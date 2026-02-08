@@ -56,12 +56,12 @@ void CDboTSCheckSSM::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetOPType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetOPType() );
 	clProperty.m_defProperty["op"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetSSMId() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSSMId() );
 	clProperty.m_defProperty["ssmid"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetVariable() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetVariable() );
 	clProperty.m_defProperty["var"] = g_NtlTSString;
 }

@@ -181,7 +181,7 @@ bool CNtlNaviPEDataExportMng::ExportWorldList( const char* pRootPath, mapdef_Exp
 		mapdef_WE_WORLD_LIST::iterator it = m_defWEWorldList.find( pair.first );
 		if( it != m_defWEWorldList.end() )
 		{
-			sprintf_s( szBuffer, 1024, "%d", it->first );
+			NTL_SNPRINTF( szBuffer, 1024, "%d", it->first );
 			strWorldPath = strRootPath + szBuffer;
 
 			if ( !it->second->ExportPEData( strWorldPath.c_str(), pair.second ) )
@@ -207,7 +207,7 @@ bool CNtlNaviPEDataExportMng::ExportWorldAll( const char* pRootPath )
 	mapdef_WE_WORLD_LIST::iterator it = m_defWEWorldList.begin();
 	for ( ; it != m_defWEWorldList.end(); ++it )
 	{
-		sprintf_s( szBuffer, 1024, "%d", it->first );
+		NTL_SNPRINTF( szBuffer, 1024, "%d", it->first );
 
 		strWorldPath = strRootPath + szBuffer;
 

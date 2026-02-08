@@ -86,7 +86,7 @@ void CNtlNaviPE_ODGroup::RunMultiThread( void )
 		AttachBackSlash( strMeshFileName );
 
 		char szTempBuffer[128];
-		sprintf_s( szTempBuffer, 128, "%d.%s", m_uiGroupID, PE_FIELD_GROUP_MESH_EXT );
+		NTL_SNPRINTF( szTempBuffer, 128, "%d.%s", m_uiGroupID, PE_FIELD_GROUP_MESH_EXT );
 		strMeshFileName += szTempBuffer;
 
 		sFILE_CHUNK_INFO sMeshChunk = LoadFileChunk( strMeshFileName.c_str() );
@@ -130,7 +130,7 @@ void CNtlNaviPE_ODGroup::RunMultiThread( void )
 			std::string strColFile = m_strImportPath;
 			AttachBackSlash( strColFile );
 
-			sprintf_s( szTempBuff, 256, "%d_%d.%s", m_uiGroupID, (tSigned32)WORLD_COORD_TO_PATH_COORD(it->fRadius), PE_FIELD_GROUP_COL_PRE_EXT );
+			NTL_SNPRINTF( szTempBuff, 256, "%d_%d.%s", m_uiGroupID, (tSigned32)WORLD_COORD_TO_PATH_COORD(it->fRadius), PE_FIELD_GROUP_COL_PRE_EXT );
 			strColFile += szTempBuff;
 
 			sFILE_CHUNK_INFO sColChunk = LoadFileChunk( strColFile.c_str() );
@@ -156,7 +156,7 @@ void CNtlNaviPE_ODGroup::RunMultiThread( void )
 			std::string strPFFile = m_strImportPath;
 			AttachBackSlash( strPFFile );
 
-			sprintf_s( szTempBuff, 256, "%d_%d.%s", m_uiGroupID, (tSigned32)WORLD_COORD_TO_PATH_COORD(it->fRadius), PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
+			NTL_SNPRINTF( szTempBuff, 256, "%d_%d.%s", m_uiGroupID, (tSigned32)WORLD_COORD_TO_PATH_COORD(it->fRadius), PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
 			strPFFile += szTempBuff;
 
 			sFILE_CHUNK_INFO sPFChunk = LoadFileChunk( strPFFile.c_str() );
@@ -214,7 +214,7 @@ void CNtlNaviPE_IDGroup::RunMultiThread( void )
 		AttachBackSlash( strMeshFileName );
 
 		char szTempBuffer[128];
-		sprintf_s( szTempBuffer, 128, "%d.%s", 0, PE_FIELD_GROUP_MESH_EXT );
+		NTL_SNPRINTF( szTempBuffer, 128, "%d.%s", 0, PE_FIELD_GROUP_MESH_EXT );
 		strMeshFileName += szTempBuffer;
 
 		sFILE_CHUNK_INFO sMeshChunk = LoadFileChunk( strMeshFileName.c_str() );
@@ -258,7 +258,7 @@ void CNtlNaviPE_IDGroup::RunMultiThread( void )
 			std::string strColFile = m_strImportPath;
 			AttachBackSlash( strColFile );
 
-			sprintf_s( szTempBuff, 256, "%d_%d.%s", 0, (tSigned32)WORLD_COORD_TO_PATH_COORD(it->fRadius), PE_FIELD_GROUP_COL_PRE_EXT );
+			NTL_SNPRINTF( szTempBuff, 256, "%d_%d.%s", 0, (tSigned32)WORLD_COORD_TO_PATH_COORD(it->fRadius), PE_FIELD_GROUP_COL_PRE_EXT );
 			strColFile += szTempBuff;
 
 			sFILE_CHUNK_INFO sColChunk = LoadFileChunk( strColFile.c_str() );
@@ -284,7 +284,7 @@ void CNtlNaviPE_IDGroup::RunMultiThread( void )
 			std::string strPFFile = m_strImportPath;
 			AttachBackSlash( strPFFile );
 
-			sprintf_s( szTempBuff, 256, "%d_%d.%s", 0, (tSigned32)WORLD_COORD_TO_PATH_COORD(it->fRadius), PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
+			NTL_SNPRINTF( szTempBuff, 256, "%d_%d.%s", 0, (tSigned32)WORLD_COORD_TO_PATH_COORD(it->fRadius), PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
 			strPFFile += szTempBuff;
 
 			sFILE_CHUNK_INFO sPFChunk = LoadFileChunk( strPFFile.c_str() );

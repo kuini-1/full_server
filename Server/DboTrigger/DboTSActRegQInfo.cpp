@@ -280,19 +280,19 @@ void CDboTSActRegQInfo::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetTitle() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetTitle() );
 	clProperty.m_defProperty["title"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetArea() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetArea() );
 	clProperty.m_defProperty["area"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetGoal() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetGoal() );
 	clProperty.m_defProperty["goal"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetGrade() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetGrade() );
 	clProperty.m_defProperty["grade"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetGradeType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetGradeType() );
 	clProperty.m_defProperty["gtype"]		= g_NtlTSString;
 
 	// 스크립트에는 eQUEST_SORT_TYPE 타입들이 Bit flag로 통합되어 저장되므로
@@ -300,124 +300,124 @@ void CDboTSActRegQInfo::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 	// 또한 eQUEST_SORT_TYPE 이 존재하지 않는 경우는 0 이다
 	if ( GetSortType() == eQUEST_SORT_TYPE_INVALID )
 	{
-		sprintf_s( g_NtlTSString, "%d", 0 );
+		NTL_SNPRINTF( g_NtlTSString, "%d", 0 );
 		clProperty.m_defProperty["stype"]	= g_NtlTSString;
 	}
 	else
 	{
-		sprintf_s( g_NtlTSString, "%d", (1<<GetSortType()) );
+		NTL_SNPRINTF( g_NtlTSString, "%d", (1<<GetSortType()) );
 		clProperty.m_defProperty["stype"]	= g_NtlTSString;
 	}
 
-	sprintf_s( g_NtlTSString, "%d", GetSort() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSort() );
 	clProperty.m_defProperty["sort"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetContents() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetContents() );
 	clProperty.m_defProperty["cont"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetReward() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetReward() );
 	clProperty.m_defProperty["rwd"]			= g_NtlTSString;
 
 	if ( 0xffffffff != m_sQuestMarkInfo[0].uiWorldTblIdx )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[0].uiWorldTblIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[0].uiWorldTblIdx );
 		clProperty.m_defProperty["m0widx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[0].fX );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[0].fX );
 		clProperty.m_defProperty["m0fx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[0].fY );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[0].fY );
 		clProperty.m_defProperty["m0fy"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[0].fZ );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[0].fZ );
 		clProperty.m_defProperty["m0fz"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[0].uiTooltipIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[0].uiTooltipIdx );
 		clProperty.m_defProperty["m0ttip"]	= g_NtlTSString;
 	}
 
 	if ( 0xffffffff != m_sQuestMarkInfo[1].uiWorldTblIdx )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[1].uiWorldTblIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[1].uiWorldTblIdx );
 		clProperty.m_defProperty["m1widx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[1].fX );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[1].fX );
 		clProperty.m_defProperty["m1fx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[1].fY );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[1].fY );
 		clProperty.m_defProperty["m1fy"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[1].fZ );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[1].fZ );
 		clProperty.m_defProperty["m1fz"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[1].uiTooltipIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[1].uiTooltipIdx );
 		clProperty.m_defProperty["m1ttip"]	= g_NtlTSString;
 	}
 
 	if ( 0xffffffff != m_sQuestMarkInfo[2].uiWorldTblIdx )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[2].uiWorldTblIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[2].uiWorldTblIdx );
 		clProperty.m_defProperty["m2widx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[2].fX );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[2].fX );
 		clProperty.m_defProperty["m2fx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[2].fY );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[2].fY );
 		clProperty.m_defProperty["m2fy"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[2].fZ );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[2].fZ );
 		clProperty.m_defProperty["m2fz"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[2].uiTooltipIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[2].uiTooltipIdx );
 		clProperty.m_defProperty["m2ttip"]	= g_NtlTSString;
 	}
 
 	if ( 0xffffffff != m_sQuestMarkInfo[3].uiWorldTblIdx )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[3].uiWorldTblIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[3].uiWorldTblIdx );
 		clProperty.m_defProperty["m3widx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[3].fX );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[3].fX );
 		clProperty.m_defProperty["m3fx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[3].fY );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[3].fY );
 		clProperty.m_defProperty["m3fy"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[3].fZ );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[3].fZ );
 		clProperty.m_defProperty["m3fz"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[3].uiTooltipIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[3].uiTooltipIdx );
 		clProperty.m_defProperty["m3ttip"]	= g_NtlTSString;
 	}
 
 	if ( 0xffffffff != m_sQuestMarkInfo[4].uiWorldTblIdx )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[4].uiWorldTblIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[4].uiWorldTblIdx );
 		clProperty.m_defProperty["m4widx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[4].fX );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[4].fX );
 		clProperty.m_defProperty["m4fx"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[4].fY );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[4].fY );
 		clProperty.m_defProperty["m4fy"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_sQuestMarkInfo[4].fZ );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_sQuestMarkInfo[4].fZ );
 		clProperty.m_defProperty["m4fz"]	= g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", m_sQuestMarkInfo[4].uiTooltipIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sQuestMarkInfo[4].uiTooltipIdx );
 		clProperty.m_defProperty["m4ttip"]	= g_NtlTSString;
 	}
 
-	sprintf_s( g_NtlTSString, "%d", GetM0Pat() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetM0Pat() );
 	clProperty.m_defProperty["m0pat"]			= g_NtlTSString;
-	sprintf_s( g_NtlTSString, "%d", GetM1Pat() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetM1Pat() );
 	clProperty.m_defProperty["m1pat"]			= g_NtlTSString;
-	sprintf_s( g_NtlTSString, "%d", GetM2Pat() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetM2Pat() );
 	clProperty.m_defProperty["m2pat"]			= g_NtlTSString;
-	sprintf_s( g_NtlTSString, "%d", GetM3Pat() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetM3Pat() );
 	clProperty.m_defProperty["m3pat"]			= g_NtlTSString;
-	sprintf_s( g_NtlTSString, "%d", GetM4Pat() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetM4Pat() );
 	clProperty.m_defProperty["m4pat"]			= g_NtlTSString;
-	sprintf_s( g_NtlTSString, "%d", GetScItem() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetScItem() );
 	clProperty.m_defProperty["scitem"]			= g_NtlTSString;
 }

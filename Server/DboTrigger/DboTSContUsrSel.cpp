@@ -148,8 +148,8 @@ void CDboTSContUsrSel::ApplyScriptDataForScript( const CNtlTSScrProperty& clProp
 
 	for ( int i = 0; i < MAX_NEXT_LINK_COUNT; ++i )
 	{
-		sprintf_s( g_NtlTSString, "%d", i ); strConcId = strId + g_NtlTSString;
-		sprintf_s( g_NtlTSString, "%d", i ); strConcDesc = strDesc + g_NtlTSString;
+		NTL_SNPRINTF( g_NtlTSString, "%d", i ); strConcId = strId + g_NtlTSString;
+		NTL_SNPRINTF( g_NtlTSString, "%d", i ); strConcDesc = strDesc + g_NtlTSString;
 
 		if ( clProperty.IsExist( strConcId ) )
 		{
@@ -172,19 +172,19 @@ void CDboTSContUsrSel::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCont::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", (int)GetUserSelType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", (int)GetUserSelType() );
 	clProperty.m_defProperty["ust"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", (int)GetUserSelProgState() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", (int)GetUserSelProgState() );
 	clProperty.m_defProperty["uspt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", (int)GetTargetType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", (int)GetTargetType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTargetTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetTargetTblIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetDesc() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetDesc() );
 	clProperty.m_defProperty["desc"] = g_NtlTSString;
 
 	const std::string strId = "nid";
@@ -195,18 +195,18 @@ void CDboTSContUsrSel::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 	mapdef_NEXT_LINK::iterator cit = m_defNextLink.begin();
 	for ( int i = 0; cit != m_defNextLink.end(); ++i, ++cit )
 	{
-		sprintf_s( g_NtlTSString, "%d", i ); strConcId = strId + g_NtlTSString;
-		sprintf_s( g_NtlTSString, "%d", cit->first );
+		NTL_SNPRINTF( g_NtlTSString, "%d", i ); strConcId = strId + g_NtlTSString;
+		NTL_SNPRINTF( g_NtlTSString, "%d", cit->first );
 		clProperty.m_defProperty[strConcId] = g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", i ); strConcDesc = strDesc + g_NtlTSString;
-		sprintf_s( g_NtlTSString, "%d", cit->second );
+		NTL_SNPRINTF( g_NtlTSString, "%d", i ); strConcDesc = strDesc + g_NtlTSString;
+		NTL_SNPRINTF( g_NtlTSString, "%d", cit->second );
 		clProperty.m_defProperty[strConcDesc] = g_NtlTSString;
 	}
 
-	sprintf_s( g_NtlTSString, "%d", GetCancelLink() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetCancelLink() );
 	clProperty.m_defProperty["cancellnk"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetLogInLink() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetLogInLink() );
 	clProperty.m_defProperty["lilnk"] = g_NtlTSString;
 }

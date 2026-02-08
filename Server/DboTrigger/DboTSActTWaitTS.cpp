@@ -34,6 +34,6 @@ void CDboTSActTWaitTS::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetWaitTime() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetWaitTime() );
 	clProperty.m_defProperty["time"] = g_NtlTSString;
 }

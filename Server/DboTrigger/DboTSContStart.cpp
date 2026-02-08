@@ -34,6 +34,6 @@ void CDboTSContStart::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CDboTSContGCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetSTDiag() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSTDiag() );
 	clProperty.m_defProperty["stdiag"] = g_NtlTSString;
 }

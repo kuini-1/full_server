@@ -272,114 +272,114 @@ void CDboTSActSToCEvt::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetEvtType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetEvtType() );
 	clProperty.m_defProperty["etype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", IsApplyTypeWorld() ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, "%d", IsApplyTypeWorld() ? 1 : 0 );
 	clProperty.m_defProperty["apptype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetEvtDataType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetEvtDataType() );
 	clProperty.m_defProperty["eitype"] = g_NtlTSString;
 
 	switch ( GetEvtDataType() )
 	{
 	case eSTOC_EVT_DATA_TYPE_MOB_KILL_CNT:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[0].uiMobIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[0].uiMobIdx );
 			clProperty.m_defProperty["idx0"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[0].nMobCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[0].nMobCnt );
 			clProperty.m_defProperty["cnt0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[1].uiMobIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[1].uiMobIdx );
 			clProperty.m_defProperty["idx1"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[1].nMobCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[1].nMobCnt );
 			clProperty.m_defProperty["cnt1"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[2].uiMobIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[2].uiMobIdx );
 			clProperty.m_defProperty["idx2"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[2].nMobCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillCnt[2].nMobCnt );
 			clProperty.m_defProperty["cnt2"] = g_NtlTSString;
 		}
 		break;
 	case eSTOC_EVT_DATA_TYPE_MOB_KILL_ITEM_CNT:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[0].uiMobLIIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[0].uiMobLIIdx );
 			clProperty.m_defProperty["idx0"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[0].nMobLICnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[0].nMobLICnt );
 			clProperty.m_defProperty["cnt0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[1].uiMobLIIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[1].uiMobLIIdx );
 			clProperty.m_defProperty["idx1"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[1].nMobLICnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[1].nMobLICnt );
 			clProperty.m_defProperty["cnt1"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[2].uiMobLIIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[2].uiMobLIIdx );
 			clProperty.m_defProperty["idx2"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[2].nMobLICnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sMobKillItemCnt[2].nMobLICnt );
 			clProperty.m_defProperty["cnt2"] = g_NtlTSString;
 		}
 		break;
 	case eSTOC_EVT_DATA_TYPE_DELIVERY_ITEM:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[0].uiItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[0].uiItemIdx );
 			clProperty.m_defProperty["idx0"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[0].nItemCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[0].nItemCnt );
 			clProperty.m_defProperty["cnt0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[1].uiItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[1].uiItemIdx );
 			clProperty.m_defProperty["idx1"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[1].nItemCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[1].nItemCnt );
 			clProperty.m_defProperty["cnt1"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[2].uiItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[2].uiItemIdx );
 			clProperty.m_defProperty["idx2"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[2].nItemCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sDeliveryItemCnt[2].nItemCnt );
 			clProperty.m_defProperty["cnt2"] = g_NtlTSString;
 		}
 		break;
 	case eSTOC_EVT_DATA_TYPE_OBJECT_ITEM:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[0].uiItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[0].uiItemIdx );
 			clProperty.m_defProperty["idx0"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[0].nItemCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[0].nItemCnt );
 			clProperty.m_defProperty["cnt0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[1].uiItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[1].uiItemIdx );
 			clProperty.m_defProperty["idx1"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[1].nItemCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[1].nItemCnt );
 			clProperty.m_defProperty["cnt1"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[2].uiItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[2].uiItemIdx );
 			clProperty.m_defProperty["idx2"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[2].nItemCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sObjectItemCnt[2].nItemCnt );
 			clProperty.m_defProperty["cnt2"] = g_NtlTSString;
 		}
 		break;
 	case eSTOC_EVT_DATA_TYPE_PUBLIC_MOB_ITEM_CNT:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sPublicMobItemCnt[0].uiItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sPublicMobItemCnt[0].uiItemIdx );
 			clProperty.m_defProperty["idx0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sPublicMobItemCnt[0].uiRequireItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sPublicMobItemCnt[0].uiRequireItemIdx );
 			clProperty.m_defProperty["nidx0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uEvtData.sPublicMobItemCnt[0].fDropRate );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uEvtData.sPublicMobItemCnt[0].fDropRate );
 			clProperty.m_defProperty["rate0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sPublicMobItemCnt[0].nItemCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sPublicMobItemCnt[0].nItemCnt );
 			clProperty.m_defProperty["cnt0"] = g_NtlTSString;
 		}
 		break;
 
 	case eSTOC_EVT_DATA_TYPE_CUSTOM_EVT_CNT:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sCustomEvtCnt[0].uiQTextTblIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sCustomEvtCnt[0].uiQTextTblIdx );
 			clProperty.m_defProperty["qtidx"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sCustomEvtCnt[0].uiCustomEvtID );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sCustomEvtCnt[0].uiCustomEvtID );
 			clProperty.m_defProperty["idx0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtData.sCustomEvtCnt[0].nMaxCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sCustomEvtCnt[0].nMaxCnt );
 			clProperty.m_defProperty["cnt0"] = g_NtlTSString;
 		}
 		break;
@@ -388,96 +388,96 @@ void CDboTSActSToCEvt::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 		{
 			if ( 0xff != m_uEvtData.sVisitEvt[0].byObjType )
 			{
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].byObjType );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].byObjType );
 				clProperty.m_defProperty["otype0"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiWorldTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiWorldTblIdx );
 				clProperty.m_defProperty["widx0"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiObjTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiObjTblIdx );
 				clProperty.m_defProperty["tidx0"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiIndicatorQText );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiIndicatorQText );
 				clProperty.m_defProperty["it0"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiDialogText );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiDialogText );
 				clProperty.m_defProperty["dt0"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiItemTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[0].uiItemTblIdx );
 				clProperty.m_defProperty["iidx0"] = g_NtlTSString;
 			}
 
 			if ( 0xff != m_uEvtData.sVisitEvt[1].byObjType )
 			{
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].byObjType );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].byObjType );
 				clProperty.m_defProperty["otype1"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiWorldTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiWorldTblIdx );
 				clProperty.m_defProperty["widx1"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiObjTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiObjTblIdx );
 				clProperty.m_defProperty["tidx1"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiIndicatorQText );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiIndicatorQText );
 				clProperty.m_defProperty["it1"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiDialogText );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiDialogText );
 				clProperty.m_defProperty["dt1"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiItemTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[1].uiItemTblIdx );
 				clProperty.m_defProperty["iidx1"] = g_NtlTSString;
 			}
 
 			if ( 0xff != m_uEvtData.sVisitEvt[2].byObjType )
 			{
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].byObjType );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].byObjType );
 				clProperty.m_defProperty["otype2"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiWorldTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiWorldTblIdx );
 				clProperty.m_defProperty["widx2"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiObjTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiObjTblIdx );
 				clProperty.m_defProperty["tidx2"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiIndicatorQText );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiIndicatorQText );
 				clProperty.m_defProperty["it2"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiDialogText );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiDialogText );
 				clProperty.m_defProperty["dt2"] = g_NtlTSString;
-				sprintf_s( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiItemTblIdx );
+				NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtData.sVisitEvt[2].uiItemTblIdx );
 				clProperty.m_defProperty["iidx2"] = g_NtlTSString;
 			}
 		}
 		break;
 	}
 
-	sprintf_s( g_NtlTSString, "%d", GetEvtCondDataType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetEvtCondDataType() );
 	clProperty.m_defProperty["ectype"] = g_NtlTSString;
 
 	switch ( GetEvtCondDataType() )
 	{
 	case eSTOC_EVT_COND_DATA_TYPE_AUTO_EQUIP_ITEM:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtCondData.sAutoEquipItem[0].uiItemTblIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtCondData.sAutoEquipItem[0].uiItemTblIdx );
 			clProperty.m_defProperty["cd0"] = g_NtlTSString;
 		}
 		break;
 	case eSTOC_EVT_COND_DATA_TYPE_EQUIP_ITEM:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtCondData.sEquipItem[0].uiItemTblIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtCondData.sEquipItem[0].uiItemTblIdx );
 			clProperty.m_defProperty["cd0"] = g_NtlTSString;
 		}
 		break;
 	case eSTOC_EVT_COND_DATA_TYPE_HAVE_ITEM:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtCondData.sHaveItem[0].uiItemTblIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtCondData.sHaveItem[0].uiItemTblIdx );
 			clProperty.m_defProperty["cd0"] = g_NtlTSString;
 		}
 		break;
 	case eSTOC_EVT_COND_DATA_TYPE_HAVE_QITEM:
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uEvtCondData.sHaveQItem[0].uiQItemTblIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtCondData.sHaveQItem[0].uiQItemTblIdx );
 			clProperty.m_defProperty["cd0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_uEvtCondData.sHaveQItem[0].nQITemCnt );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uEvtCondData.sHaveQItem[0].nQITemCnt );
 			clProperty.m_defProperty["cd1"] = g_NtlTSString;
 		}
 		break;
 	}
 
 	unsigned int uiEvtSubCondDataType = GetEvtSubCondDataType();
-	sprintf_s( g_NtlTSString, "%d", uiEvtSubCondDataType );
+	NTL_SNPRINTF( g_NtlTSString, "%d", uiEvtSubCondDataType );
 	clProperty.m_defProperty["esctype"] = g_NtlTSString;
 
 	if ( uiEvtSubCondDataType & eSTOC_EVT_SUB_COND_DATA_FLAG_LEVEL_DIFF_LESS )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_sEvtSubCondData.sLevelDiffLess.nLevelDiff );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_sEvtSubCondData.sLevelDiffLess.nLevelDiff );
 		clProperty.m_defProperty["scd0"] = g_NtlTSString;
 	}
 }

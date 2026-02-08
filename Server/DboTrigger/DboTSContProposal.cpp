@@ -145,36 +145,36 @@ void CDboTSContProposal::TakeScriptDataForScript( CNtlTSScrProperty& clProperty 
 {
 	CNtlTSCont::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetDisplaySummary() ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetDisplaySummary() ? 1 : 0 );
 	clProperty.m_defProperty["ds"]			= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTitle() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetTitle() );
 	clProperty.m_defProperty["title"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetArea() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetArea() );
 	clProperty.m_defProperty["area"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetGoal() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetGoal() );
 	clProperty.m_defProperty["goal"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetGrade() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetGrade() );
 	clProperty.m_defProperty["grade"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetGradeType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetGradeType() );
 	clProperty.m_defProperty["gtype"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetSort() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSort() );
 	clProperty.m_defProperty["sort"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetContents() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetContents() );
 	clProperty.m_defProperty["cont"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetReward() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetReward() );
 	clProperty.m_defProperty["rwd"]			= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetOkLink() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetOkLink() );
 	clProperty.m_defProperty["oklnk"]		= g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetCancelLink() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetCancelLink() );
 	clProperty.m_defProperty["cancellnk"]	= g_NtlTSString;
 }

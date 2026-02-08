@@ -34,6 +34,6 @@ void CDboTSCheckSToCEvt::TakeScriptDataForScript( CNtlTSScrProperty& clProperty 
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetSToCEvtDataType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSToCEvtDataType() );
 	clProperty.m_defProperty["itype"] = g_NtlTSString;
 }

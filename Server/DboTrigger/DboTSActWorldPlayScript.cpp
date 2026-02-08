@@ -51,12 +51,12 @@ void CDboTSActWorldPlayScript::TakeScriptDataForScript( CNtlTSScrProperty& clPro
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", IsStart() ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, "%d", IsStart() ? 1 : 0 );
 	clProperty.m_defProperty["start"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", IsUserOutFailed() ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, "%d", IsUserOutFailed() ? 1 : 0 );
 	clProperty.m_defProperty["uof"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetScriptID() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetScriptID() );
 	clProperty.m_defProperty["sid"] = g_NtlTSString;
 }

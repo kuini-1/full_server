@@ -45,9 +45,9 @@ void CDboTSCheckLvl::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetMinLvl() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetMinLvl() );
 	clProperty.m_defProperty["minlvl"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetMaxLvl() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetMaxLvl() );
 	clProperty.m_defProperty["maxlvl"] = g_NtlTSString;
 }

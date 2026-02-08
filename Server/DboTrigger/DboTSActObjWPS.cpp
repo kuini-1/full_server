@@ -34,6 +34,6 @@ void CDboTSActObjWPS::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetObjWPS() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetObjWPS() );
 	clProperty.m_defProperty["sid"] = g_NtlTSString;
 }

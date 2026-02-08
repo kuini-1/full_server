@@ -29,6 +29,6 @@ void CDboTSActTMQInfoShow::TakeScriptDataForScript( CNtlTSScrProperty& clPropert
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetTMQInfoType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetTMQInfoType() );
 	clProperty.m_defProperty["itype"] = g_NtlTSString;
 }

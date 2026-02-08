@@ -58,12 +58,12 @@ void CDboTSCheckQItem::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetCheckType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetCheckType() );
 	clProperty.m_defProperty["ct"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetItemIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemIdx() );
 	clProperty.m_defProperty["iidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetItemCnt() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemCnt() );
 	clProperty.m_defProperty["icnt"] = g_NtlTSString;
 }

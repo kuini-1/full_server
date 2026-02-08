@@ -59,15 +59,15 @@ void CDboTSCheckOutRGN::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetWorldTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetWorldTblIdx() );
 	clProperty.m_defProperty["widx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%f", GetPosX() );
+	NTL_SNPRINTF( g_NtlTSString, "%f", GetPosX() );
 	clProperty.m_defProperty["fx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%f", GetPosZ() );
+	NTL_SNPRINTF( g_NtlTSString, "%f", GetPosZ() );
 	clProperty.m_defProperty["fz"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%f", GetRadius() );
+	NTL_SNPRINTF( g_NtlTSString, "%f", GetRadius() );
 	clProperty.m_defProperty["fr"] = g_NtlTSString;
 }

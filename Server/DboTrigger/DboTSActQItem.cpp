@@ -64,40 +64,40 @@ void CDboTSActQItem::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetQItemType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetQItemType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
 	if ( 0xffffffff != m_stQItemInfo[0].uiQItemIdx )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_stQItemInfo[0].uiQItemIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_stQItemInfo[0].uiQItemIdx );
 		clProperty.m_defProperty["iidx0"] = g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", m_stQItemInfo[0].nQItemCnt );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_stQItemInfo[0].nQItemCnt );
 		clProperty.m_defProperty["icnt0"] = g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_stQItemInfo[0].fProbability );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_stQItemInfo[0].fProbability );
 		clProperty.m_defProperty["iprob0"] = g_NtlTSString;
 	}
 	if ( 0xffffffff != m_stQItemInfo[1].uiQItemIdx )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_stQItemInfo[1].uiQItemIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_stQItemInfo[1].uiQItemIdx );
 		clProperty.m_defProperty["iidx1"] = g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", m_stQItemInfo[1].nQItemCnt );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_stQItemInfo[1].nQItemCnt );
 		clProperty.m_defProperty["icnt1"] = g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_stQItemInfo[1].fProbability );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_stQItemInfo[1].fProbability );
 		clProperty.m_defProperty["iprob1"] = g_NtlTSString;
 	}
 	if ( 0xffffffff != m_stQItemInfo[2].uiQItemIdx )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_stQItemInfo[2].uiQItemIdx );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_stQItemInfo[2].uiQItemIdx );
 		clProperty.m_defProperty["iidx2"] = g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%d", m_stQItemInfo[2].nQItemCnt );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_stQItemInfo[2].nQItemCnt );
 		clProperty.m_defProperty["icnt2"] = g_NtlTSString;
 
-		sprintf_s( g_NtlTSString, "%f", m_stQItemInfo[2].fProbability );
+		NTL_SNPRINTF( g_NtlTSString, "%f", m_stQItemInfo[2].fProbability );
 		clProperty.m_defProperty["iprob2"] = g_NtlTSString;
 	}
 }

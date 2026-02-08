@@ -29,6 +29,6 @@ void CDboTSRcvSvrEvt::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetEvtID() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetEvtID() );
 	clProperty.m_defProperty["id"] = g_NtlTSString;
 }

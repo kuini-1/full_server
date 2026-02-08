@@ -84,21 +84,21 @@ void CDboTSActSendSvrEvt::TakeScriptDataForScript( CNtlTSScrProperty& clProperty
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetSvrEvtType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSvrEvtType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetSvrEvtTriggerType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSvrEvtTriggerType() );
 	clProperty.m_defProperty["ttype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetSvrEvtID() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSvrEvtID() );
 	clProperty.m_defProperty["id"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetTblIdx() );
 	clProperty.m_defProperty["tblidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetEvtSendType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetEvtSendType() );
 	clProperty.m_defProperty["stype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%f", GetEvtSendType_Radius() );
+	NTL_SNPRINTF( g_NtlTSString, "%f", GetEvtSendType_Radius() );
 	clProperty.m_defProperty["stradius"] = g_NtlTSString;
 }

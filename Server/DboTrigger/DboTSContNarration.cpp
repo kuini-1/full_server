@@ -145,36 +145,36 @@ void CDboTSContNarration::TakeScriptDataForScript( CNtlTSScrProperty& clProperty
 {
 	CNtlTSCont::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetProgressState() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetProgressState() );
 	clProperty.m_defProperty["pt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetOwnerType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetOwnerType() );
 	clProperty.m_defProperty["ot"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetOwnerIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetOwnerIdx() );
 	clProperty.m_defProperty["oi"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetOwnerState() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetOwnerState() );
 	clProperty.m_defProperty["os"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetDialogDirType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetDialogDirType() );
 	clProperty.m_defProperty["dt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetDialog() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetDialog() );
 	clProperty.m_defProperty["dg"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetGUIType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetGUIType() );
 	clProperty.m_defProperty["gt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetMaxLifeTime() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetMaxLifeTime() );
 	clProperty.m_defProperty["mlt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetOkLink() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetOkLink() );
 	clProperty.m_defProperty["oklnk"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetCancelLink() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetCancelLink() );
 	clProperty.m_defProperty["cancellnk"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetLogInLink() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetLogInLink() );
 	clProperty.m_defProperty["lilnk"] = g_NtlTSString;
 }

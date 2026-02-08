@@ -78,59 +78,59 @@ void CDboTSActRegCTiming::TakeScriptDataForScript( CNtlTSScrProperty& clProperty
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", m_bReg ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_bReg ? 1 : 0 );
 	clProperty.m_defProperty["rtype"] = g_NtlTSString;
 
 	if ( m_bReg )
 	{
-		sprintf_s( g_NtlTSString, "%d", m_uiTimingFlags );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_uiTimingFlags );
 		clProperty.m_defProperty["flags"] = g_NtlTSString;
 
 		if ( m_uiTimingFlags & eREG_C_TIMING_MOB_CLICK_FLAG )
 		{
-			sprintf_s( g_NtlTSString, "%d", m_sMobClick.uiMobGroupIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_sMobClick.uiMobGroupIdx );
 			clProperty.m_defProperty["0_midx"] = g_NtlTSString;
 		}
 		if ( m_uiTimingFlags & eREG_C_TIMING_NPC_CLICK_FLAG )
 		{
-			sprintf_s( g_NtlTSString, "%d", m_sNPCClick.uiNpcIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_sNPCClick.uiNpcIdx );
 			clProperty.m_defProperty["1_nidx"] = g_NtlTSString;
 		}
 		if ( m_uiTimingFlags & eREG_C_TIMING_OBJ_CLICK_FLAG )
 		{
-			sprintf_s( g_NtlTSString, "%d", m_sObjClick.uiWorldIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_sObjClick.uiWorldIdx );
 			clProperty.m_defProperty["2_widx"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%d", m_sObjClick.uiObjIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_sObjClick.uiObjIdx );
 			clProperty.m_defProperty["2_oidx"] = g_NtlTSString;
 		}
 		if ( m_uiTimingFlags & eREG_C_TIMING_ENTER_RGN_FLAG )
 		{
-			sprintf_s( g_NtlTSString, "%d", m_sEnterRgn.uiWorldIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_sEnterRgn.uiWorldIdx );
 			clProperty.m_defProperty["3_widx"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_sEnterRgn.fMinX );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_sEnterRgn.fMinX );
 			clProperty.m_defProperty["3_minx"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%f", m_sEnterRgn.fMinZ );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_sEnterRgn.fMinZ );
 			clProperty.m_defProperty["3_minz"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_sEnterRgn.fMaxX );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_sEnterRgn.fMaxX );
 			clProperty.m_defProperty["3_maxx"] = g_NtlTSString;
-			sprintf_s( g_NtlTSString, "%f", m_sEnterRgn.fMaxZ );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_sEnterRgn.fMaxZ );
 			clProperty.m_defProperty["3_maxz"] = g_NtlTSString;
 		}
 		if ( m_uiTimingFlags & eREG_C_TIMING_GET_QITEM_FLAG )
 		{
-			sprintf_s( g_NtlTSString, "%d", m_sGetQItem.uiQItemIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_sGetQItem.uiQItemIdx );
 			clProperty.m_defProperty["4_qidx"] = g_NtlTSString;
 		}
 
-		sprintf_s( g_NtlTSString, "%d", m_eExcuteType );
+		NTL_SNPRINTF( g_NtlTSString, "%d", m_eExcuteType );
 		clProperty.m_defProperty["etype"] = g_NtlTSString;
 
 		if ( m_eExcuteType == eREG_C_TIMING_EXCUTE_TYPE_MINI_NARRATION )
 		{
-			sprintf_s( g_NtlTSString, "%d", m_uExcuteData.sMiniNarration.uiTblIdx );
+			NTL_SNPRINTF( g_NtlTSString, "%d", m_uExcuteData.sMiniNarration.uiTblIdx );
 			clProperty.m_defProperty["ntidx"] = g_NtlTSString;
 		}
 	}

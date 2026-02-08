@@ -43,9 +43,9 @@ void CDboTSCheckProgQuest::TakeScriptDataForScript( CNtlTSScrProperty& clPropert
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetQuestID() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetQuestID() );
 	clProperty.m_defProperty["qid"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetNOT() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetNOT() );
 	clProperty.m_defProperty["not"] = g_NtlTSString;
 }

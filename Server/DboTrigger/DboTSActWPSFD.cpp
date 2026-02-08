@@ -34,9 +34,9 @@ void CDboTSActWPSFD::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", m_tSidx );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_tSidx );
 	clProperty.m_defProperty["sid"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_TaIdx );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_TaIdx );
 	clProperty.m_defProperty["taid"] = g_NtlTSString;
 }

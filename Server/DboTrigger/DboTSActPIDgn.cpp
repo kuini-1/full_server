@@ -62,15 +62,15 @@ void CDboTSActPIDgn::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetDungeonType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetDungeonType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetNormalDungeonTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetNormalDungeonTblIdx() );
 	clProperty.m_defProperty["nidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetHardDungeonTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetHardDungeonTblIdx() );
 	clProperty.m_defProperty["hidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetRDungeonTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetRDungeonTblIdx() );
 	clProperty.m_defProperty["ridx"] = g_NtlTSString;
 }

@@ -40,9 +40,9 @@ void CDboTSRB::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetRBTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetRBTblIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetRBCondition() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetRBCondition() );
 	clProperty.m_defProperty["cond"] = g_NtlTSString;
 }

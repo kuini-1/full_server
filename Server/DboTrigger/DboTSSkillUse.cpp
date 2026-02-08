@@ -73,18 +73,18 @@ void CDboTSSkillUse::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetSkillType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSkillType() );
 	clProperty.m_defProperty["stype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetSkillIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSkillIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetSkillTargetType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSkillTargetType() );
 	clProperty.m_defProperty["ttype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetSkillTargetIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSkillTargetIdx() );
 	clProperty.m_defProperty["tidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetSkillRPFlags() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetSkillRPFlags() );
 	clProperty.m_defProperty["rp"] = g_NtlTSString;
 }

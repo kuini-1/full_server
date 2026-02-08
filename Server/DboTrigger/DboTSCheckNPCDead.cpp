@@ -29,7 +29,7 @@ void CDboTSCheckNPCDead::TakeScriptDataForScript( CNtlTSScrProperty& clProperty 
 	vecdef_NPC_INDEX_LIST::iterator it = m_defNPCIndexList.begin();
 	for ( ; it != m_defNPCIndexList.end(); ++it )
 	{
-		sprintf_s( g_NtlTSString, "%d", *it );
+		NTL_SNPRINTF( g_NtlTSString, "%d", *it );
 		strNPCIndexList += g_NtlTSString;
 		strNPCIndexList += ";";
 	}

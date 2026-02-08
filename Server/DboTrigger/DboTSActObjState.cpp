@@ -98,18 +98,18 @@ void CDboTSActObjState::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetWorldIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetWorldIdx() );
 	clProperty.m_defProperty["widx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetObjectIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetObjectIdx() );
 	clProperty.m_defProperty["oidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetObjectMainState() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetObjectMainState() );
 	clProperty.m_defProperty["mstate"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetObjectShowHide() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetObjectShowHide() );
 	clProperty.m_defProperty["osh_sh"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetObjectCheckUncheck() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetObjectCheckUncheck() );
 	clProperty.m_defProperty["osh_uc"] = g_NtlTSString;
 }

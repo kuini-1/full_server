@@ -54,21 +54,21 @@ void CDboTSActMail::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", m_dtIdx );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_dtIdx );
 	clProperty.m_defProperty["dtidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_uiItemTblidx );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_uiItemTblidx );
 	clProperty.m_defProperty["itidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_stIdx );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_stIdx );
 	clProperty.m_defProperty["stidx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_byItemCount );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_byItemCount );
 	clProperty.m_defProperty["icnt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_taId );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_taId );
 	clProperty.m_defProperty["taid"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_uiZeni );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_uiZeni );
 	clProperty.m_defProperty["zenny"] = g_NtlTSString;
 }

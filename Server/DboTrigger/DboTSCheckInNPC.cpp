@@ -45,9 +45,9 @@ void CDboTSCheckInNPC::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetNPCIndex() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetNPCIndex() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetRadius() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetRadius() );
 	clProperty.m_defProperty["rad"] = g_NtlTSString;
 }

@@ -30,7 +30,7 @@ void CDboTSCheckDistWithNPC::TakeScriptDataForScript( CNtlTSScrProperty& clPrope
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%f", GetDistance() );
+	NTL_SNPRINTF( g_NtlTSString, "%f", GetDistance() );
 	clProperty.m_defProperty["dist"] = g_NtlTSString;
 
 	std::string strNPCIndexList;
@@ -38,7 +38,7 @@ void CDboTSCheckDistWithNPC::TakeScriptDataForScript( CNtlTSScrProperty& clPrope
 	vecdef_NPC_INDEX_LIST::iterator it = m_defNPCIndexList.begin();
 	for ( ; it != m_defNPCIndexList.end(); ++it )
 	{
-		sprintf_s( g_NtlTSString, "%d", *it );
+		NTL_SNPRINTF( g_NtlTSString, "%d", *it );
 		strNPCIndexList += g_NtlTSString;
 		strNPCIndexList += ";";
 	}

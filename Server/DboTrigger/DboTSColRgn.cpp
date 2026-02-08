@@ -293,54 +293,54 @@ void CDboTSColRgn::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", m_uiWorldTblIdx );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_uiWorldTblIdx );
 	clProperty.m_defProperty["widx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_uiColCheckType );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_uiColCheckType );
 	clProperty.m_defProperty["cct"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_eColRgnType );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_eColRgnType );
 	clProperty.m_defProperty["crt"] = g_NtlTSString;
 
 	switch ( m_eColRgnType )
 	{
 	case eEVENT_COL_RGN_TYPE_RADIUS:
 		{
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRadius.x );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRadius.x );
 			clProperty.m_defProperty["x"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRadius.z );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRadius.z );
 			clProperty.m_defProperty["z"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRadius.r );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRadius.r );
 			clProperty.m_defProperty["r"] = g_NtlTSString;
 		}
 		break;
 
 	case eEVENT_COL_RGN_TYPE_RECTANGLE:
 		{
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRectangle.x[0] );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRectangle.x[0] );
 			clProperty.m_defProperty["x0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRectangle.z[0] );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRectangle.z[0] );
 			clProperty.m_defProperty["z0"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRectangle.x[1] );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRectangle.x[1] );
 			clProperty.m_defProperty["x1"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRectangle.z[1] );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRectangle.z[1] );
 			clProperty.m_defProperty["z1"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRectangle.x[2] );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRectangle.x[2] );
 			clProperty.m_defProperty["x2"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRectangle.z[2] );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRectangle.z[2] );
 			clProperty.m_defProperty["z2"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRectangle.x[3] );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRectangle.x[3] );
 			clProperty.m_defProperty["x3"] = g_NtlTSString;
 
-			sprintf_s( g_NtlTSString, "%f", m_uColRngData.sRectangle.z[3] );
+			NTL_SNPRINTF( g_NtlTSString, "%f", m_uColRngData.sRectangle.z[3] );
 			clProperty.m_defProperty["z3"] = g_NtlTSString;
 		}
 		break;

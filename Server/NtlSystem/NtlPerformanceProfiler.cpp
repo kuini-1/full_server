@@ -244,7 +244,7 @@ void CProfileStatistic::Save( void )
 	if( file.is_open() )
 	{
 		char szCpuCycle[64] = { 0, };
-		sprintf_s( szCpuCycle, sizeof( szCpuCycle ), "%I64d", m_uCpuCycle );
+		NTL_SNPRINTF( szCpuCycle, sizeof( szCpuCycle ), "%I64d", m_uCpuCycle );
 		file << "Time Unit : ms, ";
 		file << "CpuCycle : " << szCpuCycle << "\n\n";
 		file << "\t\t\t\t MinCycle \t MaxCycle \t AvrCycle \t TotalCycle \t CallCount \t ToTalCycle_TurnCount \t CallCount_TurnCount \n";
@@ -260,11 +260,11 @@ void CProfileStatistic::Save( void )
 
 
 			float fTimeUnit = 1000.0f;
-			sprintf_s( szToken, sizeof( szToken ), "%-31s", strToken.c_str() );
-			sprintf_s( szMinCycle, sizeof( szMinCycle ), "%-15.8f", float( profile.m_uiMinCycle ) / float( m_uCpuCycle ) * fTimeUnit );
-			sprintf_s( szMaxCycle, sizeof( szMaxCycle ), "%-15.8f", float( profile.m_uiMaxCycle ) / float( m_uCpuCycle ) * fTimeUnit );
-			sprintf_s( szTotalCycle, sizeof( szTotalCycle ), "%-15.8f", float( profile.m_uiTotalCycle ) / float( m_uCpuCycle ) * fTimeUnit );
-			sprintf_s( szAverageCycle, sizeof( szAverageCycle ), "%-15.8f", float( profile.m_uiTotalCycle ) / float( profile.m_uiCalledCount ) / float( m_uCpuCycle ) * fTimeUnit );
+			NTL_SNPRINTF( szToken, sizeof( szToken ), "%-31s", strToken.c_str() );
+			NTL_SNPRINTF( szMinCycle, sizeof( szMinCycle ), "%-15.8f", float( profile.m_uiMinCycle ) / float( m_uCpuCycle ) * fTimeUnit );
+			NTL_SNPRINTF( szMaxCycle, sizeof( szMaxCycle ), "%-15.8f", float( profile.m_uiMaxCycle ) / float( m_uCpuCycle ) * fTimeUnit );
+			NTL_SNPRINTF( szTotalCycle, sizeof( szTotalCycle ), "%-15.8f", float( profile.m_uiTotalCycle ) / float( m_uCpuCycle ) * fTimeUnit );
+			NTL_SNPRINTF( szAverageCycle, sizeof( szAverageCycle ), "%-15.8f", float( profile.m_uiTotalCycle ) / float( profile.m_uiCalledCount ) / float( m_uCpuCycle ) * fTimeUnit );
 
 			file << szToken;						
 			file << "\t" << szMinCycle << "\t" << szMaxCycle;

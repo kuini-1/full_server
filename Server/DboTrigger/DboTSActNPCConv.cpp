@@ -56,12 +56,12 @@ void CDboTSActNPCConv::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetNPCIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetNPCIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetNPCConvType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetNPCConvType() );
 	clProperty.m_defProperty["ctype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetNPCConv() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetNPCConv() );
 	clProperty.m_defProperty["conv"] = g_NtlTSString;
 }

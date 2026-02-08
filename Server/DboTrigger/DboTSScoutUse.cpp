@@ -51,12 +51,12 @@ void CDboTSScoutUse::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", GetItemIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTargetType() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetTargetType() );
 	clProperty.m_defProperty["tt"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", GetTargetIdx() );
+	NTL_SNPRINTF( g_NtlTSString, "%d", GetTargetIdx() );
 	clProperty.m_defProperty["tidx"] = g_NtlTSString;
 }
