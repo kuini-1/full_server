@@ -1,0 +1,13 @@
+---
+description: When editing NtlSharedCommon.h or NtlPortable.h, keep structure and parity
+globs: "**/NtlSharedCommon.h,**/NtlPortable.h"
+alwaysApply: false
+---
+
+# Editing the Cross-Platform Headers
+
+When editing **Shared/NtlSharedCommon.h** or **Shared/Util/NtlPortable.h**:
+
+- **Structure**: Keep `#ifdef _WIN32` / `#else` in NtlSharedCommon.h; keep `#if !defined(_WIN32)` / `#else` in NtlPortable.h. Do not invert or mix platform branches.
+- **New APIs**: Prefer macros for new compatibility so one definition covers all call sites. Use the same macro/API name on both platforms.
+- **Parity**: When adding something for Linux, ensure the Windows side has the same symbol (or already provides it). When adding for Windows, add the Linux equivalent in the `#else` block.

@@ -11,12 +11,13 @@
 #ifndef PATHENGINE_INTERFACE_HAS_BEEN_INCLUDED
 #define PATHENGINE_INTERFACE_HAS_BEEN_INCLUDED
 
-#if defined(__GNUC__) && defined(__x86_64__)
-typedef int tSigned32;
-typedef unsigned int tUnsigned32;
-#else
+/* Use fixed 32-bit types so getCollidingLine(tSigned32*) and similar APIs have stable ABI on all platforms (Linux long can be 64-bit). */
+#if defined(_WIN32)
 typedef long tSigned32;
 typedef unsigned long tUnsigned32;
+#else
+typedef int tSigned32;
+typedef unsigned int tUnsigned32;
 #endif
 
 const tSigned32 PATHENGINE_INTERFACE_MAJOR_VERSION = 3;

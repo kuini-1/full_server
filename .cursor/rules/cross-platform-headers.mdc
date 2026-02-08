@@ -1,0 +1,34 @@
+---
+description: Canonical Win/Linux layer; use only NtlSharedCommon.h and NtlPortable.h
+globs: "**/*.cpp,**/*.c,**/*.h"
+alwaysApply: false
+---
+
+# Cross-Platform Canonical Headers
+
+This project uses **two headers only** for Windows/Linux compatibility. All cross-platform types and APIs must come from them.
+
+## Shared/NtlSharedCommon.h
+
+Include for Win/Linux types and system APIs. It includes `Util/NtlPortable.h` on both platforms.
+
+- **Windows**: pulls in winsock2, windows.h.
+- **Linux**: pulls in socket/arpa/inet, pthread, dirent, etc., and defines:
+  - Types: `SOCKET`, `HANDLE`, `DWORD`, `BOOL`, `BYTE`, `WORD`, `WCHAR`, `__int64`, `ntl_uint64`, `HFILE`, `OVERLAPPED`, `WSABUF`, `WIN32_FIND_DATA` (as `WIN32_FIND_DATAA_LINUX`), `CRITICAL_SECTION` (pthread_mutex_t).
+  - Constants: `INVALID_SOCKET`, `SOCKET_ERROR`, `INVALID_HANDLE_VALUE`, `_O_CREAT`, `_O_RDONLY`, etc., Win32 error codes.
+  - Macros: `ZeroMemory`, `CopyMemory`, `_countof`, `_ASSERTE`, `closesocket`→`close`, `GetLastError`/`SetLastError`→errno, `UNREFERENCED_PARAMETER`, `TEXT`/`_T`, `LPCTSTR`.
+  - Inline wrappers: `FindFirstFile`/`FindNextFile`/`FindClose`, `GetTickCount`, `InitializeCriticalSection`/`EnterCriticalSection`/`LeaveCriticalSection`/`DeleteCriticalSection`.
+
+## Shared/Util/NtlPortable.h
+
+Include for portable CRT-style APIs. **Do not use raw** `fopen_s`, `sprintf_s`, `strncpy_s`, `strtok_s`, `_stricmp` in shared code. Use only these macros:
+
+- `NTL_FOPEN`, `NTL_SNPRINTF`, `NTL_VSNPRINTF`, `NTL_STPRINTF`, `NTL_VSTPRINTF`
+- `NTL_STRNCPY_S`, `NTL_STRNCPY_S_FULL`, `NTL_STRCPY_S`, `NTL_WCSCPY_S`, `NTL_WCSNCPY_S`
+- `NTL_STRTOK`, `NTL_SWPRINTF`, `NTL_STRICMP`
+
+On Linux, `_stricmp` and `fprintf_s` are also defined here.
+
+## Strict rule
+
+Do **not** add `#ifdef _WIN32` or `#ifdef __linux__` in random source files. Add new compatibility (types, macros, or thin wrappers) in **NtlSharedCommon.h** or **NtlPortable.h** so one change fixes all call sites. Prefer macros when the same pattern is used in many files.

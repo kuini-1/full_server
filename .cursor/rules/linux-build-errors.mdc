@@ -1,0 +1,16 @@
+---
+description: When user pastes Linux build errors, fix via canonical headers (NtlSharedCommon.h / NtlPortable.h)
+alwaysApply: true
+---
+
+# Linux Build Errors
+
+When the user provides **build errors from a Linux (or non-Windows) build** of this project:
+
+1. **Read** the Cursor rules in `.cursor/rules/`, especially `cross-platform-headers.mdc`.
+2. **Fix** using the canonical cross-platform layer: use or add types/macros in **Shared/NtlSharedCommon.h** or **Shared/Util/NtlPortable.h** (prefer macros). Avoid editing many source files; prefer one change in the canonical headers that resolves the pattern everywhere.
+3. **Patterns**:
+   - Undefined symbol or wrong type → add typedef, macro, or inline in NtlSharedCommon.h.
+   - Missing "safe" CRT (e.g. `fopen_s`, `strncpy_s`) → use existing `NTL_*` macro or add one in NtlPortable.h.
+   - Win32-only API (e.g. FindFirstFile, CRITICAL_SECTION) → ensure code includes NtlSharedCommon.h and use the Linux branch/equivalents already there, or extend NtlSharedCommon.h with a new macro/wrapper.
+   - MSVC-only syntax: `for each ( Type var in container )` is not standard C++; replace with `for ( const auto& var : container )`. In functions that return a pointer, use `return NULL` or `return nullptr`, not `return false`.
