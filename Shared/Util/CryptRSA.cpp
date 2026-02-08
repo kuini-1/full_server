@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "CryptRSA.h"
 
 #ifdef _WIN32
