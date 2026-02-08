@@ -78,7 +78,7 @@ const DWORD CONNECTION_KEEP_ALIVE_INTERVAL		= 1 * 1000; // 家南 可记 KEEP ALIVE 
 //-----------------------------------------------------------------------------------
 // connection STATUS string
 //-----------------------------------------------------------------------------------
-char * s_connection_status_string[CNtlConnection::MAX_STATUS] = 
+const char * s_connection_status_string[CNtlConnection::MAX_STATUS] = 
 {
 	"STATUS_INIT",
 	"STATUS_CREATE",

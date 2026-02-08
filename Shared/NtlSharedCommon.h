@@ -53,6 +53,7 @@ typedef unsigned __int64 ntl_uint64;
 #include <dirent.h>
 #include <time.h>
 #include <cstdio>
+#include <cstdlib>
 #include <sys/time.h>
 
 #ifndef _MAX_DIR
@@ -264,6 +265,12 @@ static inline LONG InterlockedExchange(volatile LONG* p, LONG val) {
 #ifndef ULONG_PTR
 typedef uintptr_t ULONG_PTR;
 #endif
+#ifndef LPDWORD
+typedef DWORD* LPDWORD;
+#endif
+#ifndef PULONG_PTR
+typedef ULONG_PTR* PULONG_PTR;
+#endif
 #ifndef SD_BOTH
 #define SD_BOTH SHUT_RDWR
 #endif
@@ -290,6 +297,123 @@ static inline void InitializeCriticalSectionAndSpinCount(CRITICAL_SECTION* p, DW
 static inline void DeleteCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_destroy(p); }
 static inline void EnterCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_lock(p); }
 static inline void LeaveCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_unlock(p); }
+
+/* INFINITE for Wait* / GetQueuedCompletionStatus timeout (wait forever) */
+#ifndef INFINITE
+#define INFINITE 0xFFFFFFFFUL
+#endif
+
+/* I/O Completion Port emulation for Linux: queue + mutex + cond (used by NtlNetworkProcessor) */
+typedef struct _ntl_iocp_item {
+	DWORD dwNumberOfBytesTransferred;
+	ULONG_PTR dwCompletionKey;
+	LPOVERLAPPED lpOverlapped;
+	struct _ntl_iocp_item* next;
+} ntl_iocp_item;
+
+#define NTL_IOCP_MAGIC 0x494F4350u  /* 'IOCP' */
+
+typedef struct _ntl_iocp_linux {
+	unsigned int magic;
+	pthread_mutex_t mtx;
+	pthread_cond_t cond;
+	pthread_cond_t refcond;
+	ntl_iocp_item* head;
+	ntl_iocp_item* tail;
+	int closed;
+	int refcount;
+} ntl_iocp_linux;
+
+static inline HANDLE CreateIoCompletionPort(HANDLE FileHandle, HANDLE ExistingCompletionPort, ULONG_PTR CompletionKey, DWORD NumberOfConcurrentThreads)
+{
+	(void)NumberOfConcurrentThreads;
+	if (FileHandle != INVALID_HANDLE_VALUE && ExistingCompletionPort != NULL) {
+		/* Associate: not supported on Linux; return existing port so callers don't fail */
+		return ExistingCompletionPort;
+	}
+	ntl_iocp_linux* p = (ntl_iocp_linux*)malloc(sizeof(ntl_iocp_linux));
+	if (!p) { SetLastError(ERROR_NOT_ENOUGH_MEMORY); return NULL; }
+	p->magic = NTL_IOCP_MAGIC;
+	pthread_mutex_init(&p->mtx, NULL);
+	pthread_cond_init(&p->cond, NULL);
+	pthread_cond_init(&p->refcond, NULL);
+	p->head = NULL;
+	p->tail = NULL;
+	p->closed = 0;
+	p->refcount = 0;
+	return (HANDLE)p;
+}
+
+static inline BOOL GetQueuedCompletionStatus(HANDLE CompletionPort, LPDWORD lpNumberOfBytesTransferred, PULONG_PTR lpCompletionKey, LPOVERLAPPED* lpOverlapped, DWORD dwMilliseconds)
+{
+	(void)dwMilliseconds; /* INFINITE only */
+	ntl_iocp_linux* p = (ntl_iocp_linux*)CompletionPort;
+	if (!p || p->magic != NTL_IOCP_MAGIC) { SetLastError(ERROR_INVALID_PARAMETER); return FALSE; }
+	pthread_mutex_lock(&p->mtx);
+	p->refcount++;
+	while (!p->closed && !p->head)
+		pthread_cond_wait(&p->cond, &p->mtx);
+	if (p->closed && !p->head) {
+		p->refcount--;
+		if (p->refcount == 0) pthread_cond_signal(&p->refcond);
+		pthread_mutex_unlock(&p->mtx);
+		return FALSE;
+	}
+	ntl_iocp_item* it = p->head;
+	p->head = it->next;
+	if (!p->head) p->tail = NULL;
+	if (lpNumberOfBytesTransferred) *lpNumberOfBytesTransferred = it->dwNumberOfBytesTransferred;
+	if (lpCompletionKey) *lpCompletionKey = it->dwCompletionKey;
+	if (lpOverlapped) *lpOverlapped = it->lpOverlapped;
+	free(it);
+	p->refcount--;
+	if (p->refcount == 0) pthread_cond_signal(&p->refcond);
+	pthread_mutex_unlock(&p->mtx);
+	return TRUE;
+}
+
+static inline BOOL PostQueuedCompletionStatus(HANDLE CompletionPort, DWORD dwNumberOfBytesTransferred, ULONG_PTR dwCompletionKey, LPOVERLAPPED lpOverlapped)
+{
+	ntl_iocp_linux* p = (ntl_iocp_linux*)CompletionPort;
+	if (!p || p->magic != NTL_IOCP_MAGIC) { SetLastError(ERROR_INVALID_PARAMETER); return FALSE; }
+	ntl_iocp_item* it = (ntl_iocp_item*)malloc(sizeof(ntl_iocp_item));
+	if (!it) { SetLastError(ERROR_NOT_ENOUGH_MEMORY); return FALSE; }
+	it->dwNumberOfBytesTransferred = dwNumberOfBytesTransferred;
+	it->dwCompletionKey = dwCompletionKey;
+	it->lpOverlapped = lpOverlapped;
+	it->next = NULL;
+	pthread_mutex_lock(&p->mtx);
+	if (p->closed) { pthread_mutex_unlock(&p->mtx); free(it); return FALSE; }
+	if (p->tail) p->tail->next = it; else p->head = it;
+	p->tail = it;
+	pthread_cond_signal(&p->cond);
+	pthread_mutex_unlock(&p->mtx);
+	return TRUE;
+}
+
+static inline BOOL CloseHandle(HANDLE hObject)
+{
+	if (hObject == NULL || hObject == INVALID_HANDLE_VALUE) return TRUE;
+	if ((uintptr_t)hObject < 4096) return TRUE; /* avoid treating small fd as pointer */
+	ntl_iocp_linux* p = (ntl_iocp_linux*)hObject;
+	if (p->magic != NTL_IOCP_MAGIC) return TRUE; /* not our IOCP */
+	pthread_mutex_lock(&p->mtx);
+	p->closed = 1;
+	pthread_cond_broadcast(&p->cond);
+	while (p->refcount > 0)
+		pthread_cond_wait(&p->refcond, &p->mtx);
+	ntl_iocp_item* it = p->head;
+	while (it) { ntl_iocp_item* next = it->next; free(it); it = next; }
+	p->head = NULL;
+	p->tail = NULL;
+	pthread_mutex_unlock(&p->mtx);
+	pthread_mutex_destroy(&p->mtx);
+	pthread_cond_destroy(&p->cond);
+	pthread_cond_destroy(&p->refcond);
+	p->magic = 0;
+	free(p);
+	return TRUE;
+}
 
 #ifndef TCHAR
 typedef char TCHAR;
