@@ -68,7 +68,7 @@ int					PetitionCategory2ToSelectionPos( const int nCategory2EnumValue );
 //-- Petition Data ------------------------------------------------------------------
 
 typedef unsigned int						LINKDATAID;
-#define	INVALID_LINKDATAID					(0xFFFFFFFFFFFFFFFFui32)
+#define	INVALID_LINKDATAID					(0xFFFFFFFFu)
 
 typedef	LINKDATAID							PETITIONID;
 #define	INVALID_PETITIONID					INVALID_LINKDATAID
@@ -469,7 +469,7 @@ public:
 
 //-- Petition Observer --------------------------------------------------------------
 typedef ntl_uint64					OBSERVERID;
-#define INVALID_OBSERVERID					0xFFFFFFFFFFFFFFFFui64
+#define INVALID_OBSERVERID					0xFFFFFFFFFFFFFFFFULL
 
 enum eGMSTATE
 {

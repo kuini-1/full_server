@@ -86,8 +86,8 @@ typedef unsigned int MAILID;
 const MAILID INVALID_MAILID = 0xFFFFFFFF;
 //
 const unsigned char INVALID_BYTE		= (unsigned char)0xff;
-const unsigned short INVALID_WORD		= 0xffffui16;
-const unsigned int INVALID_DWORD		= 0xffffffffui32;
+const unsigned short INVALID_WORD		= 0xffff;
+const unsigned int INVALID_DWORD		= 0xffffffffu;
 const float INVALID_FLOAT				= 3.402823466e+38F;
 const double INVALID_DOUBLE				= 1.7976931348623158e+308;
 
