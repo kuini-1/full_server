@@ -252,7 +252,7 @@
             ::pthread_mutex_lock( &atomic_mutex_ );                      \
             lval = val;                                                  \
             ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
+            return;                                                      \
         }                                                                \
                                                                          \
         static void AtomicAssign(IntType& lval, volatile const IntType& val) \
@@ -260,7 +260,7 @@
             ::pthread_mutex_lock( &atomic_mutex_ );                      \
             lval = val;                                                  \
             ::pthread_mutex_unlock( &atomic_mutex_ );                    \
-            return lval;                                                 \
+            return;                                                      \
         }                                                                \
                                                                          \
         static IntType AtomicIncrement(volatile IntType& lval, const IntType compare, bool & matches ) \
