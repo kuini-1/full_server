@@ -4,10 +4,6 @@
 #include "NtlNaviUtility.h"
 #include "NtlNaviResMng.h"
 #include "NtlNaviWEWorld.h"
-#if !defined(_WIN32)
-#include <dirent.h>
-#include <sys/stat.h>
-#endif
 
 
 CNtlNaviPEDataExportMng::CNtlNaviPEDataExportMng( void )
@@ -129,7 +125,6 @@ bool CNtlNaviPEDataExportMng::ImportWorldAll( const char* pRootPath )
 	std::string strRootPath = pRootPath;
 	AttachBackSlash( strRootPath );
 
-#if defined(_WIN32)
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 
@@ -162,37 +157,6 @@ bool CNtlNaviPEDataExportMng::ImportWorldAll( const char* pRootPath )
 	FindClose( hFind );
 
 	return true;
-#else
-	DIR* dir = opendir( strRootPath.c_str() );
-	if ( !dir )
-	{
-		CNtlNaviLog::GetInstance()->Log( "[IMPORT] Can not import world all. [%s]", pRootPath );
-		return false;
-	}
-
-	struct dirent* ent;
-	while ( ( ent = readdir( dir ) ) != NULL )
-	{
-		if ( ent->d_name[0] == '.' )
-			continue;
-
-		std::string fullPath = strRootPath + ent->d_name;
-		struct stat st;
-		if ( stat( fullPath.c_str(), &st ) != 0 )
-			continue;
-		if ( !S_ISDIR( st.st_mode ) )
-			continue;
-
-		if ( !ImportWorld( fullPath.c_str() ) )
-		{
-			closedir( dir );
-			return false;
-		}
-	}
-
-	closedir( dir );
-	return true;
-#endif
 }
 
 bool CNtlNaviPEDataExportMng::ExportWorldList( const char* pRootPath, mapdef_ExportList& list )

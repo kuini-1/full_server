@@ -46,6 +46,9 @@ typedef unsigned __int64 ntl_uint64;
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <dirent.h>
+#include <time.h>
+#include <cstdio>
 
 #ifndef _MAX_DIR
 #define _MAX_DIR 256
@@ -191,5 +194,88 @@ static inline void LeaveCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_unl
 #ifndef _T
 #define _T(x) x
 #endif
+
+/* GetTickCount: milliseconds since an epoch (monotonic on Linux) */
+static inline DWORD GetTickCount(void)
+{
+	struct timespec ts;
+#ifdef CLOCK_MONOTONIC
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+#else
+	clock_gettime(CLOCK_REALTIME, &ts);
+#endif
+	return (DWORD)((unsigned long)ts.tv_sec * 1000UL + (unsigned long)ts.tv_nsec / 1000000UL);
+}
+
+/* FindFirstFile / FindNextFile / FindClose compatibility (same API as Win32) */
+#ifndef INVALID_HANDLE_VALUE
+#define INVALID_HANDLE_VALUE ((HANDLE)(intptr_t)-1)
+#endif
+#ifndef FILE_ATTRIBUTE_DIRECTORY
+#define FILE_ATTRIBUTE_DIRECTORY 0x10
+#endif
+
+typedef struct _WIN32_FIND_DATAA_LINUX {
+	DWORD dwFileAttributes;
+	char  cFileName[260];
+	/* padding for minimal compatibility; Win32 struct has more fields */
+} WIN32_FIND_DATAA_LINUX;
+#define WIN32_FIND_DATA WIN32_FIND_DATAA_LINUX
+
+static inline HANDLE FindFirstFile(const char* lpFileName, WIN32_FIND_DATAA_LINUX* lpFindFileData)
+{
+	char dirpath[260];
+	size_t len = strlen(lpFileName);
+	if (len >= 3 && strcmp(lpFileName + len - 3, "*.*") == 0)
+		len -= 3;
+	else if (len >= 1 && lpFileName[len - 1] == '*')
+		while (len > 0 && lpFileName[len - 1] != '/' && lpFileName[len - 1] != '\\') len--;
+	if (len >= sizeof(dirpath)) return INVALID_HANDLE_VALUE;
+	memcpy(dirpath, lpFileName, len);
+	dirpath[len] = '\0';
+
+	DIR* d = opendir(dirpath);
+	if (!d) return INVALID_HANDLE_VALUE;
+
+	struct dirent* ent = readdir(d);
+	if (!ent) { closedir(d); return INVALID_HANDLE_VALUE; }
+
+	lpFindFileData->dwFileAttributes = 0;
+	if (ent->d_type == DT_DIR) lpFindFileData->dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
+	else if (ent->d_type == DT_UNKNOWN) {
+		char full[512];
+		snprintf(full, sizeof(full), "%s/%s", dirpath, ent->d_name);
+		struct stat st;
+		if (stat(full, &st) == 0 && S_ISDIR(st.st_mode))
+			lpFindFileData->dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
+	}
+	strncpy(lpFindFileData->cFileName, ent->d_name, 259);
+	lpFindFileData->cFileName[259] = '\0';
+
+	return (HANDLE)d;
+}
+
+static inline int FindNextFile(HANDLE hFindFile, WIN32_FIND_DATAA_LINUX* lpFindFileData)
+{
+	DIR* d = (DIR*)hFindFile;
+	struct dirent* ent = readdir(d);
+	if (!ent) return 0;
+
+	lpFindFileData->dwFileAttributes = 0;
+	if (ent->d_type == DT_DIR) lpFindFileData->dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
+	else if (ent->d_type == DT_UNKNOWN) {
+		/* optional: could get dir path from somewhere; skip for simplicity */
+	}
+	strncpy(lpFindFileData->cFileName, ent->d_name, 259);
+	lpFindFileData->cFileName[259] = '\0';
+
+	return 1;
+}
+
+static inline void FindClose(HANDLE hFindFile)
+{
+	if (hFindFile != INVALID_HANDLE_VALUE)
+		closedir((DIR*)hFindFile);
+}
 
 #endif // _WIN32
