@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "NtlIocp.h"
+#include "NtlIOCP.h"
 #include "NtlSocket.h"
 #include "NtlSockAddr.h"
 
