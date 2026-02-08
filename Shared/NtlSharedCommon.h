@@ -255,6 +255,21 @@ static inline LONG InterlockedDecrement(volatile LONG* p) {
 static inline LONG InterlockedExchangeAdd(volatile LONG* p, LONG val) {
 	return __sync_fetch_and_add(p, val);
 }
+static inline LONG InterlockedCompareExchange(volatile LONG* p, LONG exchange, LONG comparand) {
+	return __sync_val_compare_and_swap(p, comparand, exchange);
+}
+static inline LONG InterlockedExchange(volatile LONG* p, LONG val) {
+	return __sync_lock_test_and_set(p, val);
+}
+#ifndef ULONG_PTR
+typedef uintptr_t ULONG_PTR;
+#endif
+#ifndef SD_BOTH
+#define SD_BOTH SHUT_RDWR
+#endif
+#ifndef SD_SEND
+#define SD_SEND SHUT_WR
+#endif
 
 typedef struct _WSABUF {
 	unsigned long len;
@@ -284,6 +299,12 @@ typedef char TCHAR;
 #endif
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(x) ((void)(x))
+#endif
+#ifndef min
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef max
+#define max(a,b) (((a) > (b)) ? (a) : (b))
 #endif
 #ifndef TEXT
 #define TEXT(x) x

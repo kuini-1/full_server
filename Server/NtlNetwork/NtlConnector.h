@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-19
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -14,6 +14,7 @@
 
 #pragma once
 
+class CConnectorThread;
 
 #include "NtlIOCP.h"
 #include "NtlSockAddr.h"
@@ -223,7 +224,7 @@ private:
 
 	DWORD CheckConnection(CNtlConnector *pConnector)
 	{
-		DWORD dwTime = timeGetTime();
+		DWORD dwTime = GetTickCount();
 
 		if (pConnector->m_dwNextTry > dwTime)
 			return pConnector->m_dwNextTry - dwTime;

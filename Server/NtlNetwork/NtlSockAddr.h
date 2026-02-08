@@ -14,7 +14,7 @@
 
 #pragma once
 
-
+#include "../../Shared/NtlSharedCommon.h"
 #include "NtlString.h"
 
 class CNtlSockAddr

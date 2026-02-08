@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../Shared/NtlSharedCommon.h"
 
 class CPacketBlock;
 

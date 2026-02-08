@@ -14,6 +14,8 @@
 
 #pragma once
 
+class CAcceptorThread;
+
 #include "NtlIOCP.h"
 #include "NtlSocket.h"
 #include "NtlSockAddr.h"
