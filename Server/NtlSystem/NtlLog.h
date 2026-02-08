@@ -20,7 +20,19 @@
 #include "NtlBase.h"
 #include "NtlString.h"
 #include <list>
+#if defined(_WIN32)
 #include <crtdbg.h>
+#else
+#include <cassert>
+#ifndef _ASSERT
+#define _ASSERT(x) assert(x)
+#endif
+inline int _CrtDbgReport(int, const char*, int, const char*, const char*, ...) { (void)0; return 0; }
+inline void _CrtDbgBreak(void) {}
+#ifndef _CRT_ASSERT
+#define _CRT_ASSERT 0
+#endif
+#endif
 #include "NtlFile.h"
 
 
