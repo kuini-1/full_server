@@ -144,7 +144,7 @@ bool CObjectTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstri
 		int nCnt = 0;																\
 		char *pToken, *pNextToken;													\
 																					\
-		pToken = strtok_s( szTemp, ";", &pNextToken );								\
+		pToken = NTL_STRTOK( szTemp, ";", &pNextToken );								\
 																					\
 		while ( NULL != pToken )													\
 		{																			\
@@ -161,7 +161,7 @@ bool CObjectTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstri
 																					\
 			nCnt++;																	\
 																					\
-			pToken = strtok_s( NULL, ";", &pNextToken );							\
+			pToken = NTL_STRTOK( NULL, ";", &pNextToken );							\
 		}																			\
 	}
 

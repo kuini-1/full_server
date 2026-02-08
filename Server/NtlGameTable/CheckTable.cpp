@@ -49,7 +49,7 @@ bool CCheckTable::Create(WCHAR* pwszFileName, DWORD dwCodePage)
 
 	// Stores the XML file name.
 	{
-		wcsncpy_s<_countof(m_wszXmlFileName)>(m_wszXmlFileName, pwszFileName, _countof(m_wszXmlFileName) - 1);
+		NTL_WCSNCPY_S(m_wszXmlFileName, _countof(m_wszXmlFileName), pwszFileName, _countof(m_wszXmlFileName) - 1);
 		m_wszXmlFileName[_countof(m_wszXmlFileName) - 1] = L'\0';
 	}
 
@@ -62,7 +62,7 @@ bool CCheckTable::Create(WCHAR* pwszFileName, DWORD dwCodePage)
 
 	while (NULL != ppwszSheetList[dwSheetIndex])
 	{
-		swprintf_s<_countof(wszXPath)>(wszXPath, rowXPathFormat, ppwszSheetList[dwSheetIndex], 0);
+		NTL_SWPRINTF(wszXPath, _countof(wszXPath), rowXPathFormat, ppwszSheetList[dwSheetIndex], 0);
 
 		IXMLDOMNode* pAttributeNameNode = NULL;
 		pAttributeNameNode = doc.SelectSingleNode(wszXPath);
@@ -163,7 +163,7 @@ bool CCheckTable::Create(WCHAR* pwszFileName, DWORD dwCodePage)
 		{
 			IXMLDOMNode* pRoot = NULL;
 			IXMLDOMNodeList* pRow = NULL;
-			swprintf_s<_countof(wszXPath)>(wszXPath, rowXPathFormat, ppwszSheetList[dwSheetIndex], iRowIndex);
+			NTL_SWPRINTF(wszXPath, _countof(wszXPath), rowXPathFormat, ppwszSheetList[dwSheetIndex], iRowIndex);
 
 			pRoot = doc.SelectSingleNode(wszXPath);
 			if (NULL == pRoot)

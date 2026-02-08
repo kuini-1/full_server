@@ -26,6 +26,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <wincrypt.h>
+#include "NtlPortable.h"
 #else
 #include "../../Shared/NtlSharedCommon.h"
 #endif

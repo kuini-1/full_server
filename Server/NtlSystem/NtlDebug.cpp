@@ -71,11 +71,11 @@ void NtlDebugPrint(unsigned int dwFlag, LPCTSTR lpszText, ...)
 #if defined(_WIN32)
 		SYSTEMTIME	systemTime;
 		GetLocalTime( &systemTime );
-		nWriteSize += _stprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT("[%d-%02d-%02d %d:%d:%d:%d] "), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds );
+		nWriteSize += NTL_STPRINTF( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT("[%d-%02d-%02d %d:%d:%d:%d] "), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds );
 
 		va_list args;
 		va_start( args, lpszText );
-		nWriteSize += _vstprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, lpszText, args );
+		nWriteSize += NTL_VSTPRINTF( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, lpszText, args );
 		va_end( args );
 #else
 		time_t now = time(NULL);

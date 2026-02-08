@@ -160,7 +160,7 @@ bool CTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, bool
 
 	// Stores the XML file name.
 	{
-		wcsncpy_s<_countof(m_wszXmlFileName)>(m_wszXmlFileName, pwszFileName, _countof(m_wszXmlFileName) - 1);
+		NTL_WCSNCPY_S(m_wszXmlFileName, _countof(m_wszXmlFileName), pwszFileName, _countof(m_wszXmlFileName) - 1);
 		m_wszXmlFileName[_countof(m_wszXmlFileName) - 1] = L'\0';
 	}
 
@@ -173,7 +173,7 @@ bool CTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, bool
 
 	while (NULL != ppwszSheetList[dwSheetIndex])
 	{
-		swprintf_s<_countof(wszXPath)>(wszXPath, rowXPathFormat, ppwszSheetList[dwSheetIndex], 0);
+		NTL_SWPRINTF(wszXPath, _countof(wszXPath), rowXPathFormat, ppwszSheetList[dwSheetIndex], 0);
 
 		IXMLDOMNode* pAttributeNameNode = NULL;
 		pAttributeNameNode = pXmlDoc->SelectSingleNode(wszXPath);
@@ -268,7 +268,7 @@ bool CTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, bool
 		{
 			IXMLDOMNode* pRoot = NULL;
 			IXMLDOMNodeList* pRow = NULL;
-			swprintf_s<_countof(wszXPath)>(wszXPath, rowXPathFormat, ppwszSheetList[dwSheetIndex], iRowIndex);
+			NTL_SWPRINTF(wszXPath, _countof(wszXPath), rowXPathFormat, ppwszSheetList[dwSheetIndex], iRowIndex);
 
 			pRoot = pXmlDoc->SelectSingleNode(wszXPath);
 			if (NULL == pRoot)
@@ -677,12 +677,12 @@ bool CTable::READ_STRINGW(BSTR bstr, WCHAR* pwszBuffer, DWORD dwBufferLength, co
 		}
 		else
 		{
-			wcscpy_s(pwszBuffer, dwBufferLength, bstr);
+			NTL_WCSCPY_S(pwszBuffer, dwBufferLength, bstr);
 		}
 	}
 	else
 	{
-		wcscpy_s(pwszBuffer, dwBufferLength, pwszInvalidValue);
+		NTL_WCSCPY_S(pwszBuffer, dwBufferLength, pwszInvalidValue);
 	}
 
 	return true;

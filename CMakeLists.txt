@@ -149,6 +149,10 @@ target_link_libraries(NtlNavi PUBLIC dbo_includes)
 #
 
 dbo_collect_sources(_dbo_ntlsystem_src "${CMAKE_CURRENT_SOURCE_DIR}/Server/NtlSystem")
+if(NOT WIN32)
+  list(FILTER _dbo_ntlsystem_src EXCLUDE REGEX ".*[/\\\\]NtlPdh\\.cpp$")
+  list(FILTER _dbo_ntlsystem_src EXCLUDE REGEX ".*[/\\\\]NtlMiniDump\\.cpp$")
+endif()
 add_library(NtlSystem STATIC ${_dbo_ntlsystem_src})
 target_link_libraries(NtlSystem PUBLIC dbo_includes)
 if(WIN32)

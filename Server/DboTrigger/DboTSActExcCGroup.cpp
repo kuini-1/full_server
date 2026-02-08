@@ -35,9 +35,9 @@ void CDboTSActExcCGroup::TakeScriptDataForScript( CNtlTSScrProperty& clProperty 
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	sprintf_s( g_NtlTSString, "%d", m_bReg ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_bReg ? 1 : 0 );
 	clProperty.m_defProperty["rtype"] = g_NtlTSString;
 
-	sprintf_s( g_NtlTSString, "%d", m_tgExcCGID );
+	NTL_SNPRINTF( g_NtlTSString, "%d", m_tgExcCGID );
 	clProperty.m_defProperty["gid"] = g_NtlTSString;
 }

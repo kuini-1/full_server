@@ -255,16 +255,16 @@ bool CModelToolObjDataTable::LoadProperty(const char * lpszFullPathFileName)
 	{
 		pTokenStart = szBuffer;
 		pTokenEnd = strstr( szBuffer, ";");
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
 		pModelToolObjData->m_vMin.x = (float) atof(szToken);
 
 		pTokenStart = pTokenEnd + 1;
 		pTokenEnd = strstr( pTokenStart, ";");
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
 		pModelToolObjData->m_vMin.y = (float) atof(szToken);
 
 		pTokenStart = pTokenEnd + 1;
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, strlen(szBuffer));
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, strlen(szBuffer));
 		pModelToolObjData->m_vMin.z = (float) atof(szToken);
 		
 
@@ -276,16 +276,16 @@ bool CModelToolObjDataTable::LoadProperty(const char * lpszFullPathFileName)
 		
 		pTokenStart = szBuffer;
 		pTokenEnd = strstr( szBuffer, ";");
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
 		pModelToolObjData->m_vMax.x = (float) atof(szToken);
 
 		pTokenStart = pTokenEnd + 1;
 		pTokenEnd = strstr( pTokenStart, ";");
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
 		pModelToolObjData->m_vMax.y = (float) atof(szToken);
 
 		pTokenStart = pTokenEnd + 1;
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, strlen(szBuffer));
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, strlen(szBuffer));
 		pModelToolObjData->m_vMax.z = (float) atof(szToken);
 
 		pModelToolObjData->m_fScale = 1.0f;
@@ -301,16 +301,16 @@ bool CModelToolObjDataTable::LoadProperty(const char * lpszFullPathFileName)
 		CNtlVector vTemp;
 		pTokenStart = szBuffer;
 		pTokenEnd = strstr( szBuffer, ";");
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
 		vTemp.x = (float) atof(szToken);
 
 		pTokenStart = pTokenEnd + 1;
 		pTokenEnd = strstr( pTokenStart, ";");
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
 		vTemp.y = (float) atof(szToken);
 
 		pTokenStart = pTokenEnd + 1;
-		strncpy_s(szToken, sizeof(szToken), pTokenStart, strlen(szBuffer));
+		NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, strlen(szBuffer));
 		vTemp.z = (float) atof(szToken);
 
 		pModelToolObjData->m_vMin.x = -(vTemp.x / 2.0f);

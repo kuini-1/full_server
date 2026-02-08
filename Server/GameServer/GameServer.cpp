@@ -744,7 +744,9 @@ int main(int argc, _TCHAR* argv[])
 	CNtlString consolename;
 	consolename.Format("DBOD GAME %d CH %d", app.GetGsServerId(), app.GetGsChannel());
 
+#if defined(_WIN32)
 	SetConsoleTitle(consolename.c_str());
+#endif
 
 	// LOG FILE
 	char m_LogFile[256];

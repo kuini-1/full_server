@@ -795,7 +795,7 @@ void BattleRoyaleEvent::SendRewards(WORLDID instanceID)
 			mail.mailID = INVALID_MAILID; // Will be assigned by query server
 			mail.byMailType = eMAIL_TYPE_BASIC;
 			mail.bySenderType = eMAIL_SENDER_TYPE_BASIC;
-			wcscpy_s(mail.wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, L"Battle Royale System");
+			NTL_WCSCPY_S(mail.wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, L"Battle Royale System");
 			mail.bIsAccept = false;
 			mail.bIsRead = false;
 			mail.bIsLock = false;
@@ -820,7 +820,7 @@ void BattleRoyaleEvent::SendRewards(WORLDID instanceID)
 			mail.mailID = INVALID_MAILID;
 			mail.byMailType = eMAIL_TYPE_BASIC;
 			mail.bySenderType = eMAIL_SENDER_TYPE_BASIC;
-			wcscpy_s(mail.wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, L"Battle Royale System");
+			NTL_WCSCPY_S(mail.wszFromName, NTL_MAX_SIZE_CHAR_NAME + 1, L"Battle Royale System");
 			mail.bIsAccept = false;
 			mail.bIsRead = false;
 			mail.bIsLock = false;

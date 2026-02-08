@@ -3,36 +3,41 @@
 #include <string>
 #if !defined(_WIN32)
 #include "../NtlSharedCommon.h"
+#else
+#ifndef _countof
+#define _countof(a) (sizeof(a) / sizeof((a)[0]))
+#endif
+#include "NtlPortable.h"
 #endif
 
 #define NTL_SAFE_STRCPY(buffer, original_string) \
 	if ( NULL==(char*)original_string ) buffer[0] = '\0'; \
-	else strncpy_s<_countof(buffer)>(buffer, original_string, _countof(buffer) - 1); \
+	else NTL_STRNCPY_S((buffer), _countof(buffer), (original_string), _countof(buffer) - 1); \
 	buffer[_countof(buffer) - 1] = '\0';
 
 #define NTL_SAFE_STRCPY_SIZEINPUT(buffer, buffer_size, original_string) \
 	if ( NULL==(char*)original_string ) buffer[0] = '\0'; \
-	else strncpy_s(buffer, buffer_size, original_string, _countof( original_string ) ); \
+	else NTL_STRNCPY_S((buffer), (buffer_size), (original_string), _countof(original_string)); \
 	buffer[buffer_size - 1] = '\0';
 
 #define NTL_SAFE_WCSCPY(buffer, original_string) \
 	if ( NULL==(WCHAR*)original_string ) buffer[0] = L'\0'; \
-	else wcsncpy_s((WCHAR*)buffer, _countof(buffer), original_string, _countof(buffer) - 1); \
+	else NTL_WCSNCPY_S((WCHAR*)(buffer), _countof(buffer), (original_string), _countof(buffer) - 1); \
 	buffer[_countof(buffer) - 1] = L'\0';
 
 #define NTL_SAFE_STRNCPY(buffer, original_string, character_count) \
 	if ( NULL==(char*)original_string ) buffer[0] = '\0'; \
-	else strncpy_s<_countof(buffer)>(buffer, original_string, character_count); \
+	else NTL_STRNCPY_S((buffer), _countof(buffer), (original_string), (character_count)); \
 	buffer[character_count] = '\0';
 
 #define NTL_SAFE_WCSNCPY(buffer, original_string, character_count) \
 	if ( NULL==(WCHAR*)original_string ) buffer[0] = L'\0'; \
-	else wcsncpy_s((WCHAR*)buffer, _countof(buffer), original_string, character_count); \
+	else NTL_WCSNCPY_S((WCHAR*)(buffer), _countof(buffer), (original_string), (character_count)); \
 	buffer[character_count] = L'\0';
 
 #define NTL_SAFE_WCSNCPY_SIZEINPUT(buffer, buffer_size, original_string, character_count) \
 	if ( NULL==(WCHAR*)original_string ) buffer[0] = L'\0'; \
-	else wcsncpy_s((WCHAR*)buffer, buffer_size, original_string, character_count); \
+	else NTL_WCSNCPY_S((WCHAR*)(buffer), (buffer_size), (original_string), (character_count)); \
 	buffer[character_count] = L'\0';
 
 

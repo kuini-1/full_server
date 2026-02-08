@@ -254,7 +254,9 @@ int main(int argc, _TCHAR* argv[])
 	SYSTEMTIME ti;
 	GetLocalTime(&ti);
 
+#if defined(_WIN32)
 	SetConsoleTitle( TEXT("DBOD AUTH") );
+#endif
 
 	// CHECK INI FILE AND START PROGRAM
 	int rc = app.Create(argc, argv, ".\\config\\AuthServer.ini");

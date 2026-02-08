@@ -527,11 +527,7 @@ CNtlSerializer& CNtlSerializer::Format(const char *pData /*= NULL*/, ...)
 	va_list args;
 	va_start(args, pData);
 
-#if defined(_WIN32) && defined(_MSC_VER) && (_MSC_VER >= 1400)
-	vsprintf_s(chBuffer, 1024, pData, args);
-#else
-	vsnprintf(chBuffer, 1024, pData, args);
-#endif
+	NTL_VSNPRINTF(chBuffer, 1024, pData, args);
 	va_end(args);
 
 	int iTypeSize = (int)strlen(chBuffer);

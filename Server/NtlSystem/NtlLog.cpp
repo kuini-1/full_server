@@ -163,31 +163,31 @@ void CNtlLog::Log(BYTE byLogChannel, bool bDate, LPCTSTR lpszFile, int nLine, LP
 	int nWriteSize = 0;
 
 #if defined(_WIN32)
-	nWriteSize += _stprintf_s( szLogBuffer, nBuffSize, TEXT("[%s]\t"), GetLogChannelString(byLogChannel) );
+	nWriteSize += NTL_STPRINTF( szLogBuffer, nBuffSize, TEXT("[%s]\t"), GetLogChannelString(byLogChannel) );
 
 	if( bDate )
 	{
 		SYSTEMTIME	systemTime;
 		GetLocalTime( &systemTime );
-		nWriteSize += _stprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT("[%d-%02d-%02d %d:%d:%d:%d]\t"), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds );
+		nWriteSize += NTL_STPRINTF( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT("[%d-%02d-%02d %d:%d:%d:%d]\t"), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds );
 	}
 
 
 	va_list args;
 	va_start( args, lpszText );
-	nWriteSize += _vstprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, lpszText, args );
+	nWriteSize += NTL_VSTPRINTF( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, lpszText, args );
 	va_end( args );
 
 
 	if( lpszFile )
 	{
-		nWriteSize += _stprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT(" file[%s]\tline[%d]\t"), lpszFile, nLine );
+		nWriteSize += NTL_STPRINTF( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT(" file[%s]\tline[%d]\t"), lpszFile, nLine );
 	}
 
 
 	if( lpszFunc )
 	{
-		nWriteSize += _stprintf_s( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT(" function[%s]\t"), lpszFunc );
+		nWriteSize += NTL_STPRINTF( szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT(" function[%s]\t"), lpszFunc );
 	}
 
 	if( s_log_stream)
@@ -239,16 +239,16 @@ void CNtlLog::Log(LPCTSTR lpszText, ...)
 	int nWriteSize = 0;
 
 #if defined(_WIN32)
-	nWriteSize += _stprintf_s(szLogBuffer, nBuffSize, TEXT("[%s]\t"), GetLogChannelString(LOG_HACK));
+	nWriteSize += NTL_STPRINTF(szLogBuffer, nBuffSize, TEXT("[%s]\t"), GetLogChannelString(LOG_HACK));
 
 	SYSTEMTIME	systemTime;
 	GetLocalTime(&systemTime);
-	nWriteSize += _stprintf_s(szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT("[%d-%02d-%02d %d:%d:%d:%d]\t"), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds);
+	nWriteSize += NTL_STPRINTF(szLogBuffer + nWriteSize, nBuffSize - nWriteSize, TEXT("[%d-%02d-%02d %d:%d:%d:%d]\t"), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds);
 
 
 	va_list args;
 	va_start(args, lpszText);
-	nWriteSize += _vstprintf_s(szLogBuffer + nWriteSize, nBuffSize - nWriteSize, lpszText, args);
+	nWriteSize += NTL_VSTPRINTF(szLogBuffer + nWriteSize, nBuffSize - nWriteSize, lpszText, args);
 	va_end(args);
 
 	if (s_log_stream)

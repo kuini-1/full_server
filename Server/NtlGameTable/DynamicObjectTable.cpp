@@ -124,7 +124,7 @@ bool CDynamicObjectTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std
 		int nCnt = 0;																\
 		char *pToken, *pNextToken;													\
 																					\
-		pToken = strtok_s( szTemp, ";", &pNextToken );								\
+		pToken = NTL_STRTOK( szTemp, ";", &pNextToken );								\
 																					\
 		while ( NULL != pToken )													\
 		{																			\
@@ -141,7 +141,7 @@ bool CDynamicObjectTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std
 																					\
 			nCnt++;																	\
 																					\
-			pToken = strtok_s( NULL, ";", &pNextToken );							\
+			pToken = NTL_STRTOK( NULL, ";", &pNextToken );							\
 		}																			\
 	}
 

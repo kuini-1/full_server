@@ -15,3 +15,5 @@ DboServerFiles.sln
 *.pdb
 
 /out
+/build_win
+/build_linux

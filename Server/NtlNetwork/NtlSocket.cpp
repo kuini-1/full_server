@@ -21,6 +21,9 @@
 
 #if !defined(_WIN32)
 
+#include <fcntl.h>
+#include <netinet/tcp.h>
+
 LPFN_ACCEPTEX				CNtlSocket::m_lpfnAcceptEx				= NULL;
 LPFN_CONNECTEX				CNtlSocket::m_lpfnConnectEx				= NULL;
 LPFN_DISCONNECTEX			CNtlSocket::m_lpfnDisconnectEx			= NULL;
@@ -39,7 +42,7 @@ CNtlSocket::~CNtlSocket()
 
 int CNtlSocket::StartUp()
 {
-	return NTL_FAIL;
+	return NTL_SUCCESS;
 }
 
 int CNtlSocket::CleanUp()
@@ -49,118 +52,233 @@ int CNtlSocket::CleanUp()
 
 int CNtlSocket::LoadExtensionAPI()
 {
-	return NTL_FAIL;
+	return NTL_SUCCESS;
 }
 
 int CNtlSocket::LoadExtensionFunction(GUID, LPVOID*)
 {
-	return NTL_FAIL;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::Create(int)
+int CNtlSocket::Create(int nSocketType)
 {
-	m_socket = INVALID_SOCKET;
-	return NTL_FAIL;
+	(void)nSocketType;
+	m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (INVALID_SOCKET == m_socket)
+		return errno;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::Bind(CNtlSockAddr&)
+int CNtlSocket::Bind(CNtlSockAddr& rSockAddr)
 {
-	return NTL_FAIL;
+	if (0 != bind(m_socket, (struct sockaddr*)rSockAddr, sizeof(struct sockaddr)))
+		return errno;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::Listen(int)
+int CNtlSocket::Listen(int nBackLog)
 {
-	return NTL_FAIL;
+	if (0 != listen(m_socket, nBackLog))
+		return errno;
+	return NTL_SUCCESS;
 }
 
 int CNtlSocket::Close()
 {
+	if (INVALID_SOCKET == m_socket)
+		return NTL_SUCCESS;
+	if (SOCKET_ERROR == closesocket(m_socket))
+		return errno;
 	m_socket = INVALID_SOCKET;
 	return NTL_SUCCESS;
 }
 
-int CNtlSocket::Shutdown(int)
+int CNtlSocket::Shutdown(int how)
 {
-	return NTL_FAIL;
+	if (INVALID_SOCKET == m_socket)
+		return NTL_SUCCESS;
+	if (SOCKET_ERROR == shutdown(m_socket, how))
+		return errno;
+	return NTL_SUCCESS;
 }
 
 int CNtlSocket::GetPeerName(CNtlString & rAddress, WORD & rPort)
 {
-	rAddress = "";
-	rPort = 0;
-	return NTL_FAIL;
+	struct sockaddr_in sockAddr;
+	socklen_t nSockAddrLen = sizeof(sockAddr);
+	if (0 != getpeername(m_socket, (struct sockaddr*)&sockAddr, &nSockAddrLen))
+		return errno;
+	char addrStr[INET_ADDRSTRLEN];
+	if (!inet_ntop(AF_INET, &sockAddr.sin_addr, addrStr, sizeof(addrStr)))
+		return errno;
+	rAddress = addrStr;
+	rPort = ntohs(sockAddr.sin_port);
+	return NTL_SUCCESS;
 }
 
 int CNtlSocket::GetLocalName(CNtlString & rAddress, WORD & rPort)
 {
-	rAddress = "";
-	rPort = 0;
-	return NTL_FAIL;
+	struct sockaddr_in sockAddr;
+	socklen_t nSockAddrLen = sizeof(sockAddr);
+	if (0 != getsockname(m_socket, (struct sockaddr*)&sockAddr, &nSockAddrLen))
+		return errno;
+	char addrStr[INET_ADDRSTRLEN];
+	if (!inet_ntop(AF_INET, &sockAddr.sin_addr, addrStr, sizeof(addrStr)))
+		return errno;
+	rAddress = addrStr;
+	rPort = ntohs(sockAddr.sin_port);
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::GetPeerAddr(CNtlSockAddr &)
+int CNtlSocket::GetPeerAddr(CNtlSockAddr & rAddr)
 {
-	return NTL_FAIL;
+	struct sockaddr_in sockAddr;
+	socklen_t nSockAddrLen = sizeof(sockAddr);
+	if (0 != getpeername(m_socket, (struct sockaddr*)&sockAddr, &nSockAddrLen))
+		return errno;
+	char addrStr[INET_ADDRSTRLEN];
+	if (!inet_ntop(AF_INET, &sockAddr.sin_addr, addrStr, sizeof(addrStr)))
+		return errno;
+	rAddr.SetSockAddr(addrStr, ntohs(sockAddr.sin_port));
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::GetLocalAddr(CNtlSockAddr &)
+int CNtlSocket::GetLocalAddr(CNtlSockAddr & rAddr)
 {
-	return NTL_FAIL;
+	struct sockaddr_in sockAddr;
+	socklen_t nSockAddrLen = sizeof(sockAddr);
+	if (0 != getsockname(m_socket, (struct sockaddr*)&sockAddr, &nSockAddrLen))
+		return errno;
+	char addrStr[INET_ADDRSTRLEN];
+	if (!inet_ntop(AF_INET, &sockAddr.sin_addr, addrStr, sizeof(addrStr)))
+		return errno;
+	rAddr.SetSockAddr(addrStr, ntohs(sockAddr.sin_port));
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::SetNonBlocking(BOOL)
+int CNtlSocket::SetNonBlocking(BOOL bActive)
 {
-	return NTL_FAIL;
+	int flags = fcntl(m_socket, F_GETFL, 0);
+	if (flags < 0)
+		return errno;
+	if (bActive)
+		flags |= O_NONBLOCK;
+	else
+		flags &= ~O_NONBLOCK;
+	if (fcntl(m_socket, F_SETFL, flags) < 0)
+		return errno;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::SetReuseAddr(BOOL)
+int CNtlSocket::SetReuseAddr(BOOL bActive)
 {
-	return NTL_FAIL;
+	int result = setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&bActive, sizeof(bActive));
+	if (SOCKET_ERROR == result)
+		return errno;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::SetLinger(BOOL, WORD)
+int CNtlSocket::SetLinger(BOOL bActive, WORD wTime)
 {
-	return NTL_FAIL;
+	struct linger so_linger;
+	so_linger.l_onoff = (u_short)bActive;
+	so_linger.l_linger = wTime;
+	int result = setsockopt(m_socket, SOL_SOCKET, SO_LINGER, (char*)&so_linger, sizeof(so_linger));
+	if (SOCKET_ERROR == result)
+		return errno;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::SetTCPNoDelay(BOOL)
+int CNtlSocket::SetTCPNoDelay(BOOL bActive)
 {
-	return NTL_FAIL;
+	int result = setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&bActive, sizeof(bActive));
+	if (SOCKET_ERROR == result)
+		return errno;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::SetKeepAlive(BOOL)
+int CNtlSocket::SetKeepAlive(BOOL bActive)
 {
-	return NTL_FAIL;
+	int result = setsockopt(m_socket, SOL_SOCKET, SO_KEEPALIVE, (char*)&bActive, sizeof(bActive));
+	if (SOCKET_ERROR == result)
+		return errno;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::SetKeepAlive(DWORD, DWORD)
+int CNtlSocket::SetKeepAlive(DWORD dwKeepAliveTime, DWORD dwKeepAliveInterval)
 {
-	return NTL_FAIL;
+#ifdef TCP_KEEPIDLE
+	int idle = (int)dwKeepAliveTime;
+	int interval = (int)dwKeepAliveInterval;
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle)) != 0)
+		return errno;
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(interval)) != 0)
+		return errno;
+#endif
+	return NTL_SUCCESS;
 }
 
 int CNtlSocket::SetConditionalAccept(BOOL)
 {
-	return NTL_FAIL;
+	return NTL_SUCCESS;
 }
 
 int CNtlSocket::GetCurReadSocketBuffer()
 {
-	return 0;
+	int nRead = 0;
+	if (ioctl(m_socket, FIONREAD, &nRead) < 0)
+		return 0;
+	return nRead;
 }
 
-int CNtlSocket::Connect(struct sockaddr_in*)
+int CNtlSocket::Connect(struct sockaddr_in* sockaddr)
 {
-	return NTL_FAIL;
+	int rc = connect(m_socket, (struct sockaddr*)sockaddr, sizeof(struct sockaddr_in));
+	if (SOCKET_ERROR == rc)
+		return errno;
+	return NTL_SUCCESS;
 }
 
-int CNtlSocket::SendStream(unsigned char*, int, bool)
+int CNtlSocket::SendStream(unsigned char* pSendBuffer, int nSendSize, bool bSendOut)
 {
-	return NTL_FAIL;
+	int nResult = 0;
+	bool bProcess = true;
+	BYTE* pBuffer = pSendBuffer;
+
+	if (bSendOut)
+	{
+		while (bProcess)
+		{
+			nResult = send(m_socket, (const char*)pBuffer, nSendSize, 0);
+			if (SOCKET_ERROR == nResult)
+			{
+				bProcess = false;
+				return SOCKET_ERROR;
+			}
+			else if (nResult < nSendSize)
+			{
+				pBuffer += nResult;
+				nSendSize -= nResult;
+				bProcess = true;
+			}
+			else
+			{
+				bProcess = false;
+			}
+		}
+	}
+	else
+	{
+		nResult = send(m_socket, (const char*)pBuffer, nSendSize, 0);
+		if (SOCKET_ERROR == nResult)
+			return SOCKET_ERROR;
+	}
+	return nResult;
 }
 
-int CNtlSocket::RecvStream(BYTE*, int)
+int CNtlSocket::RecvStream(BYTE* pRecvBuffer, int nRecvSize)
 {
-	return NTL_FAIL;
+	return recv(m_socket, (char*)pRecvBuffer, nRecvSize, 0);
 }
 
 #else // _WIN32

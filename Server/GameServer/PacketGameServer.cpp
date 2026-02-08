@@ -2021,7 +2021,7 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 		qRes->handle = cPlayer->GetID();
 		qRes->hObject = req->hObject;
 		qRes->charID = cPlayer->GetCharID();
-		wcscpy_s(qRes->wszName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
+		NTL_WCSCPY_S(qRes->wszName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
 		qRes->byMailType = req->byMailType;
 		if (item)
 		{
@@ -2584,7 +2584,7 @@ void CClientSession::RecvGuildInviteReq(CNtlPacket * pPacket)
 		CPlayer* target = g_pObjectManager->GetPC(req->hTarget);
 		if (target && target->IsInitialized()) //check if target is online
 		{
-			wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
+			NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
 
 			if (target->GetGuildID() == 0) //check if has no guild.
 			{
@@ -2595,7 +2595,7 @@ void CClientSession::RecvGuildInviteReq(CNtlPacket * pPacket)
 					cRes->wOpCode = GT_GUILD_INVITE_REQ;
 					cRes->invitorCharId = cPlayer->GetCharID();
 					cRes->targetCharId = target->GetCharID();
-					wcscpy_s(cRes->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
+					NTL_WCSCPY_S(cRes->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
 					cPacket.SetPacketLen(sizeof(sGT_GUILD_INVITE_REQ));
 					app->SendTo(app->GetChatServerSession(), &cPacket); //Send to chat server
 
@@ -3549,7 +3549,7 @@ void CClientSession::RecvPartyInviteReq(CNtlPacket * pPacket)
 					else
 					{
 						resultcode = GAME_SUCCESS;
-						wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
+						NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
 						target->SetIsPartyInvite(true);
 						target->SetPartyInviteID(res->partyID);
 						target->SetPartyInvitedByID(cPlayer->GetCharID());
@@ -3558,7 +3558,7 @@ void CClientSession::RecvPartyInviteReq(CNtlPacket * pPacket)
 				else
 				{
 					resultcode = GAME_SUCCESS;
-					wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
+					NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
 					target->SetIsPartyInvite(true);
 					target->SetPartyInviteID(res->partyID);
 					target->SetPartyInvitedByID(cPlayer->GetCharID());
@@ -3578,7 +3578,7 @@ void CClientSession::RecvPartyInviteReq(CNtlPacket * pPacket)
 		CNtlPacket packet2(sizeof(sGU_PARTY_INVITE_NFY));
 		sGU_PARTY_INVITE_NFY * res2 = (sGU_PARTY_INVITE_NFY *)packet2.GetPacketData();
 		res2->wOpCode = GU_PARTY_INVITE_NFY;
-		wcscpy_s(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName() );
+		NTL_WCSCPY_S(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName() );
 		packet2.SetPacketLen( sizeof(sGU_PARTY_INVITE_NFY));
 		g_pApp->Send( target->GetClientSessionID(), &packet2 );
 	}
@@ -3617,7 +3617,7 @@ void CClientSession::RecvPartyInviteCharIdReq(CNtlPacket * pPacket)
 					else
 					{
 						resultcode = GAME_SUCCESS;
-						wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
+						NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
 						target->SetIsPartyInvite(true);	
 						target->SetPartyInviteID(res->partyID);	
 						target->SetPartyInvitedByID(cPlayer->GetCharID());
@@ -3626,7 +3626,7 @@ void CClientSession::RecvPartyInviteCharIdReq(CNtlPacket * pPacket)
 				else
 				{
 					resultcode = GAME_SUCCESS;
-					wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName() );
+					NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName() );
 					target->SetIsPartyInvite(true);	
 					target->SetPartyInviteID(res->partyID);	
 					target->SetPartyInvitedByID(cPlayer->GetCharID());
@@ -3646,7 +3646,7 @@ void CClientSession::RecvPartyInviteCharIdReq(CNtlPacket * pPacket)
 		CNtlPacket packet2(sizeof(sGU_PARTY_INVITE_NFY));
 		sGU_PARTY_INVITE_NFY * res2 = (sGU_PARTY_INVITE_NFY *)packet2.GetPacketData();
 		res2->wOpCode = GU_PARTY_INVITE_NFY;
-		wcscpy_s(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
+		NTL_WCSCPY_S(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
 		packet2.SetPacketLen( sizeof(sGU_PARTY_INVITE_NFY));
 		g_pApp->Send(target->GetClientSessionID(), &packet2 );
 	}
@@ -3696,7 +3696,7 @@ void CClientSession::RecvPartyInviteCharNameReq(CNtlPacket * pPacket)
 					else
 					{
 						resultcode = GAME_SUCCESS;
-						wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName() );
+						NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName() );
 						target->SetIsPartyInvite(true);	
 						target->SetPartyInviteID(res->partyID);	
 						target->SetPartyInvitedByID(cPlayer->GetCharID());
@@ -3705,7 +3705,7 @@ void CClientSession::RecvPartyInviteCharNameReq(CNtlPacket * pPacket)
 				else
 				{
 					resultcode = GAME_SUCCESS;
-					wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
+					NTL_WCSCPY_S(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
 					target->SetIsPartyInvite(true);	
 					target->SetPartyInviteID(res->partyID);	
 					target->SetPartyInvitedByID(cPlayer->GetCharID());
@@ -3727,7 +3727,7 @@ void CClientSession::RecvPartyInviteCharNameReq(CNtlPacket * pPacket)
 		CNtlPacket packet2(sizeof(sGU_PARTY_INVITE_NFY));
 		sGU_PARTY_INVITE_NFY * res2 = (sGU_PARTY_INVITE_NFY *)packet2.GetPacketData();
 		res2->wOpCode = GU_PARTY_INVITE_NFY;
-		wcscpy_s(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
+		NTL_WCSCPY_S(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
 		packet2.SetPacketLen( sizeof(sGU_PARTY_INVITE_NFY));
 		g_pApp->Send( target->GetClientSessionID(), &packet2 );
 	}
@@ -3818,7 +3818,7 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 					CNtlPacket packet2(sizeof(sGU_PARTY_INVITATION_DECLINED_NFY));
 					sGU_PARTY_INVITATION_DECLINED_NFY * res2 = (sGU_PARTY_INVITATION_DECLINED_NFY *)packet2.GetPacketData();
 					res2->wOpCode = GU_PARTY_INVITATION_DECLINED_NFY;
-					wcscpy_s(res2->wszPlayerName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
+					NTL_WCSCPY_S(res2->wszPlayerName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
 					packet2.SetPacketLen(sizeof(sGU_PARTY_INVITATION_DECLINED_NFY));
 					g_pApp->Send(invitor->GetClientSessionID(), &packet2);
 
@@ -3829,7 +3829,7 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 					CNtlPacket packet2(sizeof(sGU_PARTY_INVITATION_EXPIRED_NFY));
 					sGU_PARTY_INVITATION_EXPIRED_NFY * res2 = (sGU_PARTY_INVITATION_EXPIRED_NFY *)packet2.GetPacketData();
 					res2->wOpCode = GU_PARTY_INVITATION_EXPIRED_NFY;
-					wcscpy_s(res2->wszPlayerName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
+					NTL_WCSCPY_S(res2->wszPlayerName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
 					packet2.SetPacketLen(sizeof(sGU_PARTY_INVITATION_EXPIRED_NFY));
 					g_pApp->Send(invitor->GetClientSessionID(), &packet2);
 
@@ -5840,7 +5840,7 @@ void	CClientSession::RecvScouterEquipCheckReq(CNtlPacket * pPacket)
 				res->aItemProfile[byItemCount].bNeedToIdentify = data->bNeedToIdentify;
 				res->aItemProfile[byItemCount].byBattleAttribute = data->byBattleAttribute;
 				res->aItemProfile[byItemCount].byRestrictState = data->byRestrictState;
-				wcscpy_s(res->aItemProfile[byItemCount].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, data->awchMaker);
+				NTL_WCSCPY_S(res->aItemProfile[byItemCount].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, data->awchMaker);
 				memcpy(&res->aItemProfile[byItemCount].sOptionSet, &data->sOptionSet, sizeof(sITEM_OPTION_SET));
 				res->aItemProfile[byItemCount].byDurationType = data->byDurationType;
 				res->aItemProfile[byItemCount].nUseStartTime = data->nUseStartTime;
@@ -9635,7 +9635,7 @@ void CClientSession::RecvItemUpgradeWorkReq(CNtlPacket * pPacket)
 						rChat->byMsgType = DBO_BROADCASTING_MSG_TYPE_ITEMUPGRADE;
 						rChat->sData.sItemUpgrade.byGrade = res->byItemGrade;
 						rChat->sData.sItemUpgrade.tblidx = equipdata->GetTblidx();
-						wcscpy_s(rChat->sData.sItemUpgrade.wszName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
+						NTL_WCSCPY_S(rChat->sData.sItemUpgrade.wszName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
 						pChat.SetPacketLen(sizeof(sGT_BROADCASTING_SYSTEM_NFY));
 						app->SendTo(app->GetChatServerSession(), &pChat);
 					}
@@ -10867,8 +10867,8 @@ void CClientSession::RecvSellCancelAuctionHouseReq(CNtlPacket * pPacket)
 	CNtlPacket packet(sizeof(sGT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ));
 	sGT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ * res = (sGT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ *)packet.GetPacketData();
 	res->wOpCode = GT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ;
-	wcscpy_s(res->awchSystem, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
-	wcscpy_s(res->awchText, 128 + 1, L"Cancel Auction Item");
+	NTL_WCSCPY_S(res->awchSystem, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
+	NTL_WCSCPY_S(res->awchText, 128 + 1, L"Cancel Auction Item");
 	res->charId = cPlayer->GetCharID();
 	res->itemId = req->itemId;
 	res->nItem = req->nItem;
@@ -11001,7 +11001,7 @@ void CClientSession::RecvGiftShopStartReq(CNtlPacket * pPacket)
 		sMERCHANT_TBLDAT* pMerchantData = (sMERCHANT_TBLDAT*)pMerchantItemTable->FindData(1);
 		res->wOpCode = GU_GIFT_SHOP_TAB_INFO_NFY;
 		res->byTabIndex = 0;
-		wcscpy_s(res->wszTabName, NTL_MAX_SIZE_TAB_NAME_IN_UNICODE + 1, L"Items");
+		NTL_WCSCPY_S(res->wszTabName, NTL_MAX_SIZE_TAB_NAME_IN_UNICODE + 1, L"Items");
 		res->byItemCount = 0;
 
 		for (int i = 0; i < NTL_MAX_MERCHANT_COUNT + 1; i++)
@@ -11023,7 +11023,7 @@ void CClientSession::RecvGiftShopStartReq(CNtlPacket * pPacket)
 		/*
 		res->wOpCode = GU_GIFT_SHOP_TAB_INFO_NFY;
 		res->byTabIndex = 1;
-		wcscpy_s(res->wszTabName, NTL_MAX_SIZE_TAB_NAME_IN_UNICODE + 1, L"Items 2");
+		NTL_WCSCPY_S(res->wszTabName, NTL_MAX_SIZE_TAB_NAME_IN_UNICODE + 1, L"Items 2");
 		res->byItemCount = 1;
 		res->aSellItemInfo[0].idxItemTbl = 11120090;
 		res->aSellItemInfo[0].dwPrice = 50;

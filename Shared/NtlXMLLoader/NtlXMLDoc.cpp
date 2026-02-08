@@ -461,7 +461,7 @@ bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode* pNode, WCHAR* pwszAttribu
 		return false;
 	}
 
-	wcscpy_s(pwszResultText, nBufferSizeInWChars, V_BSTR(&var));
+	NTL_WCSCPY_S(pwszResultText, nBufferSizeInWChars, V_BSTR(&var));
 
 	return true;
 }
@@ -551,7 +551,7 @@ bool CNtlXMLDoc::GetDataWithXPath(WCHAR* pwszXPath, WCHAR* pwszResultData, int n
 		return false;
 	}
 
-	wcscpy_s(pwszResultData, nBufferSizeInWChars, bstr);
+	NTL_WCSCPY_S(pwszResultData, nBufferSizeInWChars, bstr);
 
 	::SysFreeString(bstr);
 	pNode->Release();

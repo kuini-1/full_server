@@ -81,7 +81,7 @@ void CPlayer::Send_GtUserEnterGame(bool bForSyncCommunity)
 	CNtlPacket packetChat(sizeof(sGT_USER_ENTER_GAME));
 	sGT_USER_ENTER_GAME * res = (sGT_USER_ENTER_GAME *)packetChat.GetPacketData();
 	res->wOpCode = GT_USER_ENTER_GAME;
-	wcscpy_s(res->awchName, NTL_MAX_SIZE_CHAR_NAME + 1, GetCharName());
+	NTL_WCSCPY_S(res->awchName, NTL_MAX_SIZE_CHAR_NAME + 1, GetCharName());
 	res->byClass = GetClass();
 	res->byLevel = GetLevel();
 	res->byRace = GetRace();
@@ -173,7 +173,7 @@ void CPlayer::LoadData(sPC_PROFILE* pcdata, sPC_TBLDAT* pTbldat)
 		m_fScale = pTbldat->fScale;
 		if (RefreshObjectRadius())
 		{
-			wcscpy_s(player_data.awchName, NTL_MAX_SIZE_CHAR_NAME + 1, pcdata->awchName);
+			NTL_WCSCPY_S(player_data.awchName, NTL_MAX_SIZE_CHAR_NAME + 1, pcdata->awchName);
 			player_data.bChangeClass = pcdata->bChangeClass;
 			player_data.bindObjectTblidx = pcdata->bindObjectTblidx;
 			player_data.bindWorldId = pcdata->bindWorldId;
@@ -795,7 +795,7 @@ void CPlayer::CopyToObjectInfo(sOBJECT_INFO *pObjectInfo, CHARACTERID playerChar
 
 	m_pStateManager->CopyTo(&pObjectInfo->pcState);
 
-	wcscpy_s(pObjectInfo->pcBrief.awchName, NTL_MAX_SIZE_CHAR_NAME + 1, GetCharName());
+	NTL_WCSCPY_S(pObjectInfo->pcBrief.awchName, NTL_MAX_SIZE_CHAR_NAME + 1, GetCharName());
 	pObjectInfo->pcBrief.bEmergency = player_data.bEmergency;
 	pObjectInfo->pcBrief.bInvisibleCostume = player_data.bInvisibleCostume;
 	pObjectInfo->pcBrief.bIsAdult = player_data.bIsAdult;
@@ -837,7 +837,7 @@ void CPlayer::CopyToObjectInfo(sOBJECT_INFO *pObjectInfo, CHARACTERID playerChar
 	pObjectInfo->pcBrief.wAttackSpeedRate = GetCharAtt()->GetLastAttackSpeedRate();
 	pObjectInfo->pcBrief.wCurEP = GetCurEP();
 	pObjectInfo->pcBrief.wMaxEP = GetLastMaxEP();
-	wcscpy_s(pObjectInfo->pcBrief.wszGuildName, NTL_MAX_SIZE_GUILD_NAME + 1, GetGuildName());
+	NTL_WCSCPY_S(pObjectInfo->pcBrief.wszGuildName, NTL_MAX_SIZE_GUILD_NAME + 1, GetGuildName());
 }
 
 void CPlayer::CreateDestServerInfo(sDBO_SERVER_INFO * pServerInfo, BYTE* pbyAuthKey)
@@ -847,7 +847,7 @@ void CPlayer::CreateDestServerInfo(sDBO_SERVER_INFO * pServerInfo, BYTE* pbyAuth
 		if (m_pDestServerInfo == NULL)
 			m_pDestServerInfo = new sSERVER_INFO;
 
-		strcpy_s(m_pDestServerInfo->szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, pServerInfo->achPublicAddress);
+		NTL_STRCPY_S(m_pDestServerInfo->szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, pServerInfo->achPublicAddress);
 		m_pDestServerInfo->wCharacterServerPortForClient = pServerInfo->wPortForClient;
 		m_pDestServerInfo->dwLoad = pServerInfo->dwLoad;
 		m_pDestServerInfo->serverchannelID = pServerInfo->byServerChannelIndex;
@@ -1537,7 +1537,7 @@ void CPlayer::RecvPcItemLoadRes(sITEM_DATA * pData, BYTE byCount, WORD wCurPacke
 		res->aItemProfile[res->byItemCount].byGrade = pData[i].byGrade;
 		res->aItemProfile[res->byItemCount].bNeedToIdentify = pData[i].bNeedToIdentify;
 		res->aItemProfile[res->byItemCount].byBattleAttribute = pData[i].byBattleAttribute;
-		wcscpy_s(res->aItemProfile[res->byItemCount].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, pData[i].awchMaker);
+		NTL_WCSCPY_S(res->aItemProfile[res->byItemCount].awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1, pData[i].awchMaker);
 		memcpy(&res->aItemProfile[res->byItemCount].sOptionSet, &pData[i].sOptionSet, sizeof(sITEM_OPTION_SET));
 		res->aItemProfile[res->byItemCount].nUseStartTime = pData[i].nUseStartTime;
 		res->aItemProfile[res->byItemCount].nUseEndTime = pData[i].nUseEndTime;

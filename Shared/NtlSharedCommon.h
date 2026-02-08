@@ -5,6 +5,7 @@
 // - YOSHIKI
 
 #ifdef _WIN32
+#include "Util/NtlPortable.h"
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
@@ -34,6 +35,7 @@ typedef unsigned __int64 ntl_uint64;
 
 #else
 // Linux / POSIX: do not include Windows headers.
+#include "Util/NtlPortable.h"
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -41,6 +43,47 @@ typedef unsigned __int64 ntl_uint64;
 #include <errno.h>
 #include <cstring>
 #include <pthread.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
+#ifndef _MAX_DIR
+#define _MAX_DIR 256
+#endif
+#ifndef MAX_PATH
+#define MAX_PATH 260
+#endif
+
+#ifndef HFILE
+typedef int HFILE;
+#endif
+#ifndef HFILE_ERROR
+#define HFILE_ERROR (-1)
+#endif
+#ifndef _O_CREAT
+#define _O_CREAT O_CREAT
+#endif
+#ifndef _O_APPEND
+#define _O_APPEND O_APPEND
+#endif
+#ifndef _O_RDWR
+#define _O_RDWR O_RDWR
+#endif
+#ifndef _O_RDONLY
+#define _O_RDONLY O_RDONLY
+#endif
+#ifndef _O_WRONLY
+#define _O_WRONLY O_WRONLY
+#endif
+#ifndef _SH_DENYNO
+#define _SH_DENYNO 0
+#endif
+#ifndef _S_IREAD
+#define _S_IREAD S_IRUSR
+#endif
+#ifndef _S_IWRITE
+#define _S_IWRITE S_IWUSR
+#endif
 
 // Socket type mapping (Winsock -> POSIX)
 typedef int SOCKET;

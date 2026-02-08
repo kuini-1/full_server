@@ -23,7 +23,7 @@ static void FillWebServerEntry(sWEB_SERVER_ENTRY& out, sDBO_SERVER_INFO* info, B
 	out.dwLoad = info->dwLoad;
 	out.dwMaxLoad = info->dwMaxLoad;
 	out.wPortForClient = info->wPortForClient;
-	strncpy_s(out.achPublicAddress, NTL_MAX_LENGTH_OF_IP + 1, info->achPublicAddress, _TRUNCATE);
+	NTL_STRNCPY_S_FULL(out.achPublicAddress, NTL_MAX_LENGTH_OF_IP + 1, info->achPublicAddress);
 }
 
 
@@ -1875,15 +1875,15 @@ int CWebSession::OnDispatch(CNtlPacket * pPacket)
 			res->requestId = req->requestId;
 			res->serverAcceptLimit = app->m_config.ServerAcceptLimit;
 			res->serverPlayerLimit = (DWORD)app->m_config.ServerPlayerLimit;
-			strncpy_s(res->authAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strAuthServerAcceptIP.c_str(), _TRUNCATE);
+			NTL_STRNCPY_S_FULL(res->authAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strAuthServerAcceptIP.c_str());
 			res->authPort = app->m_config.wAuthServerAcceptPort;
-			strncpy_s(res->charAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strCharServerAcceptIP.c_str(), _TRUNCATE);
+			NTL_STRNCPY_S_FULL(res->charAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strCharServerAcceptIP.c_str());
 			res->charPort = app->m_config.wCharServerAcceptPort;
-			strncpy_s(res->chatAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strChatServerAcceptIP.c_str(), _TRUNCATE);
+			NTL_STRNCPY_S_FULL(res->chatAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strChatServerAcceptIP.c_str());
 			res->chatPort = app->m_config.wChatServerAcceptPort;
-			strncpy_s(res->gameAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strGameServerAcceptIP.c_str(), _TRUNCATE);
+			NTL_STRNCPY_S_FULL(res->gameAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strGameServerAcceptIP.c_str());
 			res->gamePort = app->m_config.wGameServerAcceptPort;
-			strncpy_s(res->webAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strWebServerAcceptIP.c_str(), _TRUNCATE);
+			NTL_STRNCPY_S_FULL(res->webAddress, NTL_MAX_LENGTH_OF_IP + 1, app->m_config.strWebServerAcceptIP.c_str());
 			res->webPort = app->m_config.wWebServerAcceptPort;
 			packet.SetPacketLen(sizeof(sWM_GET_MASTER_CONFIG_RES));
 			app->Send(GetHandle(), &packet);
@@ -1958,7 +1958,7 @@ int CWebSession::OnDispatch(CNtlPacket * pPacket)
 				out.byServerStatus = farm->byServerStatus;
 				out.dwLoad = farm->dwLoad;
 				out.dwMaxLoad = farm->dwMaxLoad;
-				wcscpy_s(out.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, farm->wszGameServerFarmName);
+				NTL_WCSCPY_S(out.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, farm->wszGameServerFarmName);
 			}
 
 			packet.SetPacketLen(sizeof(sWM_GET_GAME_FARM_LIST_RES));
@@ -1994,7 +1994,7 @@ int CWebSession::OnDispatch(CNtlPacket * pPacket)
 					out.dwMaxLoad = channel->dwMaxLoad;
 					out.bIsVisible = channel->bIsVisible;
 					out.bIsScrambleChannel = channel->bIsScrambleChannel;
-					wcscpy_s(out.wszServerChannelName, NTL_MAX_SIZE_SERVER_CHANNEL_NAME_UNICODE + 1, channel->sChannelBuff.wszServerChannelName);
+					NTL_WCSCPY_S(out.wszServerChannelName, NTL_MAX_SIZE_SERVER_CHANNEL_NAME_UNICODE + 1, channel->sChannelBuff.wszServerChannelName);
 				}
 			}
 

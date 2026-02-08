@@ -55,12 +55,7 @@ bool CNtlFileSerializer::SaveFile(char* pszFullPathFileName, bool bCrypt /* = FA
 
 	FILE *pFile = NULL;
 
-#if defined(_WIN32)
-	if (0 != fopen_s(&pFile, pszFullPathFileName, "wb"))
-#else
-	pFile = fopen(pszFullPathFileName, "wb");
-	if (NULL == pFile)
-#endif
+	if (!NTL_FOPEN(&pFile, pszFullPathFileName, "wb"))
 	{
 		return false;
 	}
@@ -126,12 +121,7 @@ bool CNtlFileSerializer::LoadFile(char* pszFullPathFileName, bool bCrypt /* = FA
 
 	FILE *pFile = NULL;
 
-#if defined(_WIN32)
-	if (0 != fopen_s(&pFile, pszFullPathFileName, "rb"))
-#else
-	pFile = fopen(pszFullPathFileName, "rb");
-	if (NULL == pFile)
-#endif
+	if (!NTL_FOPEN(&pFile, pszFullPathFileName, "rb"))
 	{
 		return false;
 	}

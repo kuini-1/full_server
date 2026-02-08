@@ -474,16 +474,16 @@ bool CModelToolCharDataTable::LoadProperty(const char * lpszFullPathFileName)
 	CNtlVector vTemp;
 	pTokenStart = szBuffer;
 	pTokenEnd = strstr( szBuffer, ";");
-	strncpy_s(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
+	NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
 	vTemp.x = (float) atof(szToken);
 
 	pTokenStart = pTokenEnd + 1;
 	pTokenEnd = strstr( pTokenStart, ";");
-	strncpy_s(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
+	NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, pTokenEnd - pTokenStart);
 	vTemp.y = (float) atof(szToken);
 
 	pTokenStart = pTokenEnd + 1;
-	strncpy_s(szToken, sizeof(szToken), pTokenStart, strlen(szBuffer));
+	NTL_STRNCPY_S(szToken, sizeof(szToken), pTokenStart, strlen(szBuffer));
 	vTemp.z = (float) atof(szToken);
 
 	pModelToolCharData->m_vMin.x = -(vTemp.x / 2.0f);

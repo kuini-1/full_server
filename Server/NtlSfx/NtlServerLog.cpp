@@ -112,18 +112,18 @@ void CNtlServerLog::Log(BYTE byLogChannel, bool bDate, LPCTSTR lpszFile, int nLi
 	{
 		SYSTEMTIME	systemTime;
 		GetLocalTime( &systemTime );
-		nWriteSize += _stprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT("%d-%02d-%02d %02d:%02d:%02d,"), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond );
+		nWriteSize += NTL_STPRINTF( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT("%d-%02d-%02d %02d:%02d:%02d,"), systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wMinute, systemTime.wSecond );
 	}
 
 	va_list args;
 	va_start( args, lpszText );
-	nWriteSize += _vstprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, lpszText, args );
+	nWriteSize += NTL_VSTPRINTF( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, lpszText, args );
 	va_end( args );
 
 	if( lpszFile )
-		nWriteSize += _stprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT(" file:%s\t(line:%d)"), lpszFile, nLine );
+		nWriteSize += NTL_STPRINTF( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT(" file:%s\t(line:%d)"), lpszFile, nLine );
 	if( lpszFunc )
-		nWriteSize += _stprintf_s( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT(" function[%s]\t"), lpszFunc );
+		nWriteSize += NTL_STPRINTF( pLogData->achLogText + nWriteSize, nBuffSize - nWriteSize, TEXT(" function[%s]\t"), lpszFunc );
 #else
 	if( bDate )
 	{

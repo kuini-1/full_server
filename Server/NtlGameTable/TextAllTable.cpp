@@ -264,7 +264,7 @@ bool CTextTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, 
 			return false;
 		}
 
-		swprintf_s<_countof(wszXPath)>( wszXPath, rowXPathFormat, ppwszSheetList[dwSheetIndex], m_nField + 1 );
+		NTL_SWPRINTF(wszXPath, _countof(wszXPath), rowXPathFormat, ppwszSheetList[dwSheetIndex], m_nField + 1);
 
 		IXMLDOMNodeList* pTextNodeList = NULL;
 		pTextNodeList = pXmlDoc->SelectNodeList( wszXPath );

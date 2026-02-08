@@ -21,6 +21,10 @@
 #if defined(_WIN32)
 #include <io.h>
 #include <tchar.h>
+#else
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #endif
 
 
@@ -73,11 +77,21 @@ void CNtlFile::Destroy()
 //-----------------------------------------------------------------------------------
 int CNtlFile::Create(LPCTSTR lpszFileName, int nOperationFlag /* = _O_CREAT | _O_APPEND | _O_RDWR */, int nSharingFlag /* = _SH_DENYNO */, int nPermissionMode /* = _S_IREAD | _S_IWRITE */, bool bAutoClose /* = false */)
 {
+#if defined(_WIN32)
 	int rc = _tsopen_s( &m_hFile, lpszFileName, nOperationFlag, nSharingFlag, nPermissionMode );
 	if( NTL_SUCCESS != rc )
 	{
 		return rc;
 	}
+#else
+	(void)nSharingFlag;
+	int fd = open( lpszFileName, nOperationFlag, nPermissionMode );
+	if ( fd < 0 )
+	{
+		return errno;
+	}
+	m_hFile = fd;
+#endif
 
 	m_strFileName = lpszFileName;
 
@@ -96,7 +110,11 @@ void CNtlFile::Close()
 {
 	if( IsOpened() && m_bAutoClose )
 	{
+#if defined(_WIN32)
 		_close( m_hFile );
+#else
+		close( m_hFile );
+#endif
 		m_hFile = HFILE_ERROR;
 	}
 }
@@ -179,7 +197,11 @@ int CNtlFileStream::Attach(CNtlFile & rFile, LPCTSTR lpszMode /* = TEXT */)
 	}
 
 
+#if defined(_WIN32)
 	m_pFilePtr = _fdopen( rFile.GetFileHandle(), lpszMode );
+#else
+	m_pFilePtr = fdopen( rFile.GetFileHandle(), lpszMode );
+#endif
 	if( NULL == m_pFilePtr )
 	{
 		return GetLastError();

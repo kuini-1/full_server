@@ -116,7 +116,7 @@ bool CNtlLogSystem::SetLogPath(char* pszLogPath)
 	{
 		char szLogPathRefined[MAX_LOG_PATH_NAME_LENGTH + 1];
 
-		strncpy_s<_countof(szLogPathRefined)>(szLogPathRefined, pszLogPath, MAX_LOG_PATH_NAME_LENGTH);
+		NTL_STRNCPY_S(szLogPathRefined, _countof(szLogPathRefined), pszLogPath, MAX_LOG_PATH_NAME_LENGTH);
 		szLogPathRefined[MAX_LOG_PATH_NAME_LENGTH] = '\0';
 
 		size_t logPathLength = strlen(szLogPathRefined);
@@ -132,7 +132,7 @@ bool CNtlLogSystem::SetLogPath(char* pszLogPath)
 			return false;
 		}
 
-		strncpy_s<_countof(m_szLogPath)>(m_szLogPath, szLogPathRefined, MAX_LOG_PATH_NAME_LENGTH);
+		NTL_STRNCPY_S(m_szLogPath, _countof(m_szLogPath), szLogPathRefined, MAX_LOG_PATH_NAME_LENGTH);
 		m_szLogPath[MAX_LOG_PATH_NAME_LENGTH] = '\0';
 	}
 
@@ -704,8 +704,7 @@ bool CNtlLogSystem::OpenLogFile(sLOG_FILE_INFO* pLogFileInfo)
 	GetLocalTime(&localTime);
 
 	char szLogFilePathFinal[MAX_PATH_FULL_NAME + 1] = { 0x00, };
-	sprintf_s<sizeof(szLogFilePathFinal)>(
-											szLogFilePathFinal,
+	NTL_SNPRINTF(szLogFilePathFinal, sizeof(szLogFilePathFinal),
 											"%s\\%04d%02d%02d",
 											m_szLogPath,
 											localTime.wYear,
@@ -717,8 +716,7 @@ bool CNtlLogSystem::OpenLogFile(sLOG_FILE_INFO* pLogFileInfo)
 		return false;
 	}
 
-	sprintf_s<_countof(pLogFileInfo->szLogFileFullName)>(
-													pLogFileInfo->szLogFileFullName,
+	NTL_SNPRINTF(pLogFileInfo->szLogFileFullName, _countof(pLogFileInfo->szLogFileFullName),
 													"%s\\%04d%02d%02d_%s_%s.%s",
 													szLogFilePathFinal,
 													localTime.wYear,

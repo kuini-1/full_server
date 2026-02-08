@@ -203,7 +203,9 @@ int main(int argc, _TCHAR* argv[])
 	SYSTEMTIME ti;
 	GetLocalTime(&ti);
 
+#if defined(_WIN32)
 	SetConsoleTitle(TEXT("DBOD QUERY"));
+#endif
 
 
 	// CHECK INI FILE AND START PROGRAM

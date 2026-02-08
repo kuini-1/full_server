@@ -58,7 +58,7 @@ int CMasterServerSession::OnConnect()
 
 	//server farm indo
 	res->gameServerFarmInfo.serverFarmId = app->m_config.byServerID;
-	wcscpy_s(res->gameServerFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, s2ws(app->m_config.ServerName.c_str()).c_str());
+	NTL_WCSCPY_S(res->gameServerFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, s2ws(app->m_config.ServerName.c_str()).c_str());
 	res->gameServerFarmInfo.byServerStatus = DBO_SERVER_STATUS_UP;
 	res->gameServerFarmInfo.dwMaxLoad = res->serverInfo.dwMaxLoad;
 	res->gameServerFarmInfo.dwLoad = 0;
@@ -71,7 +71,7 @@ int CMasterServerSession::OnConnect()
 	res->gameServerChannelInfo.dwMaxLoad = res->serverInfo.dwMaxLoad;
 	res->gameServerChannelInfo.dwLoad = 0;
 	res->gameServerChannelInfo.bIsScrambleChannel = false;
-	wcscpy_s(res->gameServerChannelInfo.sChannelBuff.wszServerChannelName, NTL_MAX_SIZE_SERVER_CHANNEL_NAME_UNICODE + 1, s2ws(app->m_config.ChannelName.c_str()).c_str());
+	NTL_WCSCPY_S(res->gameServerChannelInfo.sChannelBuff.wszServerChannelName, NTL_MAX_SIZE_SERVER_CHANNEL_NAME_UNICODE + 1, s2ws(app->m_config.ChannelName.c_str()).c_str());
 	snprintf(res->gameServerChannelInfo.sChannelBuff.szServerChannelName, NTL_MAX_SIZE_SERVER_CHANNEL_NAME_UNICODE + 1, "%s", app->m_config.ChannelName.c_str());
 
 	g_pServerInfoManager->RefreshServerFarmInfo(&res->gameServerFarmInfo); //add server farm info

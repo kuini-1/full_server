@@ -213,7 +213,7 @@ void CClientSession::SendCharCreateReq(CNtlPacket * pPacket)
 		sCQ_CHARACTER_ADD_REQ * res = (sCQ_CHARACTER_ADD_REQ *)packet.GetPacketData();
 		res->wOpCode = CQ_CHARACTER_ADD_REQ;
 		res->accountId = GetPlayer()->GetAccountID();
-		wcscpy_s(res->awchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, req->awchCharName);
+		NTL_WCSCPY_S(res->awchCharName, NTL_MAX_SIZE_CHAR_NAME + 1, req->awchCharName);
 		res->byRace = req->byRace;
 		res->byClass = req->byClass;
 		res->byGender = req->byGender;
@@ -848,7 +848,7 @@ void CClientSession::LoadServerFarmInfo()
 		sCU_SERVER_FARM_INFO * res = (sCU_SERVER_FARM_INFO *)packet.GetPacketData();
 		res->wOpCode = CU_SERVER_FARM_INFO;
 		res->serverFarmInfo.serverFarmId = pFarm->serverFarmId;
-		wcscpy_s(res->serverFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pFarm->wszGameServerFarmName);
+		NTL_WCSCPY_S(res->serverFarmInfo.wszGameServerFarmName, NTL_MAX_SIZE_SERVER_FARM_NAME_UNICODE + 1, pFarm->wszGameServerFarmName);
 		res->serverFarmInfo.byServerStatus = pFarm->byServerStatus;
 		res->serverFarmInfo.dwLoad = DWORD((float)pFarm->dwLoad / (float)pFarm->dwMaxLoad * 100.f);
 		res->serverFarmInfo.dwMaxLoad = 100;

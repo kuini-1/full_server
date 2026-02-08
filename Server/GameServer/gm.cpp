@@ -2037,7 +2037,7 @@ ACMD(do_notice)
 	res->wOpCode = GT_SYSTEM_DISPLAY_TEXT;
 	res->serverChannelId = INVALID_SERVERCHANNELID;
 	res->byDisplayType = byDisType;
-	wcscpy_s(res->wszMessage, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, s2ws(text).c_str());
+	NTL_WCSCPY_S(res->wszMessage, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, s2ws(text).c_str());
 	packet.SetPacketLen(sizeof(sGT_SYSTEM_DISPLAY_TEXT));
 	app->SendTo(app->GetChatServerSession(), &packet);
 }
@@ -2070,7 +2070,7 @@ ACMD(do_pm)
 		res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
 		res->wMessageLengthInUnicode = (WORD)text.length();
 		res->byDisplayType = SERVER_TEXT_EMERGENCY;
-		wcscpy_s(res->awchMessage, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, s2ws(text).c_str());
+		NTL_WCSCPY_S(res->awchMessage, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, s2ws(text).c_str());
 		packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 		pTarget->SendPacket(&packet);
 	}
@@ -2162,7 +2162,7 @@ ACMD(do_shutdown)
 	res->wOpCode = GT_SYSTEM_DISPLAY_TEXT;
 	res->serverChannelId = INVALID_SERVERCHANNELID;
 	res->byDisplayType = 1;
-	wcscpy_s(res->wszMessage, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, s2ws(text).c_str());
+	NTL_WCSCPY_S(res->wszMessage, NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE + 1, s2ws(text).c_str());
 	packet.SetPacketLen(sizeof(sGT_SYSTEM_DISPLAY_TEXT));
 	app->SendTo(app->GetChatServerSession(), &packet);
 
@@ -2866,7 +2866,7 @@ ACMD(do_mute)
 	res->dwDurationInMinute = dwDuration;
 	NTL_SAFE_WCSCPY(res->awchGmCharName, pPlayer->GetCharName());
 	NTL_SAFE_WCSCPY(res->awchCharName, name.c_str());
-	wcscpy_s(res->wchReason, NTL_MAX_LENGTH_OF_MAIL_MESSAGE + 1, s2ws(text).c_str());
+	NTL_WCSCPY_S(res->wchReason, NTL_MAX_LENGTH_OF_MAIL_MESSAGE + 1, s2ws(text).c_str());
 	packet.SetPacketLen(sizeof(sGT_UPDATE_PUNISH));
 	app->SendTo(app->GetChatServerSession(), &packet);
 }

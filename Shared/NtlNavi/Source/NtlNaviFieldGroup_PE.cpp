@@ -317,8 +317,7 @@ CNtlNaviFieldGroup_PE::sFILE_CHUNK_INFO CNtlNaviFieldGroup_PE::LoadFileChunk( co
 
 	sFILE_CHUNK_INFO sFileChunkInfo( 0, NULL );
 
-	fopen_s( &pFile, pFileName, "rb" );
-	if ( NULL == pFile )
+	if (!NTL_FOPEN(&pFile, pFileName, "rb"))
 	{
 		return sFILE_CHUNK_INFO( 0xffffffff, NULL );
 	}

@@ -7,8 +7,10 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include "../NtlSharedCommon.h"
 #include <hash_map>
 #else
+#include "../NtlSharedCommon.h"
 #include <unordered_map>
 namespace stdext {
 	template<typename K, typename V>

@@ -47,7 +47,7 @@ bool CDboWeInfo::Create(const char * pszTileFullPathFileName, const char * pszFi
 
 	if(pszTileFullPathFileName != NULL)
 	{
-		if(fopen_s(&fp, pszTileFullPathFileName, "rb") != 0)
+		if(!NTL_FOPEN(&fp, pszTileFullPathFileName, "rb"))
 		{
 			printf("%s: File not load\n", pszTileFullPathFileName);
 			return false;
@@ -96,7 +96,7 @@ bool CDboWeInfo::Create(const char * pszTileFullPathFileName, const char * pszFi
 
 	if(pszFieldFullPathFileName != NULL)
 	{
-		if(fopen_s(&fp, pszFieldFullPathFileName, "rb") != 0)
+		if(!NTL_FOPEN(&fp, pszFieldFullPathFileName, "rb"))
 		{
 			printf("%s: File not load\n", pszFieldFullPathFileName);
 			return false;

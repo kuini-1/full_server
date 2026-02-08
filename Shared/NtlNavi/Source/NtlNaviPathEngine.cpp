@@ -40,7 +40,8 @@ static CPEErrorHandler g_clErrorHandler;
 
 CPathDataOutStream::CPathDataOutStream( const char* pFileName )
 {
-	fopen_s( &m_pFile, pFileName, "wb" );
+	if (!NTL_FOPEN(&m_pFile, pFileName, "wb"))
+		m_pFile = NULL;
 }
 
 CPathDataOutStream::~CPathDataOutStream( void )

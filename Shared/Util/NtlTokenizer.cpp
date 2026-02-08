@@ -59,14 +59,8 @@ BOOL CNtlTokenizer::Load(const char *pFileName, CallTokenPack fnCallPack)
 	else
 	{
 		FILE *fp = NULL;
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-		if(fopen_s(&fp, pFileName, "rb") != 0)
+		if (!NTL_FOPEN(&fp, pFileName, "rb"))
 			return FALSE;
-#else
-		fp = fopen(pFileName,"rb");
-		if(fp == NULL)
-			return FALSE;
-#endif
 
 		fseek(fp, 0, SEEK_END);
 		int iSize = ftell(fp);
@@ -377,14 +371,8 @@ BOOL CNtlTokenizerW::Load(const char *pFileName, CallTokenPack fnCallPack)
 	else
 	{
 		FILE *fp = NULL;
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-		if(fopen_s(&fp, pFileName, "rb") != 0)
+		if (!NTL_FOPEN(&fp, pFileName, "rb"))
 			return FALSE;
-#else
-		fp = fopen(pFileName,"rb");
-		if(fp == NULL)
-			return FALSE;
-#endif
 		BYTE abyFileBom[2] = { 0, };
 		fread( abyFileBom, 1, 2, fp );
 

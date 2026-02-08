@@ -216,7 +216,9 @@ int main(int argc, _TCHAR* argv[])
 	SYSTEMTIME ti;
 	GetLocalTime(&ti);
 
+#if defined(_WIN32)
 	SetConsoleTitle( TEXT("DBOD CHAT") );
+#endif
 
 	int rc = app.Create(argc, argv, ".\\config\\ChatServer.ini");
 	if (NTL_SUCCESS != rc)
