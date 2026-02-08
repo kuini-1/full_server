@@ -99,7 +99,7 @@ bool CNtlNaviWorldProp_WE::ExportPathData( const char* pPath )
 	strPropertyFile += PE_WORLD_PROPERTY_FILE;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPropertyFile.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strPropertyFile.c_str(), "wb" );
 
 	if ( NULL == pFile )
 	{

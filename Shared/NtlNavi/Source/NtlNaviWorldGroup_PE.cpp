@@ -53,7 +53,7 @@ bool CNtlNaviWorldGroup_PE::ImportPathData( const char* pPath, unsigned char byL
 	strWorldGroupInfoFile += PE_WORLD_GROUP_INFO_FILE;
 
 	FILE* pFile;
-	fopen_s( &pFile, strWorldGroupInfoFile.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strWorldGroupInfoFile.c_str(), "rb" );
 	if ( NULL == pFile )
 	{
 		Destroy();

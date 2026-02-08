@@ -43,7 +43,7 @@ bool CNtlNaviWorldProp_PE::ImportPathData( const char* pPath, unsigned char /*by
 	strWorldPropFile += PE_WORLD_PROPERTY_FILE;
 
 	FILE* pFile;
-	fopen_s( &pFile, strWorldPropFile.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strWorldPropFile.c_str(), "rb" );
 	if ( NULL == pFile )
 	{
 		return false;

@@ -99,7 +99,7 @@ bool CNtlNaviFieldHeight_WE::Load( void )
 {
 	FILE* pFile;
 
-	fopen_s( &pFile, m_strPath.c_str(), "rb" );
+	NTL_FOPEN( &pFile, m_strPath.c_str(), "rb" );
 
 	if ( NULL == pFile )
 	{
@@ -204,7 +204,7 @@ bool CNtlNaviFieldHeight_WE::PreLoad( const char* pFileName )
 
 	FILE* pFile;
 
-	fopen_s( &pFile, pFileName, "rb" );
+	NTL_FOPEN( &pFile, pFileName, "rb" );
 	if ( NULL == pFile )
 	{
 		return false;

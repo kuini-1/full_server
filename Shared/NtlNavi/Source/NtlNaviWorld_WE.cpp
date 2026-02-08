@@ -181,7 +181,7 @@ bool CNtlNaviWorld_WE::ExportPathData( const char* pPath )
 	AttachBackSlash( strWorldFolder );
 
 	char szWorldID[128];
-	sprintf_s( szWorldID, 128, "%d", GetWorldID() );
+	NTL_SNPRINTF( szWorldID, 128, "%d", GetWorldID() );
 	strWorldFolder += szWorldID;
 
 	CreateDirectory( strWorldFolder.c_str(), NULL );
@@ -196,7 +196,7 @@ bool CNtlNaviWorld_WE::ExportPathData( const char* pPath )
 	strWorldInfoFile += PE_WORLD_INFO_FILE;
 
 	FILE* pFile;
-	fopen_s( &pFile, strWorldInfoFile.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strWorldInfoFile.c_str(), "wb" );
 	if ( NULL == pFile )
 	{
 		return false;

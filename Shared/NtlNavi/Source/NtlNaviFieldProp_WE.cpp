@@ -89,7 +89,7 @@ bool CNtlNaviFieldProp_WE::ImportWorldData( const char* pPath )
 {
 	FILE* pFile;
 
-	fopen_s( &pFile, pPath, "rb" );
+	NTL_FOPEN( &pFile, pPath, "rb" );
 
 	if ( NULL == pFile )
 	{
@@ -111,7 +111,7 @@ bool CNtlNaviFieldProp_WE::ImportWorldData( const char* pPath )
 	fread( &m_uiTileCnt, sizeof( m_uiTileCnt ), 1, pFile );
 
 	// 5. Tile property data chunk ( unsigned int * (3.) )
-	//    - unsigned int ( upper 2 byte : 老馆 甘 加己, lower 2 byte : 漂荐 甘 加己 )
+	//    - unsigned int ( upper 2 byte : ??? ?? ???, lower 2 byte : ??? ?? ??? )
 	unsigned int* pTilePropChunk = new unsigned int[m_uiTileCnt];
 	fread( pTilePropChunk, sizeof(unsigned int) * m_uiTileCnt, 1, pFile );
 
@@ -133,7 +133,7 @@ bool CNtlNaviFieldProp_WE::ExportPathData( const char* pPath )
 	strPropertyFile += PE_WORLD_PROPERTY_FILE;
 
 	FILE* pFile;
-	fopen_s( &pFile, strPropertyFile.c_str(), "ab" );
+	NTL_FOPEN( &pFile, strPropertyFile.c_str(), "ab" );
 
 	if ( NULL == pFile )
 	{

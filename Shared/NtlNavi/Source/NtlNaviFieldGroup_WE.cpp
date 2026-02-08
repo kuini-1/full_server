@@ -514,7 +514,7 @@ bool CNtlNaviFieldGroup_WE::ExportPathData( const char* pPath )
 						std::string strColPreFileName = strPathEngineFolder;
 						AttachBackSlash( strColPreFileName );
 
-						sprintf_s( szTempBuffer, 128, "%d_%d.%s", uiGroupID, sAgent.lRadius, PE_FIELD_GROUP_COL_PRE_EXT );
+						NTL_SNPRINTF( szTempBuffer, 128, "%d_%d.%s", uiGroupID, sAgent.lRadius, PE_FIELD_GROUP_COL_PRE_EXT );
 						strColPreFileName += szTempBuffer;
 
 						CPathDataOutStream clColPreOutStream( strColPreFileName.c_str() );
@@ -529,7 +529,7 @@ bool CNtlNaviFieldGroup_WE::ExportPathData( const char* pPath )
 						std::string strPFPreFileName = strPathEngineFolder;
 						AttachBackSlash( strPFPreFileName );
 
-						sprintf_s( szTempBuffer, 128, "%d_%d.%s", uiGroupID, sAgent.lRadius, PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
+						NTL_SNPRINTF( szTempBuffer, 128, "%d_%d.%s", uiGroupID, sAgent.lRadius, PE_FIELD_GROUP_PATH_FIND_PRE_EXT );
 						strPFPreFileName += szTempBuffer;
 
 						CPathDataOutStream clPFPreOutStream( strPFPreFileName.c_str() );
@@ -545,7 +545,7 @@ bool CNtlNaviFieldGroup_WE::ExportPathData( const char* pPath )
 					std::string strMeshFileName = strPathEngineFolder;
 					AttachBackSlash( strMeshFileName );
 
-					sprintf_s( szTempBuffer, 128, "%d.%s", uiGroupID, PE_FIELD_GROUP_MESH_EXT );
+					NTL_SNPRINTF( szTempBuffer, 128, "%d.%s", uiGroupID, PE_FIELD_GROUP_MESH_EXT );
 					strMeshFileName += szTempBuffer;
 
 					CPathDataOutStream clMeshStream( strMeshFileName.c_str() );
@@ -560,7 +560,7 @@ bool CNtlNaviFieldGroup_WE::ExportPathData( const char* pPath )
 				std::string strMeshFileName = strPathEngineFolder;
 				AttachBackSlash( strMeshFileName );
 
-				sprintf_s( szTempBuffer, 128, "%d.%s", uiGroupID, PE_FIELD_GROUP_MESH_EXT );
+				NTL_SNPRINTF( szTempBuffer, 128, "%d.%s", uiGroupID, PE_FIELD_GROUP_MESH_EXT );
 				strMeshFileName += szTempBuffer;
 
 				CPathDataOutStream clMeshStream( strMeshFileName.c_str() );
@@ -584,7 +584,7 @@ bool CNtlNaviFieldGroup_WE::ExportPathData( const char* pPath )
 	strWorldGroupInfoFile += PE_WORLD_GROUP_INFO_FILE;
 
 	FILE* pFile;
-	fopen_s( &pFile, strWorldGroupInfoFile.c_str(), "wb" );
+	NTL_FOPEN( &pFile, strWorldGroupInfoFile.c_str(), "wb" );
 	if ( NULL == pFile )
 	{
 		return false;

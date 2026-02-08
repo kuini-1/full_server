@@ -248,14 +248,14 @@ struct sNAVI_VERTEX
 
 struct sNAVI_PE_VERTEX
 {
-	long x, y;
+	tSigned32 x, y;  /* match PathEngine get3DFaceVertex(tSigned32&, tSigned32&, float&) on all platforms */
 	float z;
 
 	sNAVI_PE_VERTEX( void )
 	{
 	}
 
-	sNAVI_PE_VERTEX( long x, long y, float z )
+	sNAVI_PE_VERTEX( tSigned32 x, tSigned32 y, float z )
 	{
 		this->x = x;
 		this->y = y;

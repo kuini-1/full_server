@@ -279,4 +279,11 @@ static inline void FindClose(HANDLE hFindFile)
 		closedir((DIR*)hFindFile);
 }
 
+/* CreateDirectory: Win32 API; on Linux use mkdir (single directory, no parents) */
+static inline BOOL CreateDirectory(const char* path, void* unused)
+{
+	(void)unused;
+	return mkdir(path, 0755) == 0 ? TRUE : FALSE;
+}
+
 #endif // _WIN32

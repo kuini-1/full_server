@@ -40,7 +40,7 @@ bool CNtlNaviWorld_PE::PreLoad( const char* pPath )
 	strWorldInfoFile += PE_WORLD_INFO_FILE;
 
 	FILE* pFile;
-	fopen_s( &pFile, strWorldInfoFile.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strWorldInfoFile.c_str(), "rb" );
 	if ( NULL == pFile )
 	{
 		Destroy();
@@ -71,7 +71,7 @@ bool CNtlNaviWorld_PE::ImportPathData( const char* pPath, unsigned char byLoadFl
 	strWorldInfoFile += PE_WORLD_INFO_FILE;
 
 	FILE* pFile;
-	fopen_s( &pFile, strWorldInfoFile.c_str(), "rb" );
+	NTL_FOPEN( &pFile, strWorldInfoFile.c_str(), "rb" );
 	if ( NULL == pFile )
 	{
 		Destroy();
