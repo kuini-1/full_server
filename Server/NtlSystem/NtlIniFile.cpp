@@ -14,6 +14,7 @@
 
 #include "stdafx.h"
 #include "NtlIniFile.h"
+#include "NtlError.h"
 
 #if !defined(_WIN32)
 
@@ -186,6 +187,7 @@ bool CNtlIniFile::Read(const char *group, const char *key, CNtlString &val)
 
 #endif // _WIN32
 
+#if defined(_WIN32)
 //-----------------------------------------------------------------------------------
 //		Purpose	:
 //		Return	:
@@ -450,3 +452,4 @@ bool CNtlIniFile::Read(const char *pszGroup, const char *pszKey, DWORD &dwNumber
 
 	return true;
 }
+#endif // _WIN32
