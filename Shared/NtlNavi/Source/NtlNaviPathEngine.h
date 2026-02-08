@@ -1,6 +1,14 @@
 #ifndef _NTL_NAVI_PATHENGINE_H_
 #define _NTL_NAVI_PATHENGINE_H_
 
+#if !defined(_WIN32)
+#ifndef __stdcall
+#define __stdcall
+#endif
+#ifndef HINSTANCE
+typedef void* HINSTANCE;
+#endif
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 //

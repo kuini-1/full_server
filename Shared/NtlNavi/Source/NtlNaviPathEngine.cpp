@@ -1,6 +1,10 @@
 #include "precomp_navi.h"
 #include "NtlNaviPathEngine.h"
 #include "NtlNaviLog.h"
+#if !defined(_WIN32)
+#include <dlfcn.h>
+#include <string>
+#endif
 
 
 class CPEErrorHandler : public iErrorHandler
@@ -92,6 +96,7 @@ bool CNtlNaviPathEngine::Create( const char* pPathDllName )
 		return true;
 	}
 
+#if defined(_WIN32)
 	m_hInstance = LoadLibrary( pPathDllName );
 
 	if ( NULL == m_hInstance )
@@ -104,6 +109,7 @@ bool CNtlNaviPathEngine::Create( const char* pPathDllName )
 
 	if ( NULL == procAddr )
 	{
+		FreeLibrary( m_hInstance );
 		m_hInstance = NULL;
 		return false;
 	}
@@ -114,9 +120,49 @@ bool CNtlNaviPathEngine::Create( const char* pPathDllName )
 
 	if ( NULL == m_pPathEngine )
 	{
+		FreeLibrary( m_hInstance );
 		m_hInstance = NULL;
 		return false;
 	}
+#else
+	/* Linux: use dlopen for .so; convert .dll path to .so if needed */
+	m_hInstance = dlopen( pPathDllName, RTLD_NOW );
+	if ( NULL == m_hInstance )
+	{
+		/* Try .so extension if path ends with .dll */
+		std::string soPath( pPathDllName );
+		size_t pos = soPath.rfind( ".dll" );
+		if ( pos != std::string::npos )
+		{
+			soPath.replace( pos, 4, ".so" );
+			m_hInstance = dlopen( soPath.c_str(), RTLD_NOW );
+		}
+	}
+	if ( NULL == m_hInstance )
+	{
+		return false;
+	}
+
+	/* PathEngine exports getInterface (Windows uses ordinal 1); dlsym by name on Linux */
+	void* procAddr = dlsym( m_hInstance, "getInterface" );
+	if ( NULL == procAddr )
+	{
+		dlclose( m_hInstance );
+		m_hInstance = NULL;
+		return false;
+	}
+
+	tGetInterfaceFunction getInterfaceFunction = (tGetInterfaceFunction) procAddr;
+
+	m_pPathEngine = getInterfaceFunction( this );
+
+	if ( NULL == m_pPathEngine )
+	{
+		dlclose( m_hInstance );
+		m_hInstance = NULL;
+		return false;
+	}
+#endif
 
 	m_pPathEngine->setErrorHandler( &g_clErrorHandler );
 
@@ -128,7 +174,11 @@ void CNtlNaviPathEngine::Delete( void )
 	if ( m_pPathEngine )
 	{
 		m_pPathEngine->deleteAllObjects();
+#if defined(_WIN32)
 		FreeLibrary( m_hInstance );
+#else
+		dlclose( m_hInstance );
+#endif
 
 		m_hInstance = NULL;
 		m_pPathEngine = NULL;

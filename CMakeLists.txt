@@ -149,6 +149,9 @@ list(FILTER _dbo_ntlnavi_src EXCLUDE REGEX ".*[/\\\\]Source[/\\\\]NtlNaviField.*
 list(FILTER _dbo_ntlnavi_src EXCLUDE REGEX ".*[/\\\\]Source[/\\\\]NtlNaviWorld(Prop|Group)?_(WE|PE)\\.cpp$")
 add_library(NtlNavi STATIC ${_dbo_ntlnavi_src})
 target_link_libraries(NtlNavi PUBLIC dbo_includes)
+if(UNIX AND NOT APPLE)
+  target_link_libraries(NtlNavi PUBLIC dl)
+endif()
 
 #
 # Server core libs
