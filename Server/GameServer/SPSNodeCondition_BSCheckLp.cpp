@@ -22,13 +22,13 @@ bool CSPSNodeCondition_BSCheckLp::AddParam(CControlScriptNodeParam_Number* pNode
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "max percent") == 0)
+	if (NTL_STRICMP(name, "max percent") == 0)
 	{
 		m_byMaxPercent = (BYTE)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "min percent") == 0)
+	if (NTL_STRICMP(name, "min percent") == 0)
 	{
 		m_byMinPercent = (BYTE)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
@@ -42,17 +42,17 @@ bool CSPSNodeCondition_BSCheckLp::AddParam(CControlScriptNodeParam_String* pNode
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "true") == 0)
+	if (NTL_STRICMP(name, "true") == 0)
 	{
 		const char* sub = pNode->GetName();
 
-		if (_stricmp(sub, "true") == 0)
+		if (NTL_STRICMP(sub, "true") == 0)
 		{
 			m_bIsInRange = true;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(sub, "false") == 0)
+		if (NTL_STRICMP(sub, "false") == 0)
 		{
 			m_bIsInRange = false;
 			return CControlScriptNode::AddParam(pNode);

@@ -27,7 +27,7 @@ bool CSPSNodeAction_Say::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "tblidx") == 0)
+	if (NTL_STRICMP(name, "tblidx") == 0)
 	{
 		m_textTblidx = (TBLIDX)std::floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
@@ -42,13 +42,13 @@ bool CSPSNodeAction_Say::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "type") == 0)
+	if (NTL_STRICMP(name, "type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "say") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "say") == 0)
 			m_byDialogType = CHAR_DIALOG_SAY;
-		else if (_stricmp(pNode->GetValue(), "shout") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "shout") == 0)
 			m_byDialogType = CHAR_DIALOG_SHOUT;
-		else if (_stricmp(pNode->GetValue(), "think") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "think") == 0)
 			m_byDialogType = CHAR_DIALOG_THINK;
 		else
 		{
@@ -60,7 +60,7 @@ bool CSPSNodeAction_Say::AddParam(CControlScriptNodeParam_String* pNode)
 	}
 	else
 	{
-		if (_stricmp(name, "text") == 0)
+		if (NTL_STRICMP(name, "text") == 0)
 		{
 			m_strText.operator=(pNode->GetValue());
 

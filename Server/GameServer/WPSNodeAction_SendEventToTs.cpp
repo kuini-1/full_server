@@ -25,7 +25,7 @@ bool CWPSNodeAction_SendEventToTs::AddParam(CControlScriptNodeParam_Number* pNod
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_teId = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -40,15 +40,15 @@ bool CWPSNodeAction_SendEventToTs::AddParam(CControlScriptNodeParam_String* pNod
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "trigger type") == 0)
+	if (NTL_STRICMP(name, "trigger type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "quest") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "quest") == 0)
 		{
 			m_byTriggerType = 0; //TRIGGER_TYPE_QUEST (CSPSNodeAction_SendEventToTs::eTRIGGER_TYPE)
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(pNode->GetValue(), "pc") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "pc") == 0)
 		{
 			m_byTriggerType = 1; //TRIGGER_TYPE_PC (CSPSNodeAction_SendEventToTs::eTRIGGER_TYPE)
 			return CControlScriptNode::AddParam(pNode);
@@ -57,9 +57,9 @@ bool CWPSNodeAction_SendEventToTs::AddParam(CControlScriptNodeParam_String* pNod
 		printf("value '%s' dont exist \n", pNode->GetValue());
 	}
 
-	if (_stricmp(name, "apply type") == 0)
+	if (NTL_STRICMP(name, "apply type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "register all") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "register all") == 0)
 		{
 			m_eApplyType = SSD_TSEVENT_APPLY_TYPE_REGISTER_ALL; 
 			return CControlScriptNode::AddParam(pNode);

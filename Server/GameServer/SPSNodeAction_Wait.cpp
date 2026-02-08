@@ -21,13 +21,13 @@ bool CSPSNodeAction_Wait::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "time") == 0)
+	if (NTL_STRICMP(name, "time") == 0)
 	{
 		m_dwWaitTime = (DWORD)floor(1000.0f * pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_eventID = (DWORD)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
@@ -42,13 +42,13 @@ bool CSPSNodeAction_Wait::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "event type") == 0)
+	if (NTL_STRICMP(name, "event type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "ts") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "ts") == 0)
 			m_eEventType = SPS_EVENT_TYPE_TS;
-		else if (_stricmp(pNode->GetValue(), "tqs") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "tqs") == 0)
 			m_eEventType = SPS_EVENT_TYPE_TQS;
-		else if (_stricmp(pNode->GetValue(), "wps") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "wps") == 0)
 			m_eEventType = SPS_EVENT_TYPE_WPS;
 		else
 		{
@@ -60,11 +60,11 @@ bool CSPSNodeAction_Wait::AddParam(CControlScriptNodeParam_String* pNode)
 	}
 	else
 	{
-		if (_stricmp(name, "operation") == 0)
+		if (NTL_STRICMP(name, "operation") == 0)
 		{
-			if (_stricmp(pNode->GetValue(), "true") == 0)
+			if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 				m_bOperationAND = true;
-			else if (_stricmp(pNode->GetValue(), "false") == 0)
+			else if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 				m_bOperationAND = false;
 			else
 			{

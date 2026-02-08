@@ -18,7 +18,7 @@ bool CWPSNodeCondition_RecvEventFromTs::AddParam(CControlScriptNodeParam_Number*
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_teId = (unsigned int)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -32,21 +32,21 @@ bool CWPSNodeCondition_RecvEventFromTs::AddParam(CControlScriptNodeParam_String*
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "trigger type") == 0)
+	if (NTL_STRICMP(name, "trigger type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "quest") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "quest") == 0)
 		{
 			m_byTriggerType = 0;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(pNode->GetValue(), "pc") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "pc") == 0)
 		{
 			m_byTriggerType = 1;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(pNode->GetValue(), "object") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "object") == 0)
 		{
 			m_byTriggerType = 2;
 			return CControlScriptNode::AddParam(pNode);

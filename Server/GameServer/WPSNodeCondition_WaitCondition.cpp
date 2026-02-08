@@ -19,14 +19,14 @@ bool CWPSNodeCondition_WaitCondition::AddParam(CControlScriptNodeParam_String* p
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "operation") == 0)
+	if (NTL_STRICMP(name, "operation") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "and") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "and") == 0)
 		{
 			m_bOperationAND = true;
 			return CControlScriptNode::AddParam(pNode);
 		}
-		if (_stricmp(pNode->GetValue(), "or") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "or") == 0)
 		{
 			m_bOperationAND = false;
 			return CControlScriptNode::AddParam(pNode);

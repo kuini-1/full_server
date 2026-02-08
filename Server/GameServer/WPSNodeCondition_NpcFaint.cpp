@@ -19,7 +19,7 @@ bool CWPSNodeCondition_NpcFaint::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "npc index") == 0)
+	if (NTL_STRICMP(name, "npc index") == 0)
 	{
 		m_npcTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -34,11 +34,11 @@ bool CWPSNodeCondition_NpcFaint::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "wps fail") == 0)
+	if (NTL_STRICMP(name, "wps fail") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			m_bWpsFail = true;
-		else if (_stricmp(pNode->GetValue(), "false") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 			m_bWpsFail = false;
 		else
 		{

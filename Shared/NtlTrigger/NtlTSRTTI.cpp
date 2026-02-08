@@ -42,7 +42,7 @@ bool CNtlTSRTTI::IsDerivedClass( const std::string& strClassName ) const
 
 	while ( pFindRTTI )
 	{
-		if ( _stricmp( pFindRTTI->GetClassName(), strClassName.c_str() ) == 0 )
+		if ( NTL_STRICMP( pFindRTTI->GetClassName(), strClassName.c_str() ) == 0 )
 		{
 			return true;
 		}

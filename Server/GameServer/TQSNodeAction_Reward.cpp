@@ -24,12 +24,12 @@ bool CTQSNodeAction_Reward::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_teid = (WORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "time") == 0)
+	if (NTL_STRICMP(name, "time") == 0)
 	{
 		m_dwWaitTime = (DWORD)pNode->GetValue() * 1000;
 		return CControlScriptNode::AddParam(pNode);
@@ -45,9 +45,9 @@ bool CTQSNodeAction_Reward::AddParam(CControlScriptNodeParam_String* pNode)
 	const char* value = pNode->GetValue();
 
 
-	if (_stricmp(name, "trigger type") == 0)
+	if (NTL_STRICMP(name, "trigger type") == 0)
 	{
-		if (_stricmp(value, "quest") == 0)
+		if (NTL_STRICMP(value, "quest") == 0)
 			m_byTriggerType = 0;
 		return CControlScriptNode::AddParam(pNode);
 	}

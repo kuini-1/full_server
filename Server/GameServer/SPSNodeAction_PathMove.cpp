@@ -20,19 +20,19 @@ bool CSPSNodeAction_PathMove::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "tblidx") == 0)
+	if (NTL_STRICMP(name, "tblidx") == 0)
 	{
 		m_pathTblidx = (TBLIDX)std::floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "run mode") == 0)
+	if (NTL_STRICMP(name, "run mode") == 0)
 	{
 		m_bRunMode = pNode->GetValue() != 0.0f;
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "radius") == 0)
+	if (NTL_STRICMP(name, "radius") == 0)
 	{
 		m_fPointRadius = float(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);

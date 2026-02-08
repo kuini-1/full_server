@@ -25,7 +25,7 @@ bool CWPSNodeAction_ClearEvent::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_eventId = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -39,9 +39,9 @@ bool CWPSNodeAction_ClearEvent::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "clear all") == 0)
+	if (NTL_STRICMP(name, "clear all") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "false") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 		{
 			m_bClearAll = false;
 			return CControlScriptNode::AddParam(pNode);

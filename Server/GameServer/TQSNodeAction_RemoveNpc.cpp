@@ -24,7 +24,7 @@ bool CTQSNodeAction_RemoveNpc::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "index") == 0)
+	if (NTL_STRICMP(name, "index") == 0)
 	{
 		m_npcTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -39,13 +39,13 @@ bool CTQSNodeAction_RemoveNpc::AddParam(CControlScriptNodeParam_String* pNode)
 	const char* name = pNode->GetName();
 	const char* value = pNode->GetValue();
 
-	if (_stricmp(name, "type") == 0)
+	if (NTL_STRICMP(name, "type") == 0)
 	{
-		if (_stricmp(value, "clear") == 0)
+		if (NTL_STRICMP(value, "clear") == 0)
 			m_eSpawnRemoveType = SPAWN_REMOVE_TYPE_CLEAR;
-		else if (_stricmp(value, "despawn") == 0)
+		else if (NTL_STRICMP(value, "despawn") == 0)
 			m_eSpawnRemoveType = SPAWN_REMOVE_TYPE_DESPAWN;
-		else if (_stricmp(value, "faint") == 0)
+		else if (NTL_STRICMP(value, "faint") == 0)
 			m_eSpawnRemoveType = SPAWN_REMOVE_TYPE_FAINT;
 
 		return CControlScriptNode::AddParam(pNode);

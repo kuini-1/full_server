@@ -28,13 +28,13 @@ bool CWPSNodeAction_Calculate::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "declare") == 0)
+	if (NTL_STRICMP(name, "declare") == 0)
 	{
 		m_strDeclare = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "express") == 0)
+	if (NTL_STRICMP(name, "express") == 0)
 	{
 		m_strExpress = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

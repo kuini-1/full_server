@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cwchar>
+#include <strings.h>
 
 /* fopen_s: Windows returns 0 on success; we need same semantics */
 #define NTL_FOPEN(pFile, path, mode)  (((*(pFile)) = fopen((path), (mode))) != NULL)
@@ -58,7 +59,13 @@
 #define _TRUNCATE ((size_t)-1)
 #endif
 
+/* _stricmp / NTL_STRICMP: case-insensitive string compare -> strcasecmp (POSIX) */
+#define _stricmp strcasecmp
+#define NTL_STRICMP(s1, s2) strcasecmp((s1), (s2))
+
 #else
+
+#include <string.h>
 
 /* Windows: use native functions - define as pass-through */
 #define NTL_FOPEN(pFile, path, mode)           (fopen_s((pFile), (path), (mode)) == 0)
@@ -73,5 +80,8 @@
 #define NTL_STRCPY_S(dest, size, src)          strcpy_s((dest), (size), (src))
 #define NTL_STRTOK(str, delim, ctx)            strtok_s((str), (delim), (ctx))
 #define NTL_SWPRINTF(buf, size, fmt, ...)      swprintf_s((buf), (size), (fmt), ##__VA_ARGS__)
+
+/* _stricmp / NTL_STRICMP: case-insensitive string compare (CRT) */
+#define NTL_STRICMP(s1, s2) _stricmp((s1), (s2))
 
 #endif

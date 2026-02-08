@@ -28,13 +28,13 @@ bool CTQSNodeAction_DirectPlay::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "id") == 0)
+	if (NTL_STRICMP(name, "id") == 0)
 	{
 		m_directTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "time") == 0)
+	if (NTL_STRICMP(name, "time") == 0)
 	{
 		m_dwWaitTime = (DWORD)pNode->GetValue() * 1000;
 		return CControlScriptNode::AddParam(pNode);
@@ -51,37 +51,37 @@ bool CTQSNodeAction_DirectPlay::AddParam(CControlScriptNodeParam_String* pNode)
 	const char* name = pNode->GetName();
 	const char* value = pNode->GetValue();
 
-	if (_stricmp(name, "type") == 0)
+	if (NTL_STRICMP(name, "type") == 0)
 	{
-		if (_stricmp(value, "flash") == 0)
+		if (NTL_STRICMP(value, "flash") == 0)
 			m_eDirectionType = DIRECTION_FLASH;
-		else if (_stricmp(value, "cinematic") == 0)
+		else if (NTL_STRICMP(value, "cinematic") == 0)
 			m_eDirectionType = DIRECTION_CINEMATIC;
-		else if (_stricmp(value, "play") == 0)
+		else if (NTL_STRICMP(value, "play") == 0)
 			m_eDirectionType = DIRECTION_PLAY;
 
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "ending") == 0)
+	if (NTL_STRICMP(name, "ending") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bEnding = true;
 
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "sync") == 0)
+	if (NTL_STRICMP(name, "sync") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bSynchronize = true;
 
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "skip") == 0)
+	if (NTL_STRICMP(name, "skip") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bCanSkip = true;
 
 		return CControlScriptNode::AddParam(pNode);

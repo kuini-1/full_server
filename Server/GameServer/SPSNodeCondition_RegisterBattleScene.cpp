@@ -19,17 +19,17 @@ bool CSPSNodeCondition_RegisterBattleScene::AddParam(CControlScriptNodeParam_Str
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "play type") == 0)
+	if (NTL_STRICMP(name, "play type") == 0)
 	{
 		const char* sub = pNode->GetName();
 
-		if (_stricmp(sub, "unlimit") == 0)
+		if (NTL_STRICMP(sub, "unlimit") == 0)
 		{
 			m_ePlayType = SPS_BS_PLAY_UNLIMIT;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(sub, "once") == 0)
+		if (NTL_STRICMP(sub, "once") == 0)
 		{
 			m_ePlayType = SPS_BS_PLAY_ONCE;
 			return CControlScriptNode::AddParam(pNode);

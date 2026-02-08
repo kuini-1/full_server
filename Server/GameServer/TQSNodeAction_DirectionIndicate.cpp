@@ -29,19 +29,19 @@ bool CTQSNodeAction_DirectionIndicate::AddParam(CControlScriptNodeParam_Number* 
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "loc x") == 0)
+	if (NTL_STRICMP(name, "loc x") == 0)
 	{
 		m_vLoc.x = (float)pNode->GetValue();
 
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "loc y") == 0)
+	if (NTL_STRICMP(name, "loc y") == 0)
 	{
 		m_vLoc.y = (float)pNode->GetValue();
 
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "loc z") == 0)
+	if (NTL_STRICMP(name, "loc z") == 0)
 	{
 		m_vLoc.z = (float)pNode->GetValue();
 
@@ -58,20 +58,20 @@ bool CTQSNodeAction_DirectionIndicate::AddParam(CControlScriptNodeParam_String* 
 	const char* name = pNode->GetName();
 	const char* value = pNode->GetValue();
 
-	if (_stricmp(name, "apply") == 0)
+	if (NTL_STRICMP(name, "apply") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bIndicate = true;
 
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "indicate type") == 0)
+	if (NTL_STRICMP(name, "indicate type") == 0)
 	{
-		if (_stricmp(value, "object") == 0)
+		if (NTL_STRICMP(value, "object") == 0)
 			m_eIndicateType = DIRECTION_INDICATE_TYPE_TOBJECT;
-		else if (_stricmp(value, "npc") == 0)
+		else if (NTL_STRICMP(value, "npc") == 0)
 			m_eIndicateType = DIRECTION_INDICATE_TYPE_NPC;
-		else if (_stricmp(value, "point") == 0)
+		else if (NTL_STRICMP(value, "point") == 0)
 			m_eIndicateType = DIRECTION_INDICATE_TYPE_POINT;
 		else
 			printf("CTQSNodeAction_DirectionIndicate: could not find value %s \n", value);
@@ -79,11 +79,11 @@ bool CTQSNodeAction_DirectionIndicate::AddParam(CControlScriptNodeParam_String* 
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "auto hide") == 0)
+	if (NTL_STRICMP(name, "auto hide") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bAutoHide = true;
-		else if (_stricmp(value, "false") == 0)
+		else if (NTL_STRICMP(value, "false") == 0)
 			m_bAutoHide = false;
 		else
 			printf("CTQSNodeAction_DirectionIndicate: 'auto hide' could not find value %s \n", value);

@@ -19,17 +19,17 @@ bool CSPSNodeCondition_BSConditionGroup::AddParam(CControlScriptNodeParam_String
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "operation") == 0)
+	if (NTL_STRICMP(name, "operation") == 0)
 	{
 		const char* sub = pNode->GetName();
 
-		if (_stricmp(sub, "and") == 0)
+		if (NTL_STRICMP(sub, "and") == 0)
 		{
 			m_bOperatorAnd = true;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(sub, "or") == 0)
+		if (NTL_STRICMP(sub, "or") == 0)
 		{
 			m_bOperatorAnd = false;
 			return CControlScriptNode::AddParam(pNode);

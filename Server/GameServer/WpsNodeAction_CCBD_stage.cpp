@@ -20,7 +20,7 @@ bool CWpsNodeAction_CCBD_stage::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "stage") == 0)
+	if (NTL_STRICMP(name, "stage") == 0)
 	{
 		m_byStage = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -36,9 +36,9 @@ bool CWpsNodeAction_CCBD_stage::AddParam(CControlScriptNodeParam_String* pNode)
 	const char* value = pNode->GetValue();
 
 
-	if (_stricmp(name, "direct play") == 0)
+	if (NTL_STRICMP(name, "direct play") == 0)
 	{
-		if (_stricmp(value, "false") == 0)
+		if (NTL_STRICMP(value, "false") == 0)
 			m_bDirectPlay = false;
 		else
 			m_bDirectPlay = true;

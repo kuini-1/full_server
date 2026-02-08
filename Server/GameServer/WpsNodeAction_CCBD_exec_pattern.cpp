@@ -21,7 +21,7 @@ bool CWpsNodeAction_CCBD_exec_pattern::AddParam(CControlScriptNodeParam_String* 
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "pattern list") == 0)
+	if (NTL_STRICMP(name, "pattern list") == 0)
 	{
 		m_strPatternList = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

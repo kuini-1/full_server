@@ -19,13 +19,13 @@ bool CWPSNodeCondition_RecvEventFromWps::AddParam(CControlScriptNodeParam_Number
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "wps index") == 0)
+	if (NTL_STRICMP(name, "wps index") == 0)
 	{
 		m_wpsTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_eventId = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

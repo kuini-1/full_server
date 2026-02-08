@@ -27,49 +27,49 @@ bool CWPSNodeAction_AddMobGroup::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "group") == 0)
+	if (NTL_STRICMP(name, "group") == 0)
 	{
 		m_spawnGroupId = (SPAWNGROUPID)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "play script") == 0)
+	if (NTL_STRICMP(name, "play script") == 0)
 	{
 		m_dwPlayScriptNumber = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "play scene") == 0)
+	if (NTL_STRICMP(name, "play scene") == 0)
 	{
 		m_dwPlayScriptScene = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "faint buff index") == 0)
+	if (NTL_STRICMP(name, "faint buff index") == 0)
 	{
 		m_faintBuffIndex = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "faint buff range") == 0)
+	if (NTL_STRICMP(name, "faint buff range") == 0)
 	{
 		m_fFaintBuffRange = (float)(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "bind mob list") == 0)
+	if (NTL_STRICMP(name, "bind mob list") == 0)
 	{
 		m_nBindMobList = (int)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "drop item") == 0)
+	if (NTL_STRICMP(name, "drop item") == 0)
 	{
 		m_dropItem_ProbabilityTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "nest range") == 0)
+	if (NTL_STRICMP(name, "nest range") == 0)
 	{
 		m_byNestRange = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -83,42 +83,42 @@ bool CWPSNodeAction_AddMobGroup::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "no spawn wait") == 0)
+	if (NTL_STRICMP(name, "no spawn wait") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			BIT_FLAG_SET(m_bySpawnFuncFlag, SPAWN_FUNC_FLAG_NO_SPAWN_WAIT);
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "spawn func") == 0)
+	if (NTL_STRICMP(name, "spawn func") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "no spawn wait") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "no spawn wait") == 0)
 			BIT_FLAG_SET(m_bySpawnFuncFlag, SPAWN_FUNC_FLAG_NO_SPAWN_WAIT);
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "respawn") == 0)
+	if (NTL_STRICMP(name, "respawn") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			BIT_FLAG_SET(m_bySpawnFuncFlag, SPAWN_FUNC_FLAG_RESPAWN);
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "faint buff apply type") == 0)
+	if (NTL_STRICMP(name, "faint buff apply type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "party") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "party") == 0)
 			m_byFaintBuffApplyType = eMOB_FAINT_BUFF_PARTY;
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "nest type") == 0)
+	if (NTL_STRICMP(name, "nest type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "fix") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "fix") == 0)
 			m_eNestType = NPC_NEST_TYPE_FIX;
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "bind mob") == 0)
+	if (NTL_STRICMP(name, "bind mob") == 0)
 	{
 		m_strBindMob = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

@@ -20,7 +20,7 @@ bool CWPSNodeCondition_Compare::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "express") == 0)
+	if (NTL_STRICMP(name, "express") == 0)
 	{
 		m_strExpress = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -63,9 +63,9 @@ bool CWPSNodeCondition_Compare::CheckParameter()
 			}
 			else if (i == 1)
 			{
-				if (_stricmp(rSrc.c_str(), "==") == 0)
+				if (NTL_STRICMP(rSrc.c_str(), "==") == 0)
 					m_eOperator = SSD_VARIABLE_COMPARE_OPERATOR_EQUAL;
-				else if (_stricmp(rSrc.c_str(), "!=") == 0)
+				else if (NTL_STRICMP(rSrc.c_str(), "!=") == 0)
 					m_eOperator = SSD_VARIABLE_COMPARE_OPERATOR_NOT_EQUAL;
 				else
 				{

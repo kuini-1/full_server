@@ -25,13 +25,13 @@ bool CWPSNodeAction_RegisterBuff::AddParam(CControlScriptNodeParam_Number* pNode
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target index") == 0)
+	if (NTL_STRICMP(name, "target index") == 0)
 	{
 		m_dwTargetIndex = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "buff index") == 0)
+	if (NTL_STRICMP(name, "buff index") == 0)
 	{
 		m_SkillId = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -45,9 +45,9 @@ bool CWPSNodeAction_RegisterBuff::AddParam(CControlScriptNodeParam_String* pNode
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target type") == 0)
+	if (NTL_STRICMP(name, "target type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "mob") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "mob") == 0)
 		{
 			m_eTargetType = OBJTYPE_MOB;
 			return CControlScriptNode::AddParam(pNode);

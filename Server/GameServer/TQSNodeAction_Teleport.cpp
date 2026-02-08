@@ -25,31 +25,31 @@ bool CTQSNodeAction_Teleport::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "loc x") == 0)
+	if (NTL_STRICMP(name, "loc x") == 0)
 	{
 		m_vLoc.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "loc y") == 0)
+	if (NTL_STRICMP(name, "loc y") == 0)
 	{
 		m_vLoc.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "loc z") == 0)
+	if (NTL_STRICMP(name, "loc z") == 0)
 	{
 		m_vLoc.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 	
-	if (_stricmp(name, "dir x") == 0)
+	if (NTL_STRICMP(name, "dir x") == 0)
 	{
 		m_vDir.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "dir z") == 0)
+	if (NTL_STRICMP(name, "dir z") == 0)
 	{
 		m_vDir.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

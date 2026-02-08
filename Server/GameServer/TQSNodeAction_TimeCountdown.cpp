@@ -25,11 +25,11 @@ bool CTQSNodeAction_TimeCountdown::AddParam(CControlScriptNodeParam_String* pNod
 	const char* value = pNode->GetValue();
 
 
-	if (_stricmp(name, "mode") == 0)
+	if (NTL_STRICMP(name, "mode") == 0)
 	{
-		if (_stricmp(value, "start") == 0)
+		if (NTL_STRICMP(value, "start") == 0)
 			m_bCountdown = true;
-		else if (_stricmp(value, "stop") == 0)
+		else if (NTL_STRICMP(value, "stop") == 0)
 			m_bCountdown = false;
 		else
 			printf("CTQSNodeAction_TimeCountdown: name[%s] value '%s' not exist \n", name, value);

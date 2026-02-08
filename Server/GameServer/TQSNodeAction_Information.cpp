@@ -27,9 +27,9 @@ bool CTQSNodeAction_Information::AddParam(CControlScriptNodeParam_String* pNode)
 	const char* name = pNode->GetName();
 	const char* value = pNode->GetValue();
 
-	if (_stricmp(name, "info type") == 0)
+	if (NTL_STRICMP(name, "info type") == 0)
 	{
-		if (_stricmp(value, "stage") == 0)
+		if (NTL_STRICMP(value, "stage") == 0)
 			m_eInfoType = TIMEQUEST_INFORMATION_TYPE_STAGE;
 		return CControlScriptNode::AddParam(pNode);
 	}

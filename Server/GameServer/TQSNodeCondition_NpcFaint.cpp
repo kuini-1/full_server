@@ -24,7 +24,7 @@ bool CTQSNodeCondition_NpcFaint::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "npc index") == 0)
+	if (NTL_STRICMP(name, "npc index") == 0)
 	{
 		m_npcTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -40,11 +40,11 @@ bool CTQSNodeCondition_NpcFaint::AddParam(CControlScriptNodeParam_String* pNode)
 	const char* value = pNode->GetValue();
 
 
-	if (_stricmp(name, "tmq fail") == 0)
+	if (NTL_STRICMP(name, "tmq fail") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bTmqFail = true;
-		else if (_stricmp(value, "false") == 0)
+		else if (NTL_STRICMP(value, "false") == 0)
 			m_bTmqFail = false;
 		else
 			printf("CTQSNodeCondition_NpcFaint: name[%s] value '%s' not exist \n", name, value);

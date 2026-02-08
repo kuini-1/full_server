@@ -18,7 +18,7 @@ bool CSPSNodeAction_DirectTurning::AddParam(CControlScriptNodeParam_Number* pNod
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "tblidx") == 0)
+	if (NTL_STRICMP(name, "tblidx") == 0)
 	{
 		m_directionTblidx = (TBLIDX)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);

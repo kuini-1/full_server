@@ -25,9 +25,9 @@ bool CWPSNodeAction_If::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "reverse") == 0)
+	if (NTL_STRICMP(name, "reverse") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "false") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 		{
 			m_bReverse = false;
 			return CControlScriptNode::AddParam(pNode);

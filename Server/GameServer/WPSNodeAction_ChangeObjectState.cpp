@@ -25,19 +25,19 @@ bool CWPSNodeAction_ChangeObjectState::AddParam(CControlScriptNodeParam_Number* 
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "index") == 0)
+	if (NTL_STRICMP(name, "index") == 0)
 	{
 		m_objectTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "state") == 0)
+	if (NTL_STRICMP(name, "state") == 0)
 	{
 		m_mainState = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "substate show") == 0)
+	if (NTL_STRICMP(name, "substate show") == 0)
 	{
 		if (pNode->GetValue() == 0.0f)
 			BIT_FLAG_SET(m_subStateUnset, TOBJECT_SUBSTATE_FLAG_SHOW);
@@ -47,7 +47,7 @@ bool CWPSNodeAction_ChangeObjectState::AddParam(CControlScriptNodeParam_Number* 
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "substate unselect") == 0)
+	if (NTL_STRICMP(name, "substate unselect") == 0)
 	{
 		if (pNode->GetValue() == 0.0f)
 			BIT_FLAG_SET(m_subStateUnset, TOBJECT_SUBSTATE_FLAG_UNSELECT);

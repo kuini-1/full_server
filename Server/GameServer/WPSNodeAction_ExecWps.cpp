@@ -23,7 +23,7 @@ bool CWPSNodeAction_ExecWps::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "wps tblidx") == 0)
+	if (NTL_STRICMP(name, "wps tblidx") == 0)
 	{
 		m_wpsTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

@@ -23,7 +23,7 @@ bool CWPSNodeCondition_CheckBattle::AddParam(CControlScriptNodeParam_Number* pNo
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "group") == 0)
+	if (NTL_STRICMP(name, "group") == 0)
 	{
 		m_group = (unsigned int)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -37,9 +37,9 @@ bool CWPSNodeCondition_CheckBattle::AddParam(CControlScriptNodeParam_String* pNo
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "type") == 0)
+	if (NTL_STRICMP(name, "type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "mob") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "mob") == 0)
 		{
 			m_eObjType = OBJTYPE_MOB;
 			return CControlScriptNode::AddParam(pNode);
@@ -47,14 +47,14 @@ bool CWPSNodeCondition_CheckBattle::AddParam(CControlScriptNodeParam_String* pNo
 		printf("value '%s' dont exist \n", pNode->GetValue());
 	}
 
-	if (_stricmp(name, "is battle") == 0)
+	if (NTL_STRICMP(name, "is battle") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 		{
 			m_bIsBattle = true;
 			return CControlScriptNode::AddParam(pNode);
 		}
-		if (_stricmp(pNode->GetValue(), "false") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 		{
 			m_bIsBattle = false;
 			return CControlScriptNode::AddParam(pNode);

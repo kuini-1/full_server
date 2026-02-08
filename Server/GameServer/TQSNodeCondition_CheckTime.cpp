@@ -23,7 +23,7 @@ bool CTQSNodeCondition_CheckTime::AddParam(CControlScriptNodeParam_Number* pNode
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "time") == 0)
+	if (NTL_STRICMP(name, "time") == 0)
 	{
 		m_dwWaitTime = (DWORD)pNode->GetValue() * 1000;
 		return CControlScriptNode::AddParam(pNode);

@@ -19,7 +19,7 @@ bool CSPSNodeAction_SkillUse::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "skill index") == 0)
+	if (NTL_STRICMP(name, "skill index") == 0)
 	{
 		m_bySkillIndex = (BYTE)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);

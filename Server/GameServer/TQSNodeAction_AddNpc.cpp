@@ -25,47 +25,47 @@ bool CTQSNodeAction_AddNpc::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "index") == 0)
+	if (NTL_STRICMP(name, "index") == 0)
 	{
 		m_npcTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "loc x") == 0)
+	if (NTL_STRICMP(name, "loc x") == 0)
 	{
 		m_vLoc.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "loc y") == 0)
+	if (NTL_STRICMP(name, "loc y") == 0)
 	{
 		m_vLoc.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "loc z") == 0)
+	if (NTL_STRICMP(name, "loc z") == 0)
 	{
 		m_vLoc.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "dir x") == 0)
+	if (NTL_STRICMP(name, "dir x") == 0)
 	{
 		m_vDir.x = (float)(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "dir y") == 0)
+	if (NTL_STRICMP(name, "dir y") == 0)
 	{
 		m_vDir.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "dir z") == 0)
+	if (NTL_STRICMP(name, "dir z") == 0)
 	{
 		m_vDir.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "play script") == 0)
+	if (NTL_STRICMP(name, "play script") == 0)
 	{
 		m_dwPlayScriptNumber = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "play scene") == 0)
+	if (NTL_STRICMP(name, "play scene") == 0)
 	{
 		m_dwPlayScriptScene = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -79,27 +79,27 @@ bool CTQSNodeAction_AddNpc::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "respawn") == 0)
+	if (NTL_STRICMP(name, "respawn") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			BIT_FLAG_SET(m_bySpawnFuncFlag, SPAWN_FUNC_FLAG_RESPAWN);
 
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "no spawn wait") == 0)
+	if (NTL_STRICMP(name, "no spawn wait") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			BIT_FLAG_SET(m_bySpawnFuncFlag, SPAWN_FUNC_FLAG_NO_SPAWN_WAIT);
 
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "char condition") == 0)
+	if (NTL_STRICMP(name, "char condition") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "click disable") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "click disable") == 0)
 			BIT_FLAG_SET(m_qwCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_CLICK_DISABLE));
-		else if (_stricmp(pNode->GetValue(), "direct play") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "direct play") == 0)
 			BIT_FLAG_SET(m_qwCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_DIRECT_PLAY));
-		else if (_stricmp(pNode->GetValue(), "invincible") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "invincible") == 0)
 			BIT_FLAG_SET(m_qwCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_INVINCIBLE));
 		else
 		{

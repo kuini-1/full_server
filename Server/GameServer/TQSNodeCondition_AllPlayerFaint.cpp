@@ -26,9 +26,9 @@ bool CTQSNodeCondition_AllPlayerFaint::AddParam(CControlScriptNodeParam_String* 
 	const char* value = pNode->GetValue();
 
 
-	if (_stricmp(name, "tmq fail") == 0)
+	if (NTL_STRICMP(name, "tmq fail") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bTmqFail = true;
 		else
 			printf("CTQSNodeCondition_AllPlayerFaint: name[%s] value '%s' not exist \n", name, value);

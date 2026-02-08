@@ -23,11 +23,11 @@ bool CSPSNodeAction_SitDown::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "sitdown") == 0)
+	if (NTL_STRICMP(name, "sitdown") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			m_bSitDown = true;
-		else if (_stricmp(pNode->GetValue(), "false") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 			m_bSitDown = false;
 		else
 		{

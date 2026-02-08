@@ -19,7 +19,7 @@ bool CWpsNodeAction_CCBD_register_direct_play::AddParam(CControlScriptNodeParam_
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "change next stage") == 0)
+	if (NTL_STRICMP(name, "change next stage") == 0)
 	{
 		m_directIndex = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

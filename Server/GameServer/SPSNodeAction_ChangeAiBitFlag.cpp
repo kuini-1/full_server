@@ -27,7 +27,7 @@ bool CSPSNodeAction_ChangeAiBitFlag::AddParam(CControlScriptNodeParam_String* pN
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "attack type") == 0)
+	if (NTL_STRICMP(name, "attack type") == 0)
 	{
 		m_dwAi_Bit_Flag &= 0xFFFFFFFE;
 		m_dwAi_Bit_Flag &= 0xFFFFFFFD;
@@ -40,28 +40,28 @@ bool CSPSNodeAction_ChangeAiBitFlag::AddParam(CControlScriptNodeParam_String* pN
 
 		const char* value = pNode->GetValue();
 
-		if (_stricmp(value, "defensive") == 0)
+		if (NTL_STRICMP(value, "defensive") == 0)
 		{
 			m_dwAi_Bit_Mask |= 1;
 			m_dwAi_Bit_Flag |= 1;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "timid") == 0)
+		if (NTL_STRICMP(value, "timid") == 0)
 		{
 			m_dwAi_Bit_Mask |= 2;
 			m_dwAi_Bit_Flag |= 2;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "offensive") == 0)
+		if (NTL_STRICMP(value, "offensive") == 0)
 		{
 			m_dwAi_Bit_Mask |= 4;
 			m_dwAi_Bit_Flag |= 4;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "smart offensive") == 0)
+		if (NTL_STRICMP(value, "smart offensive") == 0)
 		{
 			m_dwAi_Bit_Mask |= 8;
 			m_dwAi_Bit_Flag |= 8;
@@ -73,46 +73,46 @@ bool CSPSNodeAction_ChangeAiBitFlag::AddParam(CControlScriptNodeParam_String* pN
 	}
 
 
-	if (_stricmp(name, "flee type") == 0)
+	if (NTL_STRICMP(name, "flee type") == 0)
 	{
 		const char* value = pNode->GetValue();
 
-		if (_stricmp(value, "desperation off") == 0)
+		if (NTL_STRICMP(value, "desperation off") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x20;
 			m_dwAi_Bit_Flag &= 0xFFFFFFDF;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "flee off") == 0)
+		if (NTL_STRICMP(value, "flee off") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x40;
 			m_dwAi_Bit_Flag &= 0xFFFFFFBF;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "retreat off") == 0)
+		if (NTL_STRICMP(value, "retreat off") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x80;
 			m_dwAi_Bit_Flag &= 0xFFFFFF7F;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "desperation on") == 0)
+		if (NTL_STRICMP(value, "desperation on") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x20;
 			m_dwAi_Bit_Flag |= 0x20;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "flee on") == 0)
+		if (NTL_STRICMP(value, "flee on") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x40;
 			m_dwAi_Bit_Flag |= 0x40;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "retreat on") == 0)
+		if (NTL_STRICMP(value, "retreat on") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x80;
 			m_dwAi_Bit_Flag |= 0x80;
@@ -124,7 +124,7 @@ bool CSPSNodeAction_ChangeAiBitFlag::AddParam(CControlScriptNodeParam_String* pN
 	}
 
 
-	if (_stricmp(name, "targetting type") == 0)
+	if (NTL_STRICMP(name, "targetting type") == 0)
 	{
 		m_dwAi_Bit_Flag &= 0xFFFFFDFF;
 		m_dwAi_Bit_Flag &= 0xFFFFFBFF;
@@ -137,19 +137,19 @@ bool CSPSNodeAction_ChangeAiBitFlag::AddParam(CControlScriptNodeParam_String* pN
 
 		const char* value = pNode->GetValue();
 
-		if (_stricmp(value, "revenge") == 0)
+		if (NTL_STRICMP(value, "revenge") == 0)
 		{
 			m_dwAi_Bit_Flag |= 0x400;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "mean") == 0)
+		if (NTL_STRICMP(value, "mean") == 0)
 		{
 			m_dwAi_Bit_Flag |= 0x800;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "brave") == 0)
+		if (NTL_STRICMP(value, "brave") == 0)
 		{
 			m_dwAi_Bit_Flag |= 0x1000;
 			return CControlScriptNode::AddParam(pNode);
@@ -159,32 +159,32 @@ bool CSPSNodeAction_ChangeAiBitFlag::AddParam(CControlScriptNodeParam_String* pN
 		return false;
 	}
 
-	if (_stricmp(name, "help type") == 0)
+	if (NTL_STRICMP(name, "help type") == 0)
 	{
 		const char* value = pNode->GetValue();
 
-		if (_stricmp(value, "alliance help off") == 0)
+		if (NTL_STRICMP(value, "alliance help off") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x8000;
 			m_dwAi_Bit_Flag &= 0xFFFF7FFF;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "defend off") == 0)
+		if (NTL_STRICMP(value, "defend off") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x10000;
 			m_dwAi_Bit_Flag &= 0xFFFEFFFF;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "alliance help on") == 0)
+		if (NTL_STRICMP(value, "alliance help on") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x8000u;
 			m_dwAi_Bit_Flag |= 0x8000u;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "defend on") == 0)
+		if (NTL_STRICMP(value, "defend on") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x10000;
 			m_dwAi_Bit_Flag |= 0x10000;
@@ -196,32 +196,32 @@ bool CSPSNodeAction_ChangeAiBitFlag::AddParam(CControlScriptNodeParam_String* pN
 	}
 
 
-	if (_stricmp(name, "move type") == 0)
+	if (NTL_STRICMP(name, "move type") == 0)
 	{
 		const char* value = pNode->GetValue();
 
-		if (_stricmp(value, "chace on") == 0)
+		if (NTL_STRICMP(value, "chace on") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x100000;
 			m_dwAi_Bit_Flag &= 0xFFEFFFFF;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "move on") == 0)
+		if (NTL_STRICMP(value, "move on") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x200000;
 			m_dwAi_Bit_Flag &= 0xFFDFFFFF;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "chace off") == 0)
+		if (NTL_STRICMP(value, "chace off") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x100000;
 			m_dwAi_Bit_Flag |= 0x100000;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "move off") == 0)
+		if (NTL_STRICMP(value, "move off") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x200000;
 			m_dwAi_Bit_Flag |= 0x200000;
@@ -233,18 +233,18 @@ bool CSPSNodeAction_ChangeAiBitFlag::AddParam(CControlScriptNodeParam_String* pN
 	}
 
 
-	if (_stricmp(name, "only skill") == 0)
+	if (NTL_STRICMP(name, "only skill") == 0)
 	{
 		const char* value = pNode->GetValue();
 
-		if (_stricmp(value, "on") == 0)
+		if (NTL_STRICMP(value, "on") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x10;
 			m_dwAi_Bit_Flag |= 0x10;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(value, "off") == 0)
+		if (NTL_STRICMP(value, "off") == 0)
 		{
 			m_dwAi_Bit_Mask |= 0x10;
 			m_dwAi_Bit_Flag &= 0xFFFFFFEF;

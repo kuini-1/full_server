@@ -19,7 +19,7 @@ bool CSPSNodeAction_SendEscortEventToTs::AddParam(CControlScriptNodeParam_Number
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_teId = (int)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);

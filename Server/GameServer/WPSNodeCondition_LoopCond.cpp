@@ -20,11 +20,11 @@ bool CWPSNodeCondition_LoopCond::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "reverse") == 0)
+	if (NTL_STRICMP(name, "reverse") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			m_bReverse = true;
-		else if (_stricmp(pNode->GetValue(), "false") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 			m_bReverse = false;
 		else
 		{
@@ -35,11 +35,11 @@ bool CWPSNodeCondition_LoopCond::AddParam(CControlScriptNodeParam_String* pNode)
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "operation") == 0)
+	if (NTL_STRICMP(name, "operation") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			m_bOperationAND = true;
-		else if (_stricmp(pNode->GetValue(), "false") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 			m_bOperationAND = false;
 		else
 		{

@@ -17,7 +17,7 @@ bool CWPSNodeCondition_CheckTime::AddParam(CControlScriptNodeParam_Number* pNode
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "time") == 0)
+	if (NTL_STRICMP(name, "time") == 0)
 	{
 		m_dwWaitTime = (DWORD)std::floor(1000.0 * pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);

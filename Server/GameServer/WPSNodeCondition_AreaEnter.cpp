@@ -20,55 +20,55 @@ bool CWPSNodeCondition_AreaEnter::AddParam(CControlScriptNodeParam_Number* pNode
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "origin x") == 0)
+	if (NTL_STRICMP(name, "origin x") == 0)
 	{
 		m_vOrigin.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "origin y") == 0)
+	if (NTL_STRICMP(name, "origin y") == 0)
 	{
 		m_vOrigin.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "origin z") == 0)
+	if (NTL_STRICMP(name, "origin z") == 0)
 	{
 		m_vOrigin.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "start x") == 0)
+	if (NTL_STRICMP(name, "start x") == 0)
 	{
 		m_vStart.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "start y") == 0)
+	if (NTL_STRICMP(name, "start y") == 0)
 	{
 		m_vStart.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "start z") == 0)
+	if (NTL_STRICMP(name, "start z") == 0)
 	{
 		m_vStart.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "end x") == 0)
+	if (NTL_STRICMP(name, "end x") == 0)
 	{
 		m_vEnd.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "end y") == 0)
+	if (NTL_STRICMP(name, "end y") == 0)
 	{
 		m_vEnd.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "end z") == 0)
+	if (NTL_STRICMP(name, "end z") == 0)
 	{
 		m_vEnd.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "radius") == 0)
+	if (NTL_STRICMP(name, "radius") == 0)
 	{
 		m_fRadius = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -82,11 +82,11 @@ bool CWPSNodeCondition_AreaEnter::AddParam(CControlScriptNodeParam_String* pNode
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "all member") == 0)
+	if (NTL_STRICMP(name, "all member") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 			m_bAllMember = true;
-		else if (_stricmp(pNode->GetValue(), "false") == 0)
+		else if (NTL_STRICMP(pNode->GetValue(), "false") == 0)
 			m_bAllMember = false;
 		else
 		{

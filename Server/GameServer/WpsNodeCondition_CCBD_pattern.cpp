@@ -24,19 +24,19 @@ bool CWpsNodeCondition_CCBD_pattern::AddParam(CControlScriptNodeParam_Number* pN
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "index") == 0)
+	if (NTL_STRICMP(name, "index") == 0)
 	{
 		m_byIndex = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "title tblidx") == 0)
+	if (NTL_STRICMP(name, "title tblidx") == 0)
 	{
 		m_titleIdx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "sub title tblidx") == 0)
+	if (NTL_STRICMP(name, "sub title tblidx") == 0)
 	{
 		m_subTitleIdx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -51,9 +51,9 @@ bool CWpsNodeCondition_CCBD_pattern::AddParam(CControlScriptNodeParam_String* pN
 	const char* name = pNode->GetName();
 	const char* value = pNode->GetValue();
 
-	if (_stricmp(name, "use limit timer") == 0)
+	if (NTL_STRICMP(name, "use limit timer") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bUseTimeLimit = true;
 		return CControlScriptNode::AddParam(pNode);
 	}

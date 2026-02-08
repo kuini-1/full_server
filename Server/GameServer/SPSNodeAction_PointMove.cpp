@@ -25,49 +25,49 @@ bool CSPSNodeAction_PointMove::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "loc x") == 0)
+	if (NTL_STRICMP(name, "loc x") == 0)
 	{
 		m_vDestLoc.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "loc y") == 0)
+	if (NTL_STRICMP(name, "loc y") == 0)
 	{
 		m_vDestLoc.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "loc z") == 0)
+	if (NTL_STRICMP(name, "loc z") == 0)
 	{
 		m_vDestLoc.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "dir x") == 0)
+	if (NTL_STRICMP(name, "dir x") == 0)
 	{
 		m_vDestDir.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "dir y") == 0)
+	if (NTL_STRICMP(name, "dir y") == 0)
 	{
 		m_vDestDir.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "dir z") == 0)
+	if (NTL_STRICMP(name, "dir z") == 0)
 	{
 		m_vDestDir.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "run mode") == 0)
+	if (NTL_STRICMP(name, "run mode") == 0)
 	{
 		m_bRunMode = pNode->GetValue() != 0.0f;
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "move speed") == 0)
+	if (NTL_STRICMP(name, "move speed") == 0)
 	{
 		m_fMoveSpeed = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

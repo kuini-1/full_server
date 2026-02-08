@@ -26,7 +26,7 @@ bool CTQSNodeAction_SendTsEvent::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_teid = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -42,9 +42,9 @@ bool CTQSNodeAction_SendTsEvent::AddParam(CControlScriptNodeParam_String* pNode)
 	const char* value = pNode->GetValue();
 
 
-	if (_stricmp(name, "trigger type") == 0)
+	if (NTL_STRICMP(name, "trigger type") == 0)
 	{
-		if (_stricmp(value, "quest") == 0)
+		if (NTL_STRICMP(value, "quest") == 0)
 			m_byTriggerType = 0;
 		else
 			printf("CTQSNodeAction_SendTsEvent: name[%s] value '%s' not exist \n", name, value);

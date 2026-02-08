@@ -25,70 +25,70 @@ bool CWPSNodeAction_MobList::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "index") == 0)
+	if (NTL_STRICMP(name, "index") == 0)
 	{
 		m_nIndex = (int)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "auto actual level") == 0)
+	if (NTL_STRICMP(name, "auto actual level") == 0)
 	{
 		m_byActualLevel = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "auto effect level") == 0)
+	if (NTL_STRICMP(name, "auto effect level") == 0)
 	{
 		m_byEffectiveLevel = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "mob1") == 0)
+	if (NTL_STRICMP(name, "mob1") == 0)
 	{
 		m_strMobList[0] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob2") == 0)
+	if (NTL_STRICMP(name, "mob2") == 0)
 	{
 		m_strMobList[1] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob3") == 0)
+	if (NTL_STRICMP(name, "mob3") == 0)
 	{
 		m_strMobList[2] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob4") == 0)
+	if (NTL_STRICMP(name, "mob4") == 0)
 	{
 		m_strMobList[3] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob5") == 0)
+	if (NTL_STRICMP(name, "mob5") == 0)
 	{
 		m_strMobList[4] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob6") == 0)
+	if (NTL_STRICMP(name, "mob6") == 0)
 	{
 		m_strMobList[5] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob7") == 0)
+	if (NTL_STRICMP(name, "mob7") == 0)
 	{
 		m_strMobList[6] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob8") == 0)
+	if (NTL_STRICMP(name, "mob8") == 0)
 	{
 		m_strMobList[7] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob9") == 0)
+	if (NTL_STRICMP(name, "mob9") == 0)
 	{
 		m_strMobList[8] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob10") == 0)
+	if (NTL_STRICMP(name, "mob10") == 0)
 	{
 		m_strMobList[9] = std::to_string((double)pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
@@ -102,52 +102,52 @@ bool CWPSNodeAction_MobList::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "mob1") == 0)
+	if (NTL_STRICMP(name, "mob1") == 0)
 	{
 		m_strMobList[0] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob2") == 0)
+	if (NTL_STRICMP(name, "mob2") == 0)
 	{
 		m_strMobList[1] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob3") == 0)
+	if (NTL_STRICMP(name, "mob3") == 0)
 	{
 		m_strMobList[2] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob4") == 0)
+	if (NTL_STRICMP(name, "mob4") == 0)
 	{
 		m_strMobList[3] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob5") == 0)
+	if (NTL_STRICMP(name, "mob5") == 0)
 	{
 		m_strMobList[4] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob6") == 0)
+	if (NTL_STRICMP(name, "mob6") == 0)
 	{
 		m_strMobList[5] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob7") == 0)
+	if (NTL_STRICMP(name, "mob7") == 0)
 	{
 		m_strMobList[6] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob8") == 0)
+	if (NTL_STRICMP(name, "mob8") == 0)
 	{
 		m_strMobList[7] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob9") == 0)
+	if (NTL_STRICMP(name, "mob9") == 0)
 	{
 		m_strMobList[8] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "mob10") == 0)
+	if (NTL_STRICMP(name, "mob10") == 0)
 	{
 		m_strMobList[9] = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

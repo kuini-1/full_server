@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Util/NtlPortable.h"
 
 #include "PacketAuthServer.h"
 #include "AuthServer.h"
@@ -49,7 +50,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 
 				Field* fields = result->Fetch();
 
-				if (0 != _stricmp(fields[1].GetString(), md5pwd)) //check password
+				if (0 != NTL_STRICMP(fields[1].GetString(), md5pwd)) //check password
 					resultcode = AUTH_WRONG_PASSWORD;
 				else
 				{

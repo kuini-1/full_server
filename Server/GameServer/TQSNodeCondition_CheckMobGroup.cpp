@@ -23,12 +23,12 @@ bool CTQSNodeCondition_CheckMobGroup::AddParam(CControlScriptNodeParam_Number* p
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "group") == 0)
+	if (NTL_STRICMP(name, "group") == 0)
 	{
 		m_spawnGroupId = (SPAWNGROUPID)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "count") == 0)
+	if (NTL_STRICMP(name, "count") == 0)
 	{
 		m_nCheckCount = (int)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

@@ -22,7 +22,7 @@ bool CSPSNodeAction_SetCharCondition::AddParam(CControlScriptNodeParam_Number* p
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "direct play") == 0)
+	if (NTL_STRICMP(name, "direct play") == 0)
 	{
 		if (pNode->GetValue() == 0.0f)
 			BIT_FLAG_SET(m_qwRemoveCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_DIRECT_PLAY));
@@ -32,7 +32,7 @@ bool CSPSNodeAction_SetCharCondition::AddParam(CControlScriptNodeParam_Number* p
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "ui disable") == 0)
+	if (NTL_STRICMP(name, "ui disable") == 0)
 	{
 		if (pNode->GetValue() == 0.0f)
 			BIT_FLAG_SET(m_qwRemoveCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_CLIENT_UI_DISABLE));
@@ -42,7 +42,7 @@ bool CSPSNodeAction_SetCharCondition::AddParam(CControlScriptNodeParam_Number* p
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "click disable") == 0)
+	if (NTL_STRICMP(name, "click disable") == 0)
 	{
 		if (pNode->GetValue() == 0.0f)
 			BIT_FLAG_SET(m_qwRemoveCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_CLICK_DISABLE));
@@ -52,7 +52,7 @@ bool CSPSNodeAction_SetCharCondition::AddParam(CControlScriptNodeParam_Number* p
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "attack disallow") == 0)
+	if (NTL_STRICMP(name, "attack disallow") == 0)
 	{
 		if (pNode->GetValue() == 0.0f)
 			BIT_FLAG_SET(m_qwRemoveCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_ATTACK_DISALLOW));
@@ -62,7 +62,7 @@ bool CSPSNodeAction_SetCharCondition::AddParam(CControlScriptNodeParam_Number* p
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "invincible") == 0)
+	if (NTL_STRICMP(name, "invincible") == 0)
 	{
 		if (pNode->GetValue() == 0.0f)
 			BIT_FLAG_SET(m_qwRemoveCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_INVINCIBLE));
@@ -72,7 +72,7 @@ bool CSPSNodeAction_SetCharCondition::AddParam(CControlScriptNodeParam_Number* p
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "invisible") == 0)
+	if (NTL_STRICMP(name, "invisible") == 0)
 	{
 		if (pNode->GetValue() == 0.0f)
 			BIT_FLAG_SET(m_qwRemoveCharConditionFlag, MAKE_BIT_FLAG64(CHARCOND_INVISIBLE));

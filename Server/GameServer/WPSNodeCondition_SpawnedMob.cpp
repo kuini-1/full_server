@@ -17,13 +17,13 @@ bool CWPSNodeCondition_SpawnedMob::AddParam(CControlScriptNodeParam_Number* pNod
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "group") == 0)
+	if (NTL_STRICMP(name, "group") == 0)
 	{
 		m_mobSpawnGroupId = (SPAWNGROUPID)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "count") == 0)
+	if (NTL_STRICMP(name, "count") == 0)
 	{
 		m_byMobCount = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

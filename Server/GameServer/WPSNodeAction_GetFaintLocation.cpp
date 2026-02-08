@@ -26,7 +26,7 @@ bool CWPSNodeAction_GetFaintLocation::AddParam(CControlScriptNodeParam_Number* p
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target index") == 0)
+	if (NTL_STRICMP(name, "target index") == 0)
 	{
 		m_dwTargetIndex = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -40,9 +40,9 @@ bool CWPSNodeAction_GetFaintLocation::AddParam(CControlScriptNodeParam_String* p
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target type") == 0)
+	if (NTL_STRICMP(name, "target type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "mob") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "mob") == 0)
 		{
 			m_eTargetType = SSD_TARGET_MOB;
 			return CControlScriptNode::AddParam(pNode);
@@ -50,19 +50,19 @@ bool CWPSNodeAction_GetFaintLocation::AddParam(CControlScriptNodeParam_String* p
 		printf("value '%s' dont exist \n", pNode->GetValue());
 	}
 
-	if (_stricmp(name, "loc var") == 0)
+	if (NTL_STRICMP(name, "loc var") == 0)
 	{
 		m_strLoc = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "dir var") == 0)
+	if (NTL_STRICMP(name, "dir var") == 0)
 	{
 		m_strDir = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "default") == 0)
+	if (NTL_STRICMP(name, "default") == 0)
 	{
 		m_strDefault = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

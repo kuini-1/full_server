@@ -21,7 +21,7 @@ bool CSPSNodeCondition_BSCheckNpc::AddParam(CControlScriptNodeParam_Number* pNod
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "npc index") == 0)
+	if (NTL_STRICMP(name, "npc index") == 0)
 	{
 		m_npcTblidx = (TBLIDX)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
@@ -35,17 +35,17 @@ bool CSPSNodeCondition_BSCheckNpc::AddParam(CControlScriptNodeParam_String* pNod
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "is exist") == 0)
+	if (NTL_STRICMP(name, "is exist") == 0)
 	{
 		const char* sub = pNode->GetName();
 
-		if (_stricmp(sub, "true") == 0)
+		if (NTL_STRICMP(sub, "true") == 0)
 		{
 			m_bIsExist = true;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(sub, "false") == 0)
+		if (NTL_STRICMP(sub, "false") == 0)
 		{
 			m_bIsExist = false;
 			return CControlScriptNode::AddParam(pNode);

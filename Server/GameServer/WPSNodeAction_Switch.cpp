@@ -24,7 +24,7 @@ bool CWPSNodeAction_Switch::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "compare variable") == 0)
+	if (NTL_STRICMP(name, "compare variable") == 0)
 	{
 		m_strCompareVariable = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

@@ -24,12 +24,12 @@ bool CTQSNodeCondition_RecvSpsEvent::AddParam(CControlScriptNodeParam_Number* pN
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target index") == 0)
+	if (NTL_STRICMP(name, "target index") == 0)
 	{
 		m_targetTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_eventID = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

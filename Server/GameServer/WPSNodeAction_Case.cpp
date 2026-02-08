@@ -23,7 +23,7 @@ bool CWPSNodeAction_Case::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "value") == 0)
+	if (NTL_STRICMP(name, "value") == 0)
 	{
 		m_nCompareValue = (int)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

@@ -32,13 +32,13 @@ bool CWPSNodeAction_ChangeCharAttribute::AddParam(CControlScriptNodeParam_Number
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target index") == 0)
+	if (NTL_STRICMP(name, "target index") == 0)
 	{
 		m_dwTargetIndex = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "size rate") == 0)
+	if (NTL_STRICMP(name, "size rate") == 0)
 	{
 		m_bySizeRate = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -52,9 +52,9 @@ bool CWPSNodeAction_ChangeCharAttribute::AddParam(CControlScriptNodeParam_String
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target type") == 0)
+	if (NTL_STRICMP(name, "target type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "mob") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "mob") == 0)
 		{
 			m_eTargetType = OBJTYPE_MOB;
 			return CControlScriptNode::AddParam(pNode);

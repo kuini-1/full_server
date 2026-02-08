@@ -24,7 +24,7 @@ bool CTQSNodeAction_ChangeStage::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "stage") == 0)
+	if (NTL_STRICMP(name, "stage") == 0)
 	{
 		m_byNextStage = (BYTE)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

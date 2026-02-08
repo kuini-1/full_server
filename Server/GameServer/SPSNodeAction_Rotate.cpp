@@ -23,19 +23,19 @@ bool CSPSNodeAction_Rotate::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "dir x") == 0)
+	if (NTL_STRICMP(name, "dir x") == 0)
 	{
 		m_vRotateDir.x = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "dir y") == 0)
+	if (NTL_STRICMP(name, "dir y") == 0)
 	{
 		m_vRotateDir.y = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "dir z") == 0)
+	if (NTL_STRICMP(name, "dir z") == 0)
 	{
 		m_vRotateDir.z = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

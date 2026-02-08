@@ -22,13 +22,13 @@ bool CSPSNodeCondition_BSCondition::AddParam(CControlScriptNodeParam_Number* pNo
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "cooltime") == 0)
+	if (NTL_STRICMP(name, "cooltime") == 0)
 	{
 		m_dwCoolTime = (DWORD)floor(pNode->GetValue() * 1000.0f);
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "precooltime") == 0)
+	if (NTL_STRICMP(name, "precooltime") == 0)
 	{
 		m_dwPreCoolTime = (DWORD)floor(pNode->GetValue() * 1000.0f);
 		return CControlScriptNode::AddParam(pNode);
@@ -42,17 +42,17 @@ bool CSPSNodeCondition_BSCondition::AddParam(CControlScriptNodeParam_String* pNo
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "operation") == 0)
+	if (NTL_STRICMP(name, "operation") == 0)
 	{
 		const char* sub = pNode->GetName();
 
-		if (_stricmp(sub, "and") == 0)
+		if (NTL_STRICMP(sub, "and") == 0)
 		{
 			m_bOperatorAnd = true;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(sub, "or") == 0)
+		if (NTL_STRICMP(sub, "or") == 0)
 		{
 			m_bOperatorAnd = false;
 			return CControlScriptNode::AddParam(pNode);

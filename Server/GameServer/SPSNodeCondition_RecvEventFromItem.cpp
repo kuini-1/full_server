@@ -19,7 +19,7 @@ bool CSPSNodeCondition_RecvEventFromItem::AddParam(CControlScriptNodeParam_Numbe
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "item index") == 0)
+	if (NTL_STRICMP(name, "item index") == 0)
 	{
 		m_itemTblidx = (TBLIDX)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);

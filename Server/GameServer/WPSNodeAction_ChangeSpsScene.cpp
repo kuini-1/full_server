@@ -24,19 +24,19 @@ bool CWPSNodeAction_ChangeSpsScene::AddParam(CControlScriptNodeParam_Number* pNo
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "index") == 0)
+	if (NTL_STRICMP(name, "index") == 0)
 	{
 		m_npcTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "play script") == 0)
+	if (NTL_STRICMP(name, "play script") == 0)
 	{
 		m_dwPlayScript = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "play scene") == 0)
+	if (NTL_STRICMP(name, "play scene") == 0)
 	{
 		m_dwPlayScene = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

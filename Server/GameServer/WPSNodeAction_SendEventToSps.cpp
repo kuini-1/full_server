@@ -25,13 +25,13 @@ bool CWPSNodeAction_SendEventToSps::AddParam(CControlScriptNodeParam_Number* pNo
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target index") == 0)
+	if (NTL_STRICMP(name, "target index") == 0)
 	{
 		m_targetTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_eventId = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -45,14 +45,14 @@ bool CWPSNodeAction_SendEventToSps::AddParam(CControlScriptNodeParam_String* pNo
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "target type") == 0)
+	if (NTL_STRICMP(name, "target type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "npc") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "npc") == 0)
 		{
 			m_eTargetType = OBJTYPE_NPC;
 			return CControlScriptNode::AddParam(pNode);
 		}
-		if (_stricmp(pNode->GetValue(), "mob") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "mob") == 0)
 		{
 			m_eTargetType = OBJTYPE_MOB;
 			return CControlScriptNode::AddParam(pNode);

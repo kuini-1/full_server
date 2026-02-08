@@ -24,19 +24,19 @@ bool CSPSNodeAction_TargetFixAttack::AddParam(CControlScriptNodeParam_Number* pN
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "bot tblidx") == 0)
+	if (NTL_STRICMP(name, "bot tblidx") == 0)
 	{
 		m_tblidxBot = (TBLIDX)floor(pNode->GetValue());
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "scan range") == 0)
+	if (NTL_STRICMP(name, "scan range") == 0)
 	{
 		m_fScanRange = (float)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "end value") == 0)
+	if (NTL_STRICMP(name, "end value") == 0)
 	{
 		if (m_eEndType == ePERCENT_TARGET_LP)
 		{
@@ -54,23 +54,23 @@ bool CSPSNodeAction_TargetFixAttack::AddParam(CControlScriptNodeParam_String* pN
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "obj type") == 0)
+	if (NTL_STRICMP(name, "obj type") == 0)
 	{
 		const char* sub = pNode->GetValue();
 
-		if (_stricmp(sub, "pc") == 0)
+		if (NTL_STRICMP(sub, "pc") == 0)
 		{
 			m_eObjType = OBJTYPE_PC;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(sub, "npc") == 0)
+		if (NTL_STRICMP(sub, "npc") == 0)
 		{
 			m_eObjType = OBJTYPE_NPC;
 			return CControlScriptNode::AddParam(pNode);
 		}
 
-		if (_stricmp(sub, "mob") == 0)
+		if (NTL_STRICMP(sub, "mob") == 0)
 		{
 			m_eObjType = OBJTYPE_MOB;
 			return CControlScriptNode::AddParam(pNode);
@@ -79,11 +79,11 @@ bool CSPSNodeAction_TargetFixAttack::AddParam(CControlScriptNodeParam_String* pN
 		printf("CSPSNodeAction_TargetFixAttack: sub [%s] not exist \n", sub);
 		return false;
 	}
-	else if (_stricmp(name, "end type") == 0)
+	else if (NTL_STRICMP(name, "end type") == 0)
 	{
 		const char* sub = pNode->GetValue();
 
-		if (_stricmp(sub, "percent target lp") == 0)
+		if (NTL_STRICMP(sub, "percent target lp") == 0)
 		{
 			m_eEndType = ePERCENT_TARGET_LP;
 			return CControlScriptNode::AddParam(pNode);

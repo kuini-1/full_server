@@ -23,7 +23,7 @@ bool CWpsNodeAction_CCBD_reward::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "item tblidx") == 0)
+	if (NTL_STRICMP(name, "item tblidx") == 0)
 	{
 		m_itemTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -39,9 +39,9 @@ bool CWpsNodeAction_CCBD_reward::AddParam(CControlScriptNodeParam_String* pNode)
 	const char* value = pNode->GetValue();
 
 
-	if (_stricmp(name, "last stage") == 0)
+	if (NTL_STRICMP(name, "last stage") == 0)
 	{
-		if (_stricmp(value, "true") == 0)
+		if (NTL_STRICMP(value, "true") == 0)
 			m_bLastStage = true;
 		return CControlScriptNode::AddParam(pNode);
 	}

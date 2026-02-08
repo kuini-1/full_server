@@ -31,7 +31,7 @@ bool CWPSNodeAction_DirectPlay::AddParam(CControlScriptNodeParam_Number* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "id") == 0)
+	if (NTL_STRICMP(name, "id") == 0)
 	{
 		m_directTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -45,9 +45,9 @@ bool CWPSNodeAction_DirectPlay::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "sync") == 0)
+	if (NTL_STRICMP(name, "sync") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "true") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "true") == 0)
 		{
 			m_bSynchronize = true;
 			return CControlScriptNode::AddParam(pNode);
@@ -55,9 +55,9 @@ bool CWPSNodeAction_DirectPlay::AddParam(CControlScriptNodeParam_String* pNode)
 		printf("value '%s' dont exist \n", pNode->GetValue());
 	}
 
-	if (_stricmp(name, "type") == 0)
+	if (NTL_STRICMP(name, "type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "cinematic") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "cinematic") == 0)
 		{
 			m_eDirectionType = DIRECTION_CINEMATIC;
 			return CControlScriptNode::AddParam(pNode);

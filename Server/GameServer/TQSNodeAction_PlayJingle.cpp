@@ -24,7 +24,7 @@ bool CTQSNodeAction_PlayJingle::AddParam(CControlScriptNodeParam_String* pNode)
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "name") == 0)
+	if (NTL_STRICMP(name, "name") == 0)
 	{
 		m_strName = pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);

@@ -19,13 +19,13 @@ bool CWPSNodeCondition_RecvEventFromSps::AddParam(CControlScriptNodeParam_Number
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "object index") == 0)
+	if (NTL_STRICMP(name, "object index") == 0)
 	{
 		m_objectTblidx = (TBLIDX)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
 	}
 
-	if (_stricmp(name, "event id") == 0)
+	if (NTL_STRICMP(name, "event id") == 0)
 	{
 		m_eventId = (DWORD)pNode->GetValue();
 		return CControlScriptNode::AddParam(pNode);
@@ -39,14 +39,14 @@ bool CWPSNodeCondition_RecvEventFromSps::AddParam(CControlScriptNodeParam_String
 {
 	const char* name = pNode->GetName();
 
-	if (_stricmp(name, "object type") == 0)
+	if (NTL_STRICMP(name, "object type") == 0)
 	{
-		if (_stricmp(pNode->GetValue(), "npc") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "npc") == 0)
 		{
 			m_eObjType = OBJTYPE_NPC;
 			return CControlScriptNode::AddParam(pNode);
 		}
-		if (_stricmp(pNode->GetValue(), "mob") == 0)
+		if (NTL_STRICMP(pNode->GetValue(), "mob") == 0)
 		{
 			m_eObjType = OBJTYPE_MOB;
 			return CControlScriptNode::AddParam(pNode);
