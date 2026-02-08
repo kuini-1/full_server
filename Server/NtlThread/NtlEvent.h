@@ -15,6 +15,7 @@
 #ifndef __NTLEVENT_H__
 #define __NTLEVENT_H__
 
+#include "../../Shared/NtlSharedCommon.h"
 #if defined(_WIN32)
 #include <process.h>
 #endif

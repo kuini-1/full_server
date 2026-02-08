@@ -187,6 +187,9 @@ static inline void GetLocalTime(SYSTEMTIME* pst)
 
 #include <cassert>
 #define _ASSERTE(x) assert(x)
+#ifndef _ASSERT
+#define _ASSERT(x) assert(x)
+#endif
 
 // Windows error code equivalents for compatibility
 #ifndef ERROR_SUCCESS
@@ -242,6 +245,9 @@ static inline void DeleteCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_de
 static inline void EnterCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_lock(p); }
 static inline void LeaveCriticalSection(CRITICAL_SECTION* p) { pthread_mutex_unlock(p); }
 
+#ifndef TCHAR
+typedef char TCHAR;
+#endif
 #ifndef LPCTSTR
 #define LPCTSTR const char*
 #endif
