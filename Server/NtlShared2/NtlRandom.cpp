@@ -15,6 +15,7 @@
 
 #include "stdafx.h"
 #include <stdlib.h>
+#include <climits>
 #include "NtlRandom.h"
 
 int NTLRandState[16];
