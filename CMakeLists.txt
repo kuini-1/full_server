@@ -57,6 +57,14 @@ if(MSVC)
 
   # Match vendored Boost libs (libboost_*-mt-s-*.lib => /MT runtime)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+else()
+  # Linux: Use header-only Boost.System to avoid version mismatch issues
+  # Boost 1.64.0 headers expect symbols in libboost_system.so, but
+  # system Boost 1.83.0 libraries don't have them (header-only in newer versions)
+  # Defining BOOST_ERROR_CODE_HEADER_ONLY makes Boost 1.64.0 headers use inline implementations
+  add_compile_definitions(
+    BOOST_ERROR_CODE_HEADER_ONLY
+  )
 endif()
 
 if(UNIX AND NOT APPLE)
@@ -332,19 +340,13 @@ if(UNIX AND NOT APPLE)
     find_library(BOOST_THREAD_LIB_FINAL NAMES boost_thread)
   endif()
   
-  # CRITICAL: Link Boost libraries with --no-as-needed to force inclusion
-  # Even though libraries appear in linker command, --as-needed may drop them
-  # because symbols are only referenced from within static library object files
-  # Boost.System must come before Boost.Thread (dependency order)
-  target_link_options(AuthServer PRIVATE "SHELL:-Wl,--no-as-needed")
+  # NOTE: Boost.System is now header-only (BOOST_ERROR_CODE_HEADER_ONLY defined above)
+  # So we only need to link Boost.Thread library
+  # Boost.Thread still requires Boost.System headers, but no library linking needed for System
   
-  if(BOOST_SYSTEM_LIB_FINAL AND EXISTS "${BOOST_SYSTEM_LIB_FINAL}")
-    message(STATUS "  Found and linking Boost.System: ${BOOST_SYSTEM_LIB_FINAL}")
-    target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB_FINAL}")
-  else()
-    message(STATUS "  Linking Boost.System by name: boost_system")
-    target_link_libraries(AuthServer PRIVATE boost_system)
-  endif()
+  # Link Boost.Thread library (still requires library, not header-only)
+  # Use --no-as-needed to force inclusion since symbols are referenced from static libraries
+  target_link_options(AuthServer PRIVATE "SHELL:-Wl,--no-as-needed")
   
   if(BOOST_THREAD_LIB_FINAL AND EXISTS "${BOOST_THREAD_LIB_FINAL}")
     message(STATUS "  Found and linking Boost.Thread: ${BOOST_THREAD_LIB_FINAL}")
@@ -357,7 +359,7 @@ if(UNIX AND NOT APPLE)
   # Re-enable --as-needed after Boost libraries
   target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
   
-  message(STATUS "Boost libraries configured for AuthServer")
+  message(STATUS "Boost libraries configured for AuthServer (System is header-only)")
 endif()
 
 dbo_collect_sources(_dbo_charserver_src "${CMAKE_CURRENT_SOURCE_DIR}/Server/CharServer")
