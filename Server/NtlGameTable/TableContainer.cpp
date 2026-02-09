@@ -248,7 +248,7 @@
 																												\
 			table_object_pointer->SaveToBinary(serializer);														\
 																												\
-			serializer.SaveFile((WCHAR*)(wstrFullPath.c_str()), false);											\
+			serializer.SaveFile(wstrFullPath.c_str(), false);											\
 		}																										\
 		else																									\
 		{																										\
@@ -261,7 +261,7 @@
 			serializer << nDataSize;																			\
 			serializer.In(dataSerializer.GetData(), nDataSize);													\
 																												\
-			serializer.SaveFile((WCHAR*)(wstrFullPath.c_str()), true, L"KEY_FOR_GAME_DATA_TABLE");			\
+			serializer.SaveFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");			\
 		}																										\
 	}
 
@@ -2454,7 +2454,7 @@ bool CTableContainer::ReloadTable(CTable* pTable, CNtlFileSerializer& serializer
 		{
 			wstrFullPath += L".edf";
 
-			serializer.LoadFile( (WCHAR*) wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE" );
+			serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
 			
 			int nDataSize = 0;
 			serializer >> nDataSize;
@@ -2549,7 +2549,7 @@ bool CTableContainer::UpdateTable(CTable* pTable, CNtlFileSerializer& serializer
 		{
 			wstrFullPath += L".edf";
 
-			serializer.LoadFile( (WCHAR*) wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE" );
+			serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
 			
 			int nDataSize = 0;
 			serializer >> nDataSize;
@@ -2635,7 +2635,7 @@ bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFile
 	{
 		wstrFullPath += L".edf";
 
-		serializer.LoadFile((WCHAR*)(wstrFullPath.c_str()), true, L"KEY_FOR_GAME_DATA_TABLE");
+		serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
 
 		int nDataSize = 0;
 		serializer >> nDataSize;
@@ -2733,7 +2733,7 @@ bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serial
 		{
 			wstrFullPath += L".edf";
 
-			serializer.LoadFile((WCHAR*) wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
+			serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
 
 			int nDataSize = 0;
 			serializer >> nDataSize;
@@ -2799,7 +2799,7 @@ bool CTableContainer::InitializePackTable(CTable* pTable, CNtlFileSerializer& se
 	wstrFullPath += pwszFileNameWithoutExtension;
 
 	char* pchFileName = Ntl_WC2MB((WCHAR*)wstrFullPath.c_str());
-	char* pszCryptPassword = NULL;
+	const char* pszCryptPassword = NULL;
 
 	std::string strFullFileName = pchFileName;
 	printf("\n\nload file \n\n");
@@ -2947,7 +2947,7 @@ bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSeri
 		{
 			wstrFullPath += L".edf";
 
-			serializer.LoadFile((WCHAR*)(wstrFullPath.c_str()), true, L"KEY_FOR_GAME_DATA_TABLE");
+			serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
 
 			int nDataSize = 0;
 			serializer >> nDataSize;
@@ -3013,7 +3013,7 @@ bool CTableContainer::InitializePackTable(CTextAllTable* pTextAllTable, CNtlFile
 	wstrFullPath += pwszFileNameWithoutExtension;
 
 	char* pchFileName = Ntl_WC2MB((WCHAR*)wstrFullPath.c_str());
-	char* pszCryptPassword = NULL;
+	const char* pszCryptPassword = NULL;
 
 	std::string strFullFileName = pchFileName;
 

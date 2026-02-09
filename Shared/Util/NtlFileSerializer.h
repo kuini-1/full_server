@@ -24,17 +24,17 @@ public:
 	CNtlFileSerializer();
 	CNtlFileSerializer(int iBufferSize, int iGlowSize);
 
-	CNtlFileSerializer(char* pszFullPath);
-	CNtlFileSerializer(WCHAR* pwszFullPath);
+	CNtlFileSerializer(const char* pszFullPath);
+	CNtlFileSerializer(const WCHAR* pwszFullPath);
 
 	virtual ~CNtlFileSerializer();
 
 public:
-	bool SaveFile(char* pszFullPathFileName, bool bCrypt = FALSE, char* szCryptPassword = NULL);
-	bool SaveFile(WCHAR* pwszFullPathFileName, bool bCrypt = FALSE, WCHAR* szCryptPassword = NULL);
+	bool SaveFile(const char* pszFullPathFileName, bool bCrypt = FALSE, const char* szCryptPassword = NULL);
+	bool SaveFile(const WCHAR* pwszFullPathFileName, bool bCrypt = FALSE, const WCHAR* szCryptPassword = NULL);
 
-	bool LoadFile(char* pszFullPathFileName, bool bCrypt = FALSE, char* szCryptPassword = NULL);
-	bool LoadFile(char* pszBuffer, int nSize, bool bCrypt = FALSE, char* szCryptPassword = NULL);
+	bool LoadFile(const char* pszFullPathFileName, bool bCrypt = FALSE, const char* szCryptPassword = NULL);
+	bool LoadFile(const char* pszBuffer, int nSize, bool bCrypt = FALSE, const char* szCryptPassword = NULL);
 
-	bool LoadFile(WCHAR* pwszFullPathFileName, bool bCrypt = FALSE, WCHAR* szCryptPassword = NULL);
+	bool LoadFile(const WCHAR* pwszFullPathFileName, bool bCrypt = FALSE, const WCHAR* szCryptPassword = NULL);
 };

@@ -19,13 +19,13 @@ CNtlFileSerializer::CNtlFileSerializer(int iBufferSize, int iGlowSize) :
 {
 }
 
-CNtlFileSerializer::CNtlFileSerializer(char* pszFullPath) :
+CNtlFileSerializer::CNtlFileSerializer(const char* pszFullPath) :
 							CNtlSerializer()
 {
 	LoadFile(pszFullPath);
 }
 
-CNtlFileSerializer::CNtlFileSerializer(WCHAR* pwszFullPath) :
+CNtlFileSerializer::CNtlFileSerializer(const WCHAR* pwszFullPath) :
 							CNtlSerializer()
 {
 	LoadFile(pwszFullPath);
@@ -35,7 +35,7 @@ CNtlFileSerializer::~CNtlFileSerializer()
 {
 }
 
-bool CNtlFileSerializer::SaveFile(char* pszFullPathFileName, bool bCrypt /* = FALSE */, char* szCryptPassword /* = NULL */)
+bool CNtlFileSerializer::SaveFile(const char* pszFullPathFileName, bool bCrypt /* = FALSE */, const char* szCryptPassword /* = NULL */)
 {
 	if(!pszFullPathFileName)
 		return false;
@@ -89,7 +89,7 @@ bool CNtlFileSerializer::SaveFile(char* pszFullPathFileName, bool bCrypt /* = FA
 	return true;
 }
 
-bool CNtlFileSerializer::SaveFile(WCHAR* pwszFullPathFileName, bool bCrypt /* = FALSE */, WCHAR* szCryptPassword /* = NULL */)
+bool CNtlFileSerializer::SaveFile(const WCHAR* pwszFullPathFileName, bool bCrypt /* = FALSE */, const WCHAR* szCryptPassword /* = NULL */)
 {
 #if defined(_WIN32)
 	USES_CONVERSION;
@@ -114,7 +114,7 @@ bool CNtlFileSerializer::SaveFile(WCHAR* pwszFullPathFileName, bool bCrypt /* = 
 #endif
 }
 
-bool CNtlFileSerializer::LoadFile(char* pszFullPathFileName, bool bCrypt /* = FALSE */, char* szCryptPassword /* = NULL */)
+bool CNtlFileSerializer::LoadFile(const char* pszFullPathFileName, bool bCrypt /* = FALSE */, const char* szCryptPassword /* = NULL */)
 {
 	if(!pszFullPathFileName)
 		return false;
@@ -171,7 +171,7 @@ bool CNtlFileSerializer::LoadFile(char* pszFullPathFileName, bool bCrypt /* = FA
 	return true;
 }
 
-bool CNtlFileSerializer::LoadFile(char* pszBuffer, int nSize, bool bCrypt /*= FALSE*/, char* szCryptPassword /*= NULL*/)
+bool CNtlFileSerializer::LoadFile(const char* pszBuffer, int nSize, bool bCrypt /*= FALSE*/, const char* szCryptPassword /*= NULL*/)
 {
 	if ( NULL == pszBuffer )
 	{
@@ -210,7 +210,7 @@ bool CNtlFileSerializer::LoadFile(char* pszBuffer, int nSize, bool bCrypt /*= FA
 	return true;
 }
 
-bool CNtlFileSerializer::LoadFile(WCHAR* pwszFullPathFileName, bool bCrypt /* = FALSE */, WCHAR* szCryptPassword /* = NULL */)
+bool CNtlFileSerializer::LoadFile(const WCHAR* pwszFullPathFileName, bool bCrypt /* = FALSE */, const WCHAR* szCryptPassword /* = NULL */)
 {
 #if defined(_WIN32)
 	USES_CONVERSION;
