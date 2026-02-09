@@ -7,7 +7,7 @@ const DWORD		DBO_MAX_LENGTH_ITEM_OPTION_NAME = 30;
 const DWORD		DBO_MAX_LENGTH_ITEM_OPTION_NOTE = 128;
 const DWORD		INVALID_SYSTEMEFFECTVALUE_DB	= 3;
 
-enum dildo : byte
+enum dildo : BYTE
 {
 
 };
