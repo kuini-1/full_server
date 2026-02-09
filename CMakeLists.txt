@@ -306,17 +306,20 @@ endif()
 if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
   # Boost shared libraries MUST come at the very end after ALL static libraries
-  # Link them via target_link_libraries AFTER everything else, with --no-as-needed
+  # Use --start-group/--end-group to handle circular dependencies in static libs
+  # Then add Boost libraries after the end-group with --no-as-needed
   if(BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}" AND BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
     message(STATUS "Linking Boost libraries at end: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
-    # Use target_link_options to add --no-as-needed right before Boost libraries
-    # Then link Boost libraries - they should come after all static libs
-    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--no-as-needed")
+    # Wrap static libraries in --start-group/--end-group to handle circular deps
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--start-group")
+    # Note: Static libs are already linked above, so this just adds the group markers
+    # Add Boost libraries after everything with --no-as-needed
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--end-group" "SHELL:-Wl,--no-as-needed")
     target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB}" "${BOOST_THREAD_LIB}")
     target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
   elseif(TARGET dbo::boost_system AND TARGET dbo::boost_thread)
     message(STATUS "Linking Boost via imported targets at end")
-    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--no-as-needed")
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--start-group" "SHELL:-Wl,--end-group" "SHELL:-Wl,--no-as-needed")
     target_link_libraries(AuthServer PRIVATE dbo::boost_system dbo::boost_thread)
     target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
   else()
