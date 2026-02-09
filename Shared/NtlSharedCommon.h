@@ -158,7 +158,6 @@ typedef unsigned long long UINT64;
 #ifndef DWORD_PTR
 typedef unsigned long DWORD_PTR;
 #endif
-#endif
 #ifndef INT64
 typedef long long INT64;
 #endif
