@@ -72,21 +72,6 @@ static inline int _localtime32_s(struct tm* _tm, const __time32_t* _t) {
 }
 #define localtime_s(_tm, _t) _localtime32_s((_tm), (const __time32_t*)(_t))
 
-#ifndef _wtoi64
-static inline __int64 _wtoi64(const wchar_t* s) { return (__int64)wcstoll(s, NULL, 10); }
-#endif
-
-/* CPINFO / GetCPInfo: Windows codepage API; stub for Linux (XML table load is Windows-only) */
-typedef struct _cpinfo_linux {
-	UINT MaxCharSize;
-	BYTE DefaultChar[2];
-	BYTE LeadByte[12];
-} CPINFO;
-static inline BOOL GetCPInfo(DWORD CodePage, CPINFO* lpCPInfo) { (void)CodePage; (void)lpCPInfo; return FALSE; }
-
-/* IsBadReadPtr: Windows API; deprecated. On Linux, assume pointer is valid. */
-#define IsBadReadPtr(ptr, size) (FALSE)
-
 #ifndef _MAX_DIR
 #define _MAX_DIR 256
 #endif
@@ -198,6 +183,22 @@ typedef int __int32;
 #ifndef __int64
 typedef long long __int64;
 #endif
+
+#ifndef _wtoi64
+static inline __int64 _wtoi64(const wchar_t* s) { return (__int64)wcstoll(s, NULL, 10); }
+#endif
+
+/* CPINFO / GetCPInfo: Windows codepage API; stub for Linux (XML table load is Windows-only) */
+typedef struct _cpinfo_linux {
+	UINT MaxCharSize;
+	BYTE DefaultChar[2];
+	BYTE LeadByte[12];
+} CPINFO;
+static inline BOOL GetCPInfo(DWORD CodePage, CPINFO* lpCPInfo) { (void)CodePage; (void)lpCPInfo; return FALSE; }
+
+/* IsBadReadPtr: Windows API; deprecated. On Linux, assume pointer is valid. */
+#define IsBadReadPtr(ptr, size) (FALSE)
+
 typedef unsigned long long ntl_uint64;
 typedef unsigned long long QWORD;
 typedef QWORD DWORDLONG;
