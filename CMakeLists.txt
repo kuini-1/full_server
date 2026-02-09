@@ -62,8 +62,10 @@ else()
   # Boost 1.64.0 headers expect symbols in libboost_system.so, but
   # system Boost 1.83.0 libraries don't have them (header-only in newer versions)
   # Defining BOOST_ERROR_CODE_HEADER_ONLY makes Boost 1.64.0 headers use inline implementations
+  # BOOST_SYSTEM_NO_DEPRECATED disables deprecated 'throws' variable that causes multiple definition errors
   add_compile_definitions(
     BOOST_ERROR_CODE_HEADER_ONLY
+    BOOST_SYSTEM_NO_DEPRECATED
   )
 endif()
 
