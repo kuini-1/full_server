@@ -19,6 +19,7 @@ struct DatabaseConnection
 
 class QueryResult;
 class QueryBuffer;
+class AsyncQuery;
 
 class Database
 {
