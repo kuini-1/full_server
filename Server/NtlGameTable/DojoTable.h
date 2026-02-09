@@ -15,7 +15,7 @@
 #pragma once
 
 
-#include "table.h"
+#include "Table.h"
 #include "NtlVector.h"
 
 const DWORD	    DOJO_MAX_UPGRADE_OBJECT_COUNT	= 4;

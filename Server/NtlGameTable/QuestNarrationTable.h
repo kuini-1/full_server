@@ -1,5 +1,5 @@
 #pragma once
-#include "table.h"
+#include "Table.h"
 
 const DWORD		DBO_MAX_COUNT_OF_NARRATION = 20;
 

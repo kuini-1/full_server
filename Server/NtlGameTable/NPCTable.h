@@ -1,5 +1,5 @@
 #pragma once
-#include "table.h"
+#include "Table.h"
 #include "PCTable.h"
 
 const DWORD		DBO_MAX_LENGTH_BOT_NAME_TEXT = 40;

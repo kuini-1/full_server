@@ -1,5 +1,5 @@
 #pragma once
-#include "table.h"
+#include "Table.h"
 
 const DWORD		DBO_MAX_LENGTH_QUEST_ITEM_ICON_NAME = 32;
 

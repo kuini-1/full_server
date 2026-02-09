@@ -1,5 +1,5 @@
 #pragma once
-#include "table.h"
+#include "Table.h"
 #include "NtlVector.h"
 #include "NtlQuest.h"
 //updated 1.12.2014
