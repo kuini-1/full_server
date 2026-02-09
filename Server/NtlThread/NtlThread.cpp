@@ -159,6 +159,180 @@ const char * CNtlRunObject::GetName() const
 	return m_pOwner ? m_pOwner->GetName() : "";
 }
 
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+CNtlThreadFactory::CNtlThreadFactory()
+{
+	m_bClosed = false;
+}
+
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+CNtlThreadFactory::~CNtlThreadFactory()
+{
+	Shutdown();
+}
+
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+void CNtlThreadFactory::GarbageCollect(bool bShutDown)
+{
+	// clean thread
+	CNtlThread * pThread;
+
+	{
+		CNtlLock lock(&m_Mutex);
+		pThread = (CNtlThread*)m_ThreadList.GetFirst();
+	}
+
+	while( pThread )
+	{
+		if( pThread->IsAutoDelete() && 
+			( bShutDown && !pThread->IsStatus( CNtlThread::eSTATUS_NOT_RUNNING ) ||
+			 !bShutDown && pThread->IsStatus( CNtlThread::eSTATUS_DEAD ) ) )
+		{
+			pThread->Join();
+			
+			CNtlLock lock(&m_Mutex);
+
+			pThread = (CNtlThread*) m_ThreadList.GetFirst();	// Reset to first
+		}
+		else
+		{
+			CNtlLock lock(&m_Mutex);
+
+			pThread = (CNtlThread*) pThread->GetNext();
+		}
+	}
+
+	// Exit thread
+	CNtlLock lock(&m_Mutex);
+
+	pThread = (CNtlThread*) m_ThreadList.GetFirst();
+	while( pThread )
+	{
+		CNtlThread * pNext = (CNtlThread*) pThread->GetNext();
+		if( pThread->IsStatus( CNtlThread::eSTATUS_NOT_RUNNING ) )
+		{
+			m_ThreadList.Remove( pThread );
+			SAFE_DELETE( pThread );
+		}
+
+		pThread = pNext;
+	}
+}
+
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+void CNtlThreadFactory::SingleGarbageCollect(CNtlThread* pGarbageThread)
+{
+	CNtlLock lock(&m_Mutex);
+
+	CNtlThread* pThread = (CNtlThread*)(m_ThreadList.GetFirst());
+	while (NULL != pThread)
+	{
+		if (pGarbageThread == pThread)
+		{
+			if (pThread->IsStatus(CNtlThread::eSTATUS_NOT_RUNNING) ||
+				pThread->IsStatus(CNtlThread::eSTATUS_PREPARING_TO_RUN))
+			{
+				m_ThreadList.Remove(pThread);
+				SAFE_DELETE(pThread);
+			}
+
+			return;
+		}
+
+		pThread = (CNtlThread*) pThread->GetNext();
+	}
+}
+
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+CNtlThread * CNtlThreadFactory::CreateThread(CNtlRunObject * pRunObject, const char * name, bool bAutoDelete)
+{
+	GarbageCollect();
+
+	CNtlThread * pThread = new CNtlThread( pRunObject, name, bAutoDelete );
+	if (NULL == pThread)
+	{
+		NTL_LOG_ASSERT("\"new CNtlThread( pRunObject, name, bAutoDelete )\" failed.");
+		return NULL;
+	}
+
+	CNtlLock lock(&m_Mutex);
+
+	m_ThreadList.Append(pThread);
+
+	return pThread;
+}
+
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+void CNtlThreadFactory::Shutdown()
+{
+	CloseAll();
+	JoinAll();
+	GarbageCollect(true);
+}
+
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+void CNtlThreadFactory::CloseAll()
+{
+	CNtlLock lock(&m_Mutex);
+
+	if( false == m_bClosed )
+	{
+		m_bClosed = true;
+
+		// Close all threads
+		CNtlThread * pThread = (CNtlThread*) m_ThreadList.GetFirst();
+		while( pThread )
+		{
+			pThread->Close();
+
+			pThread = (CNtlThread*) pThread->GetNext();
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+void CNtlThreadFactory::JoinAll()
+{
+	CNtlThread * pThread;
+
+	{
+		CNtlLock lock(&m_Mutex);
+		pThread = (CNtlThread*)m_ThreadList.GetFirst();
+	}
+
+	while( pThread )
+	{
+		pThread->Join();
+
+		CNtlLock lock(&m_Mutex);
+		pThread = (CNtlThread*) pThread->GetNext();
+	}
+}
+
 #else // _WIN32
 
 //---------------------------------------------------------------------------------------
