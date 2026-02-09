@@ -203,6 +203,9 @@ static inline __int64 _wtoi64(const wchar_t* s) { return (__int64)wcstoll(s, NUL
 #ifndef _wtof
 static inline double _wtof(const wchar_t* s) { return wcstod(s, NULL); }
 #endif
+#ifndef _atoi64
+static inline __int64 _atoi64(const char* s) { return (__int64)strtoll(s, NULL, 10); }
+#endif
 
 /* CPINFO / GetCPInfo: Windows codepage API; stub for Linux (XML table load is Windows-only) */
 typedef struct _cpinfo_linux {
