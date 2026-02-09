@@ -58,6 +58,7 @@ typedef unsigned __int64 ntl_uint64;
 #include <time.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cwchar>
 #include <sys/time.h>
 
 /* Time/CRT compatibility: __time32_t, errno_t, _localtime32_s */
@@ -70,6 +71,21 @@ static inline int _localtime32_s(struct tm* _tm, const __time32_t* _t) {
 	return localtime_r(_t, _tm) ? 0 : (errno ? errno : -1);
 }
 #define localtime_s(_tm, _t) _localtime32_s((_tm), (const __time32_t*)(_t))
+
+#ifndef _wtoi64
+static inline __int64 _wtoi64(const wchar_t* s) { return (__int64)wcstoll(s, NULL, 10); }
+#endif
+
+/* CPINFO / GetCPInfo: Windows codepage API; stub for Linux (XML table load is Windows-only) */
+typedef struct _cpinfo_linux {
+	UINT MaxCharSize;
+	BYTE DefaultChar[2];
+	BYTE LeadByte[12];
+} CPINFO;
+static inline BOOL GetCPInfo(DWORD CodePage, CPINFO* lpCPInfo) { (void)CodePage; (void)lpCPInfo; return FALSE; }
+
+/* IsBadReadPtr: Windows API; deprecated. On Linux, assume pointer is valid. */
+#define IsBadReadPtr(ptr, size) (FALSE)
 
 #ifndef _MAX_DIR
 #define _MAX_DIR 256
@@ -155,6 +171,8 @@ typedef short SHORT;
 typedef int INT;
 typedef void VOID;
 typedef long LONG;
+typedef float FLOAT;
+typedef double DOUBLE;
 #ifndef DWORD64
 typedef unsigned long long DWORD64;
 #endif
