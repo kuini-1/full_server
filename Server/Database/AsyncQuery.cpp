@@ -5,6 +5,7 @@
 
 #include "NtlLog.h"
 #include <cstdarg>
+#include <string.h>
 
 void AsyncQuery::AddQuery(const char * format, ...)
 {
@@ -12,9 +13,9 @@ void AsyncQuery::AddQuery(const char * format, ...)
 	va_list ap;
 	char buffer[4096];
 	va_start(ap, format);
-	vsnprintf_s(buffer, 4096, format, ap);
+	vsnprintf(buffer, 4096, format, ap);
 	va_end(ap);
-	res.query = _strdup(buffer);
+	res.query = strdup(buffer);
 	res.result = NULL;
 	queries.push_back(res);
 }

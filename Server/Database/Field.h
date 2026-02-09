@@ -20,7 +20,7 @@ public:
 		if (mValue)
 		{
 			UINT64 value;
-			sscanf_s(mValue, "%zu", &value);
+			sscanf(mValue, "%zu", &value);
 			return value;
 		}
 		else

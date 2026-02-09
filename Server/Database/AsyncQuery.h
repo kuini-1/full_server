@@ -5,6 +5,7 @@
 
 class QueryResult;
 class SQLCallbackBase;
+class Database;
 
 struct AsyncQueryResult
 {

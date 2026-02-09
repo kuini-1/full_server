@@ -152,6 +152,7 @@ typedef unsigned char* LPBYTE;
 
 typedef unsigned int UINT;
 typedef unsigned int UINT32;
+typedef int INT32;
 typedef unsigned long long UINT64;
 
 /* DWORD_PTR: pointer-sized unsigned integer */
