@@ -149,6 +149,13 @@ DWORD CTable::HexToDec(WCHAR* pwszHexString)
 
 bool CTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, bool bReload, bool bUpdate)
 {
+#if !defined(_WIN32)
+	(void)pXmlDoc;
+	(void)pwszFileName;
+	(void)bReload;
+	(void)bUpdate;
+	return false;
+#else
 	if (NULL == pXmlDoc)
 	{
 		return false;
@@ -414,6 +421,7 @@ bool CTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, bool
 	::SysFreeString(rowXPathFormat);
 
 	return true;
+#endif // _WIN32
 }
 
 //-----------------------------------------------------------------------------------
