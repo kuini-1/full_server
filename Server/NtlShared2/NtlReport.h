@@ -15,7 +15,7 @@
 #pragma once
 
 #include "NtlSharedType.h"
-#include "NTlSharedDef.h"
+#include "NtlSharedDef.h"
 
 enum eGM_REPORT_CATEGORY
 {
