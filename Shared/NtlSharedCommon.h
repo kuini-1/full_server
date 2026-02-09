@@ -136,6 +136,7 @@ typedef const void* LPCVOID;
 typedef void* PVOID;
 typedef unsigned char* LPBYTE;
 
+typedef unsigned int UINT;
 typedef unsigned int UINT32;
 typedef unsigned long long UINT64;
 #ifndef INT64
