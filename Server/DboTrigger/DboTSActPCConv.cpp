@@ -34,6 +34,6 @@ void CDboTSActPCConv::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetConvTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetConvTblIdx() );
 	clProperty.m_defProperty["tblidx"] = g_NtlTSString;
 }

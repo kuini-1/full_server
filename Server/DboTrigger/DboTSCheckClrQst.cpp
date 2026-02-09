@@ -225,7 +225,7 @@ void CDboTSCheckClrQst::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 	it = m_vecAndIdList.begin();
 	for ( ; it != m_vecAndIdList.end(); ++it )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d", *it );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", *it );
 		strIdList += g_NtlTSString;
 		strIdList += ";";
 	}
@@ -238,7 +238,7 @@ void CDboTSCheckClrQst::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 	it = m_vecOrIdList.begin();
 	for ( ; it != m_vecOrIdList.end(); ++it )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d", *it );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", *it );
 		strIdList += g_NtlTSString;
 		strIdList += ";";
 	}
@@ -247,10 +247,10 @@ void CDboTSCheckClrQst::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 		clProperty.m_defProperty["or"] = strIdList;
 	}
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetFlink() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetFlink() );
 	clProperty.m_defProperty["flink"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetNOT() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetNOT() );
 	clProperty.m_defProperty["not"] = g_NtlTSString;
 
 	if ( !m_defNextQidLink.empty() )
@@ -259,7 +259,7 @@ void CDboTSCheckClrQst::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 		listdef_NextQidList::iterator it2 = m_defNextQidLink.begin();
 		for ( ; it2 != m_defNextQidLink.end(); ++it2 )
 		{
-			NTL_SNPRINTF( g_NtlTSString, "%d", *it2 );
+			NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", *it2 );
 			strPreLnk += g_NtlTSString;
 			strPreLnk += ";";
 		}

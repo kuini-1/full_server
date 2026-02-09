@@ -29,6 +29,6 @@ void CDboTSCheckInWorld::TakeScriptDataForScript( CNtlTSScrProperty& clProperty 
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetWorldTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetWorldTblIdx() );
 	clProperty.m_defProperty["widx"] = g_NtlTSString;
 }

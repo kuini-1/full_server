@@ -80,12 +80,12 @@ void CDboTSActSWProbSF::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 		CNtlTSLog::Log( "SWProbSF is not in a switch container. [%s]", TS_CODE_TRACE() );
 	}
 
-	NTL_SNPRINTF( g_NtlTSString, "%f", GetProbility() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%f", GetProbility() );
 	clProperty.m_defProperty["prob"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetSuccessBID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetSuccessBID() );
 	clProperty.m_defProperty["sbi"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetFailBID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetFailBID() );
 	clProperty.m_defProperty["fbi"] = g_NtlTSString;
 }

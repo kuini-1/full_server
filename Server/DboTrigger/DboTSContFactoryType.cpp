@@ -103,26 +103,26 @@ CDboTSContFactoryType_CDboTSContReward::CDboTSContFactoryType_CDboTSContReward( 
 	// 기본 보상
 	for ( i = 0; i < 4; ++i )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "dtype%d", i );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "dtype%d", i );
 		m_defPropertyList[g_NtlTSString].eType	= CNtlTSScrFactoryType::sPROPERTY_TYPE::eDATA_TYPE_NUMBER;
 
-		NTL_SNPRINTF( g_NtlTSString, "didx%d", i );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "didx%d", i );
 		m_defPropertyList[g_NtlTSString].eType	= CNtlTSScrFactoryType::sPROPERTY_TYPE::eDATA_TYPE_NUMBER;
 
-		NTL_SNPRINTF( g_NtlTSString, "dval%d", i );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "dval%d", i );
 		m_defPropertyList[g_NtlTSString].eType	= CNtlTSScrFactoryType::sPROPERTY_TYPE::eDATA_TYPE_NUMBER;
 	}
 
 	// 선택 보상
 	for ( i = 0; i < 4; ++i )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "stype%d", i );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "stype%d", i );
 		m_defPropertyList[g_NtlTSString].eType	= CNtlTSScrFactoryType::sPROPERTY_TYPE::eDATA_TYPE_NUMBER;
 
-		NTL_SNPRINTF( g_NtlTSString, "sidx%d", i );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "sidx%d", i );
 		m_defPropertyList[g_NtlTSString].eType	= CNtlTSScrFactoryType::sPROPERTY_TYPE::eDATA_TYPE_NUMBER;
 
-		NTL_SNPRINTF( g_NtlTSString, "sval%d", i );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "sval%d", i );
 		m_defPropertyList[g_NtlTSString].eType	= CNtlTSScrFactoryType::sPROPERTY_TYPE::eDATA_TYPE_NUMBER;
 	}
 }
@@ -183,7 +183,7 @@ CDboTSContFactoryType_CDboTSContUsrSel::CDboTSContFactoryType_CDboTSContUsrSel( 
 
 	for ( int i = 0; i < CDboTSContUsrSel::MAX_NEXT_LINK_COUNT; ++i )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d", i );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", i );
 
 		strConcId = strId + g_NtlTSString;
 		strConcDesc = strDesc + g_NtlTSString;
@@ -289,7 +289,7 @@ CDboTSContFactoryType_CDboTSContSwitch::CDboTSContFactoryType_CDboTSContSwitch( 
 
 	for ( int i = 0; i < CDboTSContSwitch::MAX_NEXT_LINK_COUNT; ++i )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d", i );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", i );
 
 		strCId = strContID + g_NtlTSString;
 		strBId = strBranchID + g_NtlTSString;

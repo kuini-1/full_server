@@ -82,12 +82,12 @@ void CDboTSContGCond::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCont::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetYesLinkID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetYesLinkID() );
 	clProperty.m_defProperty["yeslnk"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetNoLinkID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetNoLinkID() );
 	clProperty.m_defProperty["nolnk"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", IsRewardMark() ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", IsRewardMark() ? 1 : 0 );
 	clProperty.m_defProperty["rm"] = g_NtlTSString;
 }

@@ -32,7 +32,7 @@ void CDboTSClickSideIcon::TakeScriptDataForScript( CNtlTSScrProperty& clProperty
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_bySideIconType );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_bySideIconType );
 	clProperty.m_defProperty["sitype"] = g_NtlTSString;
 }
 

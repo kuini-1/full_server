@@ -29,6 +29,6 @@ void CDboTSItemEquip::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetItemIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 }

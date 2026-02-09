@@ -45,9 +45,9 @@ void CDboTSActInSSM::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetSSMId() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetSSMId() );
 	clProperty.m_defProperty["ssmid"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetValue() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetValue() );
 	clProperty.m_defProperty["val"] = g_NtlTSString;
 }

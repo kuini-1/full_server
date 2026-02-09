@@ -71,9 +71,9 @@ void CDboTSContGAct::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCont::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetNextLinkID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetNextLinkID() );
 	clProperty.m_defProperty["nextlnk"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetErrorLinkID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetErrorLinkID() );
 	clProperty.m_defProperty["elnk"] = g_NtlTSString;
 }

@@ -40,9 +40,9 @@ void CDboTSActSkipCont::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetSkipQuestID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetSkipQuestID() );
 	clProperty.m_defProperty["stid"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetSkipContID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetSkipContID() );
 	clProperty.m_defProperty["stcid"] = g_NtlTSString;
 }

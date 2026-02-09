@@ -34,6 +34,6 @@ void CDboTSCheckWItem::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetItemIdx() );
 	clProperty.m_defProperty["iidx"] = g_NtlTSString;
 }

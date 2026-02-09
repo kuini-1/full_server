@@ -60,31 +60,31 @@ void CDboTSActItem::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetItemType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
 	if ( 0xffffffff != m_stItemInfo[0].uiItemIdx )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d", m_stItemInfo[0].eItemSlotType );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_stItemInfo[0].eItemSlotType );
 		clProperty.m_defProperty["stype0"] = g_NtlTSString;
 
-		NTL_SNPRINTF( g_NtlTSString, "%d", m_stItemInfo[0].uiItemIdx );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_stItemInfo[0].uiItemIdx );
 		clProperty.m_defProperty["iidx0"] = g_NtlTSString;
 	}
 	if ( 0xffffffff != m_stItemInfo[1].uiItemIdx )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d", m_stItemInfo[1].eItemSlotType );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_stItemInfo[1].eItemSlotType );
 		clProperty.m_defProperty["stype1"] = g_NtlTSString;
 
-		NTL_SNPRINTF( g_NtlTSString, "%d", m_stItemInfo[1].uiItemIdx );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_stItemInfo[1].uiItemIdx );
 		clProperty.m_defProperty["iidx1"] = g_NtlTSString;
 	}
 	if ( 0xffffffff != m_stItemInfo[2].uiItemIdx )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d", m_stItemInfo[2].eItemSlotType );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_stItemInfo[2].eItemSlotType );
 		clProperty.m_defProperty["stype2"] = g_NtlTSString;
 
-		NTL_SNPRINTF( g_NtlTSString, "%d", m_stItemInfo[2].uiItemIdx );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_stItemInfo[2].uiItemIdx );
 		clProperty.m_defProperty["iidx2"] = g_NtlTSString;
 	}
 }

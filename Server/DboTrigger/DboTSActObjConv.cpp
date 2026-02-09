@@ -67,15 +67,15 @@ void CDboTSActObjConv::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetWorldTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetWorldTblIdx() );
 	clProperty.m_defProperty["widx"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetObjIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetObjIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetObjConvType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetObjConvType() );
 	clProperty.m_defProperty["ctype"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetObjConv() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetObjConv() );
 	clProperty.m_defProperty["conv"] = g_NtlTSString;
 }

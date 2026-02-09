@@ -50,8 +50,8 @@ void CDboTSContSwitch::ApplyScriptDataForScript( const CNtlTSScrProperty& clProp
 
 	for ( int i = 0; i < MAX_NEXT_LINK_COUNT; ++i )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d", i ); strCId = strContID + g_NtlTSString;
-		NTL_SNPRINTF( g_NtlTSString, "%d", i ); strBId = strBranchID + g_NtlTSString;
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", i ); strCId = strContID + g_NtlTSString;
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", i ); strBId = strBranchID + g_NtlTSString;
 
 		if ( clProperty.IsExist( strCId ) )
 		{
@@ -80,12 +80,12 @@ void CDboTSContSwitch::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 	{
 		const sBranchInfo& sInfo = *cit;
 
-		NTL_SNPRINTF( g_NtlTSString, "%d", i ); strCId = strContID + g_NtlTSString;
-		NTL_SNPRINTF( g_NtlTSString, "%d", sInfo.tcNextId );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", i ); strCId = strContID + g_NtlTSString;
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", sInfo.tcNextId );
 		clProperty.m_defProperty[strCId] = g_NtlTSString;
 
-		NTL_SNPRINTF( g_NtlTSString, "%d", i ); strBId = strBranchID + g_NtlTSString;
-		NTL_SNPRINTF( g_NtlTSString, "%d", sInfo.uiBranchId );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", i ); strBId = strBranchID + g_NtlTSString;
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", sInfo.uiBranchId );
 		clProperty.m_defProperty[strBId] = g_NtlTSString;
 	}
 }

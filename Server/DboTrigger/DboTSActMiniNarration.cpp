@@ -29,6 +29,6 @@ void CDboTSActMiniNarration::TakeScriptDataForScript( CNtlTSScrProperty& clPrope
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_uiNarrationTblIdx );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiNarrationTblIdx );
 	clProperty.m_defProperty["tidx"] = g_NtlTSString;
 }

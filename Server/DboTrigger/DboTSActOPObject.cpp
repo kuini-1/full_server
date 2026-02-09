@@ -51,12 +51,12 @@ void CDboTSActOPObject::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", IsApply() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", IsApply() );
 	clProperty.m_defProperty["apply"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetOperateTime() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetOperateTime() );
 	clProperty.m_defProperty["time"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetDirectionTableIndex() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDirectionTableIndex() );
 	clProperty.m_defProperty["tblidx"] = g_NtlTSString;
 }

@@ -45,9 +45,9 @@ void CDboTSActTSState::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetTSState() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTSState() );
 	clProperty.m_defProperty["state"] = g_NtlTSString;
 }

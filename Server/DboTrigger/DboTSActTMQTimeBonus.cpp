@@ -24,6 +24,6 @@ void CDboTSActTMQTimeBonus::TakeScriptDataForScript( CNtlTSScrProperty& clProper
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetBonusTime() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetBonusTime() );
 	clProperty.m_defProperty["bt"] = g_NtlTSString;
 }

@@ -120,7 +120,7 @@ void CDboTSClickNPC::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 		listdef_NPCIdx::iterator it = m_defNPCIdx.begin();
 		for ( ; it != m_defNPCIdx.end(); ++it )
 		{
-			NTL_SNPRINTF( g_NtlTSString, "%d", *it );
+			NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", *it );
 			strPreLnk += g_NtlTSString;
 			strPreLnk += ";";
 		}

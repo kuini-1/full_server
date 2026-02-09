@@ -94,23 +94,23 @@ void CDboTSActPortal::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetPotalType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetPotalType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetWorldIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetWorldIdx() );
 	clProperty.m_defProperty["widx"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%f", m_fPosX );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%f", m_fPosX );
 	clProperty.m_defProperty["px"] = g_NtlTSString;
-	NTL_SNPRINTF( g_NtlTSString, "%f", m_fPosY );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%f", m_fPosY );
 	clProperty.m_defProperty["py"] = g_NtlTSString;
-	NTL_SNPRINTF( g_NtlTSString, "%f", m_fPosZ );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%f", m_fPosZ );
 	clProperty.m_defProperty["pz"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%f", m_fDirX );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%f", m_fDirX );
 	clProperty.m_defProperty["dx"] = g_NtlTSString;
-	NTL_SNPRINTF( g_NtlTSString, "%f", m_fDirY );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%f", m_fDirY );
 	clProperty.m_defProperty["dy"] = g_NtlTSString;
-	NTL_SNPRINTF( g_NtlTSString, "%f", m_fDirZ );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%f", m_fDirZ );
 	clProperty.m_defProperty["dz"] = g_NtlTSString;
 }

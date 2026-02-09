@@ -34,6 +34,6 @@ void CDboTSContEnd::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCont::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetEndType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetEndType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 }

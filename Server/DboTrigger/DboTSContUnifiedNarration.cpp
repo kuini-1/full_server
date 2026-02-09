@@ -68,15 +68,15 @@ void CDboTSContUnifiedNarration::TakeScriptDataForScript( CNtlTSScrProperty& clP
 {
 	CNtlTSCont::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetNarrationTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetNarrationTblIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetOkLink() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetOkLink() );
 	clProperty.m_defProperty["oklnk"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetCancelLink() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetCancelLink() );
 	clProperty.m_defProperty["cancellnk"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetLogInLink() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetLogInLink() );
 	clProperty.m_defProperty["lilnk"] = g_NtlTSString;
 }

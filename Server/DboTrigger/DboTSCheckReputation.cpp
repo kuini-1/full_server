@@ -45,9 +45,9 @@ void CDboTSCheckReputation::TakeScriptDataForScript( CNtlTSScrProperty& clProper
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetMinReputation() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetMinReputation() );
 	clProperty.m_defProperty["minrt"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetMaxReputation() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetMaxReputation() );
 	clProperty.m_defProperty["maxrt"] = g_NtlTSString;
 }

@@ -34,6 +34,6 @@ void CDboTSClickMob::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetMobGroupIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetMobGroupIdx() );
 	clProperty.m_defProperty["mgidx"] = g_NtlTSString;
 }

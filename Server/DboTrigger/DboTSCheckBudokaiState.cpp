@@ -103,9 +103,9 @@ void CDboTSCheckBudokaiState::TakeScriptDataForScript( CNtlTSScrProperty& clProp
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetMode() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetMode() );
 	clProperty.m_defProperty["md"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetState() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetState() );
 	clProperty.m_defProperty["st"] = g_NtlTSString;
 }

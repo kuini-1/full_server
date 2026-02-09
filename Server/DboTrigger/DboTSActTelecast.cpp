@@ -48,18 +48,18 @@ void CDboTSActTelecast::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetTelecastType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTelecastType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetNPCTableIndex() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetNPCTableIndex() );
 	clProperty.m_defProperty["npcidx"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetMessageType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetMessageType() );
 	clProperty.m_defProperty["msgtype"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetSpeechTableIndex() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetSpeechTableIndex() );
 	clProperty.m_defProperty["speechidx"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetDisplayTime() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDisplayTime() );
 	clProperty.m_defProperty["dsptime"] = g_NtlTSString;
 }

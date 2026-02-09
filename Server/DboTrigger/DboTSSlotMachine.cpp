@@ -29,6 +29,6 @@ void CDboTSSlotMachine::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_iSt );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_iSt );
 	clProperty.m_defProperty["st"] = g_NtlTSString;
 }

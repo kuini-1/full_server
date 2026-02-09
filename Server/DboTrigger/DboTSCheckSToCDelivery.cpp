@@ -77,18 +77,18 @@ void CDboTSCheckSToCDelivery::TakeScriptDataForScript( CNtlTSScrProperty& clProp
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_uiItemIdx[0] );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiItemIdx[0] );
 	clProperty.m_defProperty["iidx0"] = g_NtlTSString;
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_nItemCnt[0] );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_nItemCnt[0] );
 	clProperty.m_defProperty["icnt0"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_uiItemIdx[1] );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiItemIdx[1] );
 	clProperty.m_defProperty["iidx1"] = g_NtlTSString;
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_nItemCnt[1] );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_nItemCnt[1] );
 	clProperty.m_defProperty["icnt1"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_uiItemIdx[2] );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_uiItemIdx[2] );
 	clProperty.m_defProperty["iidx2"] = g_NtlTSString;
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_nItemCnt[2] );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_nItemCnt[2] );
 	clProperty.m_defProperty["icnt2"] = g_NtlTSString;
 }

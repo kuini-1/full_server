@@ -51,12 +51,12 @@ void CDboTSItemUse::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetItemIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemTargetType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetItemTargetType() );
 	clProperty.m_defProperty["ttype"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetItemTargetIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetItemTargetIdx() );
 	clProperty.m_defProperty["tidx"] = g_NtlTSString;
 }

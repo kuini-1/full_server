@@ -34,6 +34,6 @@ void CDboTSActTObjFriendly::TakeScriptDataForScript( CNtlTSScrProperty& clProper
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetFriendlyFlags() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetFriendlyFlags() );
 	clProperty.m_defProperty["flgs"] = g_NtlTSString;
 }

@@ -34,6 +34,6 @@ void CDboTSCheckPCRace::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetRaceFlags() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetRaceFlags() );
 	clProperty.m_defProperty["raceflg"] = g_NtlTSString;
 }

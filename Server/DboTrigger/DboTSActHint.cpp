@@ -40,9 +40,9 @@ void CDboTSActHint::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetHintType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetHintType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetTableIndex() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTableIndex() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 }

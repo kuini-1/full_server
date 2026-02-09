@@ -32,7 +32,7 @@ void CDboTSDialogOpen::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSEvent::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", m_byDialogOpenType );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", m_byDialogOpenType );
 	clProperty.m_defProperty["dotype"] = g_NtlTSString;
 }
 

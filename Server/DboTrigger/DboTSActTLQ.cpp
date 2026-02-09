@@ -40,9 +40,9 @@ void CDboTSActTLQ::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetDungeonType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDungeonType() );
 	clProperty.m_defProperty["type"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetDungeonTblIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDungeonTblIdx() );
 	clProperty.m_defProperty["idx"] = g_NtlTSString;
 }

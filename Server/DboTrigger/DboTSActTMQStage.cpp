@@ -29,6 +29,6 @@ void CDboTSActTMQStage::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSAction::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetTMQStage() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetTMQStage() );
 	clProperty.m_defProperty["stage"] = g_NtlTSString;
 }

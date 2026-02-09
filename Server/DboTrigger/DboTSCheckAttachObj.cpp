@@ -61,7 +61,7 @@ void CDboTSCheckAttachObj::TakeScriptDataForScript( CNtlTSScrProperty& clPropert
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetWorldIdx() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetWorldIdx() );
 	clProperty.m_defProperty["widx"] = g_NtlTSString;
 
 	std::string strObjList;
@@ -79,7 +79,7 @@ void CDboTSCheckAttachObj::PackingObjectIdxList( std::string& strObjList, const 
 	mapdef_OBJECT_LIST::const_iterator cit = defObjList.begin();
 	for ( ; cit != defObjList.end(); ++cit )
 	{
-		NTL_SNPRINTF( g_NtlTSString, "%d;", cit->first );
+		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d;", cit->first );
 		strObjList += g_NtlTSString;
 	}
 }

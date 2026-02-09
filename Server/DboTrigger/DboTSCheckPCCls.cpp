@@ -34,6 +34,6 @@ void CDboTSCheckPCCls::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCond::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetClsFlags() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetClsFlags() );
 	clProperty.m_defProperty["clsflg"] = g_NtlTSString;
 }

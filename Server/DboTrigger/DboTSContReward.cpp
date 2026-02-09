@@ -143,26 +143,26 @@ void CDboTSContReward::ApplyScriptDataForScript( const CNtlTSScrProperty& clProp
 		int i = 0;
 		sREWARD_INFO stInfo;
 
-		// 기본 보상
+		// ?? ????
 		for ( i = 0; i < 4; ++i )
 		{
 			stInfo.m_eType = eREWARD_TYPE_INVALID;
 			stInfo.m_uiIdx = 0xffffffff;
 			stInfo.m_nValue = 0xffffffff;
 
-			NTL_SNPRINTF( g_NtlTSString, "dtype%d", i );
+			NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "dtype%d", i );
 			if ( clProperty.IsExist( g_NtlTSString ) )
 			{
 				stInfo.m_eType = (eREWARD_TYPE)clProperty.GetValueAsInt( g_NtlTSString );
 			}
 
-			NTL_SNPRINTF( g_NtlTSString, "didx%d", i );
+			NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "didx%d", i );
 			if ( clProperty.IsExist( g_NtlTSString ) )
 			{
 				stInfo.m_uiIdx = clProperty.GetValueAsInt( g_NtlTSString );
 			}
 
-			NTL_SNPRINTF( g_NtlTSString, "dval%d", i );
+			NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "dval%d", i );
 			if ( clProperty.IsExist( g_NtlTSString ) )
 			{
 				stInfo.m_nValue = clProperty.GetValueAsInt( g_NtlTSString );
@@ -171,26 +171,26 @@ void CDboTSContReward::ApplyScriptDataForScript( const CNtlTSScrProperty& clProp
 			m_asDefReward[i] = stInfo;
 		}
 
-		// 선택 보상
+		// ???? ????
 		for ( i = 0; i < 4; ++i )
 		{
 			stInfo.m_eType = eREWARD_TYPE_INVALID;
 			stInfo.m_uiIdx = 0xffffffff;
 			stInfo.m_nValue = 0xffffffff;
 
-			NTL_SNPRINTF( g_NtlTSString, "stype%d", i );
+			NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "stype%d", i );
 			if ( clProperty.IsExist( g_NtlTSString ) )
 			{
 				stInfo.m_eType = (eREWARD_TYPE)clProperty.GetValueAsInt( g_NtlTSString );
 			}
 
-			NTL_SNPRINTF( g_NtlTSString, "sidx%d", i );
+			NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "sidx%d", i );
 			if ( clProperty.IsExist( g_NtlTSString ) )
 			{
 				stInfo.m_uiIdx = clProperty.GetValueAsInt( g_NtlTSString );
 			}
 
-			NTL_SNPRINTF( g_NtlTSString, "sval%d", i );
+			NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "sval%d", i );
 			if ( clProperty.IsExist( g_NtlTSString ) )
 			{
 				stInfo.m_nValue = clProperty.GetValueAsInt( g_NtlTSString );
@@ -214,25 +214,25 @@ void CDboTSContReward::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 {
 	CNtlTSCont::TakeScriptDataForScript( clProperty );
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetNextLinkID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetNextLinkID() );
 	clProperty.m_defProperty["nextlnk"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetCancelLinkID() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetCancelLinkID() );
 	clProperty.m_defProperty["canclnk"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetRewardContType() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetRewardContType() );
 	clProperty.m_defProperty["rwdtype"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetLimitTime() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetLimitTime() );
 	clProperty.m_defProperty["ltime"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetDesc() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetDesc() );
 	clProperty.m_defProperty["desc"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", IsUseTable() ? 1 : 0 );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", IsUseTable() ? 1 : 0 );
 	clProperty.m_defProperty["usetbl"] = g_NtlTSString;
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetRewardTableIndex() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetRewardTableIndex() );
 	clProperty.m_defProperty["rwdtbl"] = g_NtlTSString;
 
 	if ( !IsUseTable() )
@@ -241,52 +241,52 @@ void CDboTSContReward::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 		sREWARD_INFO stInfo;
 		char szKey[128];
 
-		// 기본 보상
+		// ?? ????
 		for ( i = 0; i < 4; ++i )
 		{
 			memcpy( &stInfo, &m_asDefReward[i], sizeof( sREWARD_INFO ) );
 
 			if ( eREWARD_TYPE_INVALID != stInfo.m_eType )
 			{
-				NTL_SNPRINTF( szKey, "dtype%d", i );
-				NTL_SNPRINTF( g_NtlTSString, "%d", stInfo.m_eType );
+				NTL_SNPRINTF( szKey, sizeof(szKey), "dtype%d", i );
+				NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", stInfo.m_eType );
 				clProperty.m_defProperty[szKey] = g_NtlTSString;
 
-				NTL_SNPRINTF( szKey, "didx%d", i );
-				NTL_SNPRINTF( g_NtlTSString, "%d", stInfo.m_uiIdx );
+				NTL_SNPRINTF( szKey, sizeof(szKey), "didx%d", i );
+				NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", stInfo.m_uiIdx );
 				clProperty.m_defProperty[szKey] = g_NtlTSString;
 
-				NTL_SNPRINTF( szKey, "dval%d", i );
-				NTL_SNPRINTF( g_NtlTSString, "%d", stInfo.m_nValue );
+				NTL_SNPRINTF( szKey, sizeof(szKey), "dval%d", i );
+				NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", stInfo.m_nValue );
 				clProperty.m_defProperty[szKey] = g_NtlTSString;
 			}
 		}
 
-		// 선택 보상
+		// ???? ????
 		for ( i = 0; i < 4; ++i )
 		{
 			memcpy( &stInfo, &m_asSelReward[i], sizeof( sREWARD_INFO ) );
 
 			if ( eREWARD_TYPE_INVALID != stInfo.m_eType )
 			{
-				NTL_SNPRINTF( szKey, "stype%d", i );
-				NTL_SNPRINTF( g_NtlTSString, "%d", stInfo.m_eType );
+				NTL_SNPRINTF( szKey, sizeof(szKey), "stype%d", i );
+				NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", stInfo.m_eType );
 				clProperty.m_defProperty[szKey] = g_NtlTSString;
 
-				NTL_SNPRINTF( szKey, "sidx%d", i );
-				NTL_SNPRINTF( g_NtlTSString, "%d", stInfo.m_uiIdx );
+				NTL_SNPRINTF( szKey, sizeof(szKey), "sidx%d", i );
+				NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", stInfo.m_uiIdx );
 				clProperty.m_defProperty[szKey] = g_NtlTSString;
 
-				NTL_SNPRINTF( szKey, "sval%d", i );
-				NTL_SNPRINTF( g_NtlTSString, "%d", stInfo.m_nValue );
+				NTL_SNPRINTF( szKey, sizeof(szKey), "sval%d", i );
+				NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", stInfo.m_nValue );
 				clProperty.m_defProperty[szKey] = g_NtlTSString;
 			}
 		}
 	}
 
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetRewardZeny() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetRewardZeny() );
 	clProperty.m_defProperty["rwdzeny"] = g_NtlTSString;
-	NTL_SNPRINTF( g_NtlTSString, "%d", GetRewardExp() );
+	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetRewardExp() );
 	clProperty.m_defProperty["rwdexp"] = g_NtlTSString;
 }
 
