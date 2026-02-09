@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-03-09
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Desc		:	Chung Doo sup  ( john@ntl-inc.com )
 //
@@ -16,7 +16,13 @@
 
 #include "NtlSerializer.h"
 
+#if defined(_WIN32)
 #include <comutil.h>
+#else
+#ifndef BSTR
+typedef WCHAR* BSTR;
+#endif
+#endif
 #include <map>
 
 class CNtlSerializer;
@@ -194,9 +200,9 @@ protected:
 
 	DWORD 						READ_BITFLAG(BSTR bstr, DWORD dwInvalidValue = 0) { return CheckInvalidValue( bstr ) ? dwInvalidValue : HexToDec( bstr ); }
 
-	//void						CheckNegativeInvalid(char* pszFormatString, BSTR bstr); // @가 있으면 안되는 필드로 Assert를 뿌려준다.
+	//void						CheckNegativeInvalid(char* pszFormatString, BSTR bstr); // @?? ?????? ???? ???? Assert?? ??????.
 
-	void						CheckNegativeInvalid(const wchar_t* pwszFormatString, BSTR bstr); // @가 있으면 안되는 필드로 Assert를 뿌려준다.
+	void						CheckNegativeInvalid(const wchar_t* pwszFormatString, BSTR bstr); // @?? ?????? ???? ???? Assert?? ??????.
 
 public:
 
@@ -215,7 +221,7 @@ protected:
 	DWORD						m_dwCodePage;
 
 	// This is only for displaying a message, so it can't be used for the other purposes.
-	// 메시지를 출력하기 위해 선언된 멤버 변수이므로, 정해진 용도 이외에는 사용하면 안 된다.
+	// ??????? ?????? ???? ????? ??? ????????, ?????? ?? ?????? ?????? ?? ???.
 	// by YOSHIKI(2007-08-07)
 	WCHAR								m_wszXmlFileName[CTable::TABLE_XML_FILE_NAME_MAX_LENGTH + 1];
 
