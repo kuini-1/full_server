@@ -307,7 +307,8 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
   # Boost shared libraries MUST come at the very end after ALL static libraries
   # Database is a static library that uses Boost internally, so AuthServer must link Boost directly
-  # Boost.System must be linked before Boost.Thread (dependency order)
+  # Use --start-group/--end-group to handle circular dependencies in static libs
+  # Then link Boost libraries after the end-group with --no-as-needed to force inclusion
   
   message(STATUS "Configuring Boost library linking for AuthServer...")
   
@@ -331,12 +332,12 @@ if(UNIX AND NOT APPLE)
     find_library(BOOST_THREAD_LIB_FINAL NAMES boost_thread)
   endif()
   
-  # Add library search paths to ensure linker can find Boost libraries
-  # This is important even when linking by name
-  target_link_directories(AuthServer PRIVATE ${BOOST_LIB_PATHS})
-  
-  # CRITICAL: Link Boost libraries - MUST be after static libraries
+  # CRITICAL: Link Boost libraries with --no-as-needed to force inclusion
+  # Even though libraries appear in linker command, --as-needed may drop them
+  # because symbols are only referenced from within static library object files
   # Boost.System must come before Boost.Thread (dependency order)
+  target_link_options(AuthServer PRIVATE "SHELL:-Wl,--no-as-needed")
+  
   if(BOOST_SYSTEM_LIB_FINAL AND EXISTS "${BOOST_SYSTEM_LIB_FINAL}")
     message(STATUS "  Found and linking Boost.System: ${BOOST_SYSTEM_LIB_FINAL}")
     target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB_FINAL}")
@@ -352,6 +353,9 @@ if(UNIX AND NOT APPLE)
     message(STATUS "  Linking Boost.Thread by name: boost_thread")
     target_link_libraries(AuthServer PRIVATE boost_thread)
   endif()
+  
+  # Re-enable --as-needed after Boost libraries
+  target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
   
   message(STATUS "Boost libraries configured for AuthServer")
 endif()
