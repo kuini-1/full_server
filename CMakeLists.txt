@@ -307,14 +307,15 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
   # Boost shared libraries must come AFTER all static libraries
   # Static libraries don't propagate shared library dependencies, so link Boost directly
-  # Boost libraries MUST be linked - add directly to linker flags to ensure they're included
+  # Boost libraries MUST be linked - link them at the very end after all static libraries
   # Static libraries don't propagate shared library dependencies properly
   if(BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}" AND BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
-    message(STATUS "Adding Boost libraries to linker: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
-    # Add libraries directly to LINK_FLAGS to ensure they're in the linker command
-    set_property(TARGET AuthServer APPEND_STRING PROPERTY LINK_FLAGS " ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB} ")
-    # Also link via target_link_libraries as backup
+    message(STATUS "Linking Boost libraries: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
+    # Link by full path - ensure they come after all static libraries
     target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB}" "${BOOST_THREAD_LIB}")
+    # Verify they're being linked by checking the property
+    get_target_property(LINK_LIBS AuthServer LINK_LIBRARIES)
+    message(STATUS "AuthServer LINK_LIBRARIES includes Boost: ${LINK_LIBS}")
   elseif(TARGET dbo::boost_system AND TARGET dbo::boost_thread)
     message(STATUS "Linking Boost via imported targets")
     target_link_libraries(AuthServer PRIVATE dbo::boost_system dbo::boost_thread)
