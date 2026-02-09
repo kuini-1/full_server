@@ -309,22 +309,30 @@ if(UNIX AND NOT APPLE)
   # Database uses Boost, so we must link Boost libraries to AuthServer
   # Use --start-group/--end-group to handle circular dependencies in static libs
   # Then add Boost libraries after the end-group with --no-as-needed
+  
+  # Always try to link Boost libraries - Database depends on them
+  set(_boost_linked FALSE)
+  
+  # First try imported targets
   if(TARGET dbo::boost_system AND TARGET dbo::boost_thread)
-    message(STATUS "Linking Boost via imported targets at end")
+    message(STATUS "Linking Boost via imported targets: dbo::boost_system dbo::boost_thread")
     target_link_options(AuthServer PRIVATE "SHELL:-Wl,--start-group" "SHELL:-Wl,--end-group" "SHELL:-Wl,--no-as-needed")
     target_link_libraries(AuthServer PRIVATE dbo::boost_system dbo::boost_thread)
     target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
-  elseif(BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}" AND BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
-    message(STATUS "Linking Boost libraries at end: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
-    # Wrap static libraries in --start-group/--end-group to handle circular deps
-    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--start-group")
-    # Note: Static libs are already linked above, so this just adds the group markers
-    # Add Boost libraries after everything with --no-as-needed
-    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--end-group" "SHELL:-Wl,--no-as-needed")
+    set(_boost_linked TRUE)
+  endif()
+  
+  # If not linked yet, try library paths from initial search
+  if(NOT _boost_linked AND BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}" AND BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
+    message(STATUS "Linking Boost libraries: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--start-group" "SHELL:-Wl,--end-group" "SHELL:-Wl,--no-as-needed")
     target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB}" "${BOOST_THREAD_LIB}")
     target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
-  else()
-    # Fallback: try to find and link Boost libraries directly
+    set(_boost_linked TRUE)
+  endif()
+  
+  # Final fallback: find libraries in system paths and link directly
+  if(NOT _boost_linked)
     find_library(BOOST_SYSTEM_FALLBACK NAMES boost_system PATHS /usr/lib /usr/lib/x86_64-linux-gnu /usr/local/lib NO_DEFAULT_PATH)
     find_library(BOOST_THREAD_FALLBACK NAMES boost_thread PATHS /usr/lib /usr/lib/x86_64-linux-gnu /usr/local/lib NO_DEFAULT_PATH)
     if(NOT BOOST_SYSTEM_FALLBACK)
@@ -338,9 +346,17 @@ if(UNIX AND NOT APPLE)
       target_link_options(AuthServer PRIVATE "SHELL:-Wl,--start-group" "SHELL:-Wl,--end-group" "SHELL:-Wl,--no-as-needed")
       target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_FALLBACK}" "${BOOST_THREAD_FALLBACK}")
       target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
-    else()
-      message(FATAL_ERROR "Boost libraries not found! Install with: sudo apt-get install libboost-system-dev libboost-thread-dev")
+      set(_boost_linked TRUE)
     endif()
+  endif()
+  
+  # Last resort: link by name (will work if libraries are in standard paths)
+  if(NOT _boost_linked)
+    message(STATUS "Linking Boost libraries by name: boost_system boost_thread")
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--start-group" "SHELL:-Wl,--end-group" "SHELL:-Wl,--no-as-needed")
+    target_link_libraries(AuthServer PRIVATE boost_system boost_thread)
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
+    message(WARNING "Boost libraries linked by name - if linking fails, ensure libboost-system-dev and libboost-thread-dev are installed")
   endif()
 endif()
 
