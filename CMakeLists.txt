@@ -107,21 +107,27 @@ else()
   if(BOOST_THREAD_LIB AND BOOST_SYSTEM_LIB)
     message(STATUS "Found Boost thread: ${BOOST_THREAD_LIB}")
     message(STATUS "Found Boost system: ${BOOST_SYSTEM_LIB}")
+    # Store library paths in cache for later use
+    set(BOOST_SYSTEM_LIB_PATH "${BOOST_SYSTEM_LIB}" CACHE FILEPATH "Boost system library path")
+    set(BOOST_THREAD_LIB_PATH "${BOOST_THREAD_LIB}" CACHE FILEPATH "Boost thread library path")
     # Create imported targets for shared libraries
-    add_library(dbo_boost_system SHARED IMPORTED)
+    add_library(dbo_boost_system SHARED IMPORTED GLOBAL)
     set_target_properties(dbo_boost_system PROPERTIES
       IMPORTED_LOCATION "${BOOST_SYSTEM_LIB}"
       INTERFACE_INCLUDE_DIRECTORIES "${DBO_BOOST_ROOT}"
+      IMPORTED_NO_SONAME TRUE
     )
     add_library(dbo::boost_system ALIAS dbo_boost_system)
 
-    add_library(dbo_boost_thread SHARED IMPORTED)
+    add_library(dbo_boost_thread SHARED IMPORTED GLOBAL)
     set_target_properties(dbo_boost_thread PROPERTIES
       IMPORTED_LOCATION "${BOOST_THREAD_LIB}"
       INTERFACE_INCLUDE_DIRECTORIES "${DBO_BOOST_ROOT}"
       INTERFACE_LINK_LIBRARIES dbo::boost_system
+      IMPORTED_NO_SONAME TRUE
     )
     add_library(dbo::boost_thread ALIAS dbo_boost_thread)
+    message(STATUS "Created Boost imported targets: dbo::boost_system, dbo::boost_thread")
   else()
     message(WARNING "Boost libraries not found!")
     message(WARNING "  BOOST_THREAD_LIB: ${BOOST_THREAD_LIB}")
@@ -284,10 +290,22 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
   # Ensure Boost libraries are linked - system must come before thread
   if(TARGET dbo::boost_system)
+    message(STATUS "Linking boost_system to AuthServer via target")
     target_link_libraries(AuthServer PRIVATE dbo::boost_system)
+  elseif(BOOST_SYSTEM_LIB_PATH)
+    message(STATUS "Linking boost_system directly: ${BOOST_SYSTEM_LIB_PATH}")
+    target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB_PATH}")
+  else()
+    message(FATAL_ERROR "Boost system library not found! Install with: sudo apt-get install libboost-system-dev")
   endif()
   if(TARGET dbo::boost_thread)
+    message(STATUS "Linking boost_thread to AuthServer via target")
     target_link_libraries(AuthServer PRIVATE dbo::boost_thread)
+  elseif(BOOST_THREAD_LIB_PATH)
+    message(STATUS "Linking boost_thread directly: ${BOOST_THREAD_LIB_PATH}")
+    target_link_libraries(AuthServer PRIVATE "${BOOST_THREAD_LIB_PATH}")
+  else()
+    message(FATAL_ERROR "Boost thread library not found! Install with: sudo apt-get install libboost-thread-dev")
   endif()
 endif()
 
