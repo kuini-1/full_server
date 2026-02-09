@@ -69,6 +69,7 @@ typedef int errno_t;
 static inline int _localtime32_s(struct tm* _tm, const __time32_t* _t) {
 	return localtime_r(_t, _tm) ? 0 : (errno ? errno : -1);
 }
+#define localtime_s(_tm, _t) _localtime32_s((_tm), (const __time32_t*)(_t))
 
 #ifndef _MAX_DIR
 #define _MAX_DIR 256
