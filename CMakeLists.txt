@@ -311,24 +311,46 @@ if(UNIX AND NOT APPLE)
   
   message(STATUS "Configuring Boost library linking for AuthServer...")
   
-  # CRITICAL: Always link Boost libraries by name
-  # This works for apt-get installed libraries which are in standard linker paths
-  # The linker will automatically find libboost_system.so and libboost_thread.so
-  # in /usr/lib/x86_64-linux-gnu/ or similar standard paths
-  message(STATUS "  Linking Boost libraries by name (boost_system boost_thread)")
-  message(STATUS "  Note: Libraries must be installed via: sudo apt-get install libboost-system-dev libboost-thread-dev")
+  # Find Boost libraries in standard apt-get installation paths
+  set(BOOST_LIB_PATHS /usr/lib/x86_64-linux-gnu /usr/lib /usr/local/lib)
+  find_library(BOOST_SYSTEM_LIB_FINAL 
+    NAMES boost_system 
+    PATHS ${BOOST_LIB_PATHS}
+    NO_DEFAULT_PATH
+  )
+  if(NOT BOOST_SYSTEM_LIB_FINAL)
+    find_library(BOOST_SYSTEM_LIB_FINAL NAMES boost_system)
+  endif()
   
-  # Link boost_system FIRST (it's a dependency of boost_thread)
-  target_link_libraries(AuthServer PRIVATE boost_system)
+  find_library(BOOST_THREAD_LIB_FINAL 
+    NAMES boost_thread 
+    PATHS ${BOOST_LIB_PATHS}
+    NO_DEFAULT_PATH
+  )
+  if(NOT BOOST_THREAD_LIB_FINAL)
+    find_library(BOOST_THREAD_LIB_FINAL NAMES boost_thread)
+  endif()
   
-  # Then link boost_thread (depends on boost_system)
-  target_link_libraries(AuthServer PRIVATE boost_thread)
+  # Add library search paths to ensure linker can find Boost libraries
+  # This is important even when linking by name
+  target_link_directories(AuthServer PRIVATE ${BOOST_LIB_PATHS})
   
-  # Also try to use imported targets if they were created (for consistency)
-  # But linking by name should work regardless
-  if(TARGET dbo::boost_system AND TARGET dbo::boost_thread)
-    message(STATUS "  Also using imported targets for consistency")
-    target_link_libraries(AuthServer PRIVATE dbo::boost_system dbo::boost_thread)
+  # CRITICAL: Link Boost libraries - MUST be after static libraries
+  # Boost.System must come before Boost.Thread (dependency order)
+  if(BOOST_SYSTEM_LIB_FINAL AND EXISTS "${BOOST_SYSTEM_LIB_FINAL}")
+    message(STATUS "  Found and linking Boost.System: ${BOOST_SYSTEM_LIB_FINAL}")
+    target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB_FINAL}")
+  else()
+    message(STATUS "  Linking Boost.System by name: boost_system")
+    target_link_libraries(AuthServer PRIVATE boost_system)
+  endif()
+  
+  if(BOOST_THREAD_LIB_FINAL AND EXISTS "${BOOST_THREAD_LIB_FINAL}")
+    message(STATUS "  Found and linking Boost.Thread: ${BOOST_THREAD_LIB_FINAL}")
+    target_link_libraries(AuthServer PRIVATE "${BOOST_THREAD_LIB_FINAL}")
+  else()
+    message(STATUS "  Linking Boost.Thread by name: boost_thread")
+    target_link_libraries(AuthServer PRIVATE boost_thread)
   endif()
   
   message(STATUS "Boost libraries configured for AuthServer")
