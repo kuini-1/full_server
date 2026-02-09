@@ -187,6 +187,9 @@ typedef long long __int64;
 #ifndef _wtoi64
 static inline __int64 _wtoi64(const wchar_t* s) { return (__int64)wcstoll(s, NULL, 10); }
 #endif
+#ifndef _wtof
+static inline double _wtof(const wchar_t* s) { return wcstod(s, NULL); }
+#endif
 
 /* CPINFO / GetCPInfo: Windows codepage API; stub for Linux (XML table load is Windows-only) */
 typedef struct _cpinfo_linux {
