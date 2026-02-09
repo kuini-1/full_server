@@ -298,33 +298,27 @@ target_link_libraries(Database PUBLIC dbo::mysqlclient)
 
 dbo_collect_sources(_dbo_authserver_src "${CMAKE_CURRENT_SOURCE_DIR}/Server/AuthServer")
 add_executable(AuthServer ${_dbo_authserver_src})
-# Link static libraries first - use --start-group/--end-group to handle circular dependencies
-if(UNIX AND NOT APPLE)
-  target_link_options(AuthServer PRIVATE "-Wl,--start-group")
-endif()
+# Link static libraries first
 target_link_libraries(AuthServer PRIVATE dbo_includes Util Database NtlNetwork NtlSfx NtlShared NtlSystem NtlThread servercommon)
-if(UNIX AND NOT APPLE)
-  target_link_options(AuthServer PRIVATE "-Wl,--end-group")
-endif()
 if(WIN32)
   target_link_libraries(AuthServer PRIVATE ws2_32 winmm)
 endif()
 if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
   # Boost shared libraries MUST come at the very end after ALL static libraries
-  # Use --no-as-needed to prevent linker from stripping Boost libraries
-  # Static libraries don't show direct references to shared libs, so linker strips them
+  # Link them via target_link_libraries AFTER everything else, with --no-as-needed
   if(BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}" AND BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
     message(STATUS "Linking Boost libraries at end: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
-    # Link Boost with --no-as-needed to ensure they're included
-    target_link_options(AuthServer PRIVATE "-Wl,--no-as-needed")
+    # Use target_link_options to add --no-as-needed right before Boost libraries
+    # Then link Boost libraries - they should come after all static libs
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--no-as-needed")
     target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB}" "${BOOST_THREAD_LIB}")
-    target_link_options(AuthServer PRIVATE "-Wl,--as-needed")
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
   elseif(TARGET dbo::boost_system AND TARGET dbo::boost_thread)
     message(STATUS "Linking Boost via imported targets at end")
-    target_link_options(AuthServer PRIVATE "-Wl,--no-as-needed")
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--no-as-needed")
     target_link_libraries(AuthServer PRIVATE dbo::boost_system dbo::boost_thread)
-    target_link_options(AuthServer PRIVATE "-Wl,--as-needed")
+    target_link_options(AuthServer PRIVATE "SHELL:-Wl,--as-needed")
   else()
     message(FATAL_ERROR "Boost libraries not found! Install with: sudo apt-get install libboost-system-dev libboost-thread-dev")
   endif()
