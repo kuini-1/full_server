@@ -167,7 +167,7 @@ bool CAuthServer::IsAccountTempBlocked(std::string & strUsername)
 
 void CAuthServer::RegisterAccountTempBann(std::string & strUsername)
 {
-	m_mapBlockedAccounts.insert({ strUsername, GetTickCount64() + 300000 }); //5 minutes
+	m_mapBlockedAccounts.insert(std::make_pair(strUsername, GetTickCount64() + 300000)); //5 minutes
 }
 
 

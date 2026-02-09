@@ -546,6 +546,33 @@ static inline DWORD GetTickCount(void)
 	return (DWORD)((unsigned long)ts.tv_sec * 1000UL + (unsigned long)ts.tv_nsec / 1000000UL);
 }
 
+/* GetTickCount64: 64-bit milliseconds since an epoch (monotonic on Linux) */
+static inline QWORD GetTickCount64(void)
+{
+	struct timespec ts;
+#ifdef CLOCK_MONOTONIC
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+#else
+	clock_gettime(CLOCK_REALTIME, &ts);
+#endif
+	return (QWORD)((unsigned long long)ts.tv_sec * 1000ULL + (unsigned long long)ts.tv_nsec / 1000000ULL);
+}
+
+/* timeGetTime: Win32 API alias for GetTickCount (milliseconds) */
+static inline DWORD timeGetTime(void)
+{
+	return GetTickCount();
+}
+
+/* Sleep: suspend execution for specified milliseconds */
+static inline void Sleep(DWORD dwMilliseconds)
+{
+	if (dwMilliseconds == 0) {
+		return;
+	}
+	usleep((unsigned int)dwMilliseconds * 1000U);
+}
+
 /* FindFirstFile / FindNextFile / FindClose compatibility (same API as Win32) */
 #ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE ((HANDLE)(intptr_t)-1)
