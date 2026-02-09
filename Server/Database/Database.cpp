@@ -6,6 +6,7 @@
 
 #include "NtlLog.h"
 #include <cstdarg>
+#include <string.h>
 
 std::list<Database*> Database::s_listDatabase;
 volatile bool Database::s_IsQuit = false;
@@ -64,7 +65,7 @@ QueryResult * Database::Query(const char* QueryString, ...)
 	char sql[4096];
 	va_list vlist;
 	va_start(vlist, QueryString);
-	vsnprintf_s(sql, 4096, QueryString, vlist);
+	vsnprintf(sql, 4096, QueryString, vlist);
 	va_end(vlist);
 
 	// Send the query
@@ -112,7 +113,7 @@ bool Database::Execute(const char* QueryString, ...)
 	char query[4096];
 	va_list vlist;
 	va_start(vlist, QueryString);
-	vsnprintf_s(query, 4096, QueryString, vlist);
+	vsnprintf(query, 4096, QueryString, vlist);
 	va_end(vlist);
 	ExecuteNA(query);
 	return true;
@@ -120,7 +121,7 @@ bool Database::Execute(const char* QueryString, ...)
 
 bool Database::ExecuteNA(const char* QueryString)
 {
-	char * pBuffer = _strdup(QueryString);
+	char * pBuffer = strdup(QueryString);
 	{
 		boost::mutex::scoped_lock lock(m_mutexBP);
 		m_queueQueryBeforeProc.push((AsyncQuery*)pBuffer);
@@ -140,7 +141,7 @@ bool Database::WaitExecute(const char* QueryString, ...)
 	char sql[4096];
 	va_list vlist;
 	va_start(vlist, QueryString);
-	vsnprintf_s(sql, 4096, QueryString, vlist);
+	vsnprintf(sql, 4096, QueryString, vlist);
 	va_end(vlist);
 
 	return WaitExecuteNA(sql);
@@ -151,7 +152,7 @@ QueryResult* Database::TransactionQuery(const char* QueryString, ...)
 	char sql[4096];
 	va_list vlist;
 	va_start(vlist, QueryString);
-	vsnprintf_s(sql, 4096, QueryString, vlist);
+	vsnprintf(sql, 4096, QueryString, vlist);
 	va_end(vlist);
 
 	// Send the query
@@ -168,7 +169,7 @@ bool Database::TransactionExecute(const char* QueryString, ...)
 	char sql[4096];
 	va_list vlist;
 	va_start(vlist, QueryString);
-	vsnprintf_s(sql, 4096, QueryString, vlist);
+	vsnprintf(sql, 4096, QueryString, vlist);
 	va_end(vlist);
 	DatabaseConnection* con = GetFreeConnection();
 	return _SendQuery(con, sql, false);

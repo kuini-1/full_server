@@ -127,6 +127,9 @@ protected:
 
 };
 
+// Include AsyncQuery.h before template methods that use it
+#include "AsyncQuery.h"
+
 template<class Class>
 bool
 Database::PAsyncQuery(Class *object, void (Class::*method)(QueryResultVector&), const char *sql)
