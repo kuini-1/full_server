@@ -107,19 +107,21 @@ else()
   if(BOOST_THREAD_LIB AND BOOST_SYSTEM_LIB)
     message(STATUS "Found Boost thread: ${BOOST_THREAD_LIB}")
     message(STATUS "Found Boost system: ${BOOST_SYSTEM_LIB}")
-    add_library(dbo_boost_thread UNKNOWN IMPORTED)
-    set_target_properties(dbo_boost_thread PROPERTIES
-      IMPORTED_LOCATION "${BOOST_THREAD_LIB}"
-      INTERFACE_INCLUDE_DIRECTORIES "${DBO_BOOST_ROOT}"
-    )
-    add_library(dbo::boost_thread ALIAS dbo_boost_thread)
-
-    add_library(dbo_boost_system UNKNOWN IMPORTED)
+    # Create imported targets for shared libraries
+    add_library(dbo_boost_system SHARED IMPORTED)
     set_target_properties(dbo_boost_system PROPERTIES
       IMPORTED_LOCATION "${BOOST_SYSTEM_LIB}"
       INTERFACE_INCLUDE_DIRECTORIES "${DBO_BOOST_ROOT}"
     )
     add_library(dbo::boost_system ALIAS dbo_boost_system)
+
+    add_library(dbo_boost_thread SHARED IMPORTED)
+    set_target_properties(dbo_boost_thread PROPERTIES
+      IMPORTED_LOCATION "${BOOST_THREAD_LIB}"
+      INTERFACE_INCLUDE_DIRECTORIES "${DBO_BOOST_ROOT}"
+      INTERFACE_LINK_LIBRARIES dbo::boost_system
+    )
+    add_library(dbo::boost_thread ALIAS dbo_boost_thread)
   else()
     message(WARNING "Boost libraries not found!")
     message(WARNING "  BOOST_THREAD_LIB: ${BOOST_THREAD_LIB}")
@@ -257,8 +259,12 @@ if(WIN32)
   target_link_libraries(Database PUBLIC dbo_includes NtlThread dbo::boost_thread dbo::boost_system)
 else()
   target_link_libraries(Database PUBLIC dbo_includes NtlThread)
-  if(TARGET dbo::boost_thread AND TARGET dbo::boost_system)
-    target_link_libraries(Database PUBLIC dbo::boost_thread dbo::boost_system)
+  # Boost libraries must be linked - system before thread
+  if(TARGET dbo::boost_system)
+    target_link_libraries(Database PUBLIC dbo::boost_system)
+  endif()
+  if(TARGET dbo::boost_thread)
+    target_link_libraries(Database PUBLIC dbo::boost_thread)
   endif()
 endif()
 dbo_configure_mysqlclient()
@@ -276,9 +282,12 @@ if(WIN32)
 endif()
 if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
-  # Ensure Boost libraries are linked even if Database doesn't propagate them
-  if(TARGET dbo::boost_thread AND TARGET dbo::boost_system)
-    target_link_libraries(AuthServer PRIVATE dbo::boost_thread dbo::boost_system)
+  # Ensure Boost libraries are linked - system must come before thread
+  if(TARGET dbo::boost_system)
+    target_link_libraries(AuthServer PRIVATE dbo::boost_system)
+  endif()
+  if(TARGET dbo::boost_thread)
+    target_link_libraries(AuthServer PRIVATE dbo::boost_thread)
   endif()
 endif()
 
