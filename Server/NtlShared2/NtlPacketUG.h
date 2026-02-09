@@ -1179,7 +1179,7 @@ END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( UG_PRIVATESHOP_BUSINESS_IMMEDIATE_ITEM_BUYING_REQ )
 	HOBJECT						hOwner;
-	unsigned __int16			nPriceFluctuationsCounter;
+	WORD			nPriceFluctuationsCounter;
 END_PROTOCOL()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL( UG_PRIVATESHOP_BUSINESS_CANCEL_REQ )

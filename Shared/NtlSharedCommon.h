@@ -138,6 +138,9 @@ typedef unsigned char* LPBYTE;
 
 typedef unsigned int UINT32;
 typedef unsigned long long UINT64;
+#ifndef INT64
+typedef long long INT64;
+#endif
 #ifndef WPARAM
 typedef unsigned long WPARAM;
 #endif

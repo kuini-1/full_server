@@ -395,7 +395,7 @@ struct sGM_ACCOUNT_COMMENT
 struct sGM_PACKET_ACCOUNT_COMMENT
 {
 	ACCOUNTID			accountID;
-	unsigned __int16	nCommentSize;
+	WORD				nCommentSize;
 	WCHAR				wszComment[NTL_MAX_LENGTH_OF_CHAT_MESSAGE_UNICODE+1];
 };
 
