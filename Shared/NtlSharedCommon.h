@@ -42,6 +42,16 @@ typedef unsigned __int64 ntl_uint64;
 #ifndef __unaligned
 #define __unaligned
 #endif
+/* Windows SAL annotations: no-op on Linux */
+#ifndef IN
+#define IN
+#endif
+#ifndef OUT
+#define OUT
+#endif
+#ifndef INOUT
+#define INOUT
+#endif
 #include "Util/NtlPortable.h"
 #include <sys/socket.h>
 #include <arpa/inet.h>
