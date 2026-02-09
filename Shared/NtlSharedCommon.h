@@ -60,6 +60,7 @@ typedef unsigned __int64 ntl_uint64;
 #include <unistd.h>
 #include <errno.h>
 #include <cstring>
+#include <cctype>
 #include <pthread.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
@@ -131,6 +132,7 @@ typedef int SOCKET;
 
 // Minimal types required by NtlSocket.h and other includers
 typedef unsigned char BYTE;
+typedef unsigned char UCHAR;
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
 #ifndef BOOL
@@ -499,6 +501,22 @@ typedef char TCHAR;
 #endif
 #ifndef LPSTR
 #define LPSTR char*
+#endif
+
+/* _memicmp: case-insensitive memory comparison */
+#ifndef _memicmp
+static inline int _memicmp(const void* s1, const void* s2, size_t n)
+{
+	const unsigned char* p1 = (const unsigned char*)s1;
+	const unsigned char* p2 = (const unsigned char*)s2;
+	for (size_t i = 0; i < n; i++) {
+		int c1 = tolower(p1[i]);
+		int c2 = tolower(p2[i]);
+		if (c1 < c2) return -1;
+		if (c1 > c2) return 1;
+	}
+	return 0;
+}
 #endif
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(x) ((void)(x))
