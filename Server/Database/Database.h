@@ -3,7 +3,7 @@
 
 #include "NtlString.h"
 #include "NtlQueue.h"
-#include "Callback.h"
+#include "../../Shared/Util/CallBack.h"
 #include <queue>
 #include <list>
 
