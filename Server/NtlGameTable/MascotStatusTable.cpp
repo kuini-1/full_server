@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CMascotStatusTable::m_pwszSheetList[] =
+const WCHAR* CMascotStatusTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

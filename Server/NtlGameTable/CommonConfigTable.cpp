@@ -14,7 +14,7 @@
 		return false;																				\
 	}
 
-WCHAR* CCommonConfigTable::m_pwszSheetList[] =
+const WCHAR* CCommonConfigTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

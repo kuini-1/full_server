@@ -23,7 +23,7 @@
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-WCHAR* CTimeQuestTable::m_pwszSheetList[] =
+const WCHAR* CTimeQuestTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

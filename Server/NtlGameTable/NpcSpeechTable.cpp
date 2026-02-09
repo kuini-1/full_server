@@ -22,7 +22,7 @@
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-WCHAR* CNpcSpeechTable::m_pwszSheetList[] =
+const WCHAR* CNpcSpeechTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CItemBagListTable::m_pwszSheetList[] =
+const WCHAR* CItemBagListTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

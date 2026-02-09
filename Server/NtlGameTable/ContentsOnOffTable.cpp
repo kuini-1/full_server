@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CContentsOnOffTable::m_pwszSheetList[] =
+const WCHAR* CContentsOnOffTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

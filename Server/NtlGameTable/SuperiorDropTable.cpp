@@ -17,7 +17,7 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
-WCHAR* CSuperiorDropTable::m_pwszSheetList[] =
+const WCHAR* CSuperiorDropTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

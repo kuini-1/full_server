@@ -6,7 +6,7 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
-WCHAR* CPortalTable::m_pwszSheetList[] =
+const WCHAR* CPortalTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

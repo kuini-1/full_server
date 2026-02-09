@@ -62,7 +62,7 @@ public:
 
 
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CDragonBallTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CDragonBallTable::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -84,5 +84,5 @@ private:
 	typedef DRAGONBALLGROUP::iterator DRAGONBALLGROUP_IT;
 	typedef DRAGONBALLGROUP::value_type DRAGONBALLGROUP_VAL;
 	DRAGONBALLGROUP				m_dragonGroup;
-	static						WCHAR* m_pwszSheetList[];
+	static const						WCHAR* m_pwszSheetList[];
 };

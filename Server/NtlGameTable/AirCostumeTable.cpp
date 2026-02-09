@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CAirCostumeTable::m_pwszSheetList[] =
+const WCHAR* CAirCostumeTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

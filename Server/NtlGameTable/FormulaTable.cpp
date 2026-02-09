@@ -17,7 +17,7 @@
 
 float CFormulaTable::m_afRate[DBO_MAX_FORMULA_IDX + 1][DBO_MAX_FORMULA_RATE_COUNT + 1];
 
-WCHAR* CFormulaTable::m_pwszSheetList[] =
+const WCHAR* CFormulaTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

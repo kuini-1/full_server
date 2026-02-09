@@ -19,7 +19,7 @@
 
 #include "NtlSerializer.h"
 
-WCHAR* CDynamicObjectTable::m_pwszSheetList[] =
+const WCHAR* CDynamicObjectTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

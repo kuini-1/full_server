@@ -21,7 +21,7 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
-WCHAR* CStatusTransformTable::m_pwszSheetList[] =
+const WCHAR* CStatusTransformTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CNpcServerTable::m_pwszSheetList[] =
+const WCHAR* CNpcServerTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

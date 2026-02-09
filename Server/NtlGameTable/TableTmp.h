@@ -37,12 +37,12 @@ public:
 
 
 private:
-	static WCHAR*				m_pwszSheetList[];
+	static const WCHAR*				m_pwszSheetList[];
 
 };
 
 template<typename T1>
-WCHAR* CTableTmp<T1>::m_pwszSheetList[] =
+const WCHAR* CTableTmp<T1>::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL
@@ -51,7 +51,7 @@ WCHAR* CTableTmp<T1>::m_pwszSheetList[] =
 template<typename T1>
 inline WCHAR** CTableTmp<T1>::GetSheetListInWChar()
 {
-	return &(CTableTmp<T1>::m_pwszSheetList[0]);
+	return const_cast<WCHAR**>(&(CTableTmp<T1>::m_pwszSheetList[0]));
 }
 
 

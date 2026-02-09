@@ -105,7 +105,7 @@ protected:
 
 	void					Init( void );
 
-	WCHAR**					GetSheetListInWChar( void ) { return &m_pwszSheetList[0]; }
+	WCHAR**					GetSheetListInWChar( void ) { return const_cast<WCHAR**>(&m_pwszSheetList[0]); }
 
 	void*					AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage );
 
@@ -118,6 +118,6 @@ protected:
 
 protected:
 
-	static WCHAR*			m_pwszSheetList[];
+	static const WCHAR*			m_pwszSheetList[];
 
 };

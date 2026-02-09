@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CDwcMissionTable::m_pwszSheetList[] =
+const WCHAR* CDwcMissionTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

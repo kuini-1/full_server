@@ -137,7 +137,7 @@ public:
 	TBLIDX 				FindBasicSkillTblidx(TBLIDX tblidx); 
 
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CSkillTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CSkillTable::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -155,7 +155,7 @@ protected:
 	PRE_TABLE					m_mapPreTableList;
 
 private:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 
 	std::vector<sSKILL_TBLDAT*> m_mapBasicMascotSkills;
 

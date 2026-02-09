@@ -20,7 +20,7 @@
 #include "NtlSerializer.h"
 
 
-WCHAR* CObjectTable::m_pwszSheetList[] =
+const WCHAR* CObjectTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

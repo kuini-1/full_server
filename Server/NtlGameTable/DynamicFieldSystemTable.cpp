@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CDynamicFieldSystemTable::m_pwszSheetList[] =
+const WCHAR* CDynamicFieldSystemTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

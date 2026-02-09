@@ -4,7 +4,7 @@
 #include "QuestTextDataTable.h"
 #include "NtlSerializer.h"
 
-WCHAR* CQuestTextDataTable::m_pwszSheetList[] =
+const WCHAR* CQuestTextDataTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

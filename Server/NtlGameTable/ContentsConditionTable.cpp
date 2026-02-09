@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CContentsConditionTable::m_pwszSheetList[] =
+const WCHAR* CContentsConditionTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

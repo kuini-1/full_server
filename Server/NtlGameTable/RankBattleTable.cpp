@@ -25,7 +25,7 @@
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-WCHAR* CRankBattleTable::m_pwszSheetList[] =
+const WCHAR* CRankBattleTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

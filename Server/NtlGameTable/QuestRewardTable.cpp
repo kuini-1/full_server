@@ -4,7 +4,7 @@
 #include "NtlSerializer.h"
 
 
-WCHAR* CQuestRewardTable::m_pwszSheetList[] =
+const WCHAR* CQuestRewardTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

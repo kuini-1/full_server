@@ -17,7 +17,7 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
-WCHAR* CNormalDropTable::m_pwszSheetList[] =
+const WCHAR* CNormalDropTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

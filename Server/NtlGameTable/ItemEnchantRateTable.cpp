@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CItemEnchantRateTable::m_pwszSheetList[] =
+const WCHAR* CItemEnchantRateTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

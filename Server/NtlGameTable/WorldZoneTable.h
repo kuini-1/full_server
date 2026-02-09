@@ -65,7 +65,7 @@ public:
 
 protected:
 
-	WCHAR**						GetSheetListInWChar() { return &(CWorldZoneTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CWorldZoneTable::m_pwszSheetList[0])); }
 
 	void*						AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 
@@ -85,5 +85,5 @@ public:
 
 private:
 
-	static WCHAR*				m_pwszSheetList[];
+	static const WCHAR*				m_pwszSheetList[];
 };

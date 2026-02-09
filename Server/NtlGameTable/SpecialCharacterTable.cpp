@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CSpecialCharacterTable::m_pwszSheetList[] =
+const WCHAR* CSpecialCharacterTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

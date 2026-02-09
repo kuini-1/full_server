@@ -6,7 +6,7 @@
 //
 //	Begin		:	2006-06-2
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Doo Sup, Chung   ( john@ntl-inc.com )
 //
@@ -23,7 +23,7 @@ struct sBASIC_DROP_TBLDAT : public sTBLDAT
 {
 public:
 
-		BYTE		byMax;								// 모투합쳐 떨어질 수 있는 아이템 수량
+		BYTE		byMax;								// ???????? ?????? ?? ??? ?????? ????
 		float		afNoramalTblidxRate[NTL_MAX_DROP_TABLE_SELECT];
 		TBLIDX		aNoramalDropTblidx[NTL_MAX_DROP_TABLE_SELECT];
 		float		afSuperiorTblidxRate[NTL_MAX_DROP_TABLE_SELECT];
@@ -73,7 +73,7 @@ public:
 	static TBLIDX		FindExcellentDropIndex( sBASIC_DROP_TBLDAT* psTblData, BYTE byIndex);
 	static float		FindExcellentDropRate( sBASIC_DROP_TBLDAT* psTblData, BYTE byIndex);
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CBasicDropTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CBasicDropTable::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -88,5 +88,5 @@ public:
 
 
 private:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 };

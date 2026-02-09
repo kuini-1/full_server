@@ -6,7 +6,7 @@
 #include "NtlSerializer.h"
 #include "NtlStringHandler.h"
 
-WCHAR* CTextTable::m_pwszSheetList[] = 
+const WCHAR* CTextTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

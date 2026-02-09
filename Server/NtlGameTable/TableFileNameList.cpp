@@ -85,7 +85,7 @@ char* CTableFileNameList::GetFileName(CTableContainer::eTABLE eTable)
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-WCHAR* CTableFileNameList::GetFileNameW(CTableContainer::eTABLE eTable)
+const WCHAR* CTableFileNameList::GetFileNameW(CTableContainer::eTABLE eTable)
 {
 	if (CTableContainer::TABLE_COUNT <= eTable)
 	{
@@ -93,7 +93,7 @@ WCHAR* CTableFileNameList::GetFileNameW(CTableContainer::eTABLE eTable)
 		return NULL;
 	}
 
-	return (WCHAR*)(m_awstrFileName[eTable].c_str());
+	return (const WCHAR*)(m_awstrFileName[eTable].c_str());
 }
 
 

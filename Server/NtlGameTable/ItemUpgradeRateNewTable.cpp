@@ -4,7 +4,7 @@
 #include "NtlSerializer.h"
 
 
-WCHAR* CItemUpgradeRateNewTable::m_pwszSheetList[] =
+const WCHAR* CItemUpgradeRateNewTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

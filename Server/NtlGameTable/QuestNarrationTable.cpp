@@ -18,7 +18,7 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
-WCHAR* CQuestNarrationTable::m_pwszSheetList[] =
+const WCHAR* CQuestNarrationTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

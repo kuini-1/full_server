@@ -17,7 +17,7 @@
 
 #include "NtlSerializer.h"
 
-WCHAR* CWorldTable::m_pwszSheetList[] =
+const WCHAR* CWorldTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

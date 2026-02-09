@@ -50,7 +50,7 @@ public:
 	bool				SetUpgradeRateNewTbldat(BYTE byItem_Type, BYTE byGrade, sTBLDAT * pTbldat);
 
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CItemUpgradeRateNewTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CItemUpgradeRateNewTable::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -68,5 +68,5 @@ protected:
 	sTBLDAT *					m_aUpgradeRateNewTbldat[2][NTL_ITEM_MAX_GRADE];
 
 private:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 };

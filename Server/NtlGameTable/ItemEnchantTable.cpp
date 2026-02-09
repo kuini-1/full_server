@@ -5,7 +5,7 @@
 #include "NtlBitFlagManager.h"
 #include "NtlRandom.h"
 
-WCHAR* CItemEnchantTable::m_pwszSheetList[] =
+const WCHAR* CItemEnchantTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

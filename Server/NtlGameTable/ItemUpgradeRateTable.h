@@ -43,7 +43,7 @@ public:
 	sTBLDAT* FindData(TBLIDX tblidx);
 
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CItemUpgradeRateTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CItemUpgradeRateTable::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -57,5 +57,5 @@ public:
 
 
 private:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 };

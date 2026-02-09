@@ -64,7 +64,7 @@ public:
 	void AccumulateItemGroupListByMobTblidx(BYTE byMobLevel, TBLIDX mobTblidx, std::deque<sITEM_GROUP_LIST_TBLDAT*> &rdequeItemGroupList);
 
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CItemGroupListTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CItemGroupListTable::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -82,7 +82,7 @@ public:
 
 
 private:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 
 
 	typedef std::multimap<BYTE, sITEM_GROUP_LIST_TBLDAT *> itemWorldRuleGroup;

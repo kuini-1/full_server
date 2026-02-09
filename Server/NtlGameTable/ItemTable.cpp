@@ -6,7 +6,7 @@
 #include "NtlRandom.h"
 
 
-WCHAR* CItemTable::m_pwszSheetList[] =
+const WCHAR* CItemTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

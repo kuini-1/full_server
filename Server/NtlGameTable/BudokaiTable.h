@@ -4,7 +4,7 @@
 //
 //	Begin		:	2008-04-20
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Lee Ju-hyung
 //
@@ -240,7 +240,7 @@ protected:
 
 	void					Init( void );
 
-	WCHAR**					GetSheetListInWChar( void ) { return &m_pwszSheetList[0]; }
+	WCHAR**					GetSheetListInWChar( void ) { return const_cast<WCHAR**>(&m_pwszSheetList[0]); }
 
 	void*					AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage );
 
@@ -264,7 +264,7 @@ protected:
 
 protected:
 
-	static WCHAR*			m_pwszSheetList[];
+	static const WCHAR*			m_pwszSheetList[];
 
 	sBUDOKAI_TBLINFO		m_sBudokaiTblInfo;
 };

@@ -23,7 +23,7 @@
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-WCHAR* CDojoTable::m_pwszSheetList[] =
+const WCHAR* CDojoTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

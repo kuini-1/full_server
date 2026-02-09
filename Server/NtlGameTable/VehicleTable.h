@@ -45,7 +45,7 @@ public:
 	sTBLDAT*		FindData(TBLIDX tblidx); 
 
 protected:
-	WCHAR**			GetSheetListInWChar() { return &(CVehicleTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CVehicleTable::m_pwszSheetList[0])); }
 	void*			AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool			DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool			AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -56,5 +56,5 @@ public:
 	virtual bool	SaveToBinary(CNtlSerializer& serializer);
 
 private:
-	static WCHAR*	m_pwszSheetList[];
+	static const WCHAR*	m_pwszSheetList[];
 };

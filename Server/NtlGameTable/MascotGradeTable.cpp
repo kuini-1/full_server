@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CMascotGradeTable::m_pwszSheetList[] =
+const WCHAR* CMascotGradeTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

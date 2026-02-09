@@ -194,6 +194,9 @@ typedef int __int32;
 typedef long long __int64;
 #endif
 
+#ifndef _wtoi
+static inline int _wtoi(const wchar_t* s) { return (int)wcstol(s, NULL, 10); }
+#endif
 #ifndef _wtoi64
 static inline __int64 _wtoi64(const wchar_t* s) { return (__int64)wcstoll(s, NULL, 10); }
 #endif

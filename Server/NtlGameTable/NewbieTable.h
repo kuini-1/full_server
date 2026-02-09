@@ -61,7 +61,7 @@ public:
 	bool						SetNewbieTbldat(BYTE byRace, BYTE byClass, sTBLDAT * pTbldat);
 
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CNewbieTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CNewbieTable::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -79,5 +79,5 @@ protected:
 	sTBLDAT *					m_aNewbieTbldat[RACE_COUNT][PC_CLASS_COUNT];
 
 private:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 };

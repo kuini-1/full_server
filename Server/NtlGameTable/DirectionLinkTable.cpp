@@ -24,7 +24,7 @@
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-WCHAR* CDirectionLinkTable::m_pwszSheetList[] =
+const WCHAR* CDirectionLinkTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

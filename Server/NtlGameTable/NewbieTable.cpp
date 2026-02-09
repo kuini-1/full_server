@@ -19,7 +19,7 @@
 #include "NtlCharacter.h"
 #include "NtlSerializer.h"
 
-WCHAR* CNewbieTable::m_pwszSheetList[] =
+const WCHAR* CNewbieTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

@@ -88,7 +88,7 @@ public:
 
 protected:
 
-	WCHAR **				GetSheetListInWChar() { return &(CSystemEffectTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CSystemEffectTable::m_pwszSheetList[0])); }
 
 	void *					AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 
@@ -108,7 +108,7 @@ public:
 
 private:
 
-	static WCHAR *			m_pwszSheetList[];
+	static const WCHAR *			m_pwszSheetList[];
 
 	TBLIDX					m_aEffectCodeMatchTable[ MAX_SYSTEM_EFFECT_CODE ];
 };

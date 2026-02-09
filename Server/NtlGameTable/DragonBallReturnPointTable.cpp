@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CDragonBallReturnPointTable::m_pwszSheetList[] =
+const WCHAR* CDragonBallReturnPointTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

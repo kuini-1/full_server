@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CMobServerTable::m_pwszSheetList[] =
+const WCHAR* CMobServerTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

@@ -19,7 +19,7 @@
 
 #include "NtlSerializer.h"
 
-WCHAR* CSpawnTable::m_pwszSheetList[] =
+const WCHAR* CSpawnTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

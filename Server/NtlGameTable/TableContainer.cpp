@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-01-31
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -2297,7 +2297,7 @@ bool CTableContainer::SaveToFile(CNtlBitFlagManager& rTableFlag, CTableFileNameL
 	//--------------------------------------------------------------------------------
 	// GraphicData
 	//--------------------------------------------------------------------------------
-	// 그래픽 데이타는 TableContainer로 export하지 않습니다.
+	// ????? ??????? TableContainer?? export???? ??????.
 	// Graphic data is not supposed to be exported via TableContainer.
 	// by YOSHIKI(2007-04-05)
 
@@ -2416,7 +2416,7 @@ bool CTableContainer::ReloadTable(CTable* pTable, CNtlFileSerializer& serializer
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::ReloadTable(CTable* pTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension)
+bool CTableContainer::ReloadTable(CTable* pTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension)
 {
 	std::wstring wstrFullPath( m_wstrPath );
 
@@ -2511,7 +2511,7 @@ bool CTableContainer::UpdateTable(CTable* pTable, CNtlFileSerializer& serializer
 //		Purpose	: Update tables from localize folder
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::UpdateTable(CTable* pTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension)
+bool CTableContainer::UpdateTable(CTable* pTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension)
 {
 	std::wstring wstrFullPath( m_wstrPath );
 
@@ -2597,7 +2597,7 @@ bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFile
 	return bResult;
 }
 
-bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFileSerializer & serializer, WCHAR * pwszFileNameWithoutExtension)
+bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFileSerializer & serializer, const WCHAR * pwszFileNameWithoutExtension)
 {
 	std::wstring wstrFullPath;
 
@@ -2666,7 +2666,7 @@ bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFile
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, ICallBack* pCall)
+bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall)
 {
 	if (NULL == pszFileNameWithoutExtension)
 	{
@@ -2694,7 +2694,7 @@ bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serial
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension, ICallBack* pCall)
+bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension, CTableContainer::ICallBack* pCall)
 {
 	UNREFERENCED_PARAMETER(pCall);
 	std::wstring wstrFullPath;
@@ -2763,7 +2763,7 @@ bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serial
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::InitializePackTable(CTable* pTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, ICallBack* pCall)
+bool CTableContainer::InitializePackTable(CTable* pTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall)
 {
 	printf("\n\nInitializeTable\n\n");
 	if (NULL == pszFileNameWithoutExtension)
@@ -2790,7 +2790,7 @@ bool CTableContainer::InitializePackTable(CTable* pTable, CNtlFileSerializer& se
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::InitializePackTable(CTable* pTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension, ICallBack* pCall)
+bool CTableContainer::InitializePackTable(CTable* pTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension, CTableContainer::ICallBack* pCall)
 {
 	std::wstring wstrFullPath;
 
@@ -2880,7 +2880,7 @@ bool CTableContainer::InitializePackTable(CTable* pTable, CNtlFileSerializer& se
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, ICallBack* pCall)
+bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall)
 {
 	if (NULL == pszFileNameWithoutExtension)
 	{
@@ -2908,7 +2908,7 @@ bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSeri
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension, ICallBack* pCall)
+bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension, CTableContainer::ICallBack* pCall)
 {
 	UNREFERENCED_PARAMETER(pCall);
 	std::wstring wstrFullPath;
@@ -2977,7 +2977,7 @@ bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSeri
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::InitializePackTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, ICallBack* pCall)
+bool CTableContainer::InitializePackTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall)
 {
 	if (NULL == pszFileNameWithoutExtension)
 	{
@@ -3004,7 +3004,7 @@ bool CTableContainer::InitializePackTable(CTextAllTable* pTextAllTable, CNtlFile
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-bool CTableContainer::InitializePackTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension, ICallBack* pCall)
+bool CTableContainer::InitializePackTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension, CTableContainer::ICallBack* pCall)
 {
 	std::wstring wstrFullPath;
 

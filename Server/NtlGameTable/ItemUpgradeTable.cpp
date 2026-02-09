@@ -14,7 +14,7 @@
 #include "NtlBattle.h"
 #include "NtlSerializer.h"
 
-WCHAR* CItemUpgradeTable::m_pwszSheetList[] =
+const WCHAR* CItemUpgradeTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

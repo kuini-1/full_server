@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CItemDisassembleTable::m_pwszSheetList[] =
+const WCHAR* CItemDisassembleTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

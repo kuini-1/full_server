@@ -19,7 +19,7 @@
 
 #include "NtlSerializer.h"
 
-WCHAR* CChatCommandTable::m_pwszSheetList[] =
+const WCHAR* CChatCommandTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

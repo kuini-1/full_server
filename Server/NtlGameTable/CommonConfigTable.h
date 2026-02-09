@@ -54,7 +54,7 @@ public:
 	sCOMMONCONFIG_VALUE_DATA*	FindCommonConfig(TBLIDX tblidx);
 
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CCommonConfigTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CCommonConfigTable::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void * pvTable, bool bReload, bool bUpdate);
@@ -83,7 +83,7 @@ public:
 
 
 private:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 
 	/*sNON_NPC_MERCHANT_DATA m_aNonNPCMerchant[3];
 	DWORD	m_dwMaterialDecompositionConstant;

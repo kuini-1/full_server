@@ -5,7 +5,7 @@
 
 #include "NtlSerializer.h"
 
-WCHAR* CQuestDropTable::m_pwszSheetList[] =
+const WCHAR* CQuestDropTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

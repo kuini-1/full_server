@@ -91,7 +91,7 @@
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-WCHAR* CBudokaiTable::m_pwszSheetList[] =
+const WCHAR* CBudokaiTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

@@ -23,7 +23,7 @@
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-WCHAR* CDungeonTable::m_pwszSheetList[] =
+const WCHAR* CDungeonTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

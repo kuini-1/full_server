@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CItemUpgradeRateTable::m_pwszSheetList[] =
+const WCHAR* CItemUpgradeRateTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

@@ -17,7 +17,7 @@
 #include "NewbieTableCheck.h"
 #include "NtlDebug.h"
 #include "NtlCharacter.h"
-WCHAR* CNewbieTableCheck::m_pwszSheetList[] =
+const WCHAR* CNewbieTableCheck::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

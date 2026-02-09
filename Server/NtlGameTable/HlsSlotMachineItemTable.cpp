@@ -4,7 +4,7 @@
 #include "NtlSerializer.h"
 
 
-WCHAR* CHlsSlotMachineItemTable::m_pwszSheetList[] =
+const WCHAR* CHlsSlotMachineItemTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

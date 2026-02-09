@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-01-31
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -308,7 +308,7 @@ public:
 		virtual bool Call( const char* pfilename, CNtlFileSerializer* pSeralize, const char* pszCryptPassword ) = 0;
 	};
 
-	// Create 사용 시 pCall 이 NULL 일 경우 이전의 방식과 동일하게 동작한다. pCall -> Client 사용용 
+	// Create ??? ?? pCall ?? NULL ?? ??? ?????? ???? ??????? ???????. pCall -> Client ???? 
 	// Create pCall used in this way, the behavior is the same as the previous case NULL. pCall -> Client for use
 	bool							Create(CNtlBitFlagManager& rTableFlag, char* pszPath, CTableFileNameList* pFileNameList, CTable::eLOADING_METHOD eLoadingMethod, DWORD dwCodePage, ICallBack* pCall );	
 
@@ -336,36 +336,36 @@ public:
 
 protected:
 
-	bool							InitializeTable(CTable* pTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, ICallBack* pCall);
+	bool							InitializeTable(CTable* pTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall);
 
-	bool							InitializeTable(CTable* pTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension, ICallBack* pCall);
+	bool							InitializeTable(CTable* pTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension, CTableContainer::ICallBack* pCall);
 
-	bool							InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, ICallBack* pCall);
+	bool							InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall);
 
-	bool							InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension, ICallBack* pCall);
+	bool							InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension, CTableContainer::ICallBack* pCall);
 
-	bool							InitializePackTable(CTable* pTable, CNtlFileSerializer& serializer, WCHAR* pszFileNameWithoutExtension, ICallBack* pCall);
+	bool							InitializePackTable(CTable* pTable, CNtlFileSerializer& serializer, const WCHAR* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall);
 
-	bool							InitializePackTable(CTable* pTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, ICallBack* pCall);
+	bool							InitializePackTable(CTable* pTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall);
 
-	bool							InitializePackTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, WCHAR* pszFileNameWithoutExtension, ICallBack* pCall);
+	bool							InitializePackTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, const WCHAR* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall);
 
-	bool							InitializePackTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, ICallBack* pCall);
+	bool							InitializePackTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pszFileNameWithoutExtension, CTableContainer::ICallBack* pCall);
 
 	bool							ReloadTable(CTable* pTable, CNtlFileSerializer& serializer, char* pwszFileNameWithoutExtension);
-	bool							ReloadTable(CTable* pTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension);
+	bool							ReloadTable(CTable* pTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension);
 
 	//Update tables with data from localize folder
 	bool							UpdateTable(CTable* pTable, CNtlFileSerializer& serializer, char* pwszFileNameWithoutExtension);
-	bool							UpdateTable(CTable* pTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension);
+	bool							UpdateTable(CTable* pTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension);
 
 	bool							UpdateTextAllTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, char* pwszFileNameWithoutExtension);
-	bool							UpdateTextAllTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, WCHAR* pwszFileNameWithoutExtension);
+	bool							UpdateTextAllTable(CTextAllTable* pTextAllTable, CNtlFileSerializer& serializer, const WCHAR* pwszFileNameWithoutExtension);
 
 private:
 
 	template<class T>
-	void DboCreateTable(const char *szClassName, CNtlFileSerializer & serializer, wchar_t * pwszFileName, T **pTable, CTableContainer::ICallBack *pCall)
+	void DboCreateTable(const char *szClassName, CNtlFileSerializer & serializer, const wchar_t * pwszFileName, T **pTable, CTableContainer::ICallBack *pCall)
 	{
 		if (!*pTable)
 		{
@@ -705,9 +705,9 @@ protected:
 	CCharmTable*					m_pCharmTable;
 
 // Quest
-	CQuestDropTable*				m_pQuestDropTable;		// 퀘스트 드롭 아이템 테이블
+	CQuestDropTable*				m_pQuestDropTable;		// ????? ??? ?????? ?????
 
-	CQuestItemTable*				m_pQuestItemTable;		// 퀘스트 아이템 테이블
+	CQuestItemTable*				m_pQuestItemTable;		// ????? ?????? ?????
 
 	CQuestProbabilityTable*			m_pQuestProbalityTable;
 

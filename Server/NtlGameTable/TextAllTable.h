@@ -51,7 +51,7 @@ public:
 	bool			AddTable(VOID* pvTable, bool bReload, bool bUpdate);
 
 protected:
-	WCHAR**	GetSheetListInWChar(VOID) { return &(CTextTable::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar(VOID) { return const_cast<WCHAR**>(&(CTextTable::m_pwszSheetList[0])); }
 	VOID*	AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage );
 	bool	DeallocNewTable( VOID* pvTable, WCHAR* pwszSheetName );
 	bool	SetTableData( VOID* pvTable, WCHAR* pwszSheetName, TYPE eType, BSTR bstrData );
@@ -72,7 +72,7 @@ protected:
 
 
 private:
-	static	WCHAR* m_pwszSheetList[];
+	static const	WCHAR* m_pwszSheetList[];
 
 	INT		m_nField;
 	INT		m_nType;

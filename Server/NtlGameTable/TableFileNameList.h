@@ -39,7 +39,7 @@ public:
 
 	char*							GetFileName(CTableContainer::eTABLE eTable);
 
-	WCHAR*							GetFileNameW(CTableContainer::eTABLE eTable);
+	const WCHAR*							GetFileNameW(CTableContainer::eTABLE eTable);
 
 	bool							SetFileName(CTableContainer::eTABLE eTable, char* pszFileNameWithoutExtension);
 

@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CItemMixExpTable::m_pwszSheetList[] =
+const WCHAR* CItemMixExpTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

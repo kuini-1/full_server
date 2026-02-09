@@ -34,7 +34,7 @@ class CQuestItemTable : public CTable
 {
 // Member variables
 protected:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 
 // Constructions and Destructions
 public:
@@ -51,7 +51,7 @@ public:
 // Implementations
 protected:
 	void			Init( void );
-	WCHAR**			GetSheetListInWChar( void ) { return &m_pwszSheetList[0]; }
+	WCHAR**			GetSheetListInWChar( void ) { return const_cast<WCHAR**>(&m_pwszSheetList[0]); }
 	void*			AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage );
 	bool			DeallocNewTable( void* pvTable, WCHAR* pwszSheetName );
 	bool			AddTable( void* pvTable, bool bReload, bool bUpdate );

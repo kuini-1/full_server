@@ -63,7 +63,7 @@ public:
 
 	
 protected:
-	WCHAR** GetSheetListInWChar() { return &(CNewbieTableCheck::m_pwszSheetList[0]); }
+	WCHAR** GetSheetListInWChar() { return const_cast<WCHAR**>(&(CNewbieTableCheck::m_pwszSheetList[0])); }
 	void* AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage);
 	bool DeallocNewTable(void* pvTable, WCHAR* pwszSheetName);
 	bool AddTable(void* pvTable, WCHAR* pwszSheetName);
@@ -72,5 +72,5 @@ protected:
 protected:
 	
 private:
-	static WCHAR* m_pwszSheetList[];
+	static const WCHAR* m_pwszSheetList[];
 };

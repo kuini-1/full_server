@@ -7,7 +7,7 @@
 
 #include "NtlSerializer.h"
 
-WCHAR* CHTBSetTable::m_pwszSheetList[] =
+const WCHAR* CHTBSetTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

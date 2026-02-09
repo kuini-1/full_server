@@ -4,7 +4,7 @@
 #include "QuestProbabilityTable.h"
 #include "NtlSerializer.h"
 
-WCHAR* CQuestProbabilityTable::m_pwszSheetList[] =
+const WCHAR* CQuestProbabilityTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

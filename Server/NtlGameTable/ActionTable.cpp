@@ -19,7 +19,7 @@
 
 #include "NtlSerializer.h"
 
-WCHAR* CActionTable::m_pwszSheetList[] =
+const WCHAR* CActionTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

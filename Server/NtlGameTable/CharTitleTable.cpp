@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CCharTitleTable::m_pwszSheetList[] =
+const WCHAR* CCharTitleTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

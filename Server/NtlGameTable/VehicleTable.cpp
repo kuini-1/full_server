@@ -14,7 +14,7 @@
 #include "NtlBattle.h"
 #include "NtlSerializer.h"
 
-WCHAR* CVehicleTable::m_pwszSheetList[] =
+const WCHAR* CVehicleTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL

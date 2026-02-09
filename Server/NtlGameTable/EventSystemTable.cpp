@@ -5,7 +5,7 @@
 
 
 
-WCHAR* CEventSystemTable::m_pwszSheetList[] =
+const WCHAR* CEventSystemTable::m_pwszSheetList[] =
 {
 	L"Table_Data_KOR",
 	NULL
