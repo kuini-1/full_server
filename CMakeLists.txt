@@ -276,17 +276,17 @@ if(WIN32)
   target_link_libraries(Database PUBLIC dbo_includes NtlThread dbo::boost_thread dbo::boost_system)
 else()
   target_link_libraries(Database PUBLIC dbo_includes NtlThread)
-  # Boost libraries must be linked - system before thread
-  # Link by full path to ensure they're included
+  # Boost libraries: Use PRIVATE (not PUBLIC) so they don't propagate early
+  # They will be linked directly to executables at the end
   if(BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}")
-    target_link_libraries(Database PUBLIC "${BOOST_SYSTEM_LIB}")
+    target_link_libraries(Database PRIVATE "${BOOST_SYSTEM_LIB}")
   elseif(TARGET dbo::boost_system)
-    target_link_libraries(Database PUBLIC dbo::boost_system)
+    target_link_libraries(Database PRIVATE dbo::boost_system)
   endif()
   if(BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
-    target_link_libraries(Database PUBLIC "${BOOST_THREAD_LIB}")
+    target_link_libraries(Database PRIVATE "${BOOST_THREAD_LIB}")
   elseif(TARGET dbo::boost_thread)
-    target_link_libraries(Database PUBLIC dbo::boost_thread)
+    target_link_libraries(Database PRIVATE dbo::boost_thread)
   endif()
 endif()
 dbo_configure_mysqlclient()
@@ -305,20 +305,15 @@ if(WIN32)
 endif()
 if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
-  # Boost shared libraries must come AFTER all static libraries
-  # Static libraries don't propagate shared library dependencies, so link Boost directly
-  # Boost libraries MUST be linked - link them at the very end after all static libraries
-  # Static libraries don't propagate shared library dependencies properly
+  # Boost shared libraries MUST come at the very end after ALL static libraries
+  # Use set_property to append them last, ensuring correct linker order
   if(BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}" AND BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
-    message(STATUS "Linking Boost libraries: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
-    # Link by full path - ensure they come after all static libraries
-    target_link_libraries(AuthServer PRIVATE "${BOOST_SYSTEM_LIB}" "${BOOST_THREAD_LIB}")
-    # Verify they're being linked by checking the property
-    get_target_property(LINK_LIBS AuthServer LINK_LIBRARIES)
-    message(STATUS "AuthServer LINK_LIBRARIES includes Boost: ${LINK_LIBS}")
+    message(STATUS "Linking Boost libraries at end: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
+    # Append Boost libraries to the end of LINK_LIBRARIES to ensure they come last
+    set_property(TARGET AuthServer APPEND PROPERTY LINK_LIBRARIES "${BOOST_SYSTEM_LIB}" "${BOOST_THREAD_LIB}")
   elseif(TARGET dbo::boost_system AND TARGET dbo::boost_thread)
-    message(STATUS "Linking Boost via imported targets")
-    target_link_libraries(AuthServer PRIVATE dbo::boost_system dbo::boost_thread)
+    message(STATUS "Linking Boost via imported targets at end")
+    set_property(TARGET AuthServer APPEND PROPERTY LINK_LIBRARIES dbo::boost_system dbo::boost_thread)
   else()
     message(FATAL_ERROR "Boost libraries not found! Install with: sudo apt-get install libboost-system-dev libboost-thread-dev")
   endif()
