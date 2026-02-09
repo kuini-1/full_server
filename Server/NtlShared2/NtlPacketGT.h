@@ -311,11 +311,6 @@ BEGIN_PROTOCOL(GT_BUDOKAI_NOTICE_NFY)
 		TBLIDX		tblidxNotice;		
 
 		// byNoticeType == BUDOKAI_NOTICE_GM »ç¿ë
-		struct sGM_NOTICE
-		{
-			BYTE		byNoticeLength;
-			WCHAR		wszNotice[BUDOKAI_MAX_NOTICE_LENGTH + 1];
-		};
 		sGM_NOTICE	sGmNotice;
 	};
 END_PROTOCOL()

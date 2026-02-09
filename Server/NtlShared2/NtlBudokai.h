@@ -205,6 +205,11 @@ enum eBUDOKAI_PROGRESS_MESSAGE
 
 #define BUDOKAI_MAX_NOTICE_LENGTH		255
 
+struct sGM_NOTICE
+{
+	BYTE	byNoticeLength;
+	WCHAR	wszNotice[BUDOKAI_MAX_NOTICE_LENGTH + 1];
+};
 
 // Game <-> Query The maximum number of packets that can fit in a packet
 #define BUDOKAI_MAX_INDIVIDUAL_DB_DATA_PACKET_COUNT	20
