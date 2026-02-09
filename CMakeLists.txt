@@ -306,14 +306,21 @@ endif()
 if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
   # Boost shared libraries MUST come at the very end after ALL static libraries
-  # Use set_property to append them last, ensuring correct linker order
+  # Use --no-as-needed to prevent linker from stripping Boost libraries
+  # Static libraries don't show direct references to shared libs, so linker strips them
   if(BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}" AND BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
     message(STATUS "Linking Boost libraries at end: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
+    # Force linker to include Boost libraries even if it thinks they're not needed
+    target_link_options(AuthServer PRIVATE "-Wl,--no-as-needed")
     # Append Boost libraries to the end of LINK_LIBRARIES to ensure they come last
     set_property(TARGET AuthServer APPEND PROPERTY LINK_LIBRARIES "${BOOST_SYSTEM_LIB}" "${BOOST_THREAD_LIB}")
+    # Re-enable --as-needed after Boost libraries
+    target_link_options(AuthServer PRIVATE "-Wl,--as-needed")
   elseif(TARGET dbo::boost_system AND TARGET dbo::boost_thread)
     message(STATUS "Linking Boost via imported targets at end")
+    target_link_options(AuthServer PRIVATE "-Wl,--no-as-needed")
     set_property(TARGET AuthServer APPEND PROPERTY LINK_LIBRARIES dbo::boost_system dbo::boost_thread)
+    target_link_options(AuthServer PRIVATE "-Wl,--as-needed")
   else()
     message(FATAL_ERROR "Boost libraries not found! Install with: sudo apt-get install libboost-system-dev libboost-thread-dev")
   endif()
