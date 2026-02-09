@@ -306,21 +306,27 @@ endif()
 if(UNIX AND NOT APPLE)
   target_link_libraries(AuthServer PRIVATE Threads::Threads)
   # Boost shared libraries MUST come at the very end after ALL static libraries
-  # Use --no-as-needed to prevent linker from stripping Boost libraries
+  # Use --no-as-needed right before Boost to prevent linker from stripping them
   # Static libraries don't show direct references to shared libs, so linker strips them
   if(BOOST_SYSTEM_LIB AND EXISTS "${BOOST_SYSTEM_LIB}" AND BOOST_THREAD_LIB AND EXISTS "${BOOST_THREAD_LIB}")
     message(STATUS "Linking Boost libraries at end: ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB}")
-    # Force linker to include Boost libraries even if it thinks they're not needed
-    target_link_options(AuthServer PRIVATE "-Wl,--no-as-needed")
-    # Append Boost libraries to the end of LINK_LIBRARIES to ensure they come last
-    set_property(TARGET AuthServer APPEND PROPERTY LINK_LIBRARIES "${BOOST_SYSTEM_LIB}" "${BOOST_THREAD_LIB}")
-    # Re-enable --as-needed after Boost libraries
-    target_link_options(AuthServer PRIVATE "-Wl,--as-needed")
+    # Add --no-as-needed flag right before Boost libraries using LINK_FLAGS
+    # This ensures the flag comes right before the libraries in the linker command
+    get_property(CURRENT_LINK_FLAGS TARGET AuthServer PROPERTY LINK_FLAGS)
+    if(NOT CURRENT_LINK_FLAGS)
+      set(CURRENT_LINK_FLAGS "")
+    endif()
+    # Append Boost libraries with --no-as-needed flag right before them
+    set_property(TARGET AuthServer PROPERTY LINK_FLAGS "${CURRENT_LINK_FLAGS} -Wl,--no-as-needed ${BOOST_SYSTEM_LIB} ${BOOST_THREAD_LIB} -Wl,--as-needed")
   elseif(TARGET dbo::boost_system AND TARGET dbo::boost_thread)
     message(STATUS "Linking Boost via imported targets at end")
-    target_link_options(AuthServer PRIVATE "-Wl,--no-as-needed")
-    set_property(TARGET AuthServer APPEND PROPERTY LINK_LIBRARIES dbo::boost_system dbo::boost_thread)
-    target_link_options(AuthServer PRIVATE "-Wl,--as-needed")
+    get_property(CURRENT_LINK_FLAGS TARGET AuthServer PROPERTY LINK_FLAGS)
+    if(NOT CURRENT_LINK_FLAGS)
+      set(CURRENT_LINK_FLAGS "")
+    endif()
+    get_target_property(BOOST_SYSTEM_LOC dbo::boost_system IMPORTED_LOCATION)
+    get_target_property(BOOST_THREAD_LOC dbo::boost_thread IMPORTED_LOCATION)
+    set_property(TARGET AuthServer PROPERTY LINK_FLAGS "${CURRENT_LINK_FLAGS} -Wl,--no-as-needed ${BOOST_SYSTEM_LOC} ${BOOST_THREAD_LOC} -Wl,--as-needed")
   else()
     message(FATAL_ERROR "Boost libraries not found! Install with: sudo apt-get install libboost-system-dev libboost-thread-dev")
   endif()
