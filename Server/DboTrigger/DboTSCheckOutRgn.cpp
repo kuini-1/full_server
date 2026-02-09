@@ -1,5 +1,5 @@
 #include "precomp_trigger.h"
-#include "DboTSCheckOutRGN.h"
+#include "DboTSCheckOutRgn.h"
 
 
 NTL_TS_IMPLEMENT_RTTI( CDboTSCheckOutRGN, CNtlTSCond )
