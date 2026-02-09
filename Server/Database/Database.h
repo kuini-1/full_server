@@ -7,8 +7,8 @@
 #include <queue>
 #include <list>
 
-#include <boost\thread.hpp>
-#include <boost\thread\condition.hpp>
+#include <boost/thread.hpp>
+#include <boost/thread/condition.hpp>
 
 
 
