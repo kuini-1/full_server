@@ -178,6 +178,10 @@ bool CModelToolObjDataTable::LoadPropertyList(const char *lpszPath, const char *
 
 bool CModelToolObjDataTable::LoadProperty(const char * lpszFullPathFileName)
 {
+#if !defined(_WIN32)
+	(void)lpszFullPathFileName;
+	return false;
+#else
 	CNtlXMLDoc doc;
 	if(doc.Create() == false)
 	{
@@ -325,5 +329,6 @@ bool CModelToolObjDataTable::LoadProperty(const char * lpszFullPathFileName)
 	}
 
 	return true;
+#endif // _WIN32
 }
 

@@ -730,7 +730,7 @@ TBLIDX CMobTable::FindTblidxByGroup(DWORD dwMobGroup)
 	MOB_TABLEIT iter;
 	iter = m_mapMobTableList.find(dwMobGroup);
 	if (MobEnd() == iter)
-		return NULL;
+		return INVALID_TBLIDX;
 	
 	return (TBLIDX)(iter->second); 
 }

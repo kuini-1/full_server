@@ -212,7 +212,7 @@ bool CItemUpgradeTable::SaveToBinary(CNtlSerializer& serializer)
 WORD CItemUpgradeTable::GetItemUpgradeValue(BYTE byGrade, sITEM_UPGRADE_TBLDAT* tbldat)
 {
 	if(byGrade == 0)
-		return NULL;
+		return 0;
 
 	if( tbldat == NULL )
 	{

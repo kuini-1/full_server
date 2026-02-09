@@ -208,9 +208,9 @@ public:
 
 	static void					SetErrorCallbackFunction(Dbo_TableErrorCallback pfnErrorCallback, void* pvErrorCallbackArg = NULL);
 
-	static void					CallErrorCallbackFunction(char* pszFormatString, ...);
+	static void					CallErrorCallbackFunction(const char* pszFormatString, ...);
 
-	static void					CallErrorCallbackFunction(WCHAR* pwszFormatString, ...);
+	static void					CallErrorCallbackFunction(const WCHAR* pwszFormatString, ...);
 
 	WCHAR*						GetWszXmlFileName() { return m_wszXmlFileName; }
 protected:

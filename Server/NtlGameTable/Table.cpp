@@ -745,7 +745,7 @@ void CTable::SetErrorCallbackFunction(Dbo_TableErrorCallback pfnErrorCallback, v
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-void CTable::CallErrorCallbackFunction(char* pszFormatString, ...)
+void CTable::CallErrorCallbackFunction(const char* pszFormatString, ...)
 {
 	if (NULL != m_pfnErrorCallback)
 	{
@@ -765,7 +765,7 @@ void CTable::CallErrorCallbackFunction(char* pszFormatString, ...)
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
-void CTable::CallErrorCallbackFunction(WCHAR* pwszFormatString, ...)
+void CTable::CallErrorCallbackFunction(const WCHAR* pwszFormatString, ...)
 {
 #if defined(_WIN32)
 	if (NULL != m_pfnErrorCallback)

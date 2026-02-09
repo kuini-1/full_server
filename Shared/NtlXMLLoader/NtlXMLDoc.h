@@ -37,27 +37,27 @@ protected:
 	void Init();    
 
 public:
-	bool Load(WCHAR* pwszFileName, LONG* lLineNumber, BSTR* bstrErrorReasonString);
-	bool Load(WCHAR* pwszFileName);
-	bool Load(char* pszFileName);
+	bool Load(const WCHAR* pwszFileName, LONG* lLineNumber, BSTR* bstrErrorReasonString);
+	bool Load(const WCHAR* pwszFileName);
+	bool Load(const char* pszFileName);
 
-	bool LoadXML(char* szXMLBuffer);					///< ???????? XML ?????? ???????. (by agebreak)
-	bool LoadXML(WCHAR* wszXMLBuffer);
+	bool LoadXML(const char* szXMLBuffer);					///< ???????? XML ?????? ???????. (by agebreak)
+	bool LoadXML(const WCHAR* wszXMLBuffer);
 
-	IXMLDOMNode* SelectSingleNode(WCHAR* pwszXPath);
-	IXMLDOMNode* SelectSingleNode(char* pszXPath);
+	IXMLDOMNode* SelectSingleNode(const WCHAR* pwszXPath);
+	IXMLDOMNode* SelectSingleNode(const char* pszXPath);
 
-	IXMLDOMNodeList* SelectNodeList(WCHAR* pwszXPath);
-	IXMLDOMNodeList* SelectNodeList(char* pszXPath);
+	IXMLDOMNodeList* SelectNodeList(const WCHAR* pwszXPath);
+	IXMLDOMNodeList* SelectNodeList(const char* pszXPath);
 
-	bool GetTextWithAttributeName(IXMLDOMNode* pNode, WCHAR* pwszAttributeName, WCHAR* pwszResultText, int nBufferSizeInWChars);
-	bool GetTextWithAttributeName(IXMLDOMNode* pNode, char* pszAttributeName, char* pszResultText, int nBufferSizeInBytes);
+	bool GetTextWithAttributeName(IXMLDOMNode* pNode, const WCHAR* pwszAttributeName, WCHAR* pwszResultText, int nBufferSizeInWChars);
+	bool GetTextWithAttributeName(IXMLDOMNode* pNode, const char* pszAttributeName, char* pszResultText, int nBufferSizeInBytes);
 
-	bool GetDataWithXPath(WCHAR* pwszXPath, WCHAR* pwszResultData, int nBufferSizeInWChars);
-	bool GetDataWithXPath(char* pszXPath, char* pszResultData, int nBufferSizeInBytes);
+	bool GetDataWithXPath(const WCHAR* pwszXPath, WCHAR* pwszResultData, int nBufferSizeInWChars);
+	bool GetDataWithXPath(const char* pszXPath, char* pszResultData, int nBufferSizeInBytes);
 
 	IXMLDOMDocument* GetDocument(void);
-    bool SetIndent(WCHAR* szIndentFileName);           ///< XML?????? ??????? ???? ?????.
+    bool SetIndent(const WCHAR* szIndentFileName);           ///< XML?????? ??????? ???? ?????.
     
 protected:
 	static DWORD m_dwNumberOfCreatedInstances;

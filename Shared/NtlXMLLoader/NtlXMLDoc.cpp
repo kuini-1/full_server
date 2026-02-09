@@ -34,67 +34,67 @@ void CNtlXMLDoc::Init()
 	m_bIsFileLoaded = false;
 }
 
-bool CNtlXMLDoc::Load(WCHAR*, LONG*, BSTR*)
+bool CNtlXMLDoc::Load(const WCHAR*, LONG*, BSTR*)
 {
 	return false;
 }
 
-bool CNtlXMLDoc::Load(WCHAR*)
+bool CNtlXMLDoc::Load(const WCHAR*)
 {
 	return false;
 }
 
-bool CNtlXMLDoc::Load(char*)
+bool CNtlXMLDoc::Load(const char*)
 {
 	return false;
 }
 
-bool CNtlXMLDoc::LoadXML(char*)
+bool CNtlXMLDoc::LoadXML(const char*)
 {
 	return false;
 }
 
-bool CNtlXMLDoc::LoadXML(WCHAR*)
+bool CNtlXMLDoc::LoadXML(const WCHAR*)
 {
 	return false;
 }
 
-IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(WCHAR*)
+IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(const WCHAR*)
 {
 	return NULL;
 }
 
-IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(char*)
+IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(const char*)
 {
 	return NULL;
 }
 
-IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(WCHAR*)
+IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(const WCHAR*)
 {
 	return NULL;
 }
 
-IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(char*)
+IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(const char*)
 {
 	return NULL;
 }
 
-bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode*, WCHAR*, WCHAR*, int)
+bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode*, const WCHAR*, WCHAR*, int)
 {
 	return false;
 }
 
-bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode*, char*, char*, int)
+bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode*, const char*, char*, int)
 {
 	return false;
 }
 
-bool CNtlXMLDoc::GetDataWithXPath(WCHAR*, WCHAR*, int)
+bool CNtlXMLDoc::GetDataWithXPath(const WCHAR*, WCHAR*, int)
 {
 	return false;
 }
 
-bool CNtlXMLDoc::GetDataWithXPath(char*, char*, int)
+bool CNtlXMLDoc::GetDataWithXPath(const char*, char*, int)
 {
 	return false;
 }
@@ -104,7 +104,7 @@ IXMLDOMDocument* CNtlXMLDoc::GetDocument(void)
 	return NULL;
 }
 
-bool CNtlXMLDoc::SetIndent(WCHAR*)
+bool CNtlXMLDoc::SetIndent(const WCHAR*)
 {
 	return false;
 }
@@ -208,7 +208,7 @@ void CNtlXMLDoc::Init()
 	m_pXMLDocument = NULL;
 	m_bIsFileLoaded = false;
 }
-bool CNtlXMLDoc::Load(WCHAR* pwszFileName, LONG* lLineNumber, BSTR* bstrErrorReasonString )
+bool CNtlXMLDoc::Load(const WCHAR* pwszFileName, LONG* lLineNumber, BSTR* bstrErrorReasonString )
 {
 	if (false != m_bIsFileLoaded)
 		return false;
@@ -247,7 +247,7 @@ bool CNtlXMLDoc::Load(WCHAR* pwszFileName, LONG* lLineNumber, BSTR* bstrErrorRea
 	return true;
 }
 
-bool CNtlXMLDoc::Load(WCHAR* pwszFileName )
+bool CNtlXMLDoc::Load(const WCHAR* pwszFileName )
 {
 	if (false != m_bIsFileLoaded)
 		return false;
@@ -286,7 +286,7 @@ bool CNtlXMLDoc::Load(WCHAR* pwszFileName )
 	return true;
 }
 
-bool CNtlXMLDoc::Load(char* pszFileName)
+bool CNtlXMLDoc::Load(const char* pszFileName)
 {
 	if (false != m_bIsFileLoaded)
 		return false;
@@ -303,7 +303,7 @@ bool CNtlXMLDoc::Load(char* pszFileName)
 	return Load(wszUnicodeFileName);
 }
 
-bool CNtlXMLDoc::LoadXML( char* szXMLBuffer ) 
+bool CNtlXMLDoc::LoadXML( const char* szXMLBuffer ) 
 {
 	USES_CONVERSION;
 
@@ -313,13 +313,17 @@ bool CNtlXMLDoc::LoadXML( char* szXMLBuffer )
 	return LoadXML(A2W(szXMLBuffer));
 }
 
-bool CNtlXMLDoc::LoadXML( WCHAR* wszXMLBuffer ) 
+bool CNtlXMLDoc::LoadXML( const WCHAR* wszXMLBuffer ) 
 {
 	if (false != m_bIsFileLoaded)
 		return false;
 
-	VARIANT_BOOL status;	
-	HRESULT hResult = m_pXMLDocument->loadXML(wszXMLBuffer, &status);
+	VARIANT_BOOL status;
+	BSTR bstrXMLBuffer = ::SysAllocString(wszXMLBuffer);
+	if (NULL == bstrXMLBuffer)
+		return false;
+	HRESULT hResult = m_pXMLDocument->loadXML(bstrXMLBuffer, &status);
+	::SysFreeString(bstrXMLBuffer);
 
 	if (FAILED(hResult))
 	{
@@ -346,7 +350,7 @@ bool CNtlXMLDoc::LoadXML( WCHAR* wszXMLBuffer )
 }
 
 
-IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(WCHAR* pwszXPath)
+IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(const WCHAR* pwszXPath)
 {
 	if (false == m_bIsFileLoaded)
 		return NULL;
@@ -367,7 +371,7 @@ IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(WCHAR* pwszXPath)
 	return pXMLNode;
 }
 
-IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(char* pszXPath)
+IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(const char* pszXPath)
 {
 	if (false == m_bIsFileLoaded)
 		return NULL;
@@ -384,7 +388,7 @@ IXMLDOMNode* CNtlXMLDoc::SelectSingleNode(char* pszXPath)
 	return SelectSingleNode(wszUnicodeXPath);
 }
 
-IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(WCHAR* pwszXPath)
+IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(const WCHAR* pwszXPath)
 {
 	if (false == m_bIsFileLoaded)
 		return NULL;
@@ -405,7 +409,7 @@ IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(WCHAR* pwszXPath)
 	return pXMLNodeList;
 }
 
-IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(char* pszXPath)
+IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(const char* pszXPath)
 {
 	if (false == m_bIsFileLoaded)
 		return NULL;
@@ -422,7 +426,7 @@ IXMLDOMNodeList* CNtlXMLDoc::SelectNodeList(char* pszXPath)
 	return SelectNodeList(wszUnicodeXPath);
 }
 
-bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode* pNode, WCHAR* pwszAttributeName, WCHAR* pwszResultText, int nBufferSizeInWChars)
+bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode* pNode, const WCHAR* pwszAttributeName, WCHAR* pwszResultText, int nBufferSizeInWChars)
 {
 	if (NULL == pNode || NULL == pwszAttributeName || NULL == pwszResultText)
 	{
@@ -444,7 +448,14 @@ bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode* pNode, WCHAR* pwszAttribu
 	}
 
 	IXMLDOMNode* pVirtualNode = NULL;
-	pMap->getNamedItem(pwszAttributeName, &pVirtualNode);
+	BSTR bstrAttributeName = ::SysAllocString(pwszAttributeName);
+	if (NULL == bstrAttributeName)
+	{
+		pMap->Release();
+		return false;
+	}
+	pMap->getNamedItem(bstrAttributeName, &pVirtualNode);
+	::SysFreeString(bstrAttributeName);
 	if (NULL == pVirtualNode)
 	{
 		//		NtlAssertFail("Couldn't find the given attribute name.");
@@ -466,7 +477,7 @@ bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode* pNode, WCHAR* pwszAttribu
 	return true;
 }
 
-bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode* pNode, char* pszAttributeName, char* pszResultText, int nBufferSizeInBytes)
+bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode* pNode, const char* pszAttributeName, char* pszResultText, int nBufferSizeInBytes)
 {
 	if (NULL == pNode || NULL == pszAttributeName || NULL == pszResultText)
 	{
@@ -532,13 +543,17 @@ bool CNtlXMLDoc::GetTextWithAttributeName(IXMLDOMNode* pNode, char* pszAttribute
 	return true;
 }
 
-bool CNtlXMLDoc::GetDataWithXPath(WCHAR* pwszXPath, WCHAR* pwszResultData, int nBufferSizeInWChars)
+bool CNtlXMLDoc::GetDataWithXPath(const WCHAR* pwszXPath, WCHAR* pwszResultData, int nBufferSizeInWChars)
 {
 	if (NULL == pwszXPath || NULL == pwszResultData || 0 >= nBufferSizeInWChars)
 		return false;
 
-	IXMLDOMNode* pNode = NULL;    
-	m_pXMLDocument->selectSingleNode(pwszXPath, &pNode);
+	IXMLDOMNode* pNode = NULL;
+	BSTR bstrXPath = ::SysAllocString(pwszXPath);
+	if (NULL == bstrXPath)
+		return false;
+	m_pXMLDocument->selectSingleNode(bstrXPath, &pNode);
+	::SysFreeString(bstrXPath);
 
 	if(!pNode)
 		return false;
@@ -559,7 +574,7 @@ bool CNtlXMLDoc::GetDataWithXPath(WCHAR* pwszXPath, WCHAR* pwszResultData, int n
 	return true;
 }
 
-bool CNtlXMLDoc::GetDataWithXPath(char* pszXPath, char* pszResultData, int nBufferSizeInBytes)
+bool CNtlXMLDoc::GetDataWithXPath(const char* pszXPath, char* pszResultData, int nBufferSizeInBytes)
 {
 	if (NULL == pszXPath || NULL == pszResultData || 0 >= nBufferSizeInBytes)
 		return false;
@@ -594,7 +609,7 @@ bool CNtlXMLDoc::GetDataWithXPath(char* pszXPath, char* pszResultData, int nBuff
 /**
 
 */
-bool CNtlXMLDoc::SetIndent(WCHAR* szIndentFileName)
+bool CNtlXMLDoc::SetIndent(const WCHAR* szIndentFileName)
 {
 	IXMLDOMDocument* pXSL = NULL;
 	CoCreateInstance(__uuidof(DOMDocument30), NULL, CLSCTX_INPROC_SERVER, __uuidof(IXMLDOMDocument), (void**)&pXSL);
