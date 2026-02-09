@@ -82,6 +82,45 @@ if(WIN32)
     INTERFACE_INCLUDE_DIRECTORIES "${DBO_BOOST_ROOT}"
   )
   add_library(dbo::boost_system ALIAS dbo_boost_system)
+else()
+  # Linux: find Boost libraries
+  set(DBO_BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/extern/boost_1_64_0" CACHE PATH "Boost root containing boost/ and libboost_*.so")
+  
+  find_library(BOOST_THREAD_LIB
+    NAMES boost_thread boost_thread-mt
+    PATHS "${DBO_BOOST_ROOT}/lib" "${DBO_BOOST_ROOT}/stage/lib"
+    NO_DEFAULT_PATH
+  )
+  if(NOT BOOST_THREAD_LIB)
+    find_library(BOOST_THREAD_LIB NAMES boost_thread boost_thread-mt)
+  endif()
+  
+  find_library(BOOST_SYSTEM_LIB
+    NAMES boost_system boost_system-mt
+    PATHS "${DBO_BOOST_ROOT}/lib" "${DBO_BOOST_ROOT}/stage/lib"
+    NO_DEFAULT_PATH
+  )
+  if(NOT BOOST_SYSTEM_LIB)
+    find_library(BOOST_SYSTEM_LIB NAMES boost_system boost_system-mt)
+  endif()
+  
+  if(BOOST_THREAD_LIB AND BOOST_SYSTEM_LIB)
+    add_library(dbo_boost_thread UNKNOWN IMPORTED)
+    set_target_properties(dbo_boost_thread PROPERTIES
+      IMPORTED_LOCATION "${BOOST_THREAD_LIB}"
+      INTERFACE_INCLUDE_DIRECTORIES "${DBO_BOOST_ROOT}"
+    )
+    add_library(dbo::boost_thread ALIAS dbo_boost_thread)
+
+    add_library(dbo_boost_system UNKNOWN IMPORTED)
+    set_target_properties(dbo_boost_system PROPERTIES
+      IMPORTED_LOCATION "${BOOST_SYSTEM_LIB}"
+      INTERFACE_INCLUDE_DIRECTORIES "${DBO_BOOST_ROOT}"
+    )
+    add_library(dbo::boost_system ALIAS dbo_boost_system)
+  else()
+    message(WARNING "Boost libraries not found. Database may fail to link.")
+  endif()
 endif()
 
 #
@@ -211,6 +250,9 @@ if(WIN32)
   target_link_libraries(Database PUBLIC dbo_includes NtlThread dbo::boost_thread dbo::boost_system)
 else()
   target_link_libraries(Database PUBLIC dbo_includes NtlThread)
+  if(TARGET dbo::boost_thread AND TARGET dbo::boost_system)
+    target_link_libraries(Database PUBLIC dbo::boost_thread dbo::boost_system)
+  endif()
 endif()
 dbo_configure_mysqlclient()
 target_link_libraries(Database PUBLIC dbo::mysqlclient)
