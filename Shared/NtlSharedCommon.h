@@ -494,6 +494,12 @@ typedef char TCHAR;
 #ifndef LPCTSTR
 #define LPCTSTR const char*
 #endif
+#ifndef LPCSTR
+#define LPCSTR const char*
+#endif
+#ifndef LPSTR
+#define LPSTR char*
+#endif
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(x) ((void)(x))
 #endif

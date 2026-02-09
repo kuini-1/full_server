@@ -3,7 +3,7 @@
 //
 //	Begin		:	2007-06-01
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Shin Woo Teck   ( woody1019@ntl-inc.com )
 //
@@ -16,6 +16,7 @@
 
 #include "NtlVector.h"
 #include "NtlWorld.h"
+#include "../Shared/NtlSharedCommon.h"
 #include <map>
 #include <vector>
 
@@ -43,7 +44,7 @@ struct sPATH_LIST
 		_vecPathPoint.clear();
 	}
 
-	sPATH_POINT* sPATH_LIST::GetAt(BYTE _PathPointIdx)
+	sPATH_POINT* GetAt(BYTE _PathPointIdx)
 	{
 		if(_PathPointIdx >= _NumPathPoint)
 		{
