@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "NTLReport.h"
+#include "NtlReport.h"
 
 
 const sGM_REPORT_CONTENT g_aGM_REPORT_TYPE[GM_REPORT_TYPE_COUNT] = 
