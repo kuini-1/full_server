@@ -32,15 +32,37 @@ int		CAuthServer::OnInitApp()
 	UNREFERENCED_PARAMETER(m_pEventMgr);
 
 	NTL_PRINT(PRINT_APP,"INIT NEIGHBOR SERVER INFO MANAGER");
+	printf("[DEBUG] Creating CSubNeighborServerInfoManager...\n");
+	fflush(stdout);
 	m_pNeighborServerInfoManager = new CSubNeighborServerInfoManager;
+	
+	printf("[DEBUG] NeighborServerInfoManager created, checking singleton...\n");
+	fflush(stdout);
+	if (g_pServerInfoManager == NULL)
+	{
+		printf("[DEBUG] ERROR: g_pServerInfoManager is NULL!\n");
+		fflush(stdout);
+		return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
+	}
+	
+	printf("[DEBUG] Calling g_pServerInfoManager->Create...\n");
+	fflush(stdout);
 	g_pServerInfoManager->Create(NTL_SERVER_TYPE_AUTH);
+	printf("[DEBUG] g_pServerInfoManager->Create completed\n");
+	fflush(stdout);
 
+	printf("[DEBUG] Creating CAuthSessionFactory...\n");
+	fflush(stdout);
 	m_pSessionFactory =  new CAuthSessionFactory;
 	if( NULL == m_pSessionFactory )
 	{
+		printf("[DEBUG] ERROR: Failed to create CAuthSessionFactory!\n");
+		fflush(stdout);
 		return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
 	}
 
+	printf("[DEBUG] OnInitApp completed successfully\n");
+	fflush(stdout);
 	return NTL_SUCCESS;
 }
 
