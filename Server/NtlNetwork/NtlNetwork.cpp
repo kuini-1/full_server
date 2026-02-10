@@ -101,6 +101,7 @@ CNtlNetwork::CNtlNetwork()
 //-----------------------------------------------------------------------------------
 CNtlNetwork::~CNtlNetwork()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::~CNtlNetwork - Destructor called");
 	Destroy();
 }
 
@@ -200,7 +201,10 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 //-----------------------------------------------------------------------------------
 void CNtlNetwork::Destroy()
 {
-	NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::Destroy - Called, cleaning up threads");
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::Destroy - Called, cleaning up threads (m_iocp has %d threads)", m_iocp.m_nCreatedThreads);
+	
+	// Close IOCP threads first (this will close worker threads)
+	m_iocp.Destroy();
 	
 	SAFE_DELETE(m_pNetworkMonitor);
 

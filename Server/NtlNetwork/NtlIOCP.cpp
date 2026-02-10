@@ -36,7 +36,12 @@ CNtlIocp::CNtlIocp()
 
 CNtlIocp::~CNtlIocp()
 {
-	Destroy();
+	// Only destroy if not already destroyed (check if threads exist)
+	if (m_nCreatedThreads > 0 || m_hIOCP != INVALID_HANDLE_VALUE)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::~CNtlIocp - Destructor called (m_nCreatedThreads=%d, m_hIOCP=%p)", m_nCreatedThreads, m_hIOCP);
+		Destroy();
+	}
 }
 
 // CIocpWorkerThread class definition for Linux
@@ -167,7 +172,7 @@ int CNtlIocp::Create(CNtlNetwork * pNetwork, int nCreateThreads, int nConcurrent
 
 void CNtlIocp::Destroy()
 {
-	NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::Destroy - Called, closing %d worker threads", m_nCreatedThreads);
+	NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::Destroy - Called, closing %d worker threads (m_hIOCP=%p)", m_nCreatedThreads, m_hIOCP);
 	if (m_hIOCP != INVALID_HANDLE_VALUE)
 	{
 		CloseThreads();
