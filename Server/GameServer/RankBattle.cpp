@@ -1255,7 +1255,8 @@ void CRankbattleBattle::TeleportAllOut()
 					}
 					else
 					{
-						pPlayer->StartTeleport(CNtlVector(pPlayer->GetBindLoc()), pPlayer->GetCurDir(), pPlayer->GetBindWorldID(), TELEPORT_TYPE_RANKBATTLE);
+						CNtlVector vecBindLoc(pPlayer->GetBindLoc());
+						pPlayer->StartTeleport(vecBindLoc, pPlayer->GetCurDir(), pPlayer->GetBindWorldID(), TELEPORT_TYPE_RANKBATTLE);
 					}
 				}
 				else // else cancel teleport
