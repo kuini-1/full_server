@@ -3,7 +3,7 @@
 
 
 /** 
-	Container °ü·Ã °´Ã¼¸¦ Runtime ½Ã¿¡ »ý¼ºÇÏ±â À§ÇÑ container type class µé
+	Container ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ Runtime ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ container type class ï¿½ï¿½
 */
 
 
@@ -100,7 +100,7 @@ CDboTSContFactoryType_CDboTSContReward::CDboTSContFactoryType_CDboTSContReward( 
 
 	int i = 0;
 
-	// ±âº» º¸»ó
+	// ï¿½âº» ï¿½ï¿½ï¿½ï¿½
 	for ( i = 0; i < 4; ++i )
 	{
 		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "dtype%d", i );
@@ -113,7 +113,7 @@ CDboTSContFactoryType_CDboTSContReward::CDboTSContFactoryType_CDboTSContReward( 
 		m_defPropertyList[g_NtlTSString].eType	= CNtlTSScrFactoryType::sPROPERTY_TYPE::eDATA_TYPE_NUMBER;
 	}
 
-	// ¼±ÅÃ º¸»ó
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	for ( i = 0; i < 4; ++i )
 	{
 		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "stype%d", i );

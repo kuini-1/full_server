@@ -69,7 +69,7 @@ void CDboTSQCtrl::GetSToCEvtDBData( sSTOC_EVT_DB_DATA& sSvrEvtData )
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_MOB_KILL; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_DB_TO_LOCAL( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sMobKillCnt[i].nCurMobCnt );
 				}
 			}
@@ -78,7 +78,7 @@ void CDboTSQCtrl::GetSToCEvtDBData( sSTOC_EVT_DB_DATA& sSvrEvtData )
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_MOB_KILL_ITEM; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_DB_TO_LOCAL( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sMobKillItemCnt[i].nCurMobLICnt );
 				}
 			}
@@ -87,7 +87,7 @@ void CDboTSQCtrl::GetSToCEvtDBData( sSTOC_EVT_DB_DATA& sSvrEvtData )
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_DELIVERY_ITEM; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_DB_TO_LOCAL( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sDeliveryItemCnt[i].nCurItemCnt );
 				}
 			}
@@ -96,7 +96,7 @@ void CDboTSQCtrl::GetSToCEvtDBData( sSTOC_EVT_DB_DATA& sSvrEvtData )
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_OBJECT_ITEM; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_DB_TO_LOCAL( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sObjectItemCnt[i].nCurItemCnt );
 				}
 			}
@@ -105,7 +105,7 @@ void CDboTSQCtrl::GetSToCEvtDBData( sSTOC_EVT_DB_DATA& sSvrEvtData )
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_PUBLIC_MOB_ITEM; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_DB_TO_LOCAL( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sPublicMobItemCnt[i].nCurItemCnt );
 				}
 			}
@@ -114,7 +114,7 @@ void CDboTSQCtrl::GetSToCEvtDBData( sSTOC_EVT_DB_DATA& sSvrEvtData )
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_CUSTOM_EVT_CNT; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_DB_TO_LOCAL( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sCustomEvtCnt[i].nCurCnt );
 				}
 			}
@@ -123,7 +123,7 @@ void CDboTSQCtrl::GetSToCEvtDBData( sSTOC_EVT_DB_DATA& sSvrEvtData )
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_VISIT_EVT; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					sSvrEvtData.m_aUserData[i] = (m_sSToCEvtData.uSToCEvtData.sVisitEvt[i].bCompleted ? 1 : 0);
 				}
 			}
@@ -209,7 +209,7 @@ void CDboTSQCtrl::SetSToCEvtDBData( const sSTOC_EVT_DB_DATA& sSvrEvtData, bool b
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_MOB_KILL; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_LOCAL_TO_DB( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sMobKillCnt[i].nCurMobCnt );
 				}
 			}
@@ -218,7 +218,7 @@ void CDboTSQCtrl::SetSToCEvtDBData( const sSTOC_EVT_DB_DATA& sSvrEvtData, bool b
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_MOB_KILL_ITEM; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_LOCAL_TO_DB( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sMobKillItemCnt[i].nCurMobLICnt );
 				}
 			}
@@ -227,7 +227,7 @@ void CDboTSQCtrl::SetSToCEvtDBData( const sSTOC_EVT_DB_DATA& sSvrEvtData, bool b
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_DELIVERY_ITEM; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_LOCAL_TO_DB( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sDeliveryItemCnt[i].nCurItemCnt );
 				}
 			}
@@ -236,7 +236,7 @@ void CDboTSQCtrl::SetSToCEvtDBData( const sSTOC_EVT_DB_DATA& sSvrEvtData, bool b
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_OBJECT_ITEM; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_LOCAL_TO_DB( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sObjectItemCnt[i].nCurItemCnt );
 				}
 			}
@@ -245,7 +245,7 @@ void CDboTSQCtrl::SetSToCEvtDBData( const sSTOC_EVT_DB_DATA& sSvrEvtData, bool b
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_PUBLIC_MOB_ITEM; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_LOCAL_TO_DB( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sPublicMobItemCnt[i].nCurItemCnt );
 				}
 			}
@@ -254,7 +254,7 @@ void CDboTSQCtrl::SetSToCEvtDBData( const sSTOC_EVT_DB_DATA& sSvrEvtData, bool b
 			{
 				for ( int i = 0; i < uSTOC_EVT_DATA::MAX_CUSTOM_EVT_CNT; ++i )
 				{
-					// ÀúÀåÇÏ°íÀÚ ÇÏ´Â µ¥ÀÌÅÍ°¡ Int ÇüÀÎ °æ¿ì ( 4¹ÙÀÌÆ® ¸ø ³Ñ¾î°¨ )
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ Int ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ( 4ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ñ¾î°¨ )
 					SAVE_FROM_LOCAL_TO_DB( sSvrEvtData.m_aUserData[i], m_sSToCEvtData.uSToCEvtData.sCustomEvtCnt[i].nCurCnt );
 				}
 			}
@@ -321,7 +321,7 @@ void CDboTSQCtrl::LoadQuestProgressInfo_V0( const sPROGRESS_QUEST_INFO::uDATA& u
 	if ( uData.sQInfoV0.wQState & eTS_SVR_STATE_USER_OUT_FAILED_WPS )
 	{
 		SetUserOutFailedWPS( true, false );
-		SetFailed( true, false );	// ·Îµù ½ÃÁ¡¿¡ World play script¿¡¼­ User out failed ÇÃ·¡±×¸¦ ÄÒ °æ¿ì´Â ½ÇÆÐÇÑ Äù½ºÆ® ÀÓ.
+		SetFailed( true, false );	// ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ World play scriptï¿½ï¿½ï¿½ï¿½ User out failed ï¿½Ã·ï¿½ï¿½×¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½.
 	}
 
 	// Quest progress Loading
@@ -389,11 +389,11 @@ void CDboTSQCtrl::SaveQuestProgressInfo_V0( sPROGRESS_QUEST_INFO::uDATA& uData )
 		uData.sQInfoV0.wQState |= eTS_SVR_STATE_USER_OUT_FAILED_WPS;
 	}
 
-	// Äù½ºÆ® ÁøÇà »óÅÂ ÀúÀå
+	// ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	uData.sQInfoV0.sMainTSP.tcCurId = m_pSavedCurTSP ? m_pSavedCurTSP->GetID() : NTL_TS_TC_ID_INVALID;
 	uData.sQInfoV0.sMainTSP.tcPreId = m_pSavedPreTSP ? m_pSavedPreTSP->GetID() : NTL_TS_TC_ID_INVALID;
 
-	// ¿¹¿Ü Å¸ÀÌ¸Ó ÀúÀå
+	// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	memset( &uData.sQInfoV0.sETSlot, 0xff, sizeof(sEXCEPT_TIMER_SLOT) );
 	mapdef_EXCEPT_TIMER_SLOT::iterator itETimer = m_defExceptTimerSlot.begin();
 	for ( i = 0; itETimer != m_defExceptTimerSlot.end(); ++itETimer, ++i )
@@ -405,16 +405,16 @@ void CDboTSQCtrl::SaveQuestProgressInfo_V0( sPROGRESS_QUEST_INFO::uDATA& uData )
 		uData.sQInfoV0.sETSlot.asExceptTimer[i].uiRemainTime = sTimer.uiRemainTime;
 	}
 
-	// ÀúÀå ½½·Ô ¸Þ¸ð¸® ÀúÀå
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	memcpy( &uData.sQInfoV0.sSSM, &m_sSSM, sizeof( sSTORAGE_SLOT_MEMORY ) );
 
-	// ¼­¹ö ÀÌº¥Æ® ÀúÀå
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 	GetSToCEvtDBData( uData.sQInfoV0.sSToCEvtData );
 
-	// ½ÇÇàÇÒ Å¬¶óÀÌ¾ðÆ® ±×·ì
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½×·ï¿½
 	uData.sQInfoV0.tgExcCGroup = m_tgExcCGroup;
 
-	// Äù½ºÆ® Á¤º¸
+	// ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 	uData.sQInfoV0.tcQuestInfo = m_tcQuestInfo;
 	uData.sQInfoV0.taQuestInfo = m_taQuestInfo;
 }

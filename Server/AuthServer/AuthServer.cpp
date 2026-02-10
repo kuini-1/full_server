@@ -259,7 +259,7 @@ int main(int argc, _TCHAR* argv[])
 #endif
 
 	// CHECK INI FILE AND START PROGRAM
-	int rc = app.Create(argc, argv, ".\\config\\AuthServer.ini");
+	int rc = app.Create(argc, argv, (argc > 1) ? argv[1] : "./config/AuthServer.ini");
 	if (NTL_SUCCESS != rc)
 	{
 		NTL_PRINT(PRINT_APP, "Server Application Create Fail %d(%s)", rc, NtlGetErrorMessage(rc));
@@ -269,7 +269,7 @@ int main(int argc, _TCHAR* argv[])
 
 	// LOG FILE
 	char m_LogFile[256];
-	sprintf(m_LogFile, ".\\logs\\authserver\\log_%02u-%02u-%02u.txt", ti.wYear, ti.wMonth, ti.wDay);
+	sprintf(m_LogFile, "./logs/authserver/log_%02u-%02u-%02u.txt", ti.wYear, ti.wMonth, ti.wDay);
 
 	rc = traceFileStream.Create(m_LogFile);
 	if (NTL_SUCCESS != rc)

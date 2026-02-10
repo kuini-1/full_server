@@ -388,29 +388,29 @@ eCOL_RESULT_TYPE CDboTSColRgn::ColCheck_Radius( float fBeginX, float fBeginZ, fl
 	bool bBeginIn = IsInRadius( fBeginX, fBeginZ, m_uColRngData.sRadius );
 	bool bEndIn = IsInRadius( fEndX, fEndZ, m_uColRngData.sRadius );
 
-	// ½ÃÀÛÁ¡[In], Á¾·áÁ¡[In]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[In], ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[In]
 	if ( bBeginIn && bEndIn )
 	{
-		// ½ÃÀÛÁ¡ ¹× Á¾·áÁ¡ÀÌ ¸ðµÎ ¾È¿¡ Á¸ÀçÇÏ´Â °æ¿ì´Â
-		// Ãæµ¹ÇÏÁö ¾ÊÀº °ÍÀ¸·Î °£ÁÖÇÑ´Ù
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ï¿½æµ¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 		return eCOL_RESULT_TYPE_NOT_COLLISION;
 	}
-	// ½ÃÀÛÁ¡[Out], Á¾·áÁ¡[In]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[Out], ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[In]
 	else if ( !bBeginIn && bEndIn )
 	{
-		// ¹Û¿¡¼­ ¾ÈÀ¸·Î µé¾î¿Â°ÍÀ¸·Î °£ÁÖÇÑ´Ù
+		// ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 		return eCOL_RESULT_TYPE_ENTER;
 	}
-	// ½ÃÀÛÁ¡[In], Á¾·áÁ¡[Out]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[In], ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[Out]
 	else if ( bBeginIn && !bEndIn )
 	{
-		// ¾È¿¡¼­ ¹ÛÀ¸·Î ³ª°£°ÍÀ¸·Î °£ÁÖÇÑ´Ù
+		// ï¿½È¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 		return eCOL_RESULT_TYPE_LEAVE;
 	}
-	// ½ÃÀÛÁ¡[Out], Á¾·áÁ¡[Out]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[Out], ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[Out]
 	else if ( !bBeginIn && !bEndIn )
 	{
-		// Åë°ú ¿©ºÎ¸¦ °Ë»çÇÑ´Ù
+		// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½Ë»ï¿½ï¿½Ñ´ï¿½
 		float fDirX = fEndX - fBeginX;	float fDirZ = fEndZ - fBeginZ;
 		float fInvLength = 1.f / sqrtf( fDirX * fDirX + fDirZ * fDirZ );
 		fDirX *= fInvLength; fDirZ *= fInvLength;
@@ -439,29 +439,29 @@ eCOL_RESULT_TYPE CDboTSColRgn::ColCheck_Retangle( float fBeginX, float fBeginZ, 
 	bool bBeginIn = IsInRectangle( fBeginX, fBeginZ, m_uColRngData.sRectangle );
 	bool bEndIn = IsInRectangle( fEndX, fEndZ, m_uColRngData.sRectangle );
 
-	// ½ÃÀÛÁ¡[In], Á¾·áÁ¡[In]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[In], ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[In]
 	if ( bBeginIn && bEndIn )
 	{
-		// ½ÃÀÛÁ¡ ¹× Á¾·áÁ¡ÀÌ ¸ðµÎ ¾È¿¡ Á¸ÀçÇÏ´Â °æ¿ì´Â
-		// Ãæµ¹ÇÏÁö ¾ÊÀº °ÍÀ¸·Î °£ÁÖÇÑ´Ù
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ï¿½æµ¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 		return eCOL_RESULT_TYPE_NOT_COLLISION;
 	}
-	// ½ÃÀÛÁ¡[Out], Á¾·áÁ¡[In]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[Out], ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[In]
 	else if ( !bBeginIn && bEndIn )
 	{
-		// ¹Û¿¡¼­ ¾ÈÀ¸·Î µé¾î¿Â°ÍÀ¸·Î °£ÁÖÇÑ´Ù
+		// ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 		return eCOL_RESULT_TYPE_ENTER;
 	}
-	// ½ÃÀÛÁ¡[In], Á¾·áÁ¡[Out]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[In], ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[Out]
 	else if ( bBeginIn && !bEndIn )
 	{
-		// ¾È¿¡¼­ ¹ÛÀ¸·Î ³ª°£°ÍÀ¸·Î °£ÁÖÇÑ´Ù
+		// ï¿½È¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 		return eCOL_RESULT_TYPE_LEAVE;
 	}
-	// ½ÃÀÛÁ¡[Out], Á¾·áÁ¡[Out]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[Out], ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[Out]
 	else if ( !bBeginIn && !bEndIn )
 	{
-		// Åë°ú ¿©ºÎ¸¦ °Ë»çÇÑ´Ù
+		// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½Ë»ï¿½ï¿½Ñ´ï¿½
 
 		if ( IsIntersectLine( fBeginX, fBeginZ, fEndX, fEndZ, m_uColRngData.sRectangle.x[3], m_uColRngData.sRectangle.z[3], m_uColRngData.sRectangle.x[0], m_uColRngData.sRectangle.z[0] ) )
 		{
@@ -522,7 +522,7 @@ bool CDboTSColRgn::IsIntersectLine( float fAx, float fAz, float fBx, float fBz, 
 {
 	float fDistAB, fTheCos, fTheSin, fNewX, fABPos;
 
-	// Intersection ÇÒ LineÀÇ ±æÀÌ°¡ 0 ÀÎ °æ¿ì´Â Ãæµ¹ ÇÏÁö ¾ÊÀº °ÍÀ¸·Î °£ÁÖ
+	// Intersection ï¿½ï¿½ Lineï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ 0 ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if ( fAx == fBx && fAz == fBz || fCx == fDx && fCz == fDz )
 	{
 		return false;

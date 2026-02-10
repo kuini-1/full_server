@@ -136,14 +136,14 @@ void CDboTSActRegQInfo::ApplyScriptDataForScript( const CNtlTSScrProperty& clPro
 
 	if ( clProperty.IsExist( "stype" ) )
 	{
-		// ½ºÅ©¸³Æ®¿¡´Â eQUEST_SORT_TYPE Å¸ÀÔµéÀÌ Bit flag·Î ÅëÇÕµÇ¾î ÀúÀåµÇ¹Ç·Î
-		// ºÐ¸®ÇØ¼­ ÀÐ¾îµé¿©¾ß ÇÑ´Ù.
-		// ¶ÇÇÑ eQUEST_SORT_TYPE ÀÌ Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì´Â 0 ÀÌ´Ù
+		// ï¿½ï¿½Å©ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ eQUEST_SORT_TYPE Å¸ï¿½Ôµï¿½ï¿½ï¿½ Bit flagï¿½ï¿½ ï¿½ï¿½ï¿½ÕµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¹Ç·ï¿½
+		// ï¿½Ð¸ï¿½ï¿½Ø¼ï¿½ ï¿½Ð¾ï¿½é¿©ï¿½ï¿½ ï¿½Ñ´ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ eQUEST_SORT_TYPE ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½ï¿½ 0 ï¿½Ì´ï¿½
 		unsigned int uiSType = (unsigned int)clProperty.GetValueAsInt( "stype" );
 
 		eQUEST_SORT_TYPE eQuestSortType = eQUEST_SORT_TYPE_INVALID;
 
-		// ¾Æ·¡·Î °¥¼ö·Ï ¿ì¼± ¼øÀ§°¡ ³ô¾ÆÁø´Ù
+		// ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ì¼± ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if ( uiSType & (1<<eQUEST_SORT_TYPE_TASK) )
 		{
 			eQuestSortType = eQUEST_SORT_TYPE_TASK;
@@ -295,9 +295,9 @@ void CDboTSActRegQInfo::TakeScriptDataForScript( CNtlTSScrProperty& clProperty )
 	NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", GetGradeType() );
 	clProperty.m_defProperty["gtype"]		= g_NtlTSString;
 
-	// ½ºÅ©¸³Æ®¿¡´Â eQUEST_SORT_TYPE Å¸ÀÔµéÀÌ Bit flag·Î ÅëÇÕµÇ¾î ÀúÀåµÇ¹Ç·Î
-	// ÅëÇÕÇØ¼­ ÀúÀåÇØ¾ßÇÑ´Ù.
-	// ¶ÇÇÑ eQUEST_SORT_TYPE ÀÌ Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì´Â 0 ÀÌ´Ù
+	// ï¿½ï¿½Å©ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ eQUEST_SORT_TYPE Å¸ï¿½Ôµï¿½ï¿½ï¿½ Bit flagï¿½ï¿½ ï¿½ï¿½ï¿½ÕµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¹Ç·ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½Ñ´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ eQUEST_SORT_TYPE ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½ï¿½ 0 ï¿½Ì´ï¿½
 	if ( GetSortType() == eQUEST_SORT_TYPE_INVALID )
 	{
 		NTL_SNPRINTF( g_NtlTSString, sizeof(g_NtlTSString), "%d", 0 );
