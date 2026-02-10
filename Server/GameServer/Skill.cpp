@@ -575,7 +575,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 
 
 							//aggro
-							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 						}
 						break;
 
@@ -595,7 +595,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 							CalcSkillDamage(m_pOwnerRef, pTarget, m_pSkillDataRef, e, fSkillDmg + fBonusBaseDamage, res->aSkillResult[i].effectResult[e].DD_DOT_fDamage, res->aSkillResult[i].byAttackResult, res->aSkillResult[i].damageByReflectingCurse, &res->aSkillResult[i].effectResult[e].DD_DOT_lpEpRecovered, true);
 
 							//aggro
-							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 						}
 						break;
 
@@ -612,7 +612,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 									res->aSkillResult[i].effectResult[e].DD_DOT_fDamage += m_pSkillDataRef->afRpEffectValue[DBO_RP_BONUS_SLOT_RESULT_PLUS];
 
 								//aggro
-								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 							}
 							else
 							{
@@ -633,7 +633,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 									res->aSkillResult[i].effectResult[e].DD_DOT_fDamage += m_pSkillDataRef->afRpEffectValue[DBO_RP_BONUS_SLOT_RESULT_PLUS];
 
 								//aggro
-								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 							}
 							else
 							{
@@ -654,7 +654,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 									res->aSkillResult[i].effectResult[e].DD_DOT_fDamage += m_pSkillDataRef->afRpEffectValue[DBO_RP_BONUS_SLOT_RESULT_PLUS];
 
 								//aggro
-								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 							}
 							else
 							{
@@ -675,7 +675,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 									res->aSkillResult[i].effectResult[e].DD_DOT_fDamage += m_pSkillDataRef->afRpEffectValue[DBO_RP_BONUS_SLOT_RESULT_PLUS];
 
 								//aggro
-								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 							}
 							else
 							{
@@ -747,7 +747,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 								//printf("\n%f fDOTDMG %f \n", (float)m_pSkillDataRef->aSkill_Effect_Value[e], fDOTDMG);
 
 								//aggro
-								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 							}
 							else
 							{
@@ -796,7 +796,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 							res->aSkillResult[i].effectResult[e].DD_DOT_fDamage = aBuffParameter[e].buffParameter.fParameter = aBuffParameter[e].buffParameter.DOT_fDamage;
 
 							//aggro
-							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 						}
 						break;
 						case ACTIVE_POISON://DOT buff effect // Skills with DOT effect never have 2x DOT effects in a skill. Its mostly 1x DOT and 1x Deal DMG.
@@ -839,7 +839,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 							res->aSkillResult[i].effectResult[e].DD_DOT_fDamage = aBuffParameter[e].buffParameter.fParameter = aBuffParameter[e].buffParameter.DOT_fDamage;
 
 							//aggro
-							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 						}
 						break;
 						case ACTIVE_STOMACHACHE://DOT buff effect // Skills with DOT effect never have 2x DOT effects in a skill. Its mostly 1x DOT and 1x Deal DMG.
@@ -882,7 +882,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 							res->aSkillResult[i].effectResult[e].DD_DOT_fDamage = aBuffParameter[e].buffParameter.fParameter = aBuffParameter[e].buffParameter.DOT_fDamage;
 
 							//aggro
-							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 						}
 						break;
 						case ACTIVE_BURN://DOT buff effect // Skills with DOT effect never have 2x DOT effects in a skill. Its mostly 1x DOT and 1x Deal DMG.
@@ -923,7 +923,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 							res->aSkillResult[i].effectResult[e].DD_DOT_fDamage = aBuffParameter[e].buffParameter.fParameter = aBuffParameter[e].buffParameter.DOT_fDamage;
 
 							//aggro
-							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+							nAgro += (int)(res->aSkillResult[i].effectResult[e].DD_DOT_fDamage * CFormulaTable::m_afRate[8002][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 						}
 						break;
 
@@ -962,7 +962,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 							if (m_pOwnerRef->GetID() != pTarget->GetID())
 							{
 								//aggro
-								nAgro += (int)(res->aSkillResult[i].effectResult[e].fResultValue * CFormulaTable::m_afRate[8003][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(res->aSkillResult[i].effectResult[e].fResultValue * CFormulaTable::m_afRate[8003][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 
 								IncreaseTargetEnemyAggro(m_pOwnerRef, pTarget, nAgro);
 							}
@@ -986,7 +986,7 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 							if (m_pOwnerRef->GetID() != pTarget->GetID())
 							{
 								//aggro
-								nAgro += (int)(res->aSkillResult[i].effectResult[e].fResultValue * CFormulaTable::m_afRate[8004][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(res->aSkillResult[i].effectResult[e].fResultValue * CFormulaTable::m_afRate[8004][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 
 								IncreaseTargetEnemyAggro(m_pOwnerRef, pTarget, nAgro);
 							}
@@ -1011,14 +1011,14 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 							if (effectCode == ACTIVE_HEAL_OVER_TIME)
 							{
 								//aggro
-								nAgro += (int)(aBuffParameter[e].buffParameter.fParameter * CFormulaTable::m_afRate[8006][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(aBuffParameter[e].buffParameter.fParameter * CFormulaTable::m_afRate[8006][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 
 								pTarget->UpdateCurLP((int)aBuffParameter[e].buffParameter.fParameter, true, false);
 							}
 							else
 							{
 								//aggro
-								nAgro += (int)(aBuffParameter[e].buffParameter.fParameter * CFormulaTable::m_afRate[8007][1] * max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
+								nAgro += (int)(aBuffParameter[e].buffParameter.fParameter * CFormulaTable::m_afRate[8007][1] * std::max((m_pOwnerRef->GetLevel() - pTarget->GetLevel()), 10) / 100.f);
 
 								pTarget->UpdateCurEP((WORD)aBuffParameter[e].buffParameter.fParameter, true, false);
 							}

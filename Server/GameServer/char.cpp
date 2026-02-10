@@ -605,7 +605,7 @@ bool CCharacter::OnAttackAction(CCharacter* pAttacker, int nDmg, BYTE byAttackRe
 
 	if (pAttacker) //pAttacker can be NULL if reflectdmg is true.
 	{
-		DWORD dwAggro = (DWORD)((float)nDmg * CFormulaTable::m_afRate[8001][1] * max((pAttacker->GetLevel() - GetLevel()), 10) / 100.f);
+		DWORD dwAggro = (DWORD)((float)nDmg * CFormulaTable::m_afRate[8001][1] * std::max((pAttacker->GetLevel() - GetLevel()), 10) / 100.f);
 		ChangeAggro(pAttacker->GetID(), DBO_AGGRO_CHANGE_TYPE_INCREASE, dwAggro + (DWORD)pAttacker->GetTbldat()->wBasic_Aggro_Point);
 	}
 
