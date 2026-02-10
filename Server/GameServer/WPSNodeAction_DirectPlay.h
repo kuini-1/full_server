@@ -3,8 +3,7 @@
 
 
 #include "ControlScriptNodeAction.h"
-
-enum eDIRECTION_TYPE;
+#include "NtlDirection.h"
 
 class CWPSNodeAction_DirectPlay : public CControlScriptNodeAction
 {

@@ -2,8 +2,7 @@
 #define __SCRIPT_ALGO_DBOG_ACTION_DIRECTPLAY_H__
 
 #include "ScriptAlgoAction.h"
-
-enum eDIRECTION_TYPE;
+#include "NtlDirection.h"
 
 
 class CWpsAlgoAction_DirectPlay : public CScriptAlgoAction
