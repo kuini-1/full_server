@@ -149,21 +149,23 @@ void CNtlThread::Execute()
 
 void CNtlThread::Start()
 {
+	// Set status to PREPARING_TO_RUN before creating thread to prevent GarbageCollect from deleting it
+	m_status = eSTATUS_PREPARING_TO_RUN;
+	
 	pthread_t thread;
 	int rc = pthread_create(&thread, NULL, ThreadMain, this);
 	if (rc != 0)
 	{
-		// Failed to create thread
+		// Failed to create thread - reset status
+		m_status = eSTATUS_NOT_RUNNING;
 		NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - pthread_create failed for thread '%s': %d (%s)", m_strName.c_str(), rc, strerror(rc));
 		m_hThread = INVALID_HANDLE_VALUE;
-		NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - Thread '%s' creation failed, thread object will be cleaned up", m_strName.c_str());
 		return;
 	}
 	
 	// Store thread handle (pthread_t is an opaque type, we store it as void*)
 	m_hThread = (HANDLE)thread;
 	m_threadID = (unsigned long)thread; // pthread_t might not be directly castable, but this is for compatibility
-	NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - Thread '%s' started successfully (pthread_t=%p, m_hThread=%p)", m_strName.c_str(), (void*)thread, m_hThread);
 }
 
 void CNtlThread::Join()
