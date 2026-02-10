@@ -1490,7 +1490,7 @@ bool CNpc::ConsiderWanderLoc(CNtlVector& rDestLoc)
 		bool IsMePartyLeader = false;
 
 		CNpcParty* pParty = GetNpcParty();
-		if (!pParty || GetPartyLeader(INVALID_HOBJECT, &IsMePartyLeader) != false || IsMePartyLeader)
+		if (!pParty || GetPartyLeader(INVALID_HOBJECT, &IsMePartyLeader) != NULL || IsMePartyLeader)
 		{
 			return ConsiderWanderLoc(bot_profile.vSpawnLoc, rDestLoc);
 		}
