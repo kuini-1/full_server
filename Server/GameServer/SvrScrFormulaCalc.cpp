@@ -94,15 +94,16 @@ bool CSvrScrFormulaCalc::Calculate(sSSD_FORMULA& rFormula)
 					snprintf(m_szMsg, sizeof(m_szMsg), "invalid formula");
 					return false;
 				}
+				sSSD_VARIABLE sTemp;
 				switch (sEntity.eArithmetic)
 				{
-					case SSD_FORMULA_ARITHMETIC_PLUS: sVariable.Declare(vecStack[vecStack.size() - 2].sConstant + vecStack[vecStack.size() - 1].sConstant); break;
+					case SSD_FORMULA_ARITHMETIC_PLUS: sTemp = vecStack[vecStack.size() - 2].sConstant + vecStack[vecStack.size() - 1].sConstant; sVariable.Declare(sTemp); break;
 
-					case SSD_FORMULA_ARITHMETIC_MINUS: sVariable.Declare(vecStack[vecStack.size() - 2].sConstant - vecStack[vecStack.size() - 1].sConstant); break;
+					case SSD_FORMULA_ARITHMETIC_MINUS: sTemp = vecStack[vecStack.size() - 2].sConstant - vecStack[vecStack.size() - 1].sConstant; sVariable.Declare(sTemp); break;
 
-					case SSD_FORMULA_ARITHMETIC_MULTIPLE: sVariable.Declare(vecStack[vecStack.size() - 2].sConstant * vecStack[vecStack.size() - 1].sConstant); break;
+					case SSD_FORMULA_ARITHMETIC_MULTIPLE: sTemp = vecStack[vecStack.size() - 2].sConstant * vecStack[vecStack.size() - 1].sConstant; sVariable.Declare(sTemp); break;
 
-					case SSD_FORMULA_ARITHMETIC_DIVIDE: sVariable.Declare(vecStack[vecStack.size() - 2].sConstant / vecStack[vecStack.size() - 1].sConstant); break;
+					case SSD_FORMULA_ARITHMETIC_DIVIDE: sTemp = vecStack[vecStack.size() - 2].sConstant / vecStack[vecStack.size() - 1].sConstant; sVariable.Declare(sTemp); break;
 
 					default:
 					{
