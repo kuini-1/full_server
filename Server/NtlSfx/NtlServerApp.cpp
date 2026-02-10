@@ -71,6 +71,7 @@ void CNtlServerApp::Init()
 //-----------------------------------------------------------------------------------
 void CNtlServerApp::Destroy()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlServerApp::Destroy - Called, destroying network");
 	m_network.Destroy();
 	Terminate();
 

@@ -200,8 +200,15 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 //-----------------------------------------------------------------------------------
 void CNtlNetwork::Destroy()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::Destroy - Called, cleaning up threads");
+	
 	SAFE_DELETE(m_pNetworkMonitor);
 
+	if (m_pNetworkProcessor)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::Destroy - Closing Network Processor");
+		m_pNetworkProcessor->Close();
+	}
 	SAFE_DELETE(m_pNetworkProcessor);
 
 	tConnectorThreadEx::Instance().Terminate();

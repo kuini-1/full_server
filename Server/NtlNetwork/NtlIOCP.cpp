@@ -112,7 +112,12 @@ public:
 		CNtlIocp * pIocp = (CNtlIocp*) GetArg();
 		if( pIocp )
 		{
+			NTL_PRINT(PRINT_SYSTEM, "CIocpWorkerThread::Close - Posting THREAD_CLOSE to IOCP worker thread");
 			PostQueuedCompletionStatus( pIocp->m_hIOCP, 0, THREAD_CLOSE, NULL );
+		}
+		else
+		{
+			NTL_PRINT(PRINT_SYSTEM, "CIocpWorkerThread::Close - ERROR: pIocp is NULL!");
 		}
 		CNtlRunObject::Close();
 	}
@@ -162,6 +167,7 @@ int CNtlIocp::Create(CNtlNetwork * pNetwork, int nCreateThreads, int nConcurrent
 
 void CNtlIocp::Destroy()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::Destroy - Called, closing %d worker threads", m_nCreatedThreads);
 	if (m_hIOCP != INVALID_HANDLE_VALUE)
 	{
 		CloseThreads();

@@ -46,6 +46,7 @@ m_hEventIOCP( 0 )
 //-----------------------------------------------------------------------------------
 CNtlNetworkProcessor::~CNtlNetworkProcessor()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetworkProcessor::~CNtlNetworkProcessor - Destructor called");
 	Destroy();
 }
 
@@ -233,10 +234,12 @@ void CNtlNetworkProcessor::Close()
 {
 	if (NULL == m_hEventIOCP)
 	{
+		NTL_PRINT(PRINT_SYSTEM, "CNtlNetworkProcessor::Close - m_hEventIOCP is NULL, cannot post THREAD_CLOSE");
 		CNtlRunObject::Close();
 		return;
 	}
 	
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetworkProcessor::Close - Posting THREAD_CLOSE to Network Processor thread");
 	PostQueuedCompletionStatus( m_hEventIOCP, 0, THREAD_CLOSE, NULL );
 
 	CNtlRunObject::Close();
