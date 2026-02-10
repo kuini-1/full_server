@@ -10,7 +10,7 @@ class CControlScriptNode;
 
 class CSvrScrFormulaCalc : public CSvrScrVariableContainer
 {
-	typedef sSSD_MESSAGE::eDEFINE CSvrScrFormulaCalc::eDEFINE;
+	typedef sSSD_MESSAGE::eDEFINE eDEFINE;
 
 public:
 	CSvrScrFormulaCalc(CControlState* pControlSate);
