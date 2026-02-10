@@ -8,7 +8,7 @@ class CControlScriptEventMap
 {
 	struct sEVENT_DATA
 	{
-		sEVENT_DATA::sEVENT_DATA(DWORD _eventId, WORD _wCount)
+		sEVENT_DATA(DWORD _eventId, WORD _wCount)
 		{
 			eventId = _eventId;
 			wCount = _wCount;

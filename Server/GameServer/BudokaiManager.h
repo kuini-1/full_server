@@ -87,7 +87,7 @@ class CBudokaiManager : public CNtlSingleton<CBudokaiManager>
 
 	struct sTOURNAMENT_MATCH
 	{
-		sTOURNAMENT_MATCH::sTOURNAMENT_MATCH()
+		sTOURNAMENT_MATCH()
 		{
 			m_byMatchState = BUDOKAI_MAJORMATCH_STATE_WAIT;
 			m_dwMatchTickCount = 2 * 60 * 1000;

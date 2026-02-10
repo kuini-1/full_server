@@ -34,13 +34,13 @@ class CSvrScrFormulaExpress
 		eSSD_FORMULA_FUNCTION_TYPE eFuncType;
 		std::vector<eSSD_VARIABLE_TYPE> vecParameter;
 
-		sFUNC_INFO::sFUNC_INFO(){}
-		sFUNC_INFO::sFUNC_INFO(sFUNC_INFO* __that)
+		sFUNC_INFO(){}
+		sFUNC_INFO(sFUNC_INFO* __that)
 		{
 			eFuncType = __that->eFuncType;
 			vecParameter = __that->vecParameter;
 		}
-		sFUNC_INFO::~sFUNC_INFO(){}
+		~sFUNC_INFO(){}
 	};
 
 public:

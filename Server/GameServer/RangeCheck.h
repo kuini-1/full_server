@@ -10,12 +10,12 @@ class CRangeCheck
 {
 	struct sRANGECHECK_DATA
 	{
-		sRANGECHECK_DATA::sRANGECHECK_DATA()
+		sRANGECHECK_DATA()
 		{
 			pChar = NULL;
 			fRangeDiff = 0.0f;
 		}
-		sRANGECHECK_DATA::sRANGECHECK_DATA(CCharacter* _pChar, float _fRangeDiff)
+		sRANGECHECK_DATA(CCharacter* _pChar, float _fRangeDiff)
 		{
 			pChar = _pChar;
 			fRangeDiff = _fRangeDiff;
