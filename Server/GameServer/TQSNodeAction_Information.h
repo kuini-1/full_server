@@ -3,8 +3,7 @@
 
 
 #include "ControlScriptNodeAction.h"
-
-enum eTIMEQUEST_INFORMATION_TYPE;
+#include "NtlTimeQuest.h"
 
 class CTQSNodeAction_Information : public CControlScriptNodeAction
 {
