@@ -3076,6 +3076,8 @@ void CClientSession::RecvGuildBankMoveStackReq(CNtlPacket * pPacket)
 	res->byDstPlace = req->byDestPlace;
 	res->byDstPos = req->byDestPos;
 
+	CItem* pSrcItem = NULL;
+	CItem* pDestItem = NULL;
 	if (cPlayer->IsUsingBank() == false || cPlayer->IsBankLoaded() == false || cPlayer->GetPlayerItemContainer()->IsUsingGuildBank() == false)
 	{
 		resultcode = GAME_FAIL;
@@ -3088,8 +3090,6 @@ void CClientSession::RecvGuildBankMoveStackReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	CItem* pSrcItem = NULL;
-	CItem* pDestItem = NULL;
 	pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
 	pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
 
@@ -5260,6 +5260,8 @@ void CClientSession::RecvItemStackReq(CNtlPacket * pPacket)
 	res->byDstPlace = req->byDestPlace;
 	res->byDstPos = req->byDestPos;
 
+	CItem* pSrcItem = NULL;
+	CItem* pDestItem = NULL;
 	if (req->bySrcPlace == req->byDestPlace && req->bySrcPos == req->byDestPos)
 	{
 		resultcode = GAME_FAIL;
@@ -5272,8 +5274,6 @@ void CClientSession::RecvItemStackReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	CItem* pSrcItem = NULL;
-	CItem* pDestItem = NULL;
 	pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
 	pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
 
@@ -8663,6 +8663,8 @@ void CClientSession::RecvBankStackReq(CNtlPacket * pPacket)
 	res->byDstPlace = req->byDestPlace;
 	res->byDstPos = req->byDestPos;
 
+	CItem* pSrcItem = NULL;
+	CItem* pDestItem = NULL;
 	if (req->bySrcPlace == req->byDestPlace && req->bySrcPos == req->byDestPos)
 	{
 		resultcode = GAME_FAIL;
@@ -8681,8 +8683,6 @@ void CClientSession::RecvBankStackReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	CItem* pSrcItem = NULL;
-	CItem* pDestItem = NULL;
 	pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
 	pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
 
