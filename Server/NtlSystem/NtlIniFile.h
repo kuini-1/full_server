@@ -17,6 +17,11 @@
 
 #include "NtlString.h"
 
+#if !defined(_WIN32)
+#include <map>
+#include <string>
+#endif
+
 class CNtlIniFile
 {
 public:
@@ -73,6 +78,11 @@ private:
 	CNtlString					m_strLastReadGroup;
 
 	CNtlString					m_strLastReadKey;
+
+#if !defined(_WIN32)
+	// Linux: store parsed INI data as map<section, map<key, value>>
+	std::map<std::string, std::map<std::string, std::string> > m_iniData;
+#endif
 
 };
 

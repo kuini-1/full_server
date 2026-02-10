@@ -18,6 +18,12 @@
 
 #if !defined(_WIN32)
 
+#include <fstream>
+#include <sstream>
+#include <cctype>
+#include <cstring>
+#include <sys/stat.h>
+
 const unsigned int MAX_BUFFER = 256;
 
 //-----------------------------------------------------------------------------------
@@ -37,6 +43,15 @@ CNtlIniFile::~CNtlIniFile()
 {
 }
 
+// Helper function to trim whitespace
+static std::string trim(const std::string& str)
+{
+	size_t first = str.find_first_not_of(" \t\r\n");
+	if (first == std::string::npos)
+		return "";
+	size_t last = str.find_last_not_of(" \t\r\n");
+	return str.substr(first, (last - first + 1));
+}
 
 //-----------------------------------------------------------------------------------
 //		Purpose	:
@@ -44,81 +59,191 @@ CNtlIniFile::~CNtlIniFile()
 //-----------------------------------------------------------------------------------
 int CNtlIniFile::Create(const char * lpszFullName)
 {
-	(void)lpszFullName;
-	return NTL_FAIL;
+	if (!lpszFullName)
+		return NTL_FAIL;
+
+	// Check if file exists
+	struct stat fileStat;
+	if (stat(lpszFullName, &fileStat) != 0)
+		return NTL_FAIL;
+
+	m_strConfigFileName = lpszFullName;
+	m_strLastReadGroup.GetString().clear();
+	m_strLastReadKey.GetString().clear();
+	m_iniData.clear();
+
+	// Parse the INI file
+	std::ifstream file(lpszFullName);
+	if (!file.is_open())
+		return NTL_FAIL;
+
+	std::string currentSection;
+	std::string line;
+
+	while (std::getline(file, line))
+	{
+		// Remove comments (everything after ; or #)
+		size_t commentPos = line.find(';');
+		if (commentPos != std::string::npos)
+			line = line.substr(0, commentPos);
+		commentPos = line.find('#');
+		if (commentPos != std::string::npos)
+			line = line.substr(0, commentPos);
+
+		line = trim(line);
+		if (line.empty())
+			continue;
+
+		// Check for section [section]
+		if (line[0] == '[' && line[line.length() - 1] == ']')
+		{
+			currentSection = trim(line.substr(1, line.length() - 2));
+			continue;
+		}
+
+		// Parse key=value
+		size_t eqPos = line.find('=');
+		if (eqPos != std::string::npos)
+		{
+			std::string key = trim(line.substr(0, eqPos));
+			std::string value = trim(line.substr(eqPos + 1));
+			
+			if (!key.empty())
+			{
+				m_iniData[currentSection][key] = value;
+			}
+		}
+	}
+
+	file.close();
+	return NTL_SUCCESS;
 }
 
 int CNtlIniFile::Create(const char * lpszPathName, const char * lpszFileName)
 {
-	(void)lpszPathName;
-	(void)lpszFileName;
-	return NTL_FAIL;
+	if (!lpszPathName || !lpszFileName)
+		return NTL_FAIL;
+
+	std::string fullPath = std::string(lpszPathName) + "/" + std::string(lpszFileName);
+	return Create(fullPath.c_str());
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, CNtlString &val)
 {
-	(void)group; (void)key; (void)val;
-	return false;
+	if (!group || !key)
+		return false;
+
+	m_strLastReadGroup = group;
+	m_strLastReadKey = key;
+
+	std::string section(group);
+	std::string keyStr(key);
+
+	std::map<std::string, std::map<std::string, std::string> >::iterator sectionIt = m_iniData.find(section);
+	if (sectionIt == m_iniData.end())
+		return false;
+
+	std::map<std::string, std::string>::iterator keyIt = sectionIt->second.find(keyStr);
+	if (keyIt == sectionIt->second.end())
+		return false;
+
+	val = keyIt->second.c_str();
+	return true;
 }
 
 CNtlString CNtlIniFile::Read(const char *group, const char *key)
 {
-	(void)group; (void)key;
-	return CNtlString();
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		strTemp = "";
+	return strTemp;
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, bool &bFlag)
 {
-	(void)group; (void)key; (void)bFlag;
-	return false;
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		return false;
+
+	std::string val = strTemp.c_str();
+	// Convert to lowercase for comparison
+	for (size_t i = 0; i < val.length(); ++i)
+		val[i] = tolower(val[i]);
+
+	bFlag = (val == "true" || val == "1" || val == "yes");
+	return true;
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, char &num)
 {
-	(void)group; (void)key; (void)num;
-	return false;
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		return false;
+	num = (char)atoi(strTemp.c_str());
+	return true;
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, short &num)
 {
-	(void)group; (void)key; (void)num;
-	return false;
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		return false;
+	num = (short)atoi(strTemp.c_str());
+	return true;
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, int &num)
 {
-	(void)group; (void)key; (void)num;
-	return false;
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		return false;
+	num = atoi(strTemp.c_str());
+	return true;
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, float &num)
 {
-	(void)group; (void)key; (void)num;
-	return false;
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		return false;
+	num = (float)atof(strTemp.c_str());
+	return true;
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, unsigned char &num)
 {
-	(void)group; (void)key; (void)num;
-	return false;
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		return false;
+	num = (unsigned char)atoi(strTemp.c_str());
+	return true;
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, unsigned short &num)
 {
-	(void)group; (void)key; (void)num;
-	return false;
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		return false;
+	num = (unsigned short)atoi(strTemp.c_str());
+	return true;
 }
 
 bool CNtlIniFile::Read(const char *group, const char *key, unsigned int &num)
 {
-	(void)group; (void)key; (void)num;
-	return false;
+	CNtlString strTemp;
+	if (!Read(group, key, strTemp))
+		return false;
+	num = (unsigned int)atoi(strTemp.c_str());
+	return true;
 }
 
 bool CNtlIniFile::Read(const char *pszGroup, const char *pszKey, DWORD &dwNumber)
 {
-	(void)pszGroup; (void)pszKey; (void)dwNumber;
-	return false;
+	CNtlString strTemp;
+	if (!Read(pszGroup, pszKey, strTemp))
+		return false;
+	dwNumber = (DWORD)atoi(strTemp.c_str());
+	return true;
 }
 
 #else // _WIN32
