@@ -21,6 +21,7 @@
 #if !defined(_WIN32)
 
 #include <pthread.h>
+#include <stdio.h>
 
 // Linux pthread-based implementation
 
@@ -124,7 +125,7 @@ void CNtlThread::Start()
 
 void CNtlThread::Join()
 {
-	if (m_hThread != INVALID_HANDLE_VALUE)
+	if (m_hThread != INVALID_HANDLE_VALUE && m_status == eSTATUS_DEAD)
 	{
 		pthread_t thread = (pthread_t)m_hThread;
 		pthread_join(thread, NULL);
@@ -217,21 +218,47 @@ CNtlThreadFactory::~CNtlThreadFactory()
 //-----------------------------------------------------------------------------------
 void CNtlThreadFactory::GarbageCollect(bool bShutDown)
 {
+#if !defined(_WIN32)
+	printf("[DEBUG] GarbageCollect - Start (bShutDown: %d)\n", bShutDown ? 1 : 0);
+	fflush(stdout);
+#endif
 	// clean thread
 	CNtlThread * pThread;
 
 	{
+#if !defined(_WIN32)
+		printf("[DEBUG] GarbageCollect - Locking mutex to get first thread...\n");
+		fflush(stdout);
+#endif
 		CNtlLock lock(&m_Mutex);
 		pThread = (CNtlThread*)m_ThreadList.GetFirst();
 	}
+#if !defined(_WIN32)
+	printf("[DEBUG] GarbageCollect - Got first thread, starting loop...\n");
+	fflush(stdout);
+#endif
 
 	while( pThread )
 	{
+#if !defined(_WIN32)
+		printf("[DEBUG] GarbageCollect - Checking thread (status: %d, autoDelete: %d)...\n", 
+			pThread->IsStatus(CNtlThread::eSTATUS_DEAD) ? 1 : 0,
+			pThread->IsAutoDelete() ? 1 : 0);
+		fflush(stdout);
+#endif
 		if( pThread->IsAutoDelete() && 
 			( bShutDown && !pThread->IsStatus( CNtlThread::eSTATUS_NOT_RUNNING ) ||
 			 !bShutDown && pThread->IsStatus( CNtlThread::eSTATUS_DEAD ) ) )
 		{
+#if !defined(_WIN32)
+			printf("[DEBUG] GarbageCollect - Calling Join() on dead thread...\n");
+			fflush(stdout);
+#endif
 			pThread->Join();
+#if !defined(_WIN32)
+			printf("[DEBUG] GarbageCollect - Join() completed\n");
+			fflush(stdout);
+#endif
 			
 			CNtlLock lock(&m_Mutex);
 
@@ -244,6 +271,10 @@ void CNtlThreadFactory::GarbageCollect(bool bShutDown)
 			pThread = (CNtlThread*) pThread->GetNext();
 		}
 	}
+#if !defined(_WIN32)
+	printf("[DEBUG] GarbageCollect - Loop completed, cleaning up dead threads...\n");
+	fflush(stdout);
+#endif
 
 	// Exit thread
 	CNtlLock lock(&m_Mutex);
@@ -295,8 +326,20 @@ void CNtlThreadFactory::SingleGarbageCollect(CNtlThread* pGarbageThread)
 //-----------------------------------------------------------------------------------
 CNtlThread * CNtlThreadFactory::CreateThread(CNtlRunObject * pRunObject, const char * name, bool bAutoDelete)
 {
+#if !defined(_WIN32)
+	printf("[DEBUG] CNtlThreadFactory::CreateThread - Start (name: %s)\n", name ? name : "NULL");
+	fflush(stdout);
+#endif
 	GarbageCollect();
+#if !defined(_WIN32)
+	printf("[DEBUG] CNtlThreadFactory::CreateThread - GarbageCollect() completed\n");
+	fflush(stdout);
+#endif
 
+#if !defined(_WIN32)
+	printf("[DEBUG] CNtlThreadFactory::CreateThread - Creating new CNtlThread...\n");
+	fflush(stdout);
+#endif
 	CNtlThread * pThread = new CNtlThread( pRunObject, name, bAutoDelete );
 	if (NULL == pThread)
 	{
@@ -304,10 +347,22 @@ CNtlThread * CNtlThreadFactory::CreateThread(CNtlRunObject * pRunObject, const c
 		return NULL;
 	}
 
+#if !defined(_WIN32)
+	printf("[DEBUG] CNtlThreadFactory::CreateThread - Locking mutex...\n");
+	fflush(stdout);
+#endif
 	CNtlLock lock(&m_Mutex);
 
+#if !defined(_WIN32)
+	printf("[DEBUG] CNtlThreadFactory::CreateThread - Appending to thread list...\n");
+	fflush(stdout);
+#endif
 	m_ThreadList.Append(pThread);
 
+#if !defined(_WIN32)
+	printf("[DEBUG] CNtlThreadFactory::CreateThread - Completed successfully\n");
+	fflush(stdout);
+#endif
 	return pThread;
 }
 
