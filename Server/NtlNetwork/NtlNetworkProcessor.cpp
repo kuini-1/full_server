@@ -91,6 +91,7 @@ void CNtlNetworkProcessor::Destroy()
 //-----------------------------------------------------------------------------------
 void CNtlNetworkProcessor::Run()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetworkProcessor::Run - Thread started");
 	CNtlNetwork * pNetwork = (CNtlNetwork*) GetArg();
 	if( NULL == pNetwork )
 	{
@@ -231,6 +232,7 @@ int CNtlNetworkProcessor::SendNetEvent(WPARAM wParam, LPARAM lParam)
 //-----------------------------------------------------------------------------------
 void CNtlNetworkProcessor::Close()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetworkProcessor::Close - Called (m_hEventIOCP=%p)", m_hEventIOCP);
 	if (NULL == m_hEventIOCP)
 	{
 		CNtlRunObject::Close();
