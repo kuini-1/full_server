@@ -3,7 +3,7 @@
 
 #include "TqsAlgoAction_Base.h"
 
-enum eOBJTYPE;
+#include "NtlObject.h"
 
 class CTqsAlgoAction_SendTqsEvent : public CTqsAlgoAction_Base
 {

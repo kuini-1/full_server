@@ -3,7 +3,7 @@
 
 
 #include "ControlScriptNodeAction.h"
-enum eOBJTYPE;
+#include "NtlObject.h"
 
 class CSPSNodeAction_TargetFixAttack : public CControlScriptNodeAction
 {

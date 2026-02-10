@@ -3,7 +3,7 @@
 
 #include "ScriptAlgoCondition.h"
 
-enum eOBJTYPE;
+#include "NtlObject.h"
 
 class CWpsAlgoCondition_RecvEventFromAis : public CWpsAlgoCondition
 {

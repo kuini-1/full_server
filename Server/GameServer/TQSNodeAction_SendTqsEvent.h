@@ -4,7 +4,7 @@
 
 #include "ControlScriptNodeAction.h"
 
-enum eOBJTYPE;
+#include "NtlObject.h"
 
 class CTQSNodeAction_SendTqsEvent : public CControlScriptNodeAction
 {

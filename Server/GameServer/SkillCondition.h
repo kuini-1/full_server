@@ -7,7 +7,7 @@
 class CNpc;
 class CCharacter;
 class CWorldCell;
-enum eOBJTYPE;
+#include "NtlObject.h"
 class CSpellAreaChecker;
 
 

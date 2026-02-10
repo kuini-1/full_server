@@ -4,7 +4,7 @@
 
 #include "ControlScriptNodeCondition.h"
 
-enum eOBJTYPE;
+#include "NtlObject.h"
 
 class CWPSNodeCondition_CheckBattle : public CControlScriptNodeCondition
 {

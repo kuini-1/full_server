@@ -3,7 +3,7 @@
 
 #include "ScriptAlgoAction.h"
 
-enum eOBJTYPE;
+#include "NtlObject.h"
 
 class CWpsAlgoAction_UnregisterBuff : public CScriptAlgoAction
 {

@@ -7,7 +7,7 @@
 
 class CCharacter;
 struct sBOT_AGGROPOINT;
-enum eOBJTYPE;
+#include "NtlObject.h"
 struct sCHAR_AGGRO_INFO;
 class CNtlPacket;
 class CSpellAreaChecker;
