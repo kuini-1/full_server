@@ -4,8 +4,9 @@
 
 #include "ControlScriptNodeAction.h"
 
+#include "NtlDirection.h"
+
 class CNtlVector;
-enum eDIRECTION_INDICATE_TYPE;
 
 class CTQSNodeAction_DirectionIndicate : public CControlScriptNodeAction
 {

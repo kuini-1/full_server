@@ -2,8 +2,8 @@
 #define __SCRIPT_ALGO_DBOG_ACTION_DIRECTION_INDICATION_H__
 
 #include "ScriptAlgoAction.h"
+#include "NtlDirection.h"
 
-enum eDIRECTION_INDICATE_TYPE;
 class CNtlVector;
 
 

@@ -3,8 +3,8 @@
 
 
 #include "ControlScriptNodeAction.h"
+#include "NtlDirection.h"
 
-enum eDIRECTION_INDICATE_TYPE;
 class CNtlVector;
 
 class CWPSNodeAction_Direction_Indicate : public CControlScriptNodeAction

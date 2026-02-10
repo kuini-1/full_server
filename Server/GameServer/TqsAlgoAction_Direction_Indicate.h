@@ -2,8 +2,8 @@
 #define __TQS_ALGO_DBOG_ACTION_DIRECTION_INDICATION_H__
 
 #include "TqsAlgoAction_Base.h"
+#include "NtlDirection.h"
 
-enum eDIRECTION_INDICATE_TYPE;
 class CNtlVector;
 
 
