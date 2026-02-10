@@ -722,17 +722,31 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 		&dwBytes,
 		&m_recvContext );
 
+#if !defined(_WIN32)
+	// On Linux, handle EAGAIN/EWOULDBLOCK (no connection available) as pending operation
+	if (rc == ERROR_IO_PENDING)
+	{
+		// No connection available yet - this is OK, operation is pending (like Windows AcceptEx)
+		// Keep the counts incremented - session is in accepting state waiting for connection
+		// Don't post to IOCP yet - will be posted when connection arrives
+		// Return success - ReserveAccept succeeds, session stays in accepting state
+		// The acceptor thread will retry periodically, and when a connection arrives, accept will succeed
+		return NTL_SUCCESS;
+	}
+#endif
+
 	if( NTL_SUCCESS != rc )
 	{
 		DecreasePostIoCount();
 		m_pAcceptorRef->DecreaseCurAcceptingCount();
 
+		// Only log actual errors, not EAGAIN (which is handled above)
 		NTL_PRINT(PRINT_SYSTEM, "Session[%X] AcceptEx Function Failed: (%d)%s", this, rc, NtlGetErrorMessage( rc ) );
 		return rc;
 	}
 
 #if !defined(_WIN32)
-	// On Linux, AcceptEx completes synchronously, so post completion to IOCP immediately
+	// On Linux, AcceptEx completed synchronously with a connection, so post completion to IOCP immediately
 	if (m_pNetworkRef)
 	{
 		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP

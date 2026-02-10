@@ -72,6 +72,7 @@ public:
 				rc = pAcceptor->ReserveAccept( nAcceptCount );
 				if( NTL_SUCCESS != rc )
 				{
+					// Only log real errors - EAGAIN is handled as success in PostAccept
 					ERR_LOG(LOG_NETWORK, "%s ReserveAccept Fail :%d[%s]", GetName(), rc, NtlGetErrorMessage(rc));
 				}
 				else
@@ -444,6 +445,8 @@ int CNtlAcceptor::ReserveAccept(int nReserveCount)
 		rc = pSession->PostAccept( this );
 		if( NTL_SUCCESS != rc )
 		{
+			// On Linux, ERROR_IO_PENDING (EAGAIN) is handled as success in PostAccept
+			// So if we get an error here, it's a real error
 			NTL_PRINT(PRINT_SYSTEM, "pSession->PostAccept() failed(NTL_SUCCESS != rc), rc = %d", rc);
 			RELEASE_SESSION( pSession );
 			return rc;

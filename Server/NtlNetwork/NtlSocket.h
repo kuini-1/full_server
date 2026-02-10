@@ -202,9 +202,10 @@ inline int CNtlSocket::AcceptEx(CNtlSocket &rAcceptSocket, PVOID lpOutputBuffer,
 		int err = errno;
 		if (err == EAGAIN || err == EWOULDBLOCK)
 		{
-			// No connection available - return error to retry later
-			SetLastError(err);
-			return err;
+			// No connection available - this is not an error, just means no connection yet
+			// Return ERROR_IO_PENDING to indicate async operation is pending (like Windows AcceptEx)
+			SetLastError(ERROR_IO_PENDING);
+			return ERROR_IO_PENDING;
 		}
 		SetLastError(err);
 		return err;
