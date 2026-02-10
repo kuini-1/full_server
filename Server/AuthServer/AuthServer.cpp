@@ -68,6 +68,8 @@ int		CAuthServer::OnInitApp()
 
 int		CAuthServer::OnCreate()
 {
+	printf("[DEBUG] CAuthServer::OnCreate called\n");
+	fflush(stdout);
 	return NTL_SUCCESS;
 }
 
