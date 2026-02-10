@@ -46,7 +46,11 @@ m_hEventIOCP( 0 )
 //-----------------------------------------------------------------------------------
 CNtlNetworkProcessor::~CNtlNetworkProcessor()
 {
+	printf("[DEBUG] CNtlNetworkProcessor::~CNtlNetworkProcessor - Destructor called\n");
+	fflush(stdout);
 	Destroy();
+	printf("[DEBUG] CNtlNetworkProcessor::~CNtlNetworkProcessor - Destroy() completed\n");
+	fflush(stdout);
 }
 
 
@@ -77,10 +81,15 @@ int CNtlNetworkProcessor::Create()
 //-----------------------------------------------------------------------------------
 void CNtlNetworkProcessor::Destroy()
 {
+	printf("[DEBUG] CNtlNetworkProcessor::Destroy - Called, m_hEventIOCP = %p\n", m_hEventIOCP);
+	fflush(stdout);
 	if( NULL != m_hEventIOCP )
 	{
 		CloseHandle( m_hEventIOCP );
+		m_hEventIOCP = NULL;
 	}
+	printf("[DEBUG] CNtlNetworkProcessor::Destroy - Completed\n");
+	fflush(stdout);
 }
 
 

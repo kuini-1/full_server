@@ -173,19 +173,31 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 		return rc;
 	}
 
+	printf("[DEBUG] CNtlNetwork::Create - About to call CreateMonitorThread()\n");
+	fflush(stdout);
 	rc = CreateMonitorThread();
 	if (NTL_SUCCESS != rc)
 	{
 		NTL_PRINT(PRINT_SYSTEM, "CreateMonitorThread() failed.(NTL_SUCCESS != rc) rc = %d", rc);
+		printf("[DEBUG] CNtlNetwork::Create - CreateMonitorThread() failed: %d\n", rc);
+		fflush(stdout);
 		return rc;
 	}
+	printf("[DEBUG] CNtlNetwork::Create - CreateMonitorThread() succeeded\n");
+	fflush(stdout);
 
+	printf("[DEBUG] CNtlNetwork::Create - About to call m_iocp.Create()\n");
+	fflush(stdout);
 	rc = m_iocp.Create(this, nCreateThreads, nConcurrentThreads );
 	if( NTL_SUCCESS != rc )
 	{
 		NTL_PRINT(PRINT_SYSTEM, "m_iocp.Create(this, nCreateThreads, nConcurrentThreads ) failed.(NTL_SUCCESS != rc) rc = %d", rc);
+		printf("[DEBUG] CNtlNetwork::Create - m_iocp.Create() failed: %d\n", rc);
+		fflush(stdout);
 		return rc;
 	}
+	printf("[DEBUG] CNtlNetwork::Create - m_iocp.Create() succeeded\n");
+	fflush(stdout);
 
 	m_pSessionFactoryRef = pFactory;
 	m_bDirectProcess = bDirectProcess;
@@ -200,9 +212,16 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 //-----------------------------------------------------------------------------------
 void CNtlNetwork::Destroy()
 {
+	printf("[DEBUG] CNtlNetwork::Destroy - Called\n");
+	fflush(stdout);
+	
 	SAFE_DELETE(m_pNetworkMonitor);
 
+	printf("[DEBUG] CNtlNetwork::Destroy - About to delete Network Processor\n");
+	fflush(stdout);
 	SAFE_DELETE(m_pNetworkProcessor);
+	printf("[DEBUG] CNtlNetwork::Destroy - Network Processor deleted\n");
+	fflush(stdout);
 
 	tConnectorThreadEx::Instance().Terminate();
 
