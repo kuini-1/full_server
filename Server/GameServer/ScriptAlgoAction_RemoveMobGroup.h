@@ -2,8 +2,7 @@
 #define __SCRIPT_ALGO_DBOG_ACTION_REMOVEMOBGROUP_H__
 
 #include "ScriptAlgoAction.h"
-
-enum eSPAWN_REMOVE_TYPE;
+#include "NtlCharacter.h"
 
 class CWpsAlgoAction_RemoveMobGroup : public CScriptAlgoAction
 {

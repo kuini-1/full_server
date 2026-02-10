@@ -2,8 +2,7 @@
 #define __TQS_ALGO_DBOG_ACTION_REMOVE_NPC_H__
 
 #include "TqsAlgoAction_Base.h"
-
-enum eSPAWN_REMOVE_TYPE;
+#include "NtlCharacter.h"
 
 class CTqsAlgoAction_RemoveNpc : public CTqsAlgoAction_Base
 {

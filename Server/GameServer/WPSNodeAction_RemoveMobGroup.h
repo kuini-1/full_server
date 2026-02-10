@@ -3,8 +3,7 @@
 
 
 #include "ControlScriptNodeAction.h"
-
-enum eSPAWN_REMOVE_TYPE;
+#include "NtlCharacter.h"
 
 class CWPSNodeAction_RemoveMobGroup : public CControlScriptNodeAction
 {

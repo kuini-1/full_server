@@ -3,7 +3,7 @@
 
 
 #include "ControlScriptNodeAction.h"
-enum eSPAWN_REMOVE_TYPE;
+#include "NtlCharacter.h"
 
 class CTQSNodeAction_RemoveNpc : public CControlScriptNodeAction
 {
