@@ -1098,7 +1098,7 @@ int main(int argc, _TCHAR* argv[])
 	SetConsoleTitle( TEXT("DBOD MASTER") );
 #endif
 
-	int rc = app.Create(argc, argv, ".\\config\\MasterServer.ini");
+	int rc = app.Create(argc, argv, (argc > 1) ? argv[1] : "./config/MasterServer.ini");
 
 	if( NTL_SUCCESS != rc )
 	{
@@ -1109,14 +1109,27 @@ int main(int argc, _TCHAR* argv[])
 	
 	// LOG FILE
 	char m_LogFile[256];
-	sprintf(m_LogFile,".\\logs\\masterserver\\log_%02d-%02d-%02d.txt", ti.wYear, ti.wMonth, ti.wDay);
+	sprintf(m_LogFile, "./logs/masterserver/log_%02u-%02u-%02u.txt", ti.wYear, ti.wMonth, ti.wDay);
+
+	// Create log directory if it doesn't exist
+#if !defined(_WIN32)
+	// Try to create directories, ignore errors if they already exist
+	mkdir("./logs", 0755);
+	mkdir("./logs/masterserver", 0755);
+#endif
 
 	rc = traceFileStream.Create(m_LogFile);
 	if (NTL_SUCCESS != rc)
-		return rc;
-
-	app.m_log.AttachLogStream(traceFileStream.GetFilePtr());
-	NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
+	{
+		NTL_PRINT(PRINT_APP, "Failed to create log file: %s (error: %d) - continuing without log file", m_LogFile, rc);
+		// Don't return - continue without log file
+	}
+	else
+	{
+		NTL_PRINT(PRINT_APP, "Log file created: %s", m_LogFile);
+		app.m_log.AttachLogStream(traceFileStream.GetFilePtr());
+		NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
+	}
 
 	app.Start();
 	NTL_PRINT(PRINT_APP, "MASTER SERVER STARTED");
