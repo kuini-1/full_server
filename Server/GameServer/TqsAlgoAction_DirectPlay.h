@@ -2,8 +2,7 @@
 #define __TQS_ALGO_DBOG_ACTION_DIRECTPLAY_H__
 
 #include "TqsAlgoAction_Base.h"
-
-enum eDIRECTION_TYPE;
+#include "NtlDirection.h"
 
 
 class CTqsAlgoAction_DirectPlay : public CTqsAlgoAction_Base

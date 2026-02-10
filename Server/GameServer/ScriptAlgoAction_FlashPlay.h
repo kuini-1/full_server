@@ -2,8 +2,7 @@
 #define __SCRIPT_ALGO_DBOG_ACTION_FLASH_PLAY_H__
 
 #include "ScriptAlgoAction.h"
-
-enum eDIRECTION_TYPE;
+#include "NtlDirection.h"
 
 class CWpsAlgoAction_FlashPlay : public CScriptAlgoAction
 {
