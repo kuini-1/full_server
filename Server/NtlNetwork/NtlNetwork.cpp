@@ -200,9 +200,6 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 //-----------------------------------------------------------------------------------
 void CNtlNetwork::Destroy()
 {
-	// Close IOCP threads first (this will close worker threads)
-	m_iocp.Destroy();
-	
 	SAFE_DELETE(m_pNetworkMonitor);
 
 	if (m_pNetworkProcessor)
