@@ -31,7 +31,7 @@ protected:
 	bool					ConvertVariable(sSSD_VARIABLE& sVariable, sSSD_FORMULA_ENTITY& rFormula);
 
 
-	char					m_szMsg[eDEFINE::MAX_MESSAGE_LENGTH + 1];
+	char					m_szMsg[sSSD_MESSAGE::eDEFINE::MAX_MESSAGE_LENGTH + 1];
 
 };
 

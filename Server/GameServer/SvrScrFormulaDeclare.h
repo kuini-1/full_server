@@ -13,7 +13,7 @@ class CSvrScrFormulaDeclare
 {
 public:
 
-	typedef sSSD_MESSAGE::eDEFINE CSvrScrFormulaDeclare::eDEFINE;
+	typedef sSSD_MESSAGE::eDEFINE eDEFINE;
 
 	enum eDECLARE_STATE_TYPE
 	{
@@ -81,7 +81,7 @@ public:
 
 protected:
 
-	char					m_szMsg[eDEFINE::MAX_MESSAGE_LENGTH + 1];
+	char					m_szMsg[sSSD_MESSAGE::eDEFINE::MAX_MESSAGE_LENGTH + 1];
 
 	std::map<std::string, eSSD_VARIABLE_TYPE> m_mapStr2Var;
 	std::map<std::string, eSSD_FORMULA_ARITHMETIC_TYPE> m_mapStr2Arithmetic;

@@ -10,7 +10,7 @@ class CSvrScrFormulaToken;
 
 class CSvrScrFormulaExpress
 {
-	typedef sSSD_MESSAGE::eDEFINE CSvrScrFormulaExpress::eDEFINE;
+	typedef sSSD_MESSAGE::eDEFINE eDEFINE;
 
 	enum eSTATE_TYPE
 	{
@@ -66,7 +66,7 @@ public:
 
 protected:
 
-	char					m_szMsg[eDEFINE::MAX_MESSAGE_LENGTH + 1];
+	char					m_szMsg[sSSD_MESSAGE::eDEFINE::MAX_MESSAGE_LENGTH + 1];
 
 	std::map<std::string, eSSD_FORMULA_ARITHMETIC_TYPE> m_mapStr2Arithmetic;
 	std::map<std::string, sFUNC_INFO> m_mapStr2Func;

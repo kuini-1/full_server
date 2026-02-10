@@ -2617,9 +2617,9 @@ ACMD(do_test)
 	CGameServer* app = (CGameServer*)g_pApp;
 	pToken->PopToPeek();
 	std::string strToken = pToken->PeekNextToken(NULL, &iLine);
-	byte stage = (byte)atof(strToken.c_str());
+	BYTE stage = (BYTE)atof(strToken.c_str());
 	strToken = pToken->PeekNextToken(NULL, &iLine);
-	byte invincible = (byte)atof(strToken.c_str());
+	BYTE invincible = (BYTE)atof(strToken.c_str());
 
 	if (!pPlayer || !pPlayer->IsInitialized())
 		return;

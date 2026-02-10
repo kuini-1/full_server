@@ -213,11 +213,13 @@ bool CTimeQuest::TickProcess(DWORD dwTickDiff)
 					{
 						if (m_ruleInfo.byTimeQuestMode == TIMEQUEST_MODE_PARTY)
 							pPlayer->StartTeleport(pPlayer->GetEnterTmqLoc(), pPlayer->GetCurDir(), GetWorld()->GetTbldat()->outWorldTblidx, TELEPORT_TYPE_DEFAULT);
-						else
-						{
-							pPlayer->SendQueryTutorialUpdate(true);
-							pPlayer->StartTeleport(CNtlVector(pPlayer->GetBindLoc()), CNtlVector(pPlayer->GetBindDir()), pPlayer->GetBindWorldID(), TELEPORT_TYPE_DEFAULT);
-						}
+					else
+					{
+						pPlayer->SendQueryTutorialUpdate(true);
+						CNtlVector vecBindLoc(pPlayer->GetBindLoc());
+						CNtlVector vecBindDir(pPlayer->GetBindDir());
+						pPlayer->StartTeleport(vecBindLoc, vecBindDir, pPlayer->GetBindWorldID(), TELEPORT_TYPE_DEFAULT);
+					}
 					}
 				}
 

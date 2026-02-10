@@ -1041,7 +1041,10 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 									CPlayer* pTargetPlayer = (CPlayer*)pTarget;
 
 									if(pTargetPlayer->GetDragonballScrambleBallFlag() == 0)
-										pTarget->StartTeleport(CNtlVector(pTargetPlayer->GetBindLoc()), pTarget->GetCurDir(), pTargetPlayer->GetBindWorldID(), TELEPORT_TYPE_SKILL);
+									{
+										CNtlVector vecBindLoc(pTargetPlayer->GetBindLoc());
+										pTarget->StartTeleport(vecBindLoc, pTarget->GetCurDir(), pTargetPlayer->GetBindWorldID(), TELEPORT_TYPE_SKILL);
+									}
 									else
 										res->wResultCode = GAME_CAN_NOT_TELEPORT;
 								}
