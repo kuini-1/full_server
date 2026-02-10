@@ -882,14 +882,14 @@ struct sSSD_MESSAGE
 
 struct sSSD_VARNAME
 {
-	sSSD_VARNAME::sSSD_VARNAME(void)
+	sSSD_VARNAME(void)
 	{
-		memset(this, NULL, sizeof(sSSD_VARNAME));
+		memset(this, 0, sizeof(sSSD_VARNAME));
 	}
 
 	sSSD_VARNAME* operator=(const char *szSrc)
 	{
-		memset(szVarName, NULL, 32 + 1);
+		memset(szVarName, 0, 32 + 1);
 		strncpy_s(szVarName, 32 + 1, szSrc, 32);
 		return this;
 	}
