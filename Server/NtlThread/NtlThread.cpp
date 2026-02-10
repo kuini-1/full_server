@@ -134,19 +134,12 @@ void CNtlThread::Join()
 
 void CNtlThread::Wait()
 {
-	if (m_pRunObject)
-	{
-		m_pRunObject->Wait();
-	}
+	m_event.Wait();
 }
 
 int CNtlThread::Wait(unsigned int millisecs)
 {
-	if (m_pRunObject)
-	{
-		return m_pRunObject->Wait(millisecs);
-	}
-	return 0;
+	return m_event.Wait(millisecs);
 }
 
 void CNtlThread::Exit()
@@ -161,10 +154,7 @@ void CNtlThread::Notify(CNtlThread * pThread)
 	if (pThread)
 	{
 		pThread->SetSignaled(true);
-		if (pThread->m_pRunObject)
-		{
-			pThread->m_pRunObject->m_event.Signal();
-		}
+		pThread->m_event.Signal();
 	}
 }
 
