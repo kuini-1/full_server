@@ -298,21 +298,23 @@ int main(int argc, _TCHAR* argv[])
 
 	// Create log directory if it doesn't exist
 #if !defined(_WIN32)
-	_mkdir("./logs");
-	_mkdir("./logs/authserver");
+	// Try to create directories, ignore errors if they already exist
+	mkdir("./logs", 0755);
+	mkdir("./logs/authserver", 0755);
 #endif
 
 	rc = traceFileStream.Create(m_LogFile);
 	if (NTL_SUCCESS != rc)
 	{
-		NTL_PRINT(PRINT_APP, "Failed to create log file: %s (error: %d)", m_LogFile, rc);
-		return rc;
+		NTL_PRINT(PRINT_APP, "Failed to create log file: %s (error: %d) - continuing without log file", m_LogFile, rc);
+		// Don't return - continue without log file
 	}
-
-	NTL_PRINT(PRINT_APP, "Log file created: %s", m_LogFile);
-
-	app.m_log.AttachLogStream(traceFileStream.GetFilePtr());
-	NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
+	else
+	{
+		NTL_PRINT(PRINT_APP, "Log file created: %s", m_LogFile);
+		app.m_log.AttachLogStream(traceFileStream.GetFilePtr());
+		NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
+	}
 
 	// CONNECT TO MYSQL DATABASE
 	NTL_PRINT(PRINT_APP, "CONNECTING TO DATABASE");

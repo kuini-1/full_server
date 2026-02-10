@@ -67,15 +67,33 @@ CNtlThread::CNtlThread(CNtlRunObject * pRunObject, const char * name, bool bAuto
 
 CNtlThread::~CNtlThread(void)
 {
+	// Stop the run object first (signal it to stop)
+	CNtlRunObject* pRunObj = m_pRunObject;
+	if (pRunObj)
+	{
+		pRunObj->Close();
+	}
+	
+	// Wait for thread to finish
 	if (m_hThread != INVALID_HANDLE_VALUE)
 	{
 		Join();
 	}
-	Close();
+	
 	CleanUp();
-	if (m_bAutoDelete)
+	
+	// Delete run object if auto-delete is enabled
+	// Note: If thread finished normally, Execute() already deleted it and cleared m_pRunObject
+	// So we only delete here if the thread was stopped externally or if Execute() didn't delete it
+	if (m_bAutoDelete && m_pRunObject && pRunObj == m_pRunObject)
 	{
-		SAFE_DELETE(m_pRunObject);
+		// Double-check status - only delete if thread is dead
+		// Execute() should have deleted it already, but be safe
+		if (m_status == eSTATUS_DEAD)
+		{
+			m_pRunObject = NULL; // Clear before delete to prevent double-delete
+			delete pRunObj;
+		}
 	}
 }
 
@@ -100,11 +118,32 @@ void CNtlThread::CleanUp()
 void CNtlThread::Execute()
 {
 	Init();
-	if (m_pRunObject)
+	CNtlRunObject* pRunObj = m_pRunObject; // Save pointer in case it gets cleared
+	if (pRunObj)
 	{
-		m_pRunObject->Run();
+		try
+		{
+			pRunObj->Run();
+		}
+		catch (...)
+		{
+			// Catch any exceptions to prevent crashes
+		}
 	}
 	CleanUp();
+	
+	// Delete run object if auto-delete is enabled
+	// Use the saved pointer to avoid issues if m_pRunObject was cleared
+	if (m_bAutoDelete && pRunObj)
+	{
+		// Double-check that m_pRunObject still points to the same object
+		// (destructor might have cleared it)
+		if (m_pRunObject == pRunObj)
+		{
+			m_pRunObject = NULL; // Clear pointer before delete to prevent double-delete
+			delete pRunObj;
+		}
+	}
 }
 
 void CNtlThread::Start()
