@@ -339,8 +339,55 @@ inline void CNtlSocket::GetAcceptExSockaddrs(PVOID lpOutputBuffer, DWORD dwRecei
 inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesRecvd, LPDWORD lpFlags, LPWSAOVERLAPPED lpOverlapped)
 {
 #if !defined(_WIN32)
-	(void)lpBuffers; (void)dwBufferCount; (void)lpNumberOfBytesRecvd; (void)lpFlags; (void)lpOverlapped;
-	return ENOSYS;
+	// Linux implementation: use recv() and post completion to IOCP
+	if (NULL == lpBuffers || dwBufferCount == 0 || NULL == lpNumberOfBytesRecvd)
+	{
+		SetLastError(EINVAL);
+		return EINVAL;
+	}
+
+	// Ensure socket is non-blocking
+	int flags = fcntl(m_socket, F_GETFL, 0);
+	if (flags >= 0 && !(flags & O_NONBLOCK))
+	{
+		fcntl(m_socket, F_SETFL, flags | O_NONBLOCK);
+	}
+
+	// Try to receive data (handle first buffer only for simplicity)
+	ssize_t bytesReceived = recv(m_socket, lpBuffers[0].buf, lpBuffers[0].len, 0);
+	
+	if (bytesReceived < 0)
+	{
+		int err = errno;
+		if (err == EAGAIN || err == EWOULDBLOCK)
+		{
+			// No data available - return ERROR_IO_PENDING to indicate async operation is pending
+			SetLastError(ERROR_IO_PENDING);
+			return ERROR_IO_PENDING;
+		}
+		SetLastError(err);
+		return err;
+	}
+	
+	if (bytesReceived == 0)
+	{
+		// Connection closed
+		SetLastError(ECONNRESET);
+		return ECONNRESET;
+	}
+
+	// Data received successfully
+	*lpNumberOfBytesRecvd = (DWORD)bytesReceived;
+	if (lpFlags)
+		*lpFlags = 0;
+
+	// On Windows, WSARecv initiates async operation that completes later via IOCP
+	// On Linux, we've already received synchronously, so we need to post completion
+	// But we can't access CNtlNetwork from here without circular dependencies
+	// Solution: PostRecv will handle posting the completion after RecvEx succeeds
+	// For now, just return success - PostRecv will post to IOCP if needed
+
+	return NTL_SUCCESS;
 #else
 	if( 0 != ::WSARecv( m_socket, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpOverlapped, NULL) )
 	{

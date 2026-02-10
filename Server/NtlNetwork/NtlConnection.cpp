@@ -602,11 +602,33 @@ int CNtlConnection::PostRecv()
 
 	if( NTL_SUCCESS != rc )
 	{
+#if !defined(_WIN32)
+		// On Linux, handle ERROR_IO_PENDING (EAGAIN) as a non-error condition
+		// This means no data is available yet, operation is pending (like Windows WSARecv)
+		if (rc == ERROR_IO_PENDING)
+		{
+			// No data available yet - this is OK, operation is pending
+			// Keep the counts incremented - session is in receiving state waiting for data
+			// Don't post to IOCP yet - will be posted when data arrives
+			// Return success - PostRecv succeeds, session stays in receiving state
+			return NTL_SUCCESS;
+		}
+#endif
 		DecreasePostIoCount();
 
 		NTL_PRINT(PRINT_SYSTEM, "Session[%X] RecvEx Function Failed (%d)%s", this, rc, NtlGetErrorMessage( rc ) );
 		return rc;
 	}
+
+#if !defined(_WIN32)
+	// On Linux, RecvEx completed synchronously with data, so post completion to IOCP immediately
+	if (m_pNetworkRef && dwTransferedBytes > 0)
+	{
+		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP
+		// wParam = completion key (session pointer), lParam = overlapped structure
+		m_pNetworkRef->PostIocpEventMessage((WPARAM)this, (LPARAM)&m_recvContext);
+	}
+#endif
 
 	return NTL_SUCCESS;
 }
