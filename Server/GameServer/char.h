@@ -6,7 +6,7 @@
 #include "NtlHlsItem.h"
 #include "SpawnTable.h"
 #include "MobTable.h"
-#include "NpcTable.h"
+#include "NPCTable.h"
 
 #include "TargetListManager.h"
 
