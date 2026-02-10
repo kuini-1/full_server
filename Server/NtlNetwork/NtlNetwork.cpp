@@ -342,6 +342,7 @@ int CNtlNetwork::CreateDispatcherThread()
 	if(  NTL_SUCCESS != rc )
 	{
 		NTL_PRINT(PRINT_SYSTEM, "m_pNetworkProcessor->Create() failed.(NTL_SUCCESS != rc) rc = %d", rc);
+		SAFE_DELETE( m_pNetworkProcessor );
 		return NTL_ERR_NET_THREAD_CREATE_FAIL;
 	}
 
@@ -354,7 +355,11 @@ int CNtlNetwork::CreateDispatcherThread()
 		return NTL_ERR_NET_THREAD_CREATE_FAIL;
 	}
 
+	printf("[DEBUG] CNtlNetwork::CreateDispatcherThread - About to start Network Processor thread\n");
+	fflush(stdout);
 	pThread->Start();
+	printf("[DEBUG] CNtlNetwork::CreateDispatcherThread - Network Processor thread started\n");
+	fflush(stdout);
 
 	return NTL_SUCCESS;
 }
