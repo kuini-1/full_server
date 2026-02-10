@@ -735,9 +735,9 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 	// On Linux, AcceptEx completes synchronously, so post completion to IOCP immediately
 	if (m_pNetworkRef)
 	{
-		// Post completion to IOCP - use 'this' as completion key (CNtlConnection*)
-		// The IOCP worker will cast it to CNtlSession* when processing
-		PostQueuedCompletionStatus(m_pNetworkRef->m_iocp.m_hIOCP, 0, (ULONG_PTR)this, (LPOVERLAPPED)&m_recvContext);
+		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP
+		// wParam = completion key (session pointer), lParam = overlapped structure
+		m_pNetworkRef->PostIocpEventMessage((WPARAM)this, (LPARAM)&m_recvContext);
 	}
 #endif
 
