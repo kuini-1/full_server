@@ -569,7 +569,11 @@ void CChatServerSession::RecvBudokaiMinorMatchTeleportInfoRes(CNtlPacket * pPack
 				g_pBudokaiManager->SetJoinResult(req->joinId, BUDOKAI_JOIN_RESULT_MINORMATCH);
 
 			if(req->wResultCode == GAME_SUCCESS)
-				pPlayer->TeleportAnotherServer(CNtlVector(req->vLoc), CNtlVector(req->vDir), req->worldTblidx, req->worldId, req->byTeleportType, req->byDestServerChannelId, 120); // 120 = 2 minutes
+			{
+				CNtlVector destLoc(req->vLoc);
+				CNtlVector destDir(req->vDir);
+				pPlayer->TeleportAnotherServer(destLoc, destDir, req->worldTblidx, req->worldId, req->byTeleportType, req->byDestServerChannelId, 120); // 120 = 2 minutes
+			}
 			else
 			{
 				CNtlPacket packet(sizeof(sGU_BUDOKAI_MUDOSA_TELEPORT_RES));
