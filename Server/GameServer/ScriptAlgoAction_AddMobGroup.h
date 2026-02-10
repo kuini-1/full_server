@@ -2,8 +2,7 @@
 #define __SCRIPT_ALGO_DBOG_ACTION_ADDMOBGROUP_H__
 
 #include "ScriptAlgoAction.h"
-
-enum eNPC_NEST_TYPE;
+#include "NtlBattle.h"
 
 class CWpsAlgoAction_AddMobGroup : public CScriptAlgoAction
 {

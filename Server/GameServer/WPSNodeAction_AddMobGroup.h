@@ -5,8 +5,9 @@
 #include "ControlScriptNodeAction.h"
 #include <map>
 
+#include "NtlBattle.h"
+
 class CNtlVector;
-enum eNPC_NEST_TYPE;
 
 class CWPSNodeAction_AddMobGroup : public CControlScriptNodeAction
 {

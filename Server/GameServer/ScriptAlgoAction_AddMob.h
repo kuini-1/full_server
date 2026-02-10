@@ -2,9 +2,9 @@
 #define __SCRIPT_ALGO_DBOG_ACTION_ADDMOB_H__
 
 #include "ScriptAlgoAction.h"
+#include "NtlBattle.h"
 
 class CNtlVector;
-enum eNPC_NEST_TYPE;
 
 class CWpsAlgoAction_AddMob : public CScriptAlgoAction
 {

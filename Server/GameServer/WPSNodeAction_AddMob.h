@@ -3,9 +3,9 @@
 
 
 #include "ControlScriptNodeAction.h"
+#include "NtlBattle.h"
 
 class CNtlVector;
-enum eNPC_NEST_TYPE;
 
 class CWPSNodeAction_AddMob : public CControlScriptNodeAction
 {
