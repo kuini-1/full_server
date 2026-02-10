@@ -376,32 +376,56 @@ int CNtlNetwork::CreateMonitorThread()
 //-----------------------------------------------------------------------------------
 int CNtlNetwork::CreateDispatcherThread()
 {
+	printf("[DEBUG] CreateDispatcherThread - Start\n");
+	fflush(stdout);
+	
 	CNtlString strName;
 	strName.Format("Network Processor");
 
+	printf("[DEBUG] CreateDispatcherThread - Creating CNtlNetworkProcessor...\n");
+	fflush(stdout);
 	m_pNetworkProcessor = new CNtlNetworkProcessor( this );
 	if ( NULL == m_pNetworkProcessor )
 	{
+		printf("[DEBUG] CreateDispatcherThread - Failed to create CNtlNetworkProcessor\n");
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "\"new CNtlNetworkProcessor( this )\" failed.");
 		return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
 	}
 
+	printf("[DEBUG] CreateDispatcherThread - Calling m_pNetworkProcessor->Create()...\n");
+	fflush(stdout);
 	int rc = m_pNetworkProcessor->Create();
 	if(  NTL_SUCCESS != rc )
 	{
+		printf("[DEBUG] CreateDispatcherThread - m_pNetworkProcessor->Create() failed: %d\n", rc);
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "m_pNetworkProcessor->Create() failed.(NTL_SUCCESS != rc) rc = %d", rc);
 		return NTL_ERR_NET_THREAD_CREATE_FAIL;
 	}
+	printf("[DEBUG] CreateDispatcherThread - m_pNetworkProcessor->Create() completed\n");
+	fflush(stdout);
 
+	printf("[DEBUG] CreateDispatcherThread - Calling CreateThread...\n");
+	fflush(stdout);
 	CNtlThread * pThread = tThreadFactory::Instance().CreateThread( m_pNetworkProcessor, strName.c_str(), true );
+	printf("[DEBUG] CreateDispatcherThread - CreateThread returned\n");
+	fflush(stdout);
+	
 	if( NULL == pThread )
 	{
+		printf("[DEBUG] CreateDispatcherThread - CreateThread returned NULL!\n");
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "CNtlThreadFactory::CreateThread( m_pNetworkProcessor, strName, false ) failed.(NULL == pThread)");
 		SAFE_DELETE( m_pNetworkProcessor );
 		return NTL_ERR_NET_THREAD_CREATE_FAIL;
 	}
 
+	printf("[DEBUG] CreateDispatcherThread - Calling pThread->Start()...\n");
+	fflush(stdout);
 	pThread->Start();
+	printf("[DEBUG] CreateDispatcherThread - pThread->Start() completed\n");
+	fflush(stdout);
 
 	return NTL_SUCCESS;
 }
