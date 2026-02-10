@@ -2,9 +2,9 @@
 #define __CHAR_BUFF__
 
 #include "NtlSkill.h"
+#include "NtlWorld.h"
 
 class CCharacter;
-enum eGAMERULE_TYPE;
 
 class CBuff
 {

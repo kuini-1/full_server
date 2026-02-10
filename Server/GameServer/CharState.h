@@ -14,7 +14,7 @@ public:
 
 public:
 
-	virtual int CopyAspectTo(sASPECTSTATE_DETAIL* pStateDetail) { return NULL; }
+	virtual int CopyAspectTo(sASPECTSTATE_DETAIL* pStateDetail) { return 0; }
 	virtual void CopyAspectFrom(sASPECTSTATE_DETAIL* pStateDetail) {}
 	virtual const char* GetStateName() { return NtlGetCharStateString(GetStateID()); }
 
