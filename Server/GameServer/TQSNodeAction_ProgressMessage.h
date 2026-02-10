@@ -3,9 +3,8 @@
 
 
 #include "ControlScriptNodeAction.h"
-
-enum ePROGRESS_MESSAGE_TYPE;
-enum eTIMEQUEST_PROGRESS_MESSAGE_TYPE;
+#include "NtlDirection.h"
+#include "NtlTimeQuest.h"
 
 class CTQSNodeAction_ProgressMessage : public CControlScriptNodeAction
 {

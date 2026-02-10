@@ -2,8 +2,8 @@
 #define __TQS_ALGO_DBOG_ACTION_PROGRESS_MESSAGE_H__
 
 #include "TqsAlgoAction_Base.h"
-
-enum ePROGRESS_MESSAGE_TYPE;
+#include "NtlDirection.h"
+#include "NtlTimeQuest.h"
 
 class CTqsAlgoAction_ProgressMessage : public CTqsAlgoAction_Base
 {
