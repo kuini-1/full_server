@@ -20,7 +20,9 @@
 
 #if !defined(_WIN32)
 
-// Non-Windows stub implementation: compile/link compatibility only.
+#include <pthread.h>
+
+// Linux pthread-based implementation
 
 static const char * s_thread_status_string[CNtlThread::MAX_STATUS] =
 {
@@ -41,6 +43,14 @@ const char * CNtlThread::GetStatusString()
 	return s_thread_status_string[m_status];
 }
 
+// Thread entry point for pthread
+static void* ThreadMain(void* arg)
+{
+	CNtlThread * pThread = (CNtlThread*) arg;
+	pThread->Execute();
+	return NULL;
+}
+
 CNtlThread::CNtlThread(CNtlRunObject * pRunObject, const char * name, bool bAutoDelete)
 :m_strName(name ? name : "Unknown Thread"),
  m_status(eSTATUS_NOT_RUNNING),
@@ -56,6 +66,10 @@ CNtlThread::CNtlThread(CNtlRunObject * pRunObject, const char * name, bool bAuto
 
 CNtlThread::~CNtlThread(void)
 {
+	if (m_hThread != INVALID_HANDLE_VALUE)
+	{
+		Join();
+	}
 	Close();
 	CleanUp();
 	if (m_bAutoDelete)
@@ -94,21 +108,44 @@ void CNtlThread::Execute()
 
 void CNtlThread::Start()
 {
-	// Run synchronously on non-Windows for now.
-	Execute();
+	pthread_t thread;
+	int rc = pthread_create(&thread, NULL, ThreadMain, this);
+	if (rc != 0)
+	{
+		// Failed to create thread
+		m_hThread = INVALID_HANDLE_VALUE;
+		return;
+	}
+	
+	// Store thread handle (pthread_t is an opaque type, we store it as void*)
+	m_hThread = (HANDLE)thread;
+	m_threadID = (unsigned long)thread; // pthread_t might not be directly castable, but this is for compatibility
 }
 
 void CNtlThread::Join()
 {
+	if (m_hThread != INVALID_HANDLE_VALUE)
+	{
+		pthread_t thread = (pthread_t)m_hThread;
+		pthread_join(thread, NULL);
+		m_hThread = INVALID_HANDLE_VALUE;
+	}
 }
 
 void CNtlThread::Wait()
 {
+	if (m_pRunObject)
+	{
+		m_pRunObject->Wait();
+	}
 }
 
 int CNtlThread::Wait(unsigned int millisecs)
 {
-	(void)millisecs;
+	if (m_pRunObject)
+	{
+		return m_pRunObject->Wait(millisecs);
+	}
 	return 0;
 }
 
@@ -116,12 +153,19 @@ void CNtlThread::Exit()
 {
 	Close();
 	CleanUp();
+	pthread_exit(NULL);
 }
 
 void CNtlThread::Notify(CNtlThread * pThread)
 {
 	if (pThread)
+	{
 		pThread->SetSignaled(true);
+		if (pThread->m_pRunObject)
+		{
+			pThread->m_pRunObject->m_event.Signal();
+		}
+	}
 }
 
 CNtlThread * CNtlThread::GetCurrentThread()
