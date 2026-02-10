@@ -4,7 +4,6 @@
 #include "TqsAlgoAction_Base.h"
 
 class CNtlVector;
-enum eNPC_NEST_TYPE;
 
 class CTqsAlgoAction_AddMob : public CTqsAlgoAction_Base
 {

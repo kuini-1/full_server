@@ -3,8 +3,6 @@
 
 #include "TqsAlgoAction_Base.h"
 
-enum eNPC_NEST_TYPE;
-
 class CTqsAlgoAction_AddMobGroup : public CTqsAlgoAction_Base
 {
 
