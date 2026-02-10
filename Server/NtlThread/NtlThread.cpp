@@ -153,6 +153,7 @@ void CNtlThread::Start()
 	if (rc != 0)
 	{
 		// Failed to create thread
+		NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - pthread_create failed for thread '%s': %d (%s)", m_strName.c_str(), rc, strerror(rc));
 		m_hThread = INVALID_HANDLE_VALUE;
 		return;
 	}
@@ -160,6 +161,7 @@ void CNtlThread::Start()
 	// Store thread handle (pthread_t is an opaque type, we store it as void*)
 	m_hThread = (HANDLE)thread;
 	m_threadID = (unsigned long)thread; // pthread_t might not be directly castable, but this is for compatibility
+	NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - Thread '%s' started successfully (pthread_t=%p)", m_strName.c_str(), (void*)thread);
 }
 
 void CNtlThread::Join()

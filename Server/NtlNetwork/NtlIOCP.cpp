@@ -235,6 +235,7 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 		m_lstWorkers.push_back(pThread);
 		pThread->Start();
 		m_nCreatedThreads++;
+		NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CreateThreads - Thread %d/%d started (handle stored in pThread)", i+1, nOpenThreads);
 	}
 
 	return NTL_SUCCESS;
