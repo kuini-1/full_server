@@ -157,7 +157,7 @@ void CPartyMatching::Register(CPlayer* player, BYTE byDifficulty, BYTE byDungeon
 		WCHAR msg[255];
 		if (byDungeonType == ePARTY_MATCHING_DUNGEON_TYPE_ULTIMATE_DUNGEON)
 		{
-			swprintf_s(msg, L"Party matching [UD %u] register in Party Search Menu", byRegion);
+			NTL_SWPRINTF(msg, 255, L"Party matching [UD %u] register in Party Search Menu", byRegion);
 			NTL_SAFE_WCSNCPY(res->awchMessage, msg, wcslen(msg));
 			res->wMessageLengthInUnicode = wcslen(msg);
 
@@ -165,19 +165,19 @@ void CPartyMatching::Register(CPlayer* player, BYTE byDifficulty, BYTE byDungeon
 		else if (byDungeonType == ePARTY_MATCHING_DUNGEON_TYPE_TIMEMACHINE_QUEST)
 		{
 
-			swprintf_s(msg, L"Party matching [TMQ %u] register in Party Search Menu", byRegion);
+			NTL_SWPRINTF(msg, 255, L"Party matching [TMQ %u] register in Party Search Menu", byRegion);
 			NTL_SAFE_WCSNCPY(res->awchMessage, msg, wcslen(msg));
 			res->wMessageLengthInUnicode = wcslen(msg);
 		}
 		else if (byDungeonType == ePARTY_MATCHING_DUNGEON_TYPE_CC_BATTLE_DUNGEON)
 		{
-			swprintf_s(msg, L"Party matching [CCBD %u] register in Party Search Menu", byRegion);
+			NTL_SWPRINTF(msg, 255, L"Party matching [CCBD %u] register in Party Search Menu", byRegion);
 			NTL_SAFE_WCSNCPY(res->awchMessage, msg, wcslen(msg));
 			res->wMessageLengthInUnicode = wcslen(msg);
 		}
 		else if (byDungeonType == ePARTY_MATCHING_DUNGEON_TYPE_RANK_BATTLE)
 		{
-			swprintf_s(msg, L"Party matching [Ranked Battle %u] register in Party Search Menu", byRegion);
+			NTL_SWPRINTF(msg, 255, L"Party matching [Ranked Battle %u] register in Party Search Menu", byRegion);
 			NTL_SAFE_WCSNCPY(res->awchMessage, msg, wcslen(msg));
 			res->wMessageLengthInUnicode = wcslen(msg);
 		}
