@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-13
 //
-//	Copyright	:	¬®√è NTL-Inc Co., Ltd
+//	Copyright	:	®œ NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -39,43 +39,162 @@ CNtlIocp::~CNtlIocp()
 	Destroy();
 }
 
-int CNtlIocp::Create(CNtlNetwork * pNetwork, int, int)
+int CNtlIocp::Create(CNtlNetwork * pNetwork, int nCreateThreads, int nConcurrentThreads)
 {
-	(void)pNetwork;
-	return NTL_FAIL;
+	if( NULL == pNetwork || NULL != m_pNetworkRef )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "(NULL == pNetwork || NULL != m_pNetworkRef) m_pNetworkRef = %016x", m_pNetworkRef);
+		return NTL_FAIL;
+	}
+
+	m_pNetworkRef = pNetwork;
+
+	if( 0 == nCreateThreads )
+	{
+		// Default: 2 * number of processors + 2
+#if !defined(_WIN32)
+		long nProcessors = sysconf(_SC_NPROCESSORS_ONLN);
+		if (nProcessors <= 0)
+			nProcessors = 1;
+		nCreateThreads = 2 * nProcessors + 2;
+#else
+		SYSTEM_INFO si;
+		GetSystemInfo(&si);
+		nCreateThreads = 2 * si.dwNumberOfProcessors + 2;
+#endif
+	}
+
+	int rc = CreateIOCP( nConcurrentThreads );
+	if( NTL_SUCCESS != rc )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CreateIOCP( nConcurrentThreads ) failed.(NTL_SUCCESS != rc) nConcurrentThreads = %d, rc = %d", nConcurrentThreads, rc);
+		return rc;
+	}
+
+	rc = CreateThreads( nCreateThreads );
+	if( NTL_SUCCESS != rc )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CreateThreads( nCreateThreads ) failed.(NTL_SUCCESS != rc) nCreateThreads = %d, rc = %d", nCreateThreads, rc);
+		return rc;
+	}
+
+	return NTL_SUCCESS;
 }
 
 void CNtlIocp::Destroy()
 {
-	m_hIOCP = INVALID_HANDLE_VALUE;
+	if (m_hIOCP != INVALID_HANDLE_VALUE)
+	{
+		CloseThreads();
+		CloseHandle(m_hIOCP);
+		m_hIOCP = INVALID_HANDLE_VALUE;
+	}
 	m_pNetworkRef = NULL;
 	m_nCreatedThreads = 0;
 	m_nProcessCount = 0;
 	m_lstWorkers.clear();
 }
 
-int CNtlIocp::CreateIOCP(int)
+int CNtlIocp::CreateIOCP(int nConcurrentThreads)
 {
-	return NTL_FAIL;
+	if( INVALID_HANDLE_VALUE != m_hIOCP )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "(INVALID_HANDLE_VALUE != m_hIOCP) m_hIOCP = %016x", m_hIOCP);
+		return NTL_FAIL;
+	}
+
+	m_hIOCP = CreateIoCompletionPort( INVALID_HANDLE_VALUE, NULL, NULL, nConcurrentThreads );
+	if( NULL == m_hIOCP )
+	{
+		return GetLastError();
+	}
+
+	return NTL_SUCCESS;
 }
 
-int CNtlIocp::CreateThreads(int)
+int CNtlIocp::CreateThreads(int nOpenThreads)
 {
-	return NTL_FAIL;
+	for (int i = 0; i < nOpenThreads; ++i)
+	{
+		CIocpWorkerThread * pWorker = new CIocpWorkerThread(this);
+		if (NULL == pWorker)
+		{
+			NTL_PRINT(PRINT_SYSTEM, "\"new CIocpWorkerThread(this)\" failed.");
+			return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
+		}
+
+		CNtlString strName;
+		strName.Format("IOCP Worker Thread %d", i);
+
+		CNtlThread * pThread = tThreadFactory::Instance().CreateThread(pWorker, strName.c_str(), true);
+		if (NULL == pThread)
+		{
+			NTL_PRINT(PRINT_SYSTEM, "CNtlThreadFactory::CreateThread(pWorker, strName, true) failed.(NULL == pThread)");
+			SAFE_DELETE(pWorker);
+			return NTL_ERR_NET_THREAD_CREATE_FAIL;
+		}
+
+		pThread->Start();
+		m_lstWorkers.push_back(pThread);
+		m_nCreatedThreads++;
+	}
+
+	return NTL_SUCCESS;
 }
 
 void CNtlIocp::CloseThreads()
 {
+	for (std::list<CNtlThread*>::iterator it = m_lstWorkers.begin(); it != m_lstWorkers.end(); ++it)
+	{
+		CNtlThread * pThread = *it;
+		if (pThread)
+		{
+			pThread->GetRunObject()->Close();
+		}
+	}
+
+	for (std::list<CNtlThread*>::iterator it = m_lstWorkers.begin(); it != m_lstWorkers.end(); ++it)
+	{
+		CNtlThread * pThread = *it;
+		if (pThread)
+		{
+			pThread->Join();
+		}
+	}
+
+	m_lstWorkers.clear();
+	m_nCreatedThreads = 0;
 }
 
-int CNtlIocp::Associate(SOCKET, LPCVOID)
+int CNtlIocp::Associate(SOCKET hSock, LPCVOID pCompletionKey)
 {
-	return NTL_FAIL;
+	if (NULL == m_hIOCP || INVALID_HANDLE_VALUE == m_hIOCP)
+	{
+		return NTL_FAIL;
+	}
+
+	HANDLE hResult = CreateIoCompletionPort((HANDLE)hSock, m_hIOCP, (ULONG_PTR)pCompletionKey, 0);
+	if (NULL == hResult)
+	{
+		return GetLastError();
+	}
+
+	return NTL_SUCCESS;
 }
 
-int CNtlIocp::PostIOCPEvent(WPARAM, LPARAM)
+int CNtlIocp::PostIOCPEvent(WPARAM wParam, LPARAM lParam)
 {
-	return NTL_FAIL;
+	if (NULL == m_hIOCP || INVALID_HANDLE_VALUE == m_hIOCP)
+	{
+		return NTL_FAIL;
+	}
+
+	if (0 == PostQueuedCompletionStatus(m_hIOCP, 0, (ULONG_PTR)wParam, (LPOVERLAPPED)lParam))
+	{
+		return GetLastError();
+	}
+
+	return NTL_SUCCESS;
 }
 
 #else // _WIN32
@@ -171,7 +290,7 @@ public:
 			}
 
 
-			// CloseÏÉÅÌÉúÎ°?Î≥ÄÍ≤ΩÎêòÍ≥?Î∞îÎ°ú SessionÏù?ShutdownÏúºÎ°ú Î≥ÄÍ≤?Îê?Ïà?ÏûàÏúºÎØÄÎ°?ÏúÑÏπòÎ•?Ïù¥Ï†Ñ
+			// Close??????????? Session??Shutdown?? ??????????????????
 			pSession->DecreasePostIoCount();
 
 		} // end while(1)
