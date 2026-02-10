@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-13
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -38,6 +38,81 @@ CNtlIocp::~CNtlIocp()
 {
 	Destroy();
 }
+
+// CIocpWorkerThread class definition for Linux
+class CIocpWorkerThread : public CNtlRunObject
+{
+public:
+	CIocpWorkerThread(CNtlIocp * pIOCP) { SetArg( pIOCP ); }
+
+	virtual void Run()
+	{
+		CNtlIocp * pIOCP = (CNtlIocp *) GetArg();
+
+		int rc = 0;
+		BOOL bResult = FALSE;
+		DWORD dwBytesTransferred = 0;
+
+		while( IsRunnable() )
+		{
+			CNtlSession * pSession = NULL;
+			sIOCONTEXT * pIOContext = NULL;
+
+			bResult = GetQueuedCompletionStatus( pIOCP->m_hIOCP,
+												&dwBytesTransferred,
+												(ULONG_PTR*) &pSession,
+												(LPOVERLAPPED*) &pIOContext,
+												INFINITE );
+
+			if (THREAD_CLOSE == (ULONG_PTR)pSession)
+			{
+				NTL_PRINT(PRINT_SYSTEM, "Thread Close");
+				return;
+			}
+
+			if (NULL == pIOContext)
+			{
+				NTL_PRINT(PRINT_SYSTEM, "NULL == pIOContext");
+				continue;
+			}
+
+			InterlockedExchange((LONG*)&pIOCP->m_nProcessCount, TRUE);
+
+			pSession = (CNtlSession*)pIOContext->param;
+			if (NULL == pSession)
+			{
+				NTL_PRINT(PRINT_SYSTEM, "pIOContext->param is NULL.(NULL == pSession)");
+				continue;
+			}
+
+			if (FALSE == bResult)
+			{
+				rc = GetLastError();
+				pSession->Close(false);
+			}
+			else
+			{
+				rc = pSession->CompleteIO(pIOContext, dwBytesTransferred);
+				if (NTL_SUCCESS != rc)
+				{
+					pSession->Close(false);
+				}
+			}
+
+			pSession->DecreasePostIoCount();
+		}
+	}
+
+	virtual void Close()
+	{
+		CNtlIocp * pIocp = (CNtlIocp*) GetArg();
+		if( pIocp )
+		{
+			PostQueuedCompletionStatus( pIocp->m_hIOCP, 0, THREAD_CLOSE, NULL );
+		}
+		CNtlRunObject::Close();
+	}
+};
 
 int CNtlIocp::Create(CNtlNetwork * pNetwork, int nCreateThreads, int nConcurrentThreads)
 {
@@ -103,7 +178,7 @@ int CNtlIocp::CreateIOCP(int nConcurrentThreads)
 		return NTL_FAIL;
 	}
 
-	m_hIOCP = CreateIoCompletionPort( INVALID_HANDLE_VALUE, NULL, NULL, nConcurrentThreads );
+	m_hIOCP = CreateIoCompletionPort( INVALID_HANDLE_VALUE, (HANDLE)0, (ULONG_PTR)0, nConcurrentThreads );
 	if( NULL == m_hIOCP )
 	{
 		return GetLastError();
@@ -114,8 +189,17 @@ int CNtlIocp::CreateIOCP(int nConcurrentThreads)
 
 int CNtlIocp::CreateThreads(int nOpenThreads)
 {
+	if( 0 == nOpenThreads )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "(0 == nOpenThreads)");
+		return NTL_ERR_SYS_INPUT_PARAMETER_WRONG;
+	}
+
 	for (int i = 0; i < nOpenThreads; ++i)
 	{
+		CNtlString strName;
+		strName.Format("IOCP Worker[%03d]", i);
+
 		CIocpWorkerThread * pWorker = new CIocpWorkerThread(this);
 		if (NULL == pWorker)
 		{
@@ -123,19 +207,17 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 			return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
 		}
 
-		CNtlString strName;
-		strName.Format("IOCP Worker Thread %d", i);
-
 		CNtlThread * pThread = tThreadFactory::Instance().CreateThread(pWorker, strName.c_str(), true);
 		if (NULL == pThread)
 		{
 			NTL_PRINT(PRINT_SYSTEM, "CNtlThreadFactory::CreateThread(pWorker, strName, true) failed.(NULL == pThread)");
 			SAFE_DELETE(pWorker);
+			CloseThreads();
 			return NTL_ERR_NET_THREAD_CREATE_FAIL;
 		}
 
-		pThread->Start();
 		m_lstWorkers.push_back(pThread);
+		pThread->Start();
 		m_nCreatedThreads++;
 	}
 
@@ -147,7 +229,7 @@ void CNtlIocp::CloseThreads()
 	for (std::list<CNtlThread*>::iterator it = m_lstWorkers.begin(); it != m_lstWorkers.end(); ++it)
 	{
 		CNtlThread * pThread = *it;
-		if (pThread)
+		if (pThread && pThread->GetRunObject())
 		{
 			pThread->GetRunObject()->Close();
 		}
@@ -173,7 +255,7 @@ int CNtlIocp::Associate(SOCKET hSock, LPCVOID pCompletionKey)
 		return NTL_FAIL;
 	}
 
-	HANDLE hResult = CreateIoCompletionPort((HANDLE)hSock, m_hIOCP, (ULONG_PTR)pCompletionKey, 0);
+	HANDLE hResult = CreateIoCompletionPort((HANDLE)(uintptr_t)hSock, m_hIOCP, (ULONG_PTR)pCompletionKey, 0);
 	if (NULL == hResult)
 	{
 		return GetLastError();
@@ -405,7 +487,7 @@ int CNtlIocp::CreateIOCP(int nConcurrentThreads)
 		return NTL_FAIL;
 	}
 
-	m_hIOCP = CreateIoCompletionPort( INVALID_HANDLE_VALUE, NULL, NULL, nConcurrentThreads );
+	m_hIOCP = CreateIoCompletionPort( INVALID_HANDLE_VALUE, (HANDLE)0, (ULONG_PTR)0, nConcurrentThreads );
 	if( NULL == m_hIOCP )
 	{
 		return GetLastError();
