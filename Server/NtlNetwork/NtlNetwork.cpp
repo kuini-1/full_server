@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-15
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -39,7 +39,7 @@ const ULONG_PTR THREAD_CLOSE = (ULONG_PTR)(-1);	// thread terminate value
 
 
 //---------------------------------------------------------------------------------------
-// Network Monitor Thread class ( Network 클래스 내부용 )
+// Network Monitor Thread class ( Network ????? ????? )
 //---------------------------------------------------------------------------------------
 class CNtlNetworkMonitor : public CNtlRunObject
 {
@@ -413,18 +413,36 @@ int CNtlNetwork::CreateDispatcherThread()
 //-----------------------------------------------------------------------------------
 int CNtlNetwork::CreateConnectorThread()
 {
+	printf("[DEBUG] CreateConnectorThread - Start\n");
+	fflush(stdout);
+	
 	CNtlString strName;
 	strName.Format("Connector Thread");
 
-	CNtlThread * pThread = tThreadFactory::Instance().CreateThread(&tConnectorThreadEx::Instance(), strName.c_str(), true);
+	printf("[DEBUG] CreateConnectorThread - Getting tConnectorThreadEx::Instance()...\n");
+	fflush(stdout);
+	CConnectorThreadEx* pConnectorThread = &tConnectorThreadEx::Instance();
+	printf("[DEBUG] CreateConnectorThread - Got Instance, calling CreateThread...\n");
+	fflush(stdout);
+	
+	CNtlThread * pThread = tThreadFactory::Instance().CreateThread(pConnectorThread, strName.c_str(), true);
+	printf("[DEBUG] CreateConnectorThread - CreateThread returned\n");
+	fflush(stdout);
+	
 	if (NULL == pThread)
 	{
+		printf("[DEBUG] CreateConnectorThread - CreateThread returned NULL!\n");
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::CreateConnectorThread( m_pThread, strName, false ) failed.(NULL == pThread)");
 		SAFE_DELETE(pThread);
 		return NTL_ERR_NET_THREAD_CREATE_FAIL;
 	}
 
+	printf("[DEBUG] CreateConnectorThread - Calling pThread->Start()...\n");
+	fflush(stdout);
 	pThread->Start();
+	printf("[DEBUG] CreateConnectorThread - pThread->Start() completed\n");
+	fflush(stdout);
 
 	return NTL_SUCCESS;
 }
