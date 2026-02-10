@@ -71,6 +71,7 @@ CNtlThread::~CNtlThread(void)
 	CNtlRunObject* pRunObj = m_pRunObject;
 	if (pRunObj)
 	{
+		NTL_PRINT(PRINT_SYSTEM, "CNtlThread::~CNtlThread - Calling Close() on RunObject '%s' (m_status=%d, m_hThread=%p)", m_strName.c_str(), m_status, m_hThread);
 		pRunObj->Close();
 	}
 	
@@ -155,12 +156,14 @@ void CNtlThread::Start()
 		// Failed to create thread
 		NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - pthread_create failed for thread '%s': %d (%s)", m_strName.c_str(), rc, strerror(rc));
 		m_hThread = INVALID_HANDLE_VALUE;
+		NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - Thread '%s' creation failed, thread object will be cleaned up", m_strName.c_str());
 		return;
 	}
 	
 	// Store thread handle (pthread_t is an opaque type, we store it as void*)
 	m_hThread = (HANDLE)thread;
 	m_threadID = (unsigned long)thread; // pthread_t might not be directly castable, but this is for compatibility
+	NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - Thread '%s' started successfully (pthread_t=%p, m_hThread=%p)", m_strName.c_str(), (void*)thread, m_hThread);
 }
 
 void CNtlThread::Join()
