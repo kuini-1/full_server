@@ -542,7 +542,10 @@ void CPlayerCache::SendPcDataLoadRes()
 	res->wWaguCoins = (WORD)m_pAccountCache->GetWaguCoin();
 	res->wEventCoins = (WORD)m_pAccountCache->GetEventCoin();
 	memcpy(&res->sPcNewData, &m_sPcNewData, sizeof(sPC_NEW_DATA)); // by kuini for new data loaded from db to game server
-	memcpy(&res->sAccNewData, &m_pAccountCache->GetAccNewData(), sizeof(sACC_NEW_DATA)); // by kuini for new data loaded from account db to game server
+	{
+		sACC_NEW_DATA accNewData = m_pAccountCache->GetAccNewData();
+		memcpy(&res->sAccNewData, &accNewData, sizeof(sACC_NEW_DATA)); // by kuini for new data loaded from account db to game server
+	}
 
 	packet.SetPacketLen(sizeof(sQG_PC_DATA_LOAD_RES));
 	app->Send(GetSession(), &packet);
