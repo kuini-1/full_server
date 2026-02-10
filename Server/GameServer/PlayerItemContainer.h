@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Item.h"
+#include "item.h"
 
 class CPlayer;
 struct sAVATAR_ATTRIBUTE;
