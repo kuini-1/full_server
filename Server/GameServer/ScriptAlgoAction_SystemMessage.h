@@ -3,8 +3,7 @@
 
 #include "ScriptAlgoAction.h"
 #include "NtlSharedDef.h"
-
-enum eSERVER_TEXT_TYPE;
+#include "NtlAdmin.h"
 
 class CWpsAlgoAction_SystemMessage : public CScriptAlgoAction
 {

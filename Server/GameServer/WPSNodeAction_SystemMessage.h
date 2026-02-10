@@ -4,8 +4,7 @@
 
 #include "ControlScriptNodeAction.h"
 #include "NtlSharedDef.h"
-
-enum eSERVER_TEXT_TYPE;
+#include "NtlAdmin.h"
 
 class CWPSNodeAction_SystemMessage : public CControlScriptNodeAction
 {
