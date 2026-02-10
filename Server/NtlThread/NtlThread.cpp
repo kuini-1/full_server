@@ -333,6 +333,45 @@ void CNtlThreadFactory::JoinAll()
 	}
 }
 
+//-----------------------------------------------------------------------------------
+//		Purpose	:
+//		Return	:
+//-----------------------------------------------------------------------------------
+void CNtlThreadFactory::AllThreadDump()
+{
+	int nThreadCount = 0;
+	bool bIsDump = false;
+
+	time_t rawtime;
+	struct tm timeinfo;
+	time(&rawtime);
+	localtime_r(&rawtime, &timeinfo);
+
+	CNtlLock lock(&m_Mutex);
+
+	CNtlThread * pThread = (CNtlThread*)m_ThreadList.GetFirst();
+	while (pThread)
+	{
+		if (pThread->IsStatus(CNtlThread::eSTATUS_RUNNING))
+		{
+			if (nThreadCount == 0)
+				bIsDump = true;
+
+			ERR_LOG(LOG_WARNING, "Handle(%p) Thread SnapShot", pThread->m_hThread);
+		//	CNtlMiniDump::ThreadSnapshot(pThread->m_hThread, &timeinfo, bIsDump);
+
+			++nThreadCount;
+			bIsDump = false;
+		}
+		else
+		{
+			ERR_LOG(LOG_WARNING, "Handle(%p) Thread skip state(%s)", pThread->m_hThread, pThread->GetStatusString());
+		}
+
+		pThread = (CNtlThread*)pThread->GetNext();
+	}
+}
+
 #else // _WIN32
 
 //---------------------------------------------------------------------------------------
