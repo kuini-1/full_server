@@ -242,15 +242,19 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 
 void CNtlIocp::CloseThreads()
 {
-	NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CloseThreads - Called, closing %zu worker threads", m_lstWorkers.size());
+	size_t threadCount = m_lstWorkers.size();
+	NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CloseThreads - Called, closing %zu worker threads (m_nCreatedThreads=%d)", threadCount, m_nCreatedThreads);
+	
+	int threadIndex = 0;
 	for (std::list<CNtlThread*>::iterator it = m_lstWorkers.begin(); it != m_lstWorkers.end(); ++it)
 	{
 		CNtlThread * pThread = *it;
 		if (pThread && pThread->GetRunObject())
 		{
-			NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CloseThreads - Closing worker thread");
+			NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CloseThreads - Closing worker thread %d/%zu", threadIndex+1, threadCount);
 			pThread->GetRunObject()->Close();
 		}
+		threadIndex++;
 	}
 
 	for (std::list<CNtlThread*>::iterator it = m_lstWorkers.begin(); it != m_lstWorkers.end(); ++it)
