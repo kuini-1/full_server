@@ -3,7 +3,7 @@
 
 
 #include "ControlScriptNodeAction.h"
-enum eRELATION_TYPE;
+#include "NtlObject.h"
 
 class CSPSNodeAction_ChangeNpcAttribute : public CControlScriptNodeAction
 {

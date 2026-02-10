@@ -2,6 +2,7 @@
 #define __AI_DBOG_BOTACTION_CHANGENPCATTRIBUTE_H__
 
 #include "BotAiAction.h"
+#include "NtlObject.h"
 
 class CBotAiAction_ChangeNpcAttribute : public CBotAiAction
 {

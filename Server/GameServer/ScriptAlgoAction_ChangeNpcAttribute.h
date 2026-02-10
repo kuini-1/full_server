@@ -2,8 +2,7 @@
 #define __SCRIPT_ALGO_DBOG_ACTION_CHANGENPCATTRIBUTE_H__
 
 #include "ScriptAlgoAction.h"
-
-enum eRELATION_TYPE;
+#include "NtlObject.h"
 
 class CWpsAlgoAction_ChangeNpcAttribute : public CScriptAlgoAction
 {
