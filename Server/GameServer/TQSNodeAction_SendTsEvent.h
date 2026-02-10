@@ -4,8 +4,7 @@
 
 #include "ControlScriptNodeAction.h"
 #include "NtlVector.h"
-
-enum eTS_EVENT_SEND_TYPE;
+#include "NtlQuest.h"
 
 class CTQSNodeAction_SendTsEvent : public CControlScriptNodeAction
 {
