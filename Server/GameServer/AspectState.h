@@ -16,14 +16,14 @@ public:
 
 	virtual void OnEnter() { m_dwLastTransformEffect = 0; m_dwDuration = INVALID_DWORD; }
 	virtual void OnExit() { m_dwLastTransformEffect = 0; m_dwDuration = INVALID_DWORD; }
-	virtual int OnUpdate(DWORD dwTickDiff, float fMultiple) { return NULL; }
-	virtual int OnObjectMsg(CObjectMsg * pObjectMsg) { return NULL; }
+	virtual int OnUpdate(DWORD dwTickDiff, float fMultiple) { return 0; }
+	virtual int OnObjectMsg(CObjectMsg * pObjectMsg) { return 0; }
 
 	virtual bool CanTransition(BYTE stateID)  { return false; } //check if current state can change into stateID
-	virtual int CopyTo(sCHARSTATE_DETAIL* pStateDetail) { return NULL; }
+	virtual int CopyTo(sCHARSTATE_DETAIL* pStateDetail) { return 0; }
 	virtual void CopyFrom(sCHARSTATE_DETAIL* pStateDetail) {}
 
-	virtual int CopyAspectTo(sASPECTSTATE_DETAIL* pStateDetail) { return NULL; }
+	virtual int CopyAspectTo(sASPECTSTATE_DETAIL* pStateDetail) { return 0; }
 	virtual void CopyAspectFrom(sASPECTSTATE_DETAIL* pStateDetail) {}
 	virtual const char* GetStateName() { return NtlGetAspectStateString(GetStateID()); }
 

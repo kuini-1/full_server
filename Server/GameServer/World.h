@@ -18,7 +18,7 @@ class CNpc;
 class CScriptAlgoObject;
 class CTqsAlgoObject;
 class CPlayer;
-enum eSSD_SCRIPT_TYPE;
+#include "ControlScriptGlobal.h"
 
 class CWorld
 {

@@ -15,7 +15,7 @@ class CUltimateDungeon;
 class CBattleDungeon;
 class CWorld;
 class CScriptAlgoObject;
-enum eSSD_SCRIPT_TYPE;
+#include "ControlScriptGlobal.h"
 class CItemDrop;
 
 class CParty : public EventableObject
@@ -219,8 +219,8 @@ private:
 			byInventorySlotDiceInProgress = INVALID_BYTE;
 			byReceivedDiceCount = 0;
 			byPlayerCount = 0;
-			memset(ahPlayerHandle, NULL, sizeof(ahPlayerHandle));
-			memset(abyDiceResult, NULL, sizeof(abyDiceResult));
+			memset(ahPlayerHandle, 0, sizeof(ahPlayerHandle));
+			memset(abyDiceResult, 0, sizeof(abyDiceResult));
 			hGainCharHandle = INVALID_HOBJECT;
 			byHighestDice = 0;
 			byReservedCount = 0;

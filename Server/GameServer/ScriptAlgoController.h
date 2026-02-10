@@ -7,7 +7,7 @@
 class CObjectMsg;
 class CControlStateComposite;
 class CScriptAlgoObject;
-enum eSSD_SCRIPT_TYPE;
+#include "ControlScriptGlobal.h"
 
 class CScriptAlgoController
 {
