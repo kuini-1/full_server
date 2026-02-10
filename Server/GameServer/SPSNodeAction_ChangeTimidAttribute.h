@@ -3,7 +3,7 @@
 
 
 #include "ControlScriptNodeAction.h"
-enum eTIMID_TYPE;
+#include "NtlCharacter.h"
 
 class CSPSNodeAction_ChangeTimidAttribute : public CControlScriptNodeAction
 {
