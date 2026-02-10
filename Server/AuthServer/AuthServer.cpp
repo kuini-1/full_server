@@ -266,14 +266,26 @@ int main(int argc, _TCHAR* argv[])
 		return rc;
 	}
 
+	NTL_PRINT(PRINT_APP, "Server Application Create Success");
 
 	// LOG FILE
 	char m_LogFile[256];
 	sprintf(m_LogFile, "./logs/authserver/log_%02u-%02u-%02u.txt", ti.wYear, ti.wMonth, ti.wDay);
 
+	// Create log directory if it doesn't exist
+#if !defined(_WIN32)
+	_mkdir("./logs");
+	_mkdir("./logs/authserver");
+#endif
+
 	rc = traceFileStream.Create(m_LogFile);
 	if (NTL_SUCCESS != rc)
+	{
+		NTL_PRINT(PRINT_APP, "Failed to create log file: %s (error: %d)", m_LogFile, rc);
 		return rc;
+	}
+
+	NTL_PRINT(PRINT_APP, "Log file created: %s", m_LogFile);
 
 	app.m_log.AttachLogStream(traceFileStream.GetFilePtr());
 	NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
