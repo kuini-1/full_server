@@ -3,8 +3,7 @@
 
 
 #include "ControlScriptNodeAction.h"
-
-enum eTELECAST_MESSAGE_TYPE;
+#include "NtlDirection.h"
 
 class CWPSNodeAction_TelecastMessage : public CControlScriptNodeAction
 {

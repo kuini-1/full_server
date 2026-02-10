@@ -2,9 +2,7 @@
 #define __SCRIPT_ALGO_DBOG_ACTION_TELECAST_MESSAGR_H__
 
 #include "ScriptAlgoAction.h"
-
-
-enum eTELECAST_MESSAGE_TYPE;
+#include "NtlDirection.h"
 
 class CWpsAlgoAction_TelecastMessage : public CScriptAlgoAction
 {
