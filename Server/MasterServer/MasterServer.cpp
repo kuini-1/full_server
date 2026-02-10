@@ -997,35 +997,65 @@ int	CMasterServer::OnCreate()
 
 	rc = m_AuthServerAcceptor.Create(m_config.strAuthServerAcceptIP.c_str(), m_config.wAuthServerAcceptPort, 1, m_config.wAuthServerAcceptPort, SESSION_SERVER_CON_AUTH_TO_MASTER, 1, 1, 1, 1);
 	if( NTL_SUCCESS != rc ) 
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - AuthServerAcceptor.Create failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 	rc = m_network.Associate( &m_AuthServerAcceptor, true );
 	if( NTL_SUCCESS != rc )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - Associate AuthServerAcceptor failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 	rc = m_CharServerAcceptor.Create(m_config.strCharServerAcceptIP.c_str(), m_config.wCharServerAcceptPort, 1, m_config.wCharServerAcceptPort, SESSION_SERVER_CON_CHAR_TO_MASTER, 10, 10, 10, 10);
 	if( NTL_SUCCESS != rc ) 
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - CharServerAcceptor.Create failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 	rc = m_network.Associate( &m_CharServerAcceptor, true );
 	if( NTL_SUCCESS != rc )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - Associate CharServerAcceptor failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 	rc = m_ChatServerAcceptor.Create(m_config.strChatServerAcceptIP.c_str(), m_config.wChatServerAcceptPort, 1, m_config.wChatServerAcceptPort, SESSION_SERVER_CON_CHAT_TO_MASTER, 5, 5, 2, 5);
 	if( NTL_SUCCESS != rc ) 
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - ChatServerAcceptor.Create failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 	rc = m_network.Associate( &m_ChatServerAcceptor, true );
 	if( NTL_SUCCESS != rc )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - Associate ChatServerAcceptor failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 	rc = m_GameServerAcceptor.Create(m_config.strGameServerAcceptIP.c_str(), m_config.wGameServerAcceptPort, 1, m_config.wGameServerAcceptPort, SESSION_SERVER_CON_GAME_TO_MASTER, 10, 10, 10, 10);
 	if( NTL_SUCCESS != rc ) 
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - GameServerAcceptor.Create failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 	rc = m_network.Associate( &m_GameServerAcceptor, true );
 	if( NTL_SUCCESS != rc )
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - Associate GameServerAcceptor failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 
 	rc = m_WebServerAcceptor.Create(m_config.strWebServerAcceptIP.c_str(), m_config.wWebServerAcceptPort, 1, m_config.wWebServerAcceptPort, SESSION_SERVER_CON_WEB, 1, 1, 1, 1);
 	if (NTL_SUCCESS != rc)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - WebServerAcceptor.Create failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 	rc = m_network.Associate(&m_WebServerAcceptor, true);
 	if (NTL_SUCCESS != rc)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CMasterServer::OnCreate - Associate WebServerAcceptor failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
+	}
 
 	return NTL_SUCCESS;
 
@@ -1102,10 +1132,14 @@ int main(int argc, _TCHAR* argv[])
 
 	if( NTL_SUCCESS != rc )
 	{
-		printf("Server Application Create Fail %d(%s)", rc, NtlGetErrorMessage(rc) );
+		printf("Server Application Create Fail %d(%s)\n", rc, NtlGetErrorMessage(rc) );
+		fflush(stdout);
 		Sleep(20000);
 		return rc;
 	}
+	
+	printf("Server Application Create Success\n");
+	fflush(stdout);
 	
 	// LOG FILE
 	char m_LogFile[256];
@@ -1131,7 +1165,11 @@ int main(int argc, _TCHAR* argv[])
 		NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
 	}
 
+	printf("About to call app.Start()...\n");
+	fflush(stdout);
 	app.Start();
+	printf("app.Start() completed\n");
+	fflush(stdout);
 	NTL_PRINT(PRINT_APP, "MASTER SERVER STARTED");
 
 	app.WaitCommandInput();

@@ -133,11 +133,13 @@ int CNtlServerApp::Create(int argc, _TCHAR* argv[], const char * lpszConfigFile 
 	rc = CNtlServerApp::OnCreate();
 	if( NTL_SUCCESS != rc )
 	{
+		NTL_PRINT(PRINT_SYSTEM, "CNtlServerApp::Create - CNtlServerApp::OnCreate failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
 	}
 	rc = OnCreate();
 	if( NTL_SUCCESS != rc )
 	{
+		NTL_PRINT(PRINT_SYSTEM, "CNtlServerApp::Create - OnCreate() failed: %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
 	}
 
@@ -255,6 +257,12 @@ void CNtlServerApp::Start(bool bAutoDelete /* = false */)
 	}
 
 	m_pAppThread = tThreadFactory::Instance().CreateThread( this, "NtlSfxAppThread", bAutoDelete );
+	if (NULL == m_pAppThread)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "CNtlServerApp::Start - CreateThread failed (NULL == m_pAppThread)");
+		return;
+	}
+	
 	m_pAppThread->Start();
 
 	OnAppStart();
