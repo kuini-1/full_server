@@ -45,6 +45,7 @@ void CCharacter::AttackAction(CCharacter* pVictim, bool bIsChainAttack)
 	float fReflectedDamage = 0.0f;
 	float fTargetLpRecoveredWhenHit = 0.0f;
 	float fTargetEpRecoveredWhenHit = 0.0f;
+	float fChainBonusRate = 0.0f;
 
 	CNtlVector vShift(pVictim->GetCurLoc().operator-(GetCurLoc()));
 	vShift.y = 0.0f;
@@ -80,7 +81,7 @@ void CCharacter::AttackAction(CCharacter* pVictim, bool bIsChainAttack)
 	fDmg = CalcMeleeDamage(this, pVictim);
 
 	//add chain bonus dmg
-	float fChainBonusRate = NtlGetBattleChainAttackBounsRate(m_byChainSequence);
+	fChainBonusRate = NtlGetBattleChainAttackBounsRate(m_byChainSequence);
 	fDmg += fDmg * fChainBonusRate / 100;
 
 
