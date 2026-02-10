@@ -11,7 +11,7 @@ class CStringSeparator
 
 public:
 
-	typedef sSSD_MESSAGE::eDEFINE CStringSeparator::eDEFINE;
+	typedef sSSD_MESSAGE::eDEFINE eDEFINE;
 
 	typedef std::vector<std::string> SEPARATOR_VEC;
 	typedef SEPARATOR_VEC::iterator SEPARATOR_IT;
