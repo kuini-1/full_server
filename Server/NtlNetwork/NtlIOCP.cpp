@@ -39,7 +39,6 @@ CNtlIocp::~CNtlIocp()
 	// Only destroy if not already destroyed (check if threads exist)
 	if (m_nCreatedThreads > 0 || m_hIOCP != INVALID_HANDLE_VALUE)
 	{
-		NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::~CNtlIocp - Destructor called (m_nCreatedThreads=%d, m_hIOCP=%p)", m_nCreatedThreads, m_hIOCP);
 		Destroy();
 	}
 }
@@ -117,12 +116,7 @@ public:
 		CNtlIocp * pIocp = (CNtlIocp*) GetArg();
 		if( pIocp )
 		{
-			NTL_PRINT(PRINT_SYSTEM, "CIocpWorkerThread::Close - Posting THREAD_CLOSE to IOCP worker thread");
 			PostQueuedCompletionStatus( pIocp->m_hIOCP, 0, THREAD_CLOSE, NULL );
-		}
-		else
-		{
-			NTL_PRINT(PRINT_SYSTEM, "CIocpWorkerThread::Close - ERROR: pIocp is NULL!");
 		}
 		CNtlRunObject::Close();
 	}
@@ -172,7 +166,6 @@ int CNtlIocp::Create(CNtlNetwork * pNetwork, int nCreateThreads, int nConcurrent
 
 void CNtlIocp::Destroy()
 {
-	NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::Destroy - Called, closing %d worker threads (m_hIOCP=%p)", m_nCreatedThreads, m_hIOCP);
 	if (m_hIOCP != INVALID_HANDLE_VALUE)
 	{
 		CloseThreads();
@@ -225,9 +218,8 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 		CNtlThread * pThread = tThreadFactory::Instance().CreateThread(pWorker, strName.c_str(), true);
 		if (NULL == pThread)
 		{
-			NTL_PRINT(PRINT_SYSTEM, "CNtlThreadFactory::CreateThread(pWorker, strName, true) failed.(NULL == pThread) - thread %d/%d", i+1, nOpenThreads);
+			NTL_PRINT(PRINT_SYSTEM, "CNtlThreadFactory::CreateThread(pWorker, strName, true) failed.(NULL == pThread)");
 			SAFE_DELETE(pWorker);
-			NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CreateThreads - Calling CloseThreads() due to thread creation failure");
 			CloseThreads();
 			return NTL_ERR_NET_THREAD_CREATE_FAIL;
 		}
@@ -235,7 +227,6 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 		m_lstWorkers.push_back(pThread);
 		pThread->Start();
 		m_nCreatedThreads++;
-		NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CreateThreads - Thread %d/%d started (handle stored in pThread)", i+1, nOpenThreads);
 	}
 
 	return NTL_SUCCESS;
@@ -243,19 +234,13 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 
 void CNtlIocp::CloseThreads()
 {
-	size_t threadCount = m_lstWorkers.size();
-	NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CloseThreads - Called, closing %zu worker threads (m_nCreatedThreads=%d)", threadCount, m_nCreatedThreads);
-	
-	int threadIndex = 0;
 	for (std::list<CNtlThread*>::iterator it = m_lstWorkers.begin(); it != m_lstWorkers.end(); ++it)
 	{
 		CNtlThread * pThread = *it;
 		if (pThread && pThread->GetRunObject())
 		{
-			NTL_PRINT(PRINT_SYSTEM, "CNtlIocp::CloseThreads - Closing worker thread %d/%zu", threadIndex+1, threadCount);
 			pThread->GetRunObject()->Close();
 		}
-		threadIndex++;
 	}
 
 	for (std::list<CNtlThread*>::iterator it = m_lstWorkers.begin(); it != m_lstWorkers.end(); ++it)

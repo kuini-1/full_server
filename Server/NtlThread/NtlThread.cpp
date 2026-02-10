@@ -161,7 +161,6 @@ void CNtlThread::Start()
 	// Store thread handle (pthread_t is an opaque type, we store it as void*)
 	m_hThread = (HANDLE)thread;
 	m_threadID = (unsigned long)thread; // pthread_t might not be directly castable, but this is for compatibility
-	NTL_PRINT(PRINT_SYSTEM, "CNtlThread::Start - Thread '%s' started successfully (pthread_t=%p)", m_strName.c_str(), (void*)thread);
 }
 
 void CNtlThread::Join()
