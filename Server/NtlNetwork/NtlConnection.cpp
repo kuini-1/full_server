@@ -782,8 +782,12 @@ int CNtlConnection::PostConnect(CNtlConnector* pConnector)
 	int rc = m_socket.Connect( pConnector->GetConnectAddr() );
 	if( NTL_SUCCESS != rc )
 	{
-		ERR_LOG(LOG_NETWORK, "Session[%X] Connect Function Failed: (%d)%s", this, rc, NtlGetErrorMessage(rc));
-		//printf( "Session[%X] Connect Function Failed: (%d)%s", this, rc, NtlGetErrorMessage( rc ) );
+		// Reduce log spam for expected errors (connection refused when server isn't running)
+		// ECONNREFUSED is 111 on Linux - don't log this as it's expected when server isn't running
+		if (rc != 111 && rc != ECONNREFUSED)
+		{
+			ERR_LOG(LOG_NETWORK, "Session[%X] Connect Function Failed: (%d)%s", this, rc, NtlGetErrorMessage(rc));
+		}
 		return rc;
 	}
 

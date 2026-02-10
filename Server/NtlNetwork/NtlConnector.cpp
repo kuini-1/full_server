@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-14
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -25,13 +25,16 @@
 
 
 //---------------------------------------------------------------------------------------
-// Network Monitor Thread class ( Network 클래스 내부용 )
+// Network Monitor Thread class ( Network ????? ????? )
 //---------------------------------------------------------------------------------------
 class CConnectorThread : public CNtlRunObject
 {
+private:
+	DWORD m_dwLastLogTime;
+
 public:
 
-	CConnectorThread(CNtlConnector * pConnector) { SetArg( pConnector ); }
+	CConnectorThread(CNtlConnector * pConnector) : m_dwLastLogTime(0) { SetArg( pConnector ); }
 
 	void Run()
 	{
@@ -45,13 +48,27 @@ public:
 			}
 			else
 			{
-				NTL_PRINT(PRINT_SYSTEM, "%s Connector Try Connect", GetName());
+				// Only log "Try Connect" occasionally to reduce spam (every 5 seconds max)
+				DWORD currentTime = GetTickCount();
+				if (currentTime - m_dwLastLogTime > 5000)
+				{
+					NTL_PRINT(PRINT_SYSTEM, "%s Connector Try Connect", GetName());
+					m_dwLastLogTime = currentTime;
+				}
 
 				int rc = pConnector->DoConnect();
 				if( NTL_SUCCESS != rc )
 				{
-					NTL_PRINT(PRINT_SYSTEM, "%s Connector Connect Fail :%d[%s]", GetName(),  rc, NtlGetErrorMessage(rc));
-					Wait( pConnector->m_dwRetryTime );
+					// Reduce log spam for connection refused (expected when server isn't running)
+					// ECONNREFUSED is 111 on Linux
+					if (rc != 111 && rc != ECONNREFUSED)
+					{
+						NTL_PRINT(PRINT_SYSTEM, "%s Connector Connect Fail :%d[%s]", GetName(),  rc, NtlGetErrorMessage(rc));
+					}
+					// Ensure minimum retry delay to prevent tight loop
+					DWORD retryTime = pConnector->m_dwRetryTime;
+					if (retryTime < 1000) retryTime = 1000; // Minimum 1 second between retries
+					Wait( retryTime );
 				}
 				else
 				{
