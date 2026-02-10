@@ -130,27 +130,16 @@ int CNtlServerApp::Create(int argc, _TCHAR* argv[], const char * lpszConfigFile 
 	}
 
 
-	printf("[DEBUG] About to call CNtlServerApp::OnCreate...\n");
-	fflush(stdout);
 	rc = CNtlServerApp::OnCreate();
 	if( NTL_SUCCESS != rc )
 	{
-		printf("[DEBUG] CNtlServerApp::OnCreate failed: %d\n", rc);
-		fflush(stdout);
 		return rc;
 	}
-	printf("[DEBUG] About to call OnCreate()...\n");
-	fflush(stdout);
 	rc = OnCreate();
 	if( NTL_SUCCESS != rc )
 	{
-		printf("[DEBUG] OnCreate() failed: %d\n", rc);
-		fflush(stdout);
 		return rc;
 	}
-
-	printf("[DEBUG] Create() completed successfully\n");
-	fflush(stdout);
 
 	return NTL_SUCCESS;
 }
@@ -178,18 +167,11 @@ int	CNtlServerApp::OnCreate()
 		return rc;
 	}*/
 
-	printf("[DEBUG] CNtlServerApp::OnCreate - About to create network...\n");
-	fflush(stdout);
 	int rc = m_network.Create(m_pSessionFactory, m_strEncryptionKeyFileDirectory.c_str(), m_nMaxSessionCount);
 	if( NTL_SUCCESS != rc )
 	{
-		printf("[DEBUG] CNtlServerApp::OnCreate - Network create failed: %d\n", rc);
-		fflush(stdout);
 		return rc;
 	}
-
-	printf("[DEBUG] CNtlServerApp::OnCreate - Network create completed\n");
-	fflush(stdout);
 
 	return NTL_SUCCESS;
 }
