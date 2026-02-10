@@ -150,7 +150,7 @@ void CTriggerObject::TickProcess(DWORD dwTickDiff)
 
 			default:
 			{
-				ERR_LOG(LOG_QUEST, "ERROR: GetEntityType not set %s. Trigger obj %u", pCurCont->GetClassNameA(), m_executer.pTSTrigger->GetID());
+				ERR_LOG(LOG_QUEST, "ERROR: GetEntityType not set %s. Trigger obj %u", pCurCont->GetClassName(), m_executer.pTSTrigger->GetID());
 				StopExecuting(true, false);
 			}
 			break;
@@ -297,7 +297,7 @@ int CTriggerObject::OnStartExecuting(CNtlTSTrigger * pTrig, CPlayer * pPlayer, Q
 
 WORD CTriggerObject::ProcessTsEntity(CNtlTSEntity * pEntity, CPlayer* pPlayer)
 {
-	//NTL_PRINT(PRINT_APP, "ENTITY-PROCESS: %s", pEntity->GetClassNameA());
+	//NTL_PRINT(PRINT_APP, "ENTITY-PROCESS: %s", pEntity->GetClassName());
 
 	switch (pEntity->GetEntityType())
 	{
@@ -1184,7 +1184,7 @@ WORD CTriggerObject::ProcessTsEntity(CNtlTSEntity * pEntity, CPlayer* pPlayer)
 
 		default:
 		{
-			NTL_PRINT(PRINT_APP, "OBJTRIGGER-PROCESS: (DEFAULT) %s ", pEntity->GetClassNameA());
+			NTL_PRINT(PRINT_APP, "OBJTRIGGER-PROCESS: (DEFAULT) %s ", pEntity->GetClassName());
 		}
 	}
 

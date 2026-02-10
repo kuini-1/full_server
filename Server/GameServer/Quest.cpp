@@ -1035,7 +1035,7 @@ void CQuest::UnsetClearQuest(QUESTID tId)
 //--------------------------------------------------------------------------------------//
 WORD CQuest::ProgressTsEntity(CNtlTSEntity* pEntity, NTL_TS_T_ID tId, CQuestProgress* pQuestProgress, sOBJTRIGGER* pTrigger/* = NULL*/)
 {
-	//NTL_PRINT(PRINT_APP, "ENTITY-PROCESS: %s tId %d -", pEntity->GetClassNameA(), tId);
+	//NTL_PRINT(PRINT_APP, "ENTITY-PROCESS: %s tId %d -", pEntity->GetClassName(), tId);
 
 	sPROGRESS_QUEST_INFO* qinfo = NULL;
 
@@ -2727,7 +2727,7 @@ WORD CQuest::ProgressTsEntity(CNtlTSEntity* pEntity, NTL_TS_T_ID tId, CQuestProg
 
 		default:
 		{
-			NTL_PRINT(PRINT_APP,"QUEST-PROCESS: (DEFAULT) %s - NEED TO DO tId %d -", pEntity->GetClassNameA(), tId);
+			NTL_PRINT(PRINT_APP,"QUEST-PROCESS: (DEFAULT) %s - NEED TO DO tId %d -", pEntity->GetClassName(), tId);
 		}
 	}
 

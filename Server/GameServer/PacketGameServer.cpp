@@ -789,7 +789,8 @@ void CClientSession::RecvCharRevivalReq(CNtlPacket * pPacket)
 			}
 			else
 			{
-				cPlayer->Revival(CNtlVector(cPlayer->GetBindLoc()), cPlayer->GetBindWorldID(), REVIVAL_TYPE_BIND_POINT, TELEPORT_TYPE_POPOSTONE);
+				CNtlVector vecLoc(cPlayer->GetBindLoc());
+				cPlayer->Revival(vecLoc, cPlayer->GetBindWorldID(), REVIVAL_TYPE_BIND_POINT, TELEPORT_TYPE_POPOSTONE);
 			}
 		}
 		else wResultcode = GAME_FAIL;
@@ -1912,7 +1913,10 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 
 	ITEMID itemid = 0;
 	WORD sendmailres = GAME_SUCCESS;
-
+	char* chText = NULL;
+	BYTE byTextSize = 0;
+	DWORD dwFee = NTL_MAX_BASIC_MAIL_SEND_ZENNY;
+	CItem* item = NULL;
 
 	char* chname = Ntl_WC2MB(req->wszTargetName);
 	std::string charname = chname;
@@ -1956,8 +1960,8 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 		goto _end;
 	}
 
-	char* chText = Ntl_WC2MB(req->wszText);
-	BYTE byTextSize = (BYTE)strlen(chText);
+	chText = Ntl_WC2MB(req->wszText);
+	byTextSize = (BYTE)strlen(chText);
 	Ntl_CleanUpHeapString(chText);
 
 	//check mail size
@@ -1973,7 +1977,7 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 		goto _end;
 	}
 
-	DWORD dwFee = NTL_MAX_BASIC_MAIL_SEND_ZENNY;
+	dwFee = NTL_MAX_BASIC_MAIL_SEND_ZENNY;
 	if (req->byMailType != eMAIL_TYPE_BASIC)
 		dwFee = NTL_MAX_ATTACH_MAIL_SEND_ZENNY;
 
@@ -2001,7 +2005,6 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 		goto _end;
 	}
 
-	CItem* item = NULL;
 	if (req->byMailType == eMAIL_TYPE_ITEM || req->byMailType == eMAIL_TYPE_ITEM_ZENNY || req->byMailType ==  eMAIL_TYPE_ITEM_ZENNY_REQ)
 	{
 		item = cPlayer->GetPlayerItemContainer()->GetItem(req->sItemData.byPlace, req->sItemData.byPos);
@@ -2811,6 +2814,7 @@ void CClientSession::RecvGuildBankMoveReq(CNtlPacket * pPacket)
 	rQry->byDstPos = req->byDestPos;
 	rQry->hNpcHandle = req->handle;
 
+	CItem* src_item = NULL;
 	if (cPlayer->IsUsingBank() == false || cPlayer->IsBankLoaded() == false || cPlayer->GetPlayerItemContainer()->IsUsingGuildBank() == false)
 	{
 		item_move_res = GAME_FAIL;
@@ -2823,7 +2827,7 @@ void CClientSession::RecvGuildBankMoveReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	CItem* src_item = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
+	src_item = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
 	if (src_item && src_item->GetCount() > 0)
 	{
 		//check if source item can be stored in guild bank
@@ -3084,8 +3088,10 @@ void CClientSession::RecvGuildBankMoveStackReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	CItem* pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
-	CItem* pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
+	CItem* pSrcItem = NULL;
+	CItem* pDestItem = NULL;
+	pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
+	pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
 
 	if (pSrcItem == NULL || pSrcItem->GetCount() == 0)
 	{
@@ -3763,7 +3769,8 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 							//check if a party already exist. if not then create one and make invitor to leader
 							if (invitor->GetParty() == NULL && cPlayer->GetPartyID() == INVALID_PARTYID)
 							{
-								CParty * party = g_pPartyManager->CreateParty(invitor, L"Unnamed", true);
+								static const WCHAR s_wszUnnamed[] = L"Unnamed";
+								CParty * party = g_pPartyManager->CreateParty(invitor, const_cast<WCHAR*>(s_wszUnnamed), true);
 								if (party)
 								{
 									if (party->AddPartyMember(cPlayer) == true)
@@ -4802,7 +4809,8 @@ void CClientSession::RecvCharSkillReq(CNtlPacket * pPacket)
 					byTargetCount = pSkill->GetOriginalTableData()->byApply_Target_Max;
 
 			//	NTL_PRINT(PRINT_APP,"StartSkill: %f %f %f | %f %f %f | %f %f %f | %u\n", vLoc.x, vLoc.y, vLoc.z, sFinalSubjectLoc.x, sFinalSubjectLoc.y, sFinalSubjectLoc.z, cPlayer->GetCurLoc().x, cPlayer->GetCurLoc().y, cPlayer->GetCurLoc().z, cPlayer->GetCharStateID());
-				pSkill->UseSkill(byRpBonusType, req->hTarget, CNtlVector(sFinalSubjectLoc), byTargetCount, req->ahApplyTarget, resultcode);
+				CNtlVector vFinalSubjectLoc(sFinalSubjectLoc);
+				pSkill->UseSkill(byRpBonusType, req->hTarget, vFinalSubjectLoc, byTargetCount, req->ahApplyTarget, resultcode);
 			}
 		}
 		else resultcode = GAME_SKILL_YOU_DONT_HAVE_THE_SKILL;
@@ -4960,13 +4968,14 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 	rQry->byDstPlace = req->byDestPlace;
 	rQry->byDstPos = req->byDestPos;
 
+	CItem* src_item = NULL;
 	if (cPlayer->GetPlayerItemContainer()->IsInventoryReserved(req->bySrcPlace, req->bySrcPos) || cPlayer->GetPlayerItemContainer()->IsInventoryReserved(req->byDestPlace, req->byDestPos))
 	{
 		item_move_res = GAME_FAIL;
 		goto END;
 	}
 	
-	CItem* src_item = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
+	src_item = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
 	if(src_item)
 	{
 		CItem* dest_item = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
@@ -5263,8 +5272,10 @@ void CClientSession::RecvItemStackReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	CItem* pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
-	CItem* pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
+	CItem* pSrcItem = NULL;
+	CItem* pDestItem = NULL;
+	pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
+	pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
 
 	if (pSrcItem == NULL || pSrcItem->GetCount() == 0)
 	{
@@ -6102,7 +6113,7 @@ void CClientSession::RecvSendGambleBuyReq(CNtlPacket * pPacket)
 								bool bRewardReceived = false;
 								int nCount = 0;
 								int nReward[NTL_QUEST_PROBABILITY_MAX_COUNT];
-								memset(nReward, NULL, sizeof(nReward));
+								memset(nReward, 0, sizeof(nReward));
 
 							LOOP_REPEAT:
 								for (int c = 0; c < pProbabilityData->byCount; c++)
@@ -8390,6 +8401,7 @@ void CClientSession::RecvBankMoveReq(CNtlPacket * pPacket)
 	rQry->dstItemId = INVALID_ITEMID;
 
 
+	CItem* src_item = NULL;
 	if (cPlayer->IsUsingBank() == false || cPlayer->IsBankLoaded() == false || cPlayer->GetPlayerItemContainer()->IsUsingGuildBank())
 	{
 		item_move_res = GAME_FAIL;
@@ -8402,7 +8414,7 @@ void CClientSession::RecvBankMoveReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	CItem* src_item = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
+	src_item = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
 	if (src_item)
 	{
 		//check if source item can be stored in bank
@@ -8669,8 +8681,10 @@ void CClientSession::RecvBankStackReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	CItem* pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
-	CItem* pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
+	CItem* pSrcItem = NULL;
+	CItem* pDestItem = NULL;
+	pSrcItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
+	pDestItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
 
 	if (pSrcItem == NULL || pSrcItem->GetCount() == 0)
 	{
@@ -9892,7 +9906,8 @@ void CClientSession::RecvClosePrivateShopReq(CNtlPacket * pPacket)
 		packet2.SetPacketLen(sizeof(sGU_PRIVATESHOP_CLOSE_NFY));
 		cPlayer->Broadcast(&packet2, cPlayer);
 
-		cPlayer->SendCharStatePrivateShop(true, PRIVATESHOP_STATE_CLOSE, L"");
+		static WCHAR s_wszEmpty[] = L"";
+		cPlayer->SendCharStatePrivateShop(true, PRIVATESHOP_STATE_CLOSE, s_wszEmpty);
 
 		cPlayer->GetPrivateShop()->CloseShop();
 	}
@@ -14231,7 +14246,7 @@ void CClientSession::RecvHoiPoiItemCreateExReq(CNtlPacket * pPacket)
 					if (vecRandSlot.size() > 1)
 						nRandReward = vecRandSlot[RandomRange(0, (int)(vecRandSlot.size() - 1))];
 					*/
-					byte nRandReward = INVALID_BYTE;
+					BYTE nRandReward = INVALID_BYTE;
 
 					if (pRecipeTbldat->asCreateItemTblidx[0].itemTblidx != INVALID_TBLIDX)
 					{
@@ -15977,7 +15992,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 
 					default:
 					{
-						ERR_LOG(LOG_USER, "PLAYER %d PROCESS PC-TRIGGER %d TC (%d %d) FAILED. Cant find pCurCont->GetClassNameA() %s", cPlayer->GetCharID(), req->tId, req->tcCurId, req->tcNextId, pCurCont->GetClassNameA());
+						ERR_LOG(LOG_USER, "PLAYER %d PROCESS PC-TRIGGER %d TC (%d %d) FAILED. Cant find pCurCont->GetClassName() %s", cPlayer->GetCharID(), req->tId, req->tcCurId, req->tcNextId, pCurCont->GetClassName());
 						resultcode = GAME_TS_ERROR_NO_IMP_CONT_TYPE;
 					}break;
 				}

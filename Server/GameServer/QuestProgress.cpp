@@ -306,7 +306,7 @@ void CQuestProgress::RunGroup(NTL_TS_TG_ID gId)
 
 					default:
 					{
-						ERR_LOG(LOG_USER, "PLAYER %u PROCESS QUEST %u container id %u group %u FAILED. Cant find pCurCont->GetEntityType() %s", m_pOwner->GetCharID(), m_QuestProgressInfo.tId, tcId, group->GetID(), pCurCont->GetClassNameA());
+						ERR_LOG(LOG_USER, "PLAYER %u PROCESS QUEST %u container id %u group %u FAILED. Cant find pCurCont->GetEntityType() %s", m_pOwner->GetCharID(), m_QuestProgressInfo.tId, tcId, group->GetID(), pCurCont->GetClassName());
 					}
 					break;
 				}
