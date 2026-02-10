@@ -190,7 +190,7 @@ struct sSSD_VARIABLE
 		eResult = SSD_VARIABLE_RESULT_DECLARATION_IS_NOT_VALID;
 	}
 
-	sSSD_VARIABLE& operator = (sSSD_VARIABLE& variable)
+	sSSD_VARIABLE& operator = (const sSSD_VARIABLE& variable)
 	{
 		switch (eType)
 		{
@@ -253,7 +253,7 @@ struct sSSD_VARIABLE
 		return *this;
 	}
 
-	bool operator= (CNtlVector& rValue)
+	bool operator= (const CNtlVector& rValue)
 	{
 		eType = SSD_VARIABLE_VECTOR;
 		eResult = SSD_VARIABLE_RESULT_SUCCESS;
@@ -262,7 +262,7 @@ struct sSSD_VARIABLE
 		sVector.z = rValue.z;
 		return true;
 	}
-	bool operator= (sVECTOR3& sVec)
+	bool operator= (const sVECTOR3& sVec)
 	{
 		eType = SSD_VARIABLE_VECTOR;
 		eResult = SSD_VARIABLE_RESULT_SUCCESS;
@@ -926,7 +926,7 @@ struct sSSD_FORMULA_ENTITY
 
 struct sSSD_FORMULA
 {
-	sSSD_FORMULA& operator=(sSSD_FORMULA& __that)
+	sSSD_FORMULA& operator=(const sSSD_FORMULA& __that)
 	{
 		sResult = __that.sResult;
 		vecEntities = __that.vecEntities;
