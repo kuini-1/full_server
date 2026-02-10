@@ -46,11 +46,7 @@ m_hEventIOCP( 0 )
 //-----------------------------------------------------------------------------------
 CNtlNetworkProcessor::~CNtlNetworkProcessor()
 {
-	printf("[DEBUG] CNtlNetworkProcessor::~CNtlNetworkProcessor - Destructor called\n");
-	fflush(stdout);
 	Destroy();
-	printf("[DEBUG] CNtlNetworkProcessor::~CNtlNetworkProcessor - Destroy() completed\n");
-	fflush(stdout);
 }
 
 
@@ -81,15 +77,11 @@ int CNtlNetworkProcessor::Create()
 //-----------------------------------------------------------------------------------
 void CNtlNetworkProcessor::Destroy()
 {
-	printf("[DEBUG] CNtlNetworkProcessor::Destroy - Called, m_hEventIOCP = %p\n", m_hEventIOCP);
-	fflush(stdout);
 	if( NULL != m_hEventIOCP )
 	{
 		CloseHandle( m_hEventIOCP );
 		m_hEventIOCP = NULL;
 	}
-	printf("[DEBUG] CNtlNetworkProcessor::Destroy - Completed\n");
-	fflush(stdout);
 }
 
 
@@ -99,20 +91,12 @@ void CNtlNetworkProcessor::Destroy()
 //-----------------------------------------------------------------------------------
 void CNtlNetworkProcessor::Run()
 {
-	printf("[DEBUG] CNtlNetworkProcessor::Run - Thread started\n");
-	fflush(stdout);
-	
 	CNtlNetwork * pNetwork = (CNtlNetwork*) GetArg();
 	if( NULL == pNetwork )
 	{
 		NTL_PRINT(PRINT_SYSTEM, "(NULL == pNetwork)");
-		printf("[DEBUG] CNtlNetworkProcessor::Run - pNetwork is NULL, exiting\n");
-		fflush(stdout);
 		return;	
 	}
-
-	printf("[DEBUG] CNtlNetworkProcessor::Run - Entering main loop, m_hEventIOCP = %p\n", m_hEventIOCP);
-	fflush(stdout);
 
 	BOOL bResult = FALSE;
 	DWORD dwBytesTransferred = 0;
@@ -127,14 +111,9 @@ void CNtlNetworkProcessor::Run()
 												(LPOVERLAPPED*) &pSession,
 												INFINITE );
 
-		printf("[DEBUG] CNtlNetworkProcessor::Run - Got completion status, bResult=%d, netEvent=%lu\n", bResult, (unsigned long)netEvent);
-		fflush(stdout);
-
 		if( THREAD_CLOSE == (ULONG_PTR) netEvent )
 		{
 			NTL_PRINT( PRINT_SYSTEM,"Thread Close" );
-			printf("[DEBUG] CNtlNetworkProcessor::Run - Received THREAD_CLOSE, exiting\n");
-			fflush(stdout);
 			break;
 		}	
 
@@ -252,13 +231,8 @@ int CNtlNetworkProcessor::SendNetEvent(WPARAM wParam, LPARAM lParam)
 //-----------------------------------------------------------------------------------
 void CNtlNetworkProcessor::Close()
 {
-	printf("[DEBUG] CNtlNetworkProcessor::Close - Called, posting THREAD_CLOSE to IOCP\n");
-	fflush(stdout);
-	
 	if (NULL == m_hEventIOCP)
 	{
-		printf("[DEBUG] CNtlNetworkProcessor::Close - ERROR: m_hEventIOCP is NULL!\n");
-		fflush(stdout);
 		CNtlRunObject::Close();
 		return;
 	}

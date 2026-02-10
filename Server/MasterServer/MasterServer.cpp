@@ -1133,13 +1133,9 @@ int main(int argc, _TCHAR* argv[])
 	if( NTL_SUCCESS != rc )
 	{
 		printf("Server Application Create Fail %d(%s)\n", rc, NtlGetErrorMessage(rc) );
-		fflush(stdout);
 		Sleep(20000);
 		return rc;
 	}
-	
-	printf("Server Application Create Success\n");
-	fflush(stdout);
 	
 	// LOG FILE
 	char m_LogFile[256];
@@ -1165,11 +1161,7 @@ int main(int argc, _TCHAR* argv[])
 		NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
 	}
 
-	printf("About to call app.Start()...\n");
-	fflush(stdout);
 	app.Start();
-	printf("app.Start() completed\n");
-	fflush(stdout);
 	NTL_PRINT(PRINT_APP, "MASTER SERVER STARTED");
 
 	app.WaitCommandInput();
