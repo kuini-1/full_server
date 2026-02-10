@@ -101,6 +101,7 @@ CNtlNetwork::CNtlNetwork()
 //-----------------------------------------------------------------------------------
 CNtlNetwork::~CNtlNetwork()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::~CNtlNetwork - Destructor called (this=%p)", this);
 	Destroy();
 }
 
@@ -200,10 +201,12 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 //-----------------------------------------------------------------------------------
 void CNtlNetwork::Destroy()
 {
+	NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::Destroy - Called (this=%p)", this);
 	SAFE_DELETE(m_pNetworkMonitor);
 
 	if (m_pNetworkProcessor)
 	{
+		NTL_PRINT(PRINT_SYSTEM, "CNtlNetwork::Destroy - Closing Network Processor");
 		m_pNetworkProcessor->Close();
 	}
 	SAFE_DELETE(m_pNetworkProcessor);
