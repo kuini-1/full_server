@@ -105,9 +105,13 @@ public:
 
 	virtual void Close()
 	{
+		printf("[DEBUG] CIocpWorkerThread::Close - Called\n");
+		fflush(stdout);
 		CNtlIocp * pIocp = (CNtlIocp*) GetArg();
 		if( pIocp )
 		{
+			printf("[DEBUG] CIocpWorkerThread::Close - Posting THREAD_CLOSE to IOCP handle %p\n", pIocp->m_hIOCP);
+			fflush(stdout);
 			PostQueuedCompletionStatus( pIocp->m_hIOCP, 0, THREAD_CLOSE, NULL );
 		}
 		CNtlRunObject::Close();
@@ -116,9 +120,14 @@ public:
 
 int CNtlIocp::Create(CNtlNetwork * pNetwork, int nCreateThreads, int nConcurrentThreads)
 {
+	printf("[DEBUG] CNtlIocp::Create - Called, pNetwork=%p, nCreateThreads=%d, nConcurrentThreads=%d\n", pNetwork, nCreateThreads, nConcurrentThreads);
+	fflush(stdout);
+	
 	if( NULL == pNetwork || NULL != m_pNetworkRef )
 	{
 		NTL_PRINT(PRINT_SYSTEM, "(NULL == pNetwork || NULL != m_pNetworkRef) m_pNetworkRef = %016x", m_pNetworkRef);
+		printf("[DEBUG] CNtlIocp::Create - Validation failed\n");
+		fflush(stdout);
 		return NTL_FAIL;
 	}
 
@@ -138,21 +147,37 @@ int CNtlIocp::Create(CNtlNetwork * pNetwork, int nCreateThreads, int nConcurrent
 		nCreateThreads = 2 * si.dwNumberOfProcessors + 2;
 #endif
 	}
+	printf("[DEBUG] CNtlIocp::Create - nCreateThreads=%d\n", nCreateThreads);
+	fflush(stdout);
 
+	printf("[DEBUG] CNtlIocp::Create - About to call CreateIOCP()\n");
+	fflush(stdout);
 	int rc = CreateIOCP( nConcurrentThreads );
 	if( NTL_SUCCESS != rc )
 	{
 		NTL_PRINT(PRINT_SYSTEM, "CreateIOCP( nConcurrentThreads ) failed.(NTL_SUCCESS != rc) nConcurrentThreads = %d, rc = %d", nConcurrentThreads, rc);
+		printf("[DEBUG] CNtlIocp::Create - CreateIOCP() failed: %d\n", rc);
+		fflush(stdout);
 		return rc;
 	}
+	printf("[DEBUG] CNtlIocp::Create - CreateIOCP() succeeded\n");
+	fflush(stdout);
 
+	printf("[DEBUG] CNtlIocp::Create - About to call CreateThreads()\n");
+	fflush(stdout);
 	rc = CreateThreads( nCreateThreads );
 	if( NTL_SUCCESS != rc )
 	{
 		NTL_PRINT(PRINT_SYSTEM, "CreateThreads( nCreateThreads ) failed.(NTL_SUCCESS != rc) nCreateThreads = %d, rc = %d", nCreateThreads, rc);
+		printf("[DEBUG] CNtlIocp::Create - CreateThreads() failed: %d\n", rc);
+		fflush(stdout);
 		return rc;
 	}
+	printf("[DEBUG] CNtlIocp::Create - CreateThreads() succeeded\n");
+	fflush(stdout);
 
+	printf("[DEBUG] CNtlIocp::Create - Success\n");
+	fflush(stdout);
 	return NTL_SUCCESS;
 }
 
@@ -226,11 +251,15 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 
 void CNtlIocp::CloseThreads()
 {
+	printf("[DEBUG] CNtlIocp::CloseThreads - Called, closing %zu worker threads\n", m_lstWorkers.size());
+	fflush(stdout);
 	for (std::list<CNtlThread*>::iterator it = m_lstWorkers.begin(); it != m_lstWorkers.end(); ++it)
 	{
 		CNtlThread * pThread = *it;
 		if (pThread && pThread->GetRunObject())
 		{
+			printf("[DEBUG] CNtlIocp::CloseThreads - Closing worker thread\n");
+			fflush(stdout);
 			pThread->GetRunObject()->Close();
 		}
 	}
