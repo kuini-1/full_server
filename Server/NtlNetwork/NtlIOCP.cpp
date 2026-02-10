@@ -47,7 +47,19 @@ public:
 
 	virtual void Run()
 	{
+		printf("[DEBUG] CIocpWorkerThread::Run - Thread started\n");
+		fflush(stdout);
+		
 		CNtlIocp * pIOCP = (CNtlIocp *) GetArg();
+		if (NULL == pIOCP)
+		{
+			printf("[DEBUG] CIocpWorkerThread::Run - ERROR: pIOCP is NULL!\n");
+			fflush(stdout);
+			return;
+		}
+
+		printf("[DEBUG] CIocpWorkerThread::Run - Entering main loop, m_hIOCP = %p\n", pIOCP->m_hIOCP);
+		fflush(stdout);
 
 		int rc = 0;
 		BOOL bResult = FALSE;
@@ -67,6 +79,8 @@ public:
 			if (THREAD_CLOSE == (ULONG_PTR)pSession)
 			{
 				NTL_PRINT(PRINT_SYSTEM, "Thread Close");
+				printf("[DEBUG] CIocpWorkerThread::Run - Received THREAD_CLOSE, exiting\n");
+				fflush(stdout);
 				return;
 			}
 
@@ -214,6 +228,9 @@ int CNtlIocp::CreateIOCP(int nConcurrentThreads)
 
 int CNtlIocp::CreateThreads(int nOpenThreads)
 {
+	printf("[DEBUG] CNtlIocp::CreateThreads - Called, nOpenThreads=%d\n", nOpenThreads);
+	fflush(stdout);
+	
 	if( 0 == nOpenThreads )
 	{
 		NTL_PRINT(PRINT_SYSTEM, "(0 == nOpenThreads)");
@@ -222,6 +239,9 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 
 	for (int i = 0; i < nOpenThreads; ++i)
 	{
+		printf("[DEBUG] CNtlIocp::CreateThreads - Creating thread %d/%d\n", i+1, nOpenThreads);
+		fflush(stdout);
+		
 		CNtlString strName;
 		strName.Format("IOCP Worker[%03d]", i);
 
@@ -229,6 +249,8 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 		if (NULL == pWorker)
 		{
 			NTL_PRINT(PRINT_SYSTEM, "\"new CIocpWorkerThread(this)\" failed.");
+			printf("[DEBUG] CNtlIocp::CreateThreads - Failed to allocate worker %d\n", i);
+			fflush(stdout);
 			return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
 		}
 
@@ -236,16 +258,24 @@ int CNtlIocp::CreateThreads(int nOpenThreads)
 		if (NULL == pThread)
 		{
 			NTL_PRINT(PRINT_SYSTEM, "CNtlThreadFactory::CreateThread(pWorker, strName, true) failed.(NULL == pThread)");
+			printf("[DEBUG] CNtlIocp::CreateThreads - Failed to create thread %d, closing previous threads\n", i);
+			fflush(stdout);
 			SAFE_DELETE(pWorker);
 			CloseThreads();
 			return NTL_ERR_NET_THREAD_CREATE_FAIL;
 		}
 
 		m_lstWorkers.push_back(pThread);
+		printf("[DEBUG] CNtlIocp::CreateThreads - Starting thread %d\n", i);
+		fflush(stdout);
 		pThread->Start();
 		m_nCreatedThreads++;
+		printf("[DEBUG] CNtlIocp::CreateThreads - Thread %d started successfully\n", i);
+		fflush(stdout);
 	}
 
+	printf("[DEBUG] CNtlIocp::CreateThreads - All %d threads created successfully\n", nOpenThreads);
+	fflush(stdout);
 	return NTL_SUCCESS;
 }
 
