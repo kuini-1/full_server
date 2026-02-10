@@ -8,7 +8,7 @@
 #include "ObjectManager.h"
 #include "NtlResultCode.h"
 #include "TableContainerManager.h"
-#include "DragonballReturnPointTable.h"
+#include "DragonBallReturnPointTable.h"
 #include "NtlRandom.h"
 #include "ItemManager.h"
 #include "ItemDrop.h"
