@@ -111,6 +111,9 @@ CNtlNetwork::~CNtlNetwork()
 //-----------------------------------------------------------------------------------
 int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryptionKeyFileDirectory, int nSessionSize, int nCreateThreads /*= 0*/, int nConcurrentThreads /*= 0*/, bool bDirectProcess /*= false*/)
 {
+	printf("[DEBUG] CNtlNetwork::Create - Start\n");
+	fflush(stdout);
+	
 	if( NULL == pFactory )
 	{
 		NTL_PRINT(PRINT_SYSTEM, "(NULL == pFactory)");
@@ -124,15 +127,21 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 		return NTL_ERR_SYS_INPUT_PARAMETER_WRONG;
 	}*/
 
-
+	printf("[DEBUG] CNtlNetwork::Create - Calling StartUp()...\n");
+	fflush(stdout);
 	int rc = StartUp();
 	if( NTL_SUCCESS != rc )
 	{
+		printf("[DEBUG] CNtlNetwork::Create - StartUp() failed: %d\n", rc);
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "StartUp() failed.(NTL_SUCCESS != rc) rc = %d", rc);
 		return rc;
 	}
+	printf("[DEBUG] CNtlNetwork::Create - StartUp() completed\n");
+	fflush(stdout);
 
-
+	printf("[DEBUG] CNtlNetwork::Create - Creating session list...\n");
+	fflush(stdout);
 	m_pSessionList = new CNtlSessionList;
 	if( NULL == m_pSessionList )
 	{
@@ -140,13 +149,21 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 		return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
 	}
 
+	printf("[DEBUG] CNtlNetwork::Create - Calling m_pSessionList->Create()...\n");
+	fflush(stdout);
 	rc = m_pSessionList->Create(this, nSessionSize, nSessionSize / 10);
 	if (NTL_SUCCESS != rc)
 	{
+		printf("[DEBUG] CNtlNetwork::Create - m_pSessionList->Create() failed: %d\n", rc);
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "m_pSessionList->Create( this, nSessionSize, nSessionSize / 10 ) failed.(NTL_SUCCESS != rc) rc = %d", rc);
 		return rc;
 	}
+	printf("[DEBUG] CNtlNetwork::Create - m_pSessionList->Create() completed\n");
+	fflush(stdout);
 
+	printf("[DEBUG] CNtlNetwork::Create - Creating acceptor list...\n");
+	fflush(stdout);
 	m_pAcceptorList = new CNtlAcceptorList;
 	if( NULL == m_pAcceptorList )
 	{
@@ -154,7 +171,8 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 		return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
 	}
 
-
+	printf("[DEBUG] CNtlNetwork::Create - Creating connector list...\n");
+	fflush(stdout);
 	m_pConnectorList = new CNtlConnectorList;
 	if( NULL == m_pConnectorList )
 	{
@@ -162,41 +180,63 @@ int	CNtlNetwork::Create(CNtlSessionFactory * pFactory, const char *pszEncryption
 		return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
 	}
 
-
+	printf("[DEBUG] CNtlNetwork::Create - Calling CreateConnectorThread()...\n");
+	fflush(stdout);
 	rc = CreateConnectorThread();
 	if (NTL_SUCCESS != rc)
 	{
+		printf("[DEBUG] CNtlNetwork::Create - CreateConnectorThread() failed: %d\n", rc);
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "CreateConnectorThread() failed.(NTL_SUCCESS != rc) rc = %d", rc);
 		return rc;
 	}
+	printf("[DEBUG] CNtlNetwork::Create - CreateConnectorThread() completed\n");
+	fflush(stdout);
 
-
+	printf("[DEBUG] CNtlNetwork::Create - Calling CreateDispatcherThread()...\n");
+	fflush(stdout);
 	rc = CreateDispatcherThread();
 	if (NTL_SUCCESS != rc)
 	{
+		printf("[DEBUG] CNtlNetwork::Create - CreateDispatcherThread() failed: %d\n", rc);
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "CreateDispatcherThread() failed.(NTL_SUCCESS != rc) rc = %d", rc);
 		return rc;
 	}
+	printf("[DEBUG] CNtlNetwork::Create - CreateDispatcherThread() completed\n");
+	fflush(stdout);
 
-
+	printf("[DEBUG] CNtlNetwork::Create - Calling CreateMonitorThread()...\n");
+	fflush(stdout);
 	rc = CreateMonitorThread();
 	if (NTL_SUCCESS != rc)
 	{
+		printf("[DEBUG] CNtlNetwork::Create - CreateMonitorThread() failed: %d\n", rc);
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "CreateMonitorThread() failed.(NTL_SUCCESS != rc) rc = %d", rc);
 		return rc;
 	}
+	printf("[DEBUG] CNtlNetwork::Create - CreateMonitorThread() completed\n");
+	fflush(stdout);
 
-
+	printf("[DEBUG] CNtlNetwork::Create - Calling m_iocp.Create()...\n");
+	fflush(stdout);
 	rc = m_iocp.Create(this, nCreateThreads, nConcurrentThreads );
 	if( NTL_SUCCESS != rc )
 	{
+		printf("[DEBUG] CNtlNetwork::Create - m_iocp.Create() failed: %d\n", rc);
+		fflush(stdout);
 		NTL_PRINT(PRINT_SYSTEM, "m_iocp.Create(this, nCreateThreads, nConcurrentThreads ) failed.(NTL_SUCCESS != rc) rc = %d", rc);
 		return rc;
 	}
+	printf("[DEBUG] CNtlNetwork::Create - m_iocp.Create() completed\n");
+	fflush(stdout);
 
 	m_pSessionFactoryRef = pFactory;
 	m_bDirectProcess = bDirectProcess;
-	 
+	
+	printf("[DEBUG] CNtlNetwork::Create - Completed successfully\n");
+	fflush(stdout);
 
 	return NTL_SUCCESS;
 }
