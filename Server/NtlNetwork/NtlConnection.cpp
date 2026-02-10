@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-19
 //
-//	Copyright	:	ㄏ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -70,8 +70,8 @@ public:
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-const DWORD CONNECTION_KEEP_ALIVE_TIME			= 5 * 1000; // 家南 可记 KEEP ALIVE 俊 荤侩
-const DWORD CONNECTION_KEEP_ALIVE_INTERVAL		= 1 * 1000; // 家南 可记 KEEP ALIVE 俊 荤侩
+const DWORD CONNECTION_KEEP_ALIVE_TIME			= 5 * 1000; // ???? ??? KEEP ALIVE ?? ???
+const DWORD CONNECTION_KEEP_ALIVE_INTERVAL		= 1 * 1000; // ???? ??? KEEP ALIVE ?? ???
 //-----------------------------------------------------------------------------------
 
 
@@ -731,6 +731,15 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 		return rc;
 	}
 
+#if !defined(_WIN32)
+	// On Linux, AcceptEx completes synchronously, so post completion to IOCP immediately
+	if (m_pNetworkRef)
+	{
+		// Post completion to IOCP - use 'this' as completion key (CNtlConnection*)
+		// The IOCP worker will cast it to CNtlSession* when processing
+		PostQueuedCompletionStatus(m_pNetworkRef->m_iocp.m_hIOCP, 0, (ULONG_PTR)this, (LPOVERLAPPED)&m_recvContext);
+	}
+#endif
 
 	return NTL_SUCCESS;
 }

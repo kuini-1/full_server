@@ -181,8 +181,65 @@ protected:
 inline int CNtlSocket::AcceptEx(CNtlSocket &rAcceptSocket, PVOID lpOutputBuffer, DWORD dwReceiveDataLength, DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, LPDWORD lpdwBytesReceived, LPOVERLAPPED lpOverlapped)
 {
 #if !defined(_WIN32)
-	(void)rAcceptSocket; (void)lpOutputBuffer; (void)dwReceiveDataLength; (void)dwLocalAddressLength; (void)dwRemoteAddressLength; (void)lpdwBytesReceived; (void)lpOverlapped;
-	return ENOSYS;
+	// Linux implementation: use accept() and store addresses in buffer
+	(void)dwReceiveDataLength; // Not used on Linux
+	
+	// Ensure listen socket is non-blocking
+	int flags = fcntl(m_socket, F_GETFL, 0);
+	if (flags >= 0 && !(flags & O_NONBLOCK))
+	{
+		fcntl(m_socket, F_SETFL, flags | O_NONBLOCK);
+	}
+	
+	// Try to accept a connection
+	struct sockaddr_in remoteAddr, localAddr;
+	socklen_t remoteLen = sizeof(remoteAddr);
+	socklen_t localLen = sizeof(localAddr);
+	
+	SOCKET acceptedSocket = accept(m_socket, (struct sockaddr*)&remoteAddr, &remoteLen);
+	if (acceptedSocket == INVALID_SOCKET)
+	{
+		int err = errno;
+		if (err == EAGAIN || err == EWOULDBLOCK)
+		{
+			// No connection available - return error to retry later
+			SetLastError(err);
+			return err;
+		}
+		SetLastError(err);
+		return err;
+	}
+	
+	// Get local address
+	if (getsockname(acceptedSocket, (struct sockaddr*)&localAddr, &localLen) != 0)
+	{
+		int err = errno;
+		close(acceptedSocket);
+		SetLastError(err);
+		return err;
+	}
+	
+	// Set the accepted socket
+	rAcceptSocket.m_socket = acceptedSocket;
+	
+	// Store addresses in buffer (same format as Windows AcceptEx)
+	// Format: [local address][remote address] (each is SOCKADDR_IN + 16 bytes padding)
+	char* pBuf = (char*)lpOutputBuffer;
+	memcpy(pBuf, &localAddr, sizeof(struct sockaddr_in));
+	memset(pBuf + sizeof(struct sockaddr_in), 0, 16); // Padding
+	memcpy(pBuf + sizeof(struct sockaddr_in) + 16, &remoteAddr, sizeof(struct sockaddr_in));
+	memset(pBuf + sizeof(struct sockaddr_in) + 16 + sizeof(struct sockaddr_in), 0, 16); // Padding
+	
+	if (lpdwBytesReceived)
+		*lpdwBytesReceived = 0;
+	
+	// On Windows, AcceptEx initiates async operation that completes later via IOCP
+	// On Linux, we've already accepted synchronously, so we need to post completion
+	// But we can't access CNtlNetwork from here without circular dependencies
+	// Solution: PostAccept will handle posting the completion after AcceptEx succeeds
+	// For now, just return success - PostAccept will post to IOCP
+	
+	return NTL_SUCCESS;
 #else
 	if( !m_lpfnAcceptEx( m_socket, rAcceptSocket.GetRawSocket(), lpOutputBuffer, dwReceiveDataLength, dwLocalAddressLength, dwRemoteAddressLength, lpdwBytesReceived, lpOverlapped ) )
 	{
@@ -253,8 +310,21 @@ inline int CNtlSocket::DisconnectEx(LPOVERLAPPED lpOverlapped, DWORD dwFlags, DW
 inline void CNtlSocket::GetAcceptExSockaddrs(PVOID lpOutputBuffer, DWORD dwReceiveDataLength, DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, LPSOCKADDR* LocalSockaddr, LPINT LocalSockaddrLength, LPSOCKADDR* RemoteSockaddr, LPINT RemoteSockaddrLength)
 {
 #if !defined(_WIN32)
-	(void)lpOutputBuffer; (void)dwReceiveDataLength; (void)dwLocalAddressLength; (void)dwRemoteAddressLength; (void)LocalSockaddr; (void)LocalSockaddrLength; (void)RemoteSockaddr; (void)RemoteSockaddrLength;
-	return;
+	// Linux implementation: extract addresses from buffer
+	// Format: [local address (SOCKADDR_IN)][16 bytes padding][remote address (SOCKADDR_IN)][16 bytes padding]
+	(void)dwReceiveDataLength; // Not used
+	
+	char* pBuf = (char*)lpOutputBuffer;
+	
+	if (LocalSockaddr)
+		*LocalSockaddr = (LPSOCKADDR)pBuf;
+	if (LocalSockaddrLength)
+		*LocalSockaddrLength = sizeof(struct sockaddr_in);
+	
+	if (RemoteSockaddr)
+		*RemoteSockaddr = (LPSOCKADDR)(pBuf + sizeof(struct sockaddr_in) + 16);
+	if (RemoteSockaddrLength)
+		*RemoteSockaddrLength = sizeof(struct sockaddr_in);
 #else
 	m_lpfnGetAcceptExSockAddrs(lpOutputBuffer, dwReceiveDataLength, dwLocalAddressLength, dwRemoteAddressLength, LocalSockaddr, LocalSockaddrLength, RemoteSockaddr, RemoteSockaddrLength);
 #endif
