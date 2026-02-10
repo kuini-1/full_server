@@ -66,6 +66,12 @@
 #define _stricmp strcasecmp
 #define NTL_STRICMP(s1, s2) strcasecmp((s1), (s2))
 
+/* _wcsicmp / NTL_WCSICMP: case-insensitive wide string compare -> wcscasecmp (POSIX) */
+#ifndef _wcsicmp
+#define _wcsicmp wcscasecmp
+#endif
+#define NTL_WCSICMP(w1, w2) wcscasecmp((w1), (w2))
+
 /* _strnicmp: case-insensitive string compare with length limit -> strncasecmp (POSIX) */
 #ifndef _strnicmp
 #define _strnicmp(s1, s2, n) strncasecmp((s1), (s2), (n))
@@ -113,5 +119,8 @@
 
 /* _stricmp / NTL_STRICMP: case-insensitive string compare (CRT) */
 #define NTL_STRICMP(s1, s2) _stricmp((s1), (s2))
+
+/* _wcsicmp / NTL_WCSICMP: case-insensitive wide string compare (CRT) */
+#define NTL_WCSICMP(w1, w2) _wcsicmp((w1), (w2))
 
 #endif
