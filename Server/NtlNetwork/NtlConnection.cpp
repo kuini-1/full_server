@@ -622,6 +622,14 @@ int CNtlConnection::PostRecv()
 			// No data available yet - decrement count since this isn't a true pending operation
 			// The retry logic in ValidCheck will call PostRecv again when data arrives
 			DecreasePostIoCount();
+			// Log occasionally to verify retry is working (but throttle to avoid spam)
+			static DWORD s_dwLastPendingLog = 0;
+			DWORD dwNow = GetTickCount();
+			if (dwNow - s_dwLastPendingLog > 5000) // Log every 5 seconds max
+			{
+				s_dwLastPendingLog = dwNow;
+				NTL_PRINT(PRINT_SYSTEM, "[PostRecv] No data available (ERROR_IO_PENDING) for Session=%p, IP=%s - retry logic will check again", this, GetRemoteIP());
+			}
 			return NTL_SUCCESS;
 		}
 		// Handle EBADF (error 9) - bad file descriptor (socket closed/invalid)

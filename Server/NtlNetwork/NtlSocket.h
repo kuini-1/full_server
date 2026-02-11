@@ -369,7 +369,16 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 			SetLastError(ERROR_IO_PENDING);
 			return ERROR_IO_PENDING;
 		}
-		// Real error occurred
+		// Real error occurred - log it for debugging
+		// Log occasionally to avoid spam
+		static DWORD s_dwLastRecvErrorLog = 0;
+		DWORD dwNow = GetTickCount();
+		if (dwNow - s_dwLastRecvErrorLog > 5000) // Log every 5 seconds max
+		{
+			s_dwLastRecvErrorLog = dwNow;
+			// Note: Can't use NTL_PRINT here as we're in NtlSocket.h (header file)
+			// Error will be logged in PostRecv
+		}
 		SetLastError(err);
 		return err;
 	}

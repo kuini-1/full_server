@@ -120,22 +120,31 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 				// Retry PostRecv more frequently (every 10ms) to detect data faster
 				// Use a per-session timestamp to avoid calling too frequently
 				static std::map<CNtlSession*, DWORD> s_lastRetryTime;
+				static std::map<CNtlSession*, DWORD> s_retryCount;
 				DWORD dwNow = GetTickCount();
 				DWORD dwLastRetry = s_lastRetryTime[pSession];
 				if (dwLastRetry == 0 || (dwNow - dwLastRetry >= 10))
 				{
 					s_lastRetryTime[pSession] = dwNow;
+					s_retryCount[pSession] = (s_retryCount[pSession] ? s_retryCount[pSession] : 0) + 1;
+					
+					// Log retry activity occasionally (every 100 retries = ~1 second)
+					if (s_retryCount[pSession] % 100 == 0)
+					{
+						NTL_PRINT(PRINT_SYSTEM, "[ValidCheck] Retrying PostRecv for Session=%p, IP=%s (retry #%u)", pSession, pSession->GetRemoteIP(), s_retryCount[pSession]);
+					}
+					
 					// PostRecv will call recv() directly on non-blocking socket
 					// If data is available, it will receive it and post to IOCP
 					// If not, it will return ERROR_IO_PENDING (which we ignore here)
 					int rc = pSession->PostRecv();
-					// Don't log errors - EBADF (9) and NTL_ERR_NET_SESSION_CLOSED are expected
-					// when sockets are closed or invalid
-					// Only log unexpected errors if needed for debugging
-					// if (rc != NTL_SUCCESS && rc != NTL_ERR_NET_SESSION_CLOSED && rc != EBADF && rc != 9)
-					// {
-					// 	NTL_PRINT(PRINT_SYSTEM, "[ValidCheck] PostRecv retry returned error: %d for Session=%p", rc, pSession);
-					// }
+					// Log errors occasionally to debug (but throttle to avoid spam)
+					static DWORD s_dwLastErrorLog = 0;
+					if (rc != NTL_SUCCESS && rc != NTL_ERR_NET_SESSION_CLOSED && (dwNow - s_dwLastErrorLog > 5000))
+					{
+						s_dwLastErrorLog = dwNow;
+						NTL_PRINT(PRINT_SYSTEM, "[ValidCheck] PostRecv retry returned error: %d for Session=%p, IP=%s", rc, pSession, pSession->GetRemoteIP());
+					}
 				}
 			}
 #endif
