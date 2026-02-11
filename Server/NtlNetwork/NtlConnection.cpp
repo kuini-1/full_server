@@ -634,6 +634,8 @@ int CNtlConnection::PostRecv()
 	// On Linux, RecvEx completed synchronously with data, so post completion to IOCP immediately
 	if (m_pNetworkRef && dwTransferedBytes > 0)
 	{
+		// Set param in IOCONTEXT so worker thread can extract session pointer
+		m_recvContext.param = this;
 		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP
 		// wParam = completion key (session pointer), lParam = overlapped structure
 		m_pNetworkRef->PostIocpEventMessage((WPARAM)this, (LPARAM)&m_recvContext);
@@ -784,6 +786,8 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 	// On Linux, AcceptEx completed synchronously with a connection, so post completion to IOCP immediately
 	if (m_pNetworkRef)
 	{
+		// Set param in IOCONTEXT so worker thread can extract session pointer
+		m_recvContext.param = this;
 		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP
 		// wParam = completion key (session pointer), lParam = overlapped structure
 		m_pNetworkRef->PostIocpEventMessage((WPARAM)this, (LPARAM)&m_recvContext);
