@@ -63,8 +63,13 @@ public:
 		while( IsRunnable() )
 		{	
 			// Retry AcceptEx on existing accepting sessions (for Linux - when connections arrive)
-			if (pAcceptor->m_pAcceptingSessionList)
+			if (pAcceptor->m_pAcceptingSessionList && pAcceptor->m_nAcceptingCount > 0)
 			{
+				static int retryCount = 0;
+				if (++retryCount % 100 == 0) // Log every 1 second (100 * 10ms)
+				{
+					NTL_PRINT(PRINT_SYSTEM, "[AcceptorThread] Retry loop #%d, accepting count=%d", retryCount, pAcceptor->m_nAcceptingCount);
+				}
 				pAcceptor->m_pAcceptingSessionList->RetryAccept(pAcceptor);
 			}
 			
