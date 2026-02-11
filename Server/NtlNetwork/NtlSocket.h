@@ -371,9 +371,16 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 		return err;
 	}
 	
-	if (selectResult == 0 || !FD_ISSET(m_socket, &readfds))
+	if (selectResult == 0)
 	{
 		// No data available - return ERROR_IO_PENDING to indicate async operation is pending
+		SetLastError(ERROR_IO_PENDING);
+		return ERROR_IO_PENDING;
+	}
+	
+	if (!FD_ISSET(m_socket, &readfds))
+	{
+		// Socket not in readfds (shouldn't happen if selectResult > 0, but handle it)
 		SetLastError(ERROR_IO_PENDING);
 		return ERROR_IO_PENDING;
 	}

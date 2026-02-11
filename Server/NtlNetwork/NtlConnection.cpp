@@ -563,6 +563,15 @@ int CNtlConnection::PostRecv()
 {
 	FUNCTION_BEGIN();
 
+	// Debug: Log when PostRecv is called (but only occasionally to avoid spam)
+	static DWORD s_dwLastLogTime = 0;
+	DWORD dwNow = GetTickCount();
+	if (dwNow - s_dwLastLogTime > 1000) // Log once per second max
+	{
+		s_dwLastLogTime = dwNow;
+		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Called for Session=%p, Status=%d", this, GetStatus());
+	}
+
 	if( false == IsStatus( STATUS_ACTIVE ) )
 	{
 		Disconnect( false );
@@ -1049,11 +1058,14 @@ int CNtlConnection::CompleteAccept(DWORD dwTransferedBytes)
 	m_pNetworkRef->PostNetEventMessage( (WPARAM)NETEVENT_ACCEPT, (LPARAM)this );
 
 
+	NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] Calling PostRecv for Session=%p", this);
 	rc = PostRecv();
 	if( NTL_SUCCESS != rc )
 	{
+		NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] PostRecv returned error: %d for Session=%p", rc, this);
 		return rc;
 	}
+	NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] PostRecv succeeded for Session=%p", this);
 
 
 	//NTL_PRINT(PRINT_SYSTEM, "Session[%X]\tCompleteAccept Called Local[%s:%u] Remote[%s:%u]", this, GetLocalIP(), GetLocalPort(), GetRemoteIP(), GetRemotePort());

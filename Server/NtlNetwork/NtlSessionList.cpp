@@ -129,9 +129,9 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 					// If data is available, it will receive it and post to IOCP
 					// If not, it will return ERROR_IO_PENDING (which we ignore here)
 					int rc = pSession->PostRecv();
+					// Only log if there's an actual error (not ERROR_IO_PENDING which is expected)
 					if (rc != NTL_SUCCESS && rc != NTL_ERR_NET_SESSION_CLOSED)
 					{
-						// Log errors (but not ERROR_IO_PENDING which is expected)
 						NTL_PRINT(PRINT_SYSTEM, "[ValidCheck] PostRecv retry returned error: %d for Session=%p", rc, pSession);
 					}
 				}
