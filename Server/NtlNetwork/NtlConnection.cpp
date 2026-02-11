@@ -748,7 +748,7 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 	m_pAcceptorRef->IncreaseCurAcceptingCount();
 
 
-	NTL_PRINT(PRINT_SYSTEM, "[PostAccept] Calling AcceptEx for Session=%p", this);
+	NTL_PRINT(PRINT_SYSTEM, "[PostAccept] Calling AcceptEx for Session=%p (listen socket fd=%d)", this, pAcceptor->GetListenSocket().GetRawSocket());
 	int rc = pAcceptor->GetListenSocket().AcceptEx(	m_socket,
 		m_recvContext.wsabuf.buf,
 		0,
@@ -757,7 +757,18 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 		&dwBytes,
 		&m_recvContext );
 	
-	NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx returned rc=%d for Session=%p", rc, this);
+	if (rc == ERROR_IO_PENDING)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx returned ERROR_IO_PENDING (no connection available yet) for Session=%p", this);
+	}
+	else if (rc == NTL_SUCCESS)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx SUCCEEDED! Connection accepted for Session=%p", this);
+	}
+	else
+	{
+		NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx returned error rc=%d for Session=%p", rc, this);
+	}
 
 #if !defined(_WIN32)
 	// On Linux, handle EAGAIN/EWOULDBLOCK (no connection available) as pending operation

@@ -69,6 +69,7 @@ public:
 			int nAcceptCount = pAcceptor->GetReserveAcceptCount();
 			if( nAcceptCount > 0 )
 			{
+				NTL_PRINT(PRINT_SYSTEM, "[AcceptorThread] Creating %d new accepting sessions (Current accepting: %d)", nAcceptCount, pAcceptor->m_nAcceptingCount);
 				rc = pAcceptor->ReserveAccept( nAcceptCount );
 				if( NTL_SUCCESS != rc )
 				{
@@ -77,7 +78,7 @@ public:
 				}
 				else
 				{
-				//	ERR_LOG(LOG_NETWORK, "%s ReserveAccept Success : ReserveCount[%d] Accepting[%d] Accepted[%u]", GetName(), nAcceptCount, pAcceptor->m_nAcceptingCount, pAcceptor->m_nAcceptedCount);
+					NTL_PRINT(PRINT_SYSTEM, "[AcceptorThread] ReserveAccept Success: Accepting=%d, Accepted=%u", pAcceptor->m_nAcceptingCount, pAcceptor->m_nAcceptedCount);
 				}
 			}
 
