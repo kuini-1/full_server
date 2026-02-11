@@ -354,40 +354,9 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 		fcntl(m_socket, F_SETFL, flags | O_NONBLOCK);
 	}
 
-	// Use select() to check if data is available before calling recv()
-	// This avoids unnecessary recv() calls and properly detects when data arrives
-	fd_set readfds;
-	struct timeval timeout;
-	FD_ZERO(&readfds);
-	FD_SET(m_socket, &readfds);
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 0; // Non-blocking check
-	
-	int selectResult = select(m_socket + 1, &readfds, NULL, NULL, &timeout);
-	if (selectResult < 0)
-	{
-		int err = errno;
-		SetLastError(err);
-		return err;
-	}
-	
-	if (selectResult == 0)
-	{
-		// No data available - return ERROR_IO_PENDING to indicate async operation is pending
-		SetLastError(ERROR_IO_PENDING);
-		return ERROR_IO_PENDING;
-	}
-	
-	if (!FD_ISSET(m_socket, &readfds))
-	{
-		// Socket not in readfds (shouldn't happen if selectResult > 0, but handle it)
-		SetLastError(ERROR_IO_PENDING);
-		return ERROR_IO_PENDING;
-	}
-
-	// Data is available - try to receive it (handle first buffer only for simplicity)
-	// Note: Even if select() says data is available, recv() might still return EAGAIN
-	// in rare race conditions, so we handle that case below
+	// Try to receive data directly (non-blocking socket will return EAGAIN if no data)
+	// This is simpler and more reliable than using select() with timeout 0
+	// The retry logic in ValidCheck will call PostRecv again when data arrives
 	ssize_t bytesReceived = recv(m_socket, lpBuffers[0].buf, lpBuffers[0].len, 0);
 	
 	if (bytesReceived < 0)
