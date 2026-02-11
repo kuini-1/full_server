@@ -120,10 +120,11 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 				// Retry PostRecv occasionally (every 100ms) to check for incoming data
 				// Use a per-session timestamp to avoid calling too frequently
 				static std::map<CNtlSession*, DWORD> s_lastRetryTime;
+				DWORD dwNow = GetTickCount();
 				DWORD dwLastRetry = s_lastRetryTime[pSession];
-				if (dwTickTime - dwLastRetry >= 100 || dwLastRetry == 0)
+				if (dwLastRetry == 0 || (dwNow - dwLastRetry >= 100))
 				{
-					s_lastRetryTime[pSession] = dwTickTime;
+					s_lastRetryTime[pSession] = dwNow;
 					// PostRecv will use select() to check if data is available
 					// If data is available, it will receive it and post to IOCP
 					// If not, it will return ERROR_IO_PENDING (which we ignore here)

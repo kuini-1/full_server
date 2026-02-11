@@ -563,11 +563,8 @@ int CNtlConnection::PostRecv()
 {
 	FUNCTION_BEGIN();
 
-	NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Called for Session=%p, Status=%d, IP=%s", this, GetStatus(), GetRemoteIP());
-
 	if( false == IsStatus( STATUS_ACTIVE ) )
 	{
-		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Session not ACTIVE, disconnecting Session=%p", this);
 		Disconnect( false );
 		return NTL_ERR_NET_SESSION_CLOSED; //if we do here NTL_SUCCESS then connection will stay forever active..
 	}
@@ -624,13 +621,12 @@ int CNtlConnection::PostRecv()
 			// Keep the counts incremented - session is in receiving state waiting for data
 			// Don't post to IOCP yet - will be posted when data arrives
 			// Return success - PostRecv succeeds, session stays in receiving state
-			NTL_PRINT(PRINT_SYSTEM, "[PostRecv] RecvEx returned ERROR_IO_PENDING (no data yet) for Session=%p", this);
+			// Note: Retry logic in ValidCheck will call PostRecv again when data arrives
 			return NTL_SUCCESS;
 		}
 #endif
 		DecreasePostIoCount();
 
-		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] RecvEx Function Failed (%d)%s for Session=%p", rc, NtlGetErrorMessage( rc ), this);
 		return rc;
 	}
 
@@ -638,7 +634,6 @@ int CNtlConnection::PostRecv()
 	// On Linux, RecvEx completed synchronously with data, so post completion to IOCP immediately
 	if (m_pNetworkRef && dwTransferedBytes > 0)
 	{
-		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] RecvEx received %u bytes, posting to IOCP for Session=%p", dwTransferedBytes, this);
 		// Set param in IOCONTEXT so worker thread can extract session pointer
 		m_recvContext.param = this;
 		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP
@@ -647,7 +642,6 @@ int CNtlConnection::PostRecv()
 	}
 	else if (dwTransferedBytes == 0)
 	{
-		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] RecvEx returned 0 bytes (connection closed?) for Session=%p", this);
 		DecreasePostIoCount();
 		return NTL_ERR_NET_SESSION_CLOSED;
 	}
