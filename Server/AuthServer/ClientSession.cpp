@@ -41,52 +41,17 @@ void CClientSession::OnClose()
 
 int CClientSession::ProcessPacket()
 {
-	CNtlPacket packet;
-	if (PopPacket(&packet))
+	NTL_PRINT(PRINT_APP, "[ClientSession] ProcessPacket called for Session=%u, IP=%s", GetHandle(), GetRemoteIP());
+	
+	// Call base class to handle packet processing
+	int rc = CNtlSession::ProcessPacket();
+	
+	if (rc != NTL_SUCCESS)
 	{
-		int nPacketLen = GetPacketLen((BYTE*)(packet.GetPacketHeader()));
-		sNTLPACKETHEADER * pHeader = (sNTLPACKETHEADER *)packet.GetPacketData();
-		
-		NTL_PRINT(PRINT_APP, "[ClientSession] ProcessPacket: OpCode=0x%04X, Len=%d, Session=%u, IP=%s", 
-			pHeader ? pHeader->wOpCode : 0, nPacketLen, GetHandle(), GetRemoteIP());
-
-		if(m_pPacketEncoder && m_pPacketEncoder->RxDecrypt(packet, GetPacketRecvCount() & PACKET_MAX_SEQUENCE) != NTL_SUCCESS)
-		{
-			NTL_PRINT(PRINT_APP, "[ClientSession] Decryption failed! Session=%u, IP=%s, FailureCount=%d", 
-				GetHandle(), GetRemoteIP(), m_nDecryptionFailureCount);
-			
-			if (ALLOWED_DECRYPTION_FAILURE_COUNT < ++m_nDecryptionFailureCount)
-			{
-				m_pNetworkRef->RegisterBlockedIp(GetRemoteAddr().GetAddr()); 
-				SetStatus(STATUS_CLOSE);
-
-				if (CheckDisconnect(false))
-				{
-					ERR_LOG(LOG_NETWORK,"Session[%X] : Diconnecting due to too many decryption failure. Local Port[%u], Remote IP[%s]", this, GetLocalPort(), GetRemoteIP());
-				}
-
-				m_nDecryptionFailureCount = 0;
-			}
-		}
-		else
-		{
-			IncreasePacketRecv();
-			int rc = OnDispatch(&packet);
-			GetRecvBuffer()->IncreasePopPos(GetHeaderSize() + nPacketLen);
-			return rc;
-		}
-
-		GetRecvBuffer()->IncreasePopPos(GetHeaderSize() + nPacketLen);
+		NTL_PRINT(PRINT_APP, "[ClientSession] ProcessPacket returned error: %d for Session=%u, IP=%s", rc, GetHandle(), GetRemoteIP());
 	}
-	else
-	{
-		NTL_PRINT(PRINT_APP, "[ClientSession] PopPacket failed! Session=%u, IP=%s - disconnecting", GetHandle(), GetRemoteIP());
-		ERR_LOG(LOG_NETWORK, "Session[%X] : Diconnecting due to sending invalid packet. Local Port[%u], Remote IP[%s]", this, GetLocalPort(), GetRemoteIP());
-		Disconnect(false);
-		return NTL_ERR_NET_PACKET_INVALID;
-	}
-
-	return NTL_SUCCESS;
+	
+	return rc;
 }
 
 int CClientSession::OnDispatch(CNtlPacket * pPacket)
