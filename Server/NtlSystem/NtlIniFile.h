@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-01-05
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	ï¿½ï¿½ NTL-Inc Co., Ltd
 //
 //	Author		:	Myoung Jin, Choi		( yoshiki@ntl-inc.com )
 //
