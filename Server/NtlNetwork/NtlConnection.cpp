@@ -26,6 +26,7 @@
 #include "Utils.h"
 
 #include "PacketBlock.h"
+#include "NtlPacket.h"
 
 
 //-----------------------------------------------------------------------------------
@@ -453,11 +454,11 @@ int CNtlConnection::RecvPackets(DWORD dwTransferedBytes)
 
 		m_recvBuffer.IncreaseWorkPos(wPacketLength);
 
-		sNTLPACKETHEADER * pHeader = (sNTLPACKETHEADER *)packet.GetPacketData();
-		if (pHeader)
+		PACKETDATA * pPacketData = (PACKETDATA *)packet.GetPacketData();
+		if (pPacketData)
 		{
 			NTL_PRINT(PRINT_SYSTEM, "[RecvPackets] Packet extracted: OpCode=0x%04X, Len=%u, Session=%p", 
-				pHeader->wOpCode, wPacketLength, this);
+				pPacketData->wOpCode, wPacketLength, this);
 		}
 
 		m_pNetworkRef->PostNetEventMessage((WPARAM)NETEVENT_RECV, (LPARAM)this);
