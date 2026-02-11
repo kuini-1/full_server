@@ -746,6 +746,7 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 	m_pAcceptorRef->IncreaseCurAcceptingCount();
 
 
+	NTL_PRINT(PRINT_SYSTEM, "[PostAccept] Calling AcceptEx for Session=%p", this);
 	int rc = pAcceptor->GetListenSocket().AcceptEx(	m_socket,
 		m_recvContext.wsabuf.buf,
 		0,
@@ -753,6 +754,8 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 		sizeof(SOCKADDR_IN) + 16,
 		&dwBytes,
 		&m_recvContext );
+	
+	NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx returned rc=%d for Session=%p", rc, this);
 
 #if !defined(_WIN32)
 	// On Linux, handle EAGAIN/EWOULDBLOCK (no connection available) as pending operation
@@ -1010,8 +1013,11 @@ int CNtlConnection::CompleteAccept(DWORD dwTransferedBytes)
 	SetStatus( STATUS_ACTIVE );
 	m_dwConnectTime = GetTickCount();
 
+	NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] Accept completed! Session=%p, Status=ACTIVE", this);
+
 	m_pAcceptorRef->OnAccepted(this);
 
+	NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] Posting NETEVENT_ACCEPT for Session=%p", this);
 	m_pNetworkRef->PostNetEventMessage( (WPARAM)NETEVENT_ACCEPT, (LPARAM)this );
 
 

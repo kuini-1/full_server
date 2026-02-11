@@ -147,10 +147,16 @@ void CNtlNetworkProcessor::ProcessNetEvent(ULONG_PTR netEvent, CNtlSession *pSes
 	{
 		case NETEVENT_ACCEPT:
 		{
+			NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] NETEVENT_ACCEPT for Session=%p, Type=%u", pSession, pSession->GetSessionType());
 			int rc = pSession->OnAccept();
 			if (NTL_SUCCESS != rc)
 			{
+				NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] OnAccept failed with rc=%d, disconnecting Session=%p", rc, pSession);
 				pSession->Disconnect(false);
+			}
+			else
+			{
+				NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] OnAccept succeeded for Session=%p", pSession);
 			}
 		}
 		break;

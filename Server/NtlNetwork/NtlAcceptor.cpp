@@ -365,6 +365,13 @@ int CNtlAcceptor::OnAssociated(CNtlNetwork * pNetwork)
 //-----------------------------------------------------------------------------------
 void	CNtlAcceptor::OnAccepted(CNtlConnection * pConnection)
 {
+	CNtlSession* pCon = static_cast<CNtlSession*>(pConnection);
+	if (pCon)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "[OnAccepted] Connection accepted! Session=%p, Handle=%u, IP=%s, Port=%u", 
+			pCon, pCon->GetHandle(), pCon->GetRemoteIP(), pCon->GetRemotePort());
+	}
+	
 	DecreaseCurAcceptingCount();
 	IncreaseCurAcceptedCount();
 
@@ -374,7 +381,6 @@ void	CNtlAcceptor::OnAccepted(CNtlConnection * pConnection)
 
 	if (m_pAcceptingSessionList)
 	{
-		CNtlSession* pCon = static_cast<CNtlSession*>(pConnection); 
 		if (pCon)
 			m_pAcceptingSessionList->Remove(pCon);
 	}
