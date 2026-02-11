@@ -47,13 +47,35 @@ start_server() {
     
     # Start server in new tmux session
     echo -e "${GREEN}Starting $server_name...${NC}"
-    tmux new-session -d -s "$server_name" -c "$BUILD_DIR" "$BUILD_DIR/$server_binary" "$CONFIG_DIR/$config_file"
     
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}  ✓ $server_name started in tmux session '$server_name'${NC}"
-    else
-        echo -e "${RED}  ✗ Failed to start $server_name${NC}"
+    # Create tmux session with the command
+    # Use 'tmux new -s' syntax (shorter form)
+    if tmux new -d -s "$server_name" "cd '$BUILD_DIR' && '$BUILD_DIR/$server_binary' '$CONFIG_DIR/$config_file'; read" 2>/dev/null; then
+        sleep 0.3
+        if tmux has-session -t "$server_name" 2>/dev/null; then
+            echo -e "${GREEN}  ✓ $server_name started in tmux session '$server_name'${NC}"
+            return
+        fi
     fi
+    
+    # Method 2: Create session first, then send command
+    echo -e "${YELLOW}  Trying alternative method...${NC}"
+    if tmux new -d -s "$server_name" 2>/dev/null; then
+        sleep 0.2
+        tmux send-keys -t "$server_name" "cd '$BUILD_DIR'" Enter
+        sleep 0.1
+        tmux send-keys -t "$server_name" "'$BUILD_DIR/$server_binary' '$CONFIG_DIR/$config_file'" Enter
+        sleep 0.3
+        if tmux has-session -t "$server_name" 2>/dev/null; then
+            echo -e "${GREEN}  ✓ $server_name started (alternative method)${NC}"
+            return
+        fi
+    fi
+    
+    # If we get here, both methods failed
+    echo -e "${RED}  ✗ Failed to start $server_name${NC}"
+    echo -e "${RED}     Check if tmux is working: tmux -V${NC}"
+    echo -e "${RED}     Check if binary exists: ls -la '$BUILD_DIR/$server_binary'${NC}"
 }
 
 # Start servers in order
