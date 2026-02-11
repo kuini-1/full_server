@@ -359,17 +359,15 @@ int CNtlAcceptor::OnAssociated(CNtlNetwork * pNetwork)
 
 	m_pNetwork = pNetwork;
 
-	if (m_nListenSocketSize > 1)
+	// Always create accepting session list (needed for Linux retry logic, even with single socket)
+	m_pAcceptingSessionList = new CNtlAcceptingSessionList;
+	if (m_pAcceptingSessionList == NULL)
 	{
-		m_pAcceptingSessionList = new CNtlAcceptingSessionList;
-		if (m_pAcceptingSessionList == NULL)
-		{
-			NTL_PRINT(PRINT_SYSTEM, "m_pAcceptingSessionList == NULL");
-			return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
-		}
-
-		m_pAcceptingSessionList->Create(m_pNetwork, m_nCreateAcceptCount, m_nCreateAcceptCount / 10);
+		NTL_PRINT(PRINT_SYSTEM, "m_pAcceptingSessionList == NULL");
+		return NTL_ERR_SYS_MEMORY_ALLOC_FAIL;
 	}
+
+	m_pAcceptingSessionList->Create(m_pNetwork, m_nCreateAcceptCount, m_nCreateAcceptCount / 10);
 
 	int rc = CreateThread();
 	if( NTL_SUCCESS != rc )
