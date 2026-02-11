@@ -17,6 +17,9 @@
 #include "NtlSessionList.h"
 #include "NtlSession.h"
 #include "NtlNetwork.h"
+#if !defined(_WIN32)
+#include <map>
+#endif
 
 
 //-----------------------------------------------------------------------------------
@@ -115,10 +118,12 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 			if (pSession->IsStatus(CNtlConnection::STATUS_ACTIVE))
 			{
 				// Retry PostRecv occasionally (every 100ms) to check for incoming data
-				static DWORD s_dwLastRetryTime = 0;
-				if (dwTickTime - s_dwLastRetryTime >= 100)
+				// Use a per-session timestamp to avoid calling too frequently
+				static std::map<CNtlSession*, DWORD> s_lastRetryTime;
+				DWORD dwLastRetry = s_lastRetryTime[pSession];
+				if (dwTickTime - dwLastRetry >= 100 || dwLastRetry == 0)
 				{
-					s_dwLastRetryTime = dwTickTime;
+					s_lastRetryTime[pSession] = dwTickTime;
 					// PostRecv will use select() to check if data is available
 					// If data is available, it will receive it and post to IOCP
 					// If not, it will return ERROR_IO_PENDING (which we ignore here)

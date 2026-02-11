@@ -64,7 +64,12 @@ public:
 
 		while( IsRunnable() )
 		{	
+#if !defined(_WIN32)
+			// On Linux, check more frequently (50ms) to retry PostRecv for active sessions
+			Wait( 50 );
+#else
 			Wait( 1000 );
+#endif
 
 			dwTickCur	= ::GetTickCount();
 			dwTickDiff	= dwTickCur - dwTickOld;
