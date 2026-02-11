@@ -176,10 +176,14 @@ void CNtlNetworkProcessor::ProcessNetEvent(ULONG_PTR netEvent, CNtlSession *pSes
 
 		case NETEVENT_RECV:
 		{
+			NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] NETEVENT_RECV for Session=%p, Type=%u", pSession, pSession->GetSessionType());
 			int rc = pSession->ProcessPacket();
 
 			if (rc != NTL_SUCCESS && pSession->IsSetControlFlag(CNtlConnection::CONTROL_FLAG_CHECK_OPCODE))
+			{
+				NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] ProcessPacket failed with rc=%d, disconnecting Session=%p", rc, pSession);
 				pSession->Disconnect(false);
+			}
 		}
 		break;
 
