@@ -624,6 +624,14 @@ int CNtlConnection::PostRecv()
 			DecreasePostIoCount();
 			return NTL_SUCCESS;
 		}
+		// Handle EBADF (error 9) - bad file descriptor (socket closed/invalid)
+		// This is expected if the socket was closed, so don't log it as an error
+		if (rc == EBADF || rc == 9)
+		{
+			DecreasePostIoCount();
+			// Socket is invalid/closed - this is normal if connection was closed
+			return NTL_ERR_NET_SESSION_CLOSED;
+		}
 #endif
 		DecreasePostIoCount();
 
