@@ -16,6 +16,8 @@
 
 #include "NtlSessionListBase.h"
 
+class CNtlAcceptor;
+
 class CNtlAcceptingSessionList : public CNtlSessionListBase
 {
 
