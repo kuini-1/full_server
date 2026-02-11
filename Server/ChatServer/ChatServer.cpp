@@ -3,6 +3,9 @@
 //-----------------------------------------------------------------------------------
 
 #include "stdafx.h"
+#if !defined(_WIN32)
+#include <time.h>
+#endif
 #include "ChatServer.h"
 #include "TableContainerManager.h"
 #include "mysql.h"
@@ -213,30 +216,51 @@ int main(int argc, _TCHAR* argv[])
 	CChatServer app;
 	CNtlFileStream traceFileStream;
 
+#if defined(_WIN32)
 	SYSTEMTIME ti;
 	GetLocalTime(&ti);
+#else
+	struct tm* ti_ptr;
+	time_t now = time(NULL);
+	ti_ptr = localtime(&now);
+#endif
 
 #if defined(_WIN32)
 	SetConsoleTitle( TEXT("DBOD CHAT") );
 #endif
 
-	int rc = app.Create(argc, argv, ".\\config\\ChatServer.ini");
+	int rc = app.Create(argc, argv, (argc > 1) ? argv[1] : "./config/ChatServer.ini");
 	if (NTL_SUCCESS != rc)
 	{
 		NTL_PRINT(PRINT_APP, "Server Application Create Fail %d(%s)", rc, NtlGetErrorMessage(rc));
 		return rc;
 	}
 
-
+	// LOG FILE
+#if !defined(_WIN32)
+	mkdir("./logs", 0755);
+	mkdir("./logs/chatserver", 0755);
+#endif
 	char m_LogFile[256];
+#if defined(_WIN32)
 	sprintf(m_LogFile, ".\\logs\\chatserver\\chatlog%02u-%02u-%02u.txt", ti.wYear, ti.wMonth, ti.wDay);
-	
+#else
+	if (ti_ptr)
+		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/chatserver/chatlog%02d-%02d-%02d.txt", ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
+	else
+		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/chatserver/chatlog00-00-00.txt");
+#endif
+
 	rc = traceFileStream.Create(m_LogFile);
 	if (NTL_SUCCESS != rc)
-		return rc;
-
-	app.m_log.AttachLogStream(traceFileStream.GetFilePtr());
-	NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
+	{
+		NTL_PRINT(PRINT_APP, "Failed to create log file: %s (error: %d) - continuing without log file", m_LogFile, rc);
+	}
+	else
+	{
+		app.m_log.AttachLogStream(traceFileStream.GetFilePtr());
+		NtlSetPrintFlag(PRINT_APP | PRINT_SYSTEM);
+	}
 
 
 	// CONNECT TO CHARACTER DATABASE
