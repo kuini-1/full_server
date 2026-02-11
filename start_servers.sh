@@ -60,25 +60,25 @@ start_server() {
 echo -e "\n${GREEN}=== Starting Servers ===${NC}"
 
 # Start MasterServer first (other servers connect to it)
-start_server "masterserver" "MasterServer" "MasterServer.ini"
+start_server "master" "MasterServer" "MasterServer.ini"
 
 # Small delay to let MasterServer start
 sleep 2
 
 # Start AuthServer (connects to MasterServer)
-start_server "authserver" "AuthServer" "AuthServer.ini"
+start_server "auth" "AuthServer" "AuthServer.ini"
 
 # Start QueryServer
-start_server "queryserver" "QueryServer" "QueryServer.ini"
+start_server "query" "QueryServer" "QueryServer.ini"
 
 # Start CharServer
-start_server "charserver" "CharServer" "CharServer.ini"
+start_server "char" "CharServer" "CharServer.ini"
 
 # Start ChatServer
-start_server "chatserver" "ChatServer" "ChatServer.ini"
+start_server "chat" "ChatServer" "ChatServer.ini"
 
 # Start GameServer (can have multiple instances, but we'll start one by default)
-start_server "gameserver" "GameServer" "GameServer.ini"
+start_server "game" "GameServer" "GameServer.ini"
 
 echo -e "\n${GREEN}=== All servers started ===${NC}"
 echo -e "\n${YELLOW}Useful commands:${NC}"

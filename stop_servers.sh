@@ -12,7 +12,7 @@ NC='\033[0m' # No Color
 echo -e "${YELLOW}Stopping all game servers...${NC}"
 
 # List of server sessions
-SERVERS=("masterserver" "authserver" "queryserver" "charserver" "chatserver" "gameserver")
+SERVERS=("master" "auth" "query" "char" "chat" "game")
 
 # Function to stop a server session
 stop_server() {
