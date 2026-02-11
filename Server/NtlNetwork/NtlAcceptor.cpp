@@ -62,7 +62,7 @@ public:
 
 		while( IsRunnable() )
 		{	
-			Wait( ACCEPT_RESERVE_CHECK_TIME );
+			Wait( 10 ); // Reduced wait time (10ms) for faster connection acceptance on Linux
 
 			//Here new connections are created
 
