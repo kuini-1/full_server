@@ -563,15 +563,6 @@ int CNtlConnection::PostRecv()
 {
 	FUNCTION_BEGIN();
 
-	// Debug: Log when PostRecv is called (but only occasionally to avoid spam)
-	static DWORD s_dwLastLogTime = 0;
-	DWORD dwNow = GetTickCount();
-	if (dwNow - s_dwLastLogTime > 1000) // Log once per second max
-	{
-		s_dwLastLogTime = dwNow;
-		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Called for Session=%p, Status=%d", this, GetStatus());
-	}
-
 	if( false == IsStatus( STATUS_ACTIVE ) )
 	{
 		Disconnect( false );
@@ -623,14 +614,14 @@ int CNtlConnection::PostRecv()
 	{
 #if !defined(_WIN32)
 		// On Linux, handle ERROR_IO_PENDING (EAGAIN) as a non-error condition
-		// This means no data is available yet, operation is pending (like Windows WSARecv)
+		// This means no data is available yet
+		// Unlike Windows where WSARecv is truly async, on Linux we're just polling
+		// So we decrement PostIoCount and allow retry logic to call PostRecv again
 		if (rc == ERROR_IO_PENDING)
 		{
-			// No data available yet - this is OK, operation is pending
-			// Keep the counts incremented - session is in receiving state waiting for data
-			// Don't post to IOCP yet - will be posted when data arrives
-			// Return success - PostRecv succeeds, session stays in receiving state
-			// Note: Retry logic in ValidCheck will call PostRecv again when data arrives
+			// No data available yet - decrement count since this isn't a true pending operation
+			// The retry logic in ValidCheck will call PostRecv again when data arrives
+			DecreasePostIoCount();
 			return NTL_SUCCESS;
 		}
 #endif

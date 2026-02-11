@@ -65,8 +65,8 @@ public:
 		while( IsRunnable() )
 		{	
 #if !defined(_WIN32)
-			// On Linux, check more frequently (50ms) to retry PostRecv for active sessions
-			Wait( 50 );
+			// On Linux, check more frequently (10ms) to retry PostRecv for active sessions
+			Wait( 10 );
 #else
 			Wait( 1000 );
 #endif

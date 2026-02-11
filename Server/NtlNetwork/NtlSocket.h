@@ -365,9 +365,11 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 		if (err == EAGAIN || err == EWOULDBLOCK)
 		{
 			// No data available - return ERROR_IO_PENDING to indicate async operation is pending
+			// This is expected and normal - data will arrive later
 			SetLastError(ERROR_IO_PENDING);
 			return ERROR_IO_PENDING;
 		}
+		// Real error occurred
 		SetLastError(err);
 		return err;
 	}
