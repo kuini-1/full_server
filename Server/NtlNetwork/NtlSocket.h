@@ -18,6 +18,7 @@
 #include <mswsock.h>
 #else
 #include "../../Shared/NtlSharedCommon.h"
+#include <sys/select.h>
 typedef struct _GUID { unsigned long Data1; unsigned short Data2; unsigned short Data3; unsigned char Data4[8]; } GUID;
 typedef int* LPINT;
 typedef DWORD* LPDWORD;
@@ -353,7 +354,31 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 		fcntl(m_socket, F_SETFL, flags | O_NONBLOCK);
 	}
 
-	// Try to receive data (handle first buffer only for simplicity)
+	// Use select() to check if data is available before calling recv()
+	// This avoids unnecessary recv() calls and properly detects when data arrives
+	fd_set readfds;
+	struct timeval timeout;
+	FD_ZERO(&readfds);
+	FD_SET(m_socket, &readfds);
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 0; // Non-blocking check
+	
+	int selectResult = select(m_socket + 1, &readfds, NULL, NULL, &timeout);
+	if (selectResult < 0)
+	{
+		int err = errno;
+		SetLastError(err);
+		return err;
+	}
+	
+	if (selectResult == 0 || !FD_ISSET(m_socket, &readfds))
+	{
+		// No data available - return ERROR_IO_PENDING to indicate async operation is pending
+		SetLastError(ERROR_IO_PENDING);
+		return ERROR_IO_PENDING;
+	}
+
+	// Data is available - try to receive it (handle first buffer only for simplicity)
 	ssize_t bytesReceived = recv(m_socket, lpBuffers[0].buf, lpBuffers[0].len, 0);
 	
 	if (bytesReceived < 0)

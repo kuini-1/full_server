@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-01-02
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -107,6 +107,25 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 			}
 			else if (pSession->PacketLogTime(dwTickTime))
 				PacketLog(pSession);
+
+#if !defined(_WIN32)
+			// On Linux, retry PostRecv for active sessions to detect when data arrives
+			// This is needed because RecvEx returns ERROR_IO_PENDING when no data is available,
+			// and we need to retry PostRecv when data arrives
+			if (pSession->IsStatus(CNtlConnection::STATUS_ACTIVE))
+			{
+				// Retry PostRecv occasionally (every 100ms) to check for incoming data
+				static DWORD s_dwLastRetryTime = 0;
+				if (dwTickTime - s_dwLastRetryTime >= 100)
+				{
+					s_dwLastRetryTime = dwTickTime;
+					// PostRecv will use select() to check if data is available
+					// If data is available, it will receive it and post to IOCP
+					// If not, it will return ERROR_IO_PENDING (which we ignore here)
+					pSession->PostRecv();
+				}
+			}
+#endif
 
 			if( true == pSession->IsShutdownable() ) //closed connections will be removed here
 			{
