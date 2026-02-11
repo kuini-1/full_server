@@ -764,16 +764,13 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 		&dwBytes,
 		&m_recvContext );
 	
-	if (rc == ERROR_IO_PENDING)
-	{
-		NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx returned ERROR_IO_PENDING (no connection available yet) for Session=%p", this);
-	}
-	else if (rc == NTL_SUCCESS)
+	if (rc == NTL_SUCCESS)
 	{
 		NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx SUCCEEDED! Connection accepted for Session=%p", this);
 	}
-	else
+	else if (rc != ERROR_IO_PENDING)
 	{
+		// Only log errors, not ERROR_IO_PENDING (which is normal when no connection available)
 		NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx returned error rc=%d for Session=%p", rc, this);
 	}
 

@@ -129,7 +129,6 @@ void CNtlAcceptingSessionList::RetryAccept(CNtlAcceptor* pAcceptor)
 	CNtlAutoMutex mutex(&m_mutex);
 	mutex.Lock();
 	
-	int retryCount = 0;
 	CNtlSession * pSession = NULL;
 	for (LISTIT it = m_sessionList.Begin(); it != m_sessionList.End(); )
 	{
@@ -137,7 +136,6 @@ void CNtlAcceptingSessionList::RetryAccept(CNtlAcceptor* pAcceptor)
 		
 		if (pSession && pSession->GetStatus() == CNtlConnection::STATUS_ACCEPT)
 		{
-			retryCount++;
 			// Retry PostAccept - if a connection is now available, AcceptEx will succeed
 			int rc = pSession->PostAccept(pAcceptor);
 			if (rc == NTL_SUCCESS)
@@ -157,10 +155,5 @@ void CNtlAcceptingSessionList::RetryAccept(CNtlAcceptor* pAcceptor)
 		{
 			it = m_sessionList.Next(it);
 		}
-	}
-	
-	if (retryCount > 0)
-	{
-		NTL_PRINT(PRINT_SYSTEM, "[RetryAccept] Retried AcceptEx on %d sessions", retryCount);
 	}
 }
