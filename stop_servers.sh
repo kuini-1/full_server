@@ -22,7 +22,6 @@ stop_server() {
         echo -e "${GREEN}Stopping $server_name...${NC}"
         # Send Ctrl+C to the session and wait a bit, then kill if still running
         tmux send-keys -t "$server_name" C-c
-        sleep 2
         # Kill the session if it's still running
         if tmux has-session -t "$server_name" 2>/dev/null; then
             tmux kill-session -t "$server_name"
