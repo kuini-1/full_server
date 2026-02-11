@@ -117,18 +117,23 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 			// and we need to retry PostRecv when data arrives
 			if (pSession->IsStatus(CNtlConnection::STATUS_ACTIVE))
 			{
-				// Retry PostRecv occasionally (every 100ms) to check for incoming data
+				// Retry PostRecv occasionally (every 50ms) to check for incoming data
 				// Use a per-session timestamp to avoid calling too frequently
 				static std::map<CNtlSession*, DWORD> s_lastRetryTime;
 				DWORD dwNow = GetTickCount();
 				DWORD dwLastRetry = s_lastRetryTime[pSession];
-				if (dwLastRetry == 0 || (dwNow - dwLastRetry >= 100))
+				if (dwLastRetry == 0 || (dwNow - dwLastRetry >= 50))
 				{
 					s_lastRetryTime[pSession] = dwNow;
 					// PostRecv will use select() to check if data is available
 					// If data is available, it will receive it and post to IOCP
 					// If not, it will return ERROR_IO_PENDING (which we ignore here)
-					pSession->PostRecv();
+					int rc = pSession->PostRecv();
+					if (rc != NTL_SUCCESS && rc != NTL_ERR_NET_SESSION_CLOSED)
+					{
+						// Log errors (but not ERROR_IO_PENDING which is expected)
+						NTL_PRINT(PRINT_SYSTEM, "[ValidCheck] PostRecv retry returned error: %d for Session=%p", rc, pSession);
+					}
 				}
 			}
 #endif

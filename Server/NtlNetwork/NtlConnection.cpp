@@ -634,6 +634,7 @@ int CNtlConnection::PostRecv()
 	// On Linux, RecvEx completed synchronously with data, so post completion to IOCP immediately
 	if (m_pNetworkRef && dwTransferedBytes > 0)
 	{
+		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Data received! %u bytes for Session=%p, posting to IOCP", dwTransferedBytes, this);
 		// Set param in IOCONTEXT so worker thread can extract session pointer
 		m_recvContext.param = this;
 		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP

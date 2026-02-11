@@ -379,6 +379,8 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 	}
 
 	// Data is available - try to receive it (handle first buffer only for simplicity)
+	// Note: Even if select() says data is available, recv() might still return EAGAIN
+	// in rare race conditions, so we handle that case below
 	ssize_t bytesReceived = recv(m_socket, lpBuffers[0].buf, lpBuffers[0].len, 0);
 	
 	if (bytesReceived < 0)
