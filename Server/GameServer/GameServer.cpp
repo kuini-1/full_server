@@ -1,4 +1,7 @@
 #include "stdafx.h"
+#if !defined(_WIN32)
+#include <time.h>
+#endif
 #include "GameServer.h"
 #include "NtlRandom.h"
 
@@ -733,10 +736,16 @@ int main(int argc, _TCHAR* argv[])
 	CGameServer app;
 	CNtlFileStream traceFileStream;
 
+#if defined(_WIN32)
 	SYSTEMTIME ti;
 	GetLocalTime( &ti );
+#else
+	struct tm* ti_ptr;
+	time_t now = time(NULL);
+	ti_ptr = localtime(&now);
+#endif
 
-// CHECK INI FILE AND START PROGRAM
+	// CHECK INI FILE AND START PROGRAM
 	int rc = app.Create(argc, argv, argv[1]);
 	if( NTL_SUCCESS != rc )
 		return rc;
@@ -749,17 +758,33 @@ int main(int argc, _TCHAR* argv[])
 #endif
 
 	// LOG FILE
+#if !defined(_WIN32)
+	mkdir("./logs", 0755);
+	mkdir("./logs/gameserver", 0755);
+	char channelDir[256];
+	snprintf(channelDir, sizeof(channelDir), "./logs/gameserver/channel%u", app.GetGsChannel());
+	mkdir(channelDir, 0755);
+#endif
 	char m_LogFile[256];
+#if defined(_WIN32)
 	sprintf(m_LogFile,"%s\\channel%u\\gamelog_%02u-%02u-%02u.txt", app.GetLogPath().c_str() ,app.GetGsChannel(), ti.wYear, ti.wMonth, ti.wDay);
+#else
+	if (ti_ptr)
+		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/gameserver/channel%u/gamelog_%02d-%02d-%02d.txt", app.GetGsChannel(), ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
+	else
+		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/gameserver/channel%u/gamelog_00-00-00.txt", app.GetGsChannel());
+#endif
 
 	rc = traceFileStream.Create( m_LogFile );
 	if( NTL_SUCCESS != rc )
-		return rc;
-
-	app.GetLog()->AttachLogStream(traceFileStream.GetFilePtr());
-
-
-	NtlSetPrintFlag( PRINT_APP | PRINT_SYSTEM );
+	{
+		NTL_PRINT(PRINT_APP, "Failed to create log file: %s (error: %d) - continuing without log file", m_LogFile, rc);
+	}
+	else
+	{
+		app.GetLog()->AttachLogStream(traceFileStream.GetFilePtr());
+		NtlSetPrintFlag( PRINT_APP | PRINT_SYSTEM );
+	}
 
 	app.Start();
 	app.WaitCommandInput();
