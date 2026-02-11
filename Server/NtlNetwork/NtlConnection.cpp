@@ -417,6 +417,8 @@ int CNtlConnection::RecvPackets(DWORD dwTransferedBytes)
 {
 	FUNCTION_BEGIN();
 
+	NTL_PRINT(PRINT_SYSTEM, "[RecvPackets] Received %u bytes, Session=%p", dwTransferedBytes, this);
+
 	IncreaseBytesRecv(dwTransferedBytes);
 
 	if (!m_recvBuffer.IncreasePushPos(dwTransferedBytes))
@@ -450,6 +452,13 @@ int CNtlConnection::RecvPackets(DWORD dwTransferedBytes)
 		packet.AttachData(m_recvBuffer.GetQueueWorkPtr(), wPacketLength);
 
 		m_recvBuffer.IncreaseWorkPos(wPacketLength);
+
+		sNTLPACKETHEADER * pHeader = (sNTLPACKETHEADER *)packet.GetPacketData();
+		if (pHeader)
+		{
+			NTL_PRINT(PRINT_SYSTEM, "[RecvPackets] Packet extracted: OpCode=0x%04X, Len=%u, Session=%p", 
+				pHeader->wOpCode, wPacketLength, this);
+		}
 
 		m_pNetworkRef->PostNetEventMessage((WPARAM)NETEVENT_RECV, (LPARAM)this);
 

@@ -39,6 +39,7 @@ public:
 
 	virtual int							OnAccept();
 	virtual void						OnClose();
+	virtual int							ProcessPacket();
 	virtual int							OnDispatch(CNtlPacket * pPacket);
 
 public:
