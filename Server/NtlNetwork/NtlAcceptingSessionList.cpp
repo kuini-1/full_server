@@ -17,6 +17,8 @@
 #include "NtlAcceptingSessionList.h"
 #include "NtlSession.h"
 #include "NtlNetwork.h"
+#include "NtlAcceptor.h"
+#include "NtlAcceptor.h"
 
 
 //-----------------------------------------------------------------------------------
@@ -113,4 +115,44 @@ void CNtlAcceptingSessionList::ValidCheck(DWORD dwTickTime)
 		}
 	}
 
+}
+
+//-----------------------------------------------------------------------------------
+//		Purpose	: Retry AcceptEx on sessions in accepting state
+//		Return	:
+//-----------------------------------------------------------------------------------
+void CNtlAcceptingSessionList::RetryAccept(CNtlAcceptor* pAcceptor)
+{
+	if (!pAcceptor)
+		return;
+
+	CNtlAutoMutex mutex(&m_mutex);
+	mutex.Lock();
+	
+	CNtlSession * pSession = NULL;
+	for (LISTIT it = m_sessionList.Begin(); it != m_sessionList.End(); )
+	{
+		pSession = *(m_sessionList.GetPtr(it));
+		
+		if (pSession && pSession->GetStatus() == CNtlConnection::STATUS_ACCEPT)
+		{
+			// Retry PostAccept - if a connection is now available, AcceptEx will succeed
+			int rc = pSession->PostAccept(pAcceptor);
+			if (rc == NTL_SUCCESS)
+			{
+				// AcceptEx succeeded or is pending - keep the session
+				it = m_sessionList.Next(it);
+			}
+			else
+			{
+				// Real error - remove the session
+				it = m_sessionList.Next(it);
+				Remove(pSession);
+			}
+		}
+		else
+		{
+			it = m_sessionList.Next(it);
+		}
+	}
 }

@@ -33,5 +33,8 @@ public:
 
 	virtual void			ValidCheck(DWORD dwTickTime);
 
+	// Retry AcceptEx on sessions that are in accepting state (for Linux - when connections arrive)
+	void					RetryAccept(CNtlAcceptor* pAcceptor);
+
 };
 

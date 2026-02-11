@@ -62,6 +62,12 @@ public:
 
 		while( IsRunnable() )
 		{	
+			// Retry AcceptEx on existing accepting sessions (for Linux - when connections arrive)
+			if (pAcceptor->m_pAcceptingSessionList)
+			{
+				pAcceptor->m_pAcceptingSessionList->RetryAccept(pAcceptor);
+			}
+			
 			Wait( 10 ); // Reduced wait time (10ms) for faster connection acceptance on Linux
 
 			//Here new connections are created
