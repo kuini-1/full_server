@@ -656,9 +656,11 @@ int CNtlConnection::PostRecv()
 		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP
 		// wParam = completion key (session pointer), lParam = overlapped structure
 		m_pNetworkRef->PostIocpEventMessage((WPARAM)this, (LPARAM)&m_recvContext);
+		// Note: PostIoCount stays incremented - CompleteRecv will decrement it after processing
 	}
 	else if (dwTransferedBytes == 0)
 	{
+		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Connection closed (0 bytes) for Session=%p, IP=%s", this, GetRemoteIP());
 		DecreasePostIoCount();
 		return NTL_ERR_NET_SESSION_CLOSED;
 	}
