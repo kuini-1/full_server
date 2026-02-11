@@ -731,6 +731,9 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 	}
 
 
+	// Check if already in accepting state (retry case) - don't increment counts again
+	bool bAlreadyAccepting = (GetStatus() == STATUS_ACCEPT);
+	
 	SetStatus( STATUS_ACCEPT );
 
 
@@ -744,8 +747,12 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 	m_recvContext.wsabuf.buf = (char*) m_recvBuffer.GetQueuePushPtr();
 	m_recvContext.wsabuf.len = 0;
 
-	IncreasePostIoCount();
-	m_pAcceptorRef->IncreaseCurAcceptingCount();
+	// Only increment counts if not already accepting (first call)
+	if (!bAlreadyAccepting)
+	{
+		IncreasePostIoCount();
+		m_pAcceptorRef->IncreaseCurAcceptingCount();
+	}
 
 
 	NTL_PRINT(PRINT_SYSTEM, "[PostAccept] Calling AcceptEx for Session=%p (listen socket fd=%d)", this, pAcceptor->GetListenSocket().GetRawSocket());
@@ -785,8 +792,12 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 
 	if( NTL_SUCCESS != rc )
 	{
-		DecreasePostIoCount();
-		m_pAcceptorRef->DecreaseCurAcceptingCount();
+		// Only decrement counts if we incremented them (not a retry)
+		if (!bAlreadyAccepting)
+		{
+			DecreasePostIoCount();
+			m_pAcceptorRef->DecreaseCurAcceptingCount();
+		}
 
 		// Only log actual errors, not EAGAIN (which is handled above)
 		NTL_PRINT(PRINT_SYSTEM, "Session[%X] AcceptEx Function Failed: (%d)%s", this, rc, NtlGetErrorMessage( rc ) );
