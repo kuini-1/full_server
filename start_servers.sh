@@ -50,7 +50,7 @@ start_server() {
     
     # Create tmux session with the command
     # Use 'tmux new -s' syntax (shorter form)
-    if tmux new -d -s "$server_name" "cd '$BUILD_DIR' && '$BUILD_DIR/$server_binary' '$CONFIG_DIR/$config_file'; read" 2>/dev/null; then
+    if tmux new -s "$server_name" "cd '$BUILD_DIR' && '$BUILD_DIR/$server_binary' '$CONFIG_DIR/$config_file'; read" 2>/dev/null; then
         sleep 0.3
         if tmux has-session -t "$server_name" 2>/dev/null; then
             echo -e "${GREEN}  ✓ $server_name started in tmux session '$server_name'${NC}"
@@ -109,4 +109,4 @@ echo -e "  Attach to a session: ${GREEN}tmux attach -t <session_name>${NC}"
 echo -e "  Detach from session: ${GREEN}Ctrl+B, then D${NC}"
 echo -e "  Stop all servers: ${GREEN}./stop_servers.sh${NC}"
 echo -e "\n${YELLOW}To view logs, attach to a session:${NC}"
-echo -e "  ${GREEN}tmux attach -t authserver${NC}"
+echo -e "  ${GREEN}tmux attach -t auth${NC}"
