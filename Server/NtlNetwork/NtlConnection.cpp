@@ -755,7 +755,6 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 	}
 
 
-	NTL_PRINT(PRINT_SYSTEM, "[PostAccept] Calling AcceptEx for Session=%p (listen socket fd=%d)", this, pAcceptor->GetListenSocket().GetRawSocket());
 	int rc = pAcceptor->GetListenSocket().AcceptEx(	m_socket,
 		m_recvContext.wsabuf.buf,
 		0,
