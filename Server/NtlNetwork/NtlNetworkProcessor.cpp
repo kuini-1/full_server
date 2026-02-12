@@ -193,6 +193,16 @@ void CNtlNetworkProcessor::ProcessNetEvent(ULONG_PTR netEvent, CNtlSession *pSes
 		}
 		break;
 
+		case NETEVENT_FORCE_CLOSE:
+		{
+			pSession->SetStatus(CNtlConnection::STATUS_CLOSE);
+			if (pSession->CheckDisconnect(false))
+			{
+				ERR_LOG(LOG_NETWORK, "Session[%X] FORCE_CLOSE: disconnecting. Local Port[%u], Remote IP[%s]", pSession, pSession->GetLocalPort(), pSession->GetRemoteIP());
+			}
+		}
+		break;
+
 		default: NTL_PRINT(PRINT_SYSTEM, "netEvent is not valid. netEvent = %d", netEvent); break;
 	}
 }

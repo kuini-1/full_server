@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-13
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -209,14 +209,10 @@ int CNtlSession::ProcessPacket()
 		{
 			if (ALLOWED_DECRYPTION_FAILURE_COUNT < ++m_nDecryptionFailureCount)
 			{
-				m_pNetworkRef->RegisterBlockedIp(GetRemoteAddr().GetAddr()); 
-				SetStatus(STATUS_CLOSE);
-
-				if (CheckDisconnect(false))
-				{
-					ERR_LOG(LOG_NETWORK,"Session[%X] : Diconnecting due to too many decryption failure. Local Port[%u], Remote IP[%s]", this, GetLocalPort(), GetRemoteIP());
-				}
-
+				m_pNetworkRef->RegisterBlockedIp(GetRemoteAddr().GetAddr());
+				/* Defer close so the IOCP worker can finish CompleteRecv (PostRecv) before we set STATUS_CLOSE.
+				 * Otherwise the worker sees !ACTIVE and closes the session with rc=100045. */
+				m_pNetworkRef->PostNetEventMessage((WPARAM)NETEVENT_FORCE_CLOSE, (LPARAM)this);
 				m_nDecryptionFailureCount = 0;
 			}
 		}

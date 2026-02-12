@@ -32,6 +32,8 @@ enum eNETEVENT
 	NETEVENT_RECV,
 	NETEVENT_REMOVE_ACCEPTING,
 	NETEVENT_DESTROY,
+	/** Deferred close (e.g. decryption failure); run after worker finishes CompleteRecv. */
+	NETEVENT_FORCE_CLOSE,
 
 	INVALID_NETEVENT,
 	NETEVENT_COUNT,
