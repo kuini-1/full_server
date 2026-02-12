@@ -354,34 +354,7 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 		fcntl(m_socket, F_SETFL, flags | O_NONBLOCK);
 	}
 
-	// Check socket state before receiving
-	// Use select() with a very short timeout to check if data is available
-	// This helps ensure we only call recv() when data is actually ready
-	fd_set readfds;
-	struct timeval timeout;
-	FD_ZERO(&readfds);
-	FD_SET(m_socket, &readfds);
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 0; // Non-blocking check
-	
-	int selectResult = select(m_socket + 1, &readfds, NULL, NULL, &timeout);
-	if (selectResult < 0)
-	{
-		int err = errno;
-		SetLastError(err);
-		return err;
-	}
-	
-	// If select says no data, return ERROR_IO_PENDING
-	if (selectResult == 0 || !FD_ISSET(m_socket, &readfds))
-	{
-		SetLastError(ERROR_IO_PENDING);
-		return ERROR_IO_PENDING;
-	}
-
-	// Data is available - try to receive it
 	// Try to receive data directly (non-blocking socket will return EAGAIN if no data)
-	// This is simpler and more reliable than using select() with timeout 0
 	// The retry logic in ValidCheck will call PostRecv again when data arrives
 	ssize_t bytesReceived = recv(m_socket, lpBuffers[0].buf, lpBuffers[0].len, 0);
 	
@@ -395,16 +368,7 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 			SetLastError(ERROR_IO_PENDING);
 			return ERROR_IO_PENDING;
 		}
-		// Real error occurred - log it for debugging
-		// Log occasionally to avoid spam
-		static DWORD s_dwLastRecvErrorLog = 0;
-		DWORD dwNow = GetTickCount();
-		if (dwNow - s_dwLastRecvErrorLog > 5000) // Log every 5 seconds max
-		{
-			s_dwLastRecvErrorLog = dwNow;
-			// Note: Can't use NTL_PRINT here as we're in NtlSocket.h (header file)
-			// Error will be logged in PostRecv
-		}
+		// Real error occurred
 		SetLastError(err);
 		return err;
 	}
