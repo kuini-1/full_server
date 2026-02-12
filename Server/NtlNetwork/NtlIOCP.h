@@ -75,6 +75,9 @@ public:
 
 	int							PostIOCPEvent(WPARAM wParam, LPARAM lParam);
 
+	/** Post completion with byte count (used by Linux sync send). */
+	int							PostIOCPEvent(DWORD dwBytesTransferred, WPARAM wParam, LPARAM lParam);
+
 
 private:
 

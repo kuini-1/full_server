@@ -147,16 +147,11 @@ void CNtlNetworkProcessor::ProcessNetEvent(ULONG_PTR netEvent, CNtlSession *pSes
 	{
 		case NETEVENT_ACCEPT:
 		{
-			NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] NETEVENT_ACCEPT for Session=%p, Type=%u", pSession, pSession->GetSessionType());
 			int rc = pSession->OnAccept();
 			if (NTL_SUCCESS != rc)
 			{
-				NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] OnAccept failed with rc=%d, disconnecting Session=%p", rc, pSession);
+				NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] OnAccept failed rc=%d, Session=%p - disconnecting", rc, pSession);
 				pSession->Disconnect(false);
-			}
-			else
-			{
-				NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] OnAccept succeeded for Session=%p", pSession);
 			}
 		}
 		break;
@@ -182,12 +177,11 @@ void CNtlNetworkProcessor::ProcessNetEvent(ULONG_PTR netEvent, CNtlSession *pSes
 
 		case NETEVENT_RECV:
 		{
-			NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] NETEVENT_RECV for Session=%p, Type=%u", pSession, pSession->GetSessionType());
 			int rc = pSession->ProcessPacket();
 
 			if (rc != NTL_SUCCESS && pSession->IsSetControlFlag(CNtlConnection::CONTROL_FLAG_CHECK_OPCODE))
 			{
-				NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] ProcessPacket failed with rc=%d, disconnecting Session=%p", rc, pSession);
+				NTL_PRINT(PRINT_SYSTEM, "[ProcessNetEvent] ProcessPacket failed rc=%d, Session=%p - disconnecting", rc, pSession);
 				pSession->Disconnect(false);
 			}
 		}

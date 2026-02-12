@@ -96,6 +96,7 @@ public:
 			if (FALSE == bResult)
 			{
 				rc = GetLastError();
+				NTL_PRINT(PRINT_SYSTEM, "[IOCP Worker] GetQueuedCompletionStatus failed -> Close session. err=%d, Session=%p, IP=%s", (int)rc, pSession, pSession->GetRemoteIP());
 				pSession->Close(false);
 			}
 			else
@@ -103,6 +104,7 @@ public:
 				rc = pSession->CompleteIO(pIOContext, dwBytesTransferred);
 				if (NTL_SUCCESS != rc)
 				{
+					NTL_PRINT(PRINT_SYSTEM, "[IOCP Worker] CompleteIO failed -> Close session. rc=%d, iomode=%d, Session=%p, IP=%s", rc, (int)pIOContext->iomode, pSession, pSession->GetRemoteIP());
 					pSession->Close(false);
 				}
 			}
@@ -287,6 +289,21 @@ int CNtlIocp::PostIOCPEvent(WPARAM wParam, LPARAM lParam)
 	return NTL_SUCCESS;
 }
 
+int CNtlIocp::PostIOCPEvent(DWORD dwBytesTransferred, WPARAM wParam, LPARAM lParam)
+{
+	if (NULL == m_hIOCP || INVALID_HANDLE_VALUE == m_hIOCP)
+	{
+		return NTL_FAIL;
+	}
+
+	if (0 == PostQueuedCompletionStatus(m_hIOCP, dwBytesTransferred, (ULONG_PTR)wParam, (LPOVERLAPPED)lParam))
+	{
+		return GetLastError();
+	}
+
+	return NTL_SUCCESS;
+}
+
 #else // _WIN32
 
 
@@ -366,7 +383,7 @@ public:
 			if (FALSE == bResult)
 			{
 				rc = GetLastError();
-				//NTL_PRINT(PRINT_SYSTEM, "Session[%X] GQCS Error : Err:%d(%s)", pSession, rc, NtlGetErrorMessage(rc));
+				NTL_PRINT(PRINT_SYSTEM, "[IOCP Worker] GetQueuedCompletionStatus failed -> Close session. err=%d, Session=%p, IP=%s", (int)rc, pSession, pSession->GetRemoteIP());
 				pSession->Close(false);
 			}
 			else
@@ -374,7 +391,7 @@ public:
 				rc = pSession->CompleteIO(pIOContext, dwBytesTransferred);
 				if (NTL_SUCCESS != rc)
 				{
-					//	NTL_PRINT( PRINT_SYSTEM, "Session[%X] CompleteIO Error : Err:%d(%s)", pSession, rc, NtlGetErrorMessage(rc) );
+					NTL_PRINT(PRINT_SYSTEM, "[IOCP Worker] CompleteIO failed -> Close session. rc=%d, iomode=%d, Session=%p, IP=%s", rc, (int)pIOContext->iomode, pSession, pSession->GetRemoteIP());
 					pSession->Close(false);
 				}
 			}
@@ -612,6 +629,20 @@ int CNtlIocp::PostIOCPEvent(WPARAM wParam, LPARAM lParam)
 	}
 
 	if (PostQueuedCompletionStatus(m_hIOCP, 0, wParam, (OVERLAPPED*)lParam) == FALSE)
+		return GetLastError();
+
+	return NTL_SUCCESS;
+}
+
+int CNtlIocp::PostIOCPEvent(DWORD dwBytesTransferred, WPARAM wParam, LPARAM lParam)
+{
+	if (m_hIOCP == NULL)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "(NULL == m_hIOCP)");
+		return NTL_ERR_NET_INVALID_COMPLETE_IO_HANDLE;
+	}
+
+	if (PostQueuedCompletionStatus(m_hIOCP, dwBytesTransferred, wParam, (OVERLAPPED*)lParam) == FALSE)
 		return GetLastError();
 
 	return NTL_SUCCESS;

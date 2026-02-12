@@ -91,6 +91,8 @@ public:
 
 	int								PostIocpEventMessage(WPARAM wParam, LPARAM lParam);
 
+	int								PostIocpEventMessage(DWORD dwBytesTransferred, WPARAM wParam, LPARAM lParam);
+
 public:
 
 	CNtlSessionList *				GetSessionList() { return m_pSessionList; }

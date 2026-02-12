@@ -755,3 +755,8 @@ int CNtlNetwork::PostIocpEventMessage(WPARAM wParam, LPARAM lParam)
 {
 	return m_iocp.PostIOCPEvent(wParam, lParam);
 }
+
+int CNtlNetwork::PostIocpEventMessage(DWORD dwBytesTransferred, WPARAM wParam, LPARAM lParam)
+{
+	return m_iocp.PostIOCPEvent(dwBytesTransferred, wParam, lParam);
+}

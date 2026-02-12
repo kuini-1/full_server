@@ -418,8 +418,6 @@ int CNtlConnection::RecvPackets(DWORD dwTransferedBytes)
 {
 	FUNCTION_BEGIN();
 
-	NTL_PRINT(PRINT_SYSTEM, "[RecvPackets] Received %u bytes, Session=%p", dwTransferedBytes, this);
-
 	IncreaseBytesRecv(dwTransferedBytes);
 
 	if (!m_recvBuffer.IncreasePushPos(dwTransferedBytes))
@@ -453,13 +451,6 @@ int CNtlConnection::RecvPackets(DWORD dwTransferedBytes)
 		packet.AttachData(m_recvBuffer.GetQueueWorkPtr(), wPacketLength);
 
 		m_recvBuffer.IncreaseWorkPos(wPacketLength);
-
-		PACKETDATA * pPacketData = (PACKETDATA *)packet.GetPacketData();
-		if (pPacketData)
-		{
-			NTL_PRINT(PRINT_SYSTEM, "[RecvPackets] Packet extracted: OpCode=0x%04X, Len=%u, Session=%p", 
-				pPacketData->wOpCode, wPacketLength, this);
-		}
 
 		m_pNetworkRef->PostNetEventMessage((WPARAM)NETEVENT_RECV, (LPARAM)this);
 
@@ -503,6 +494,24 @@ int CNtlConnection::PostSend_Ex()
 		//NTL_PRINT(PRINT_SYSTEM, "Session[%X] PostSend_Ex Function Failed: (%d)%s", this, rc, NtlGetErrorMessage(rc));
 		return rc;
 	}
+
+#if !defined(_WIN32)
+	// On Linux, SendEx completed synchronously; post completion so worker runs CompleteSend_Ex
+	if (m_pNetworkRef && dwSendBytes > 0)
+	{
+		m_sendContext.param = this;
+		rc = m_pNetworkRef->PostIocpEventMessage(dwSendBytes, (WPARAM)this, (LPARAM)&m_sendContext);
+		if (rc != NTL_SUCCESS)
+		{
+			DecreasePostIoCount();
+			return rc;
+		}
+	}
+	else if (dwSendBytes == 0)
+	{
+		DecreasePostIoCount();
+	}
+#endif
 
 	return NTL_SUCCESS;
 }
@@ -734,6 +743,24 @@ int CNtlConnection::PostSend()
 		NTL_PRINT(PRINT_SYSTEM,"Session[%X] SendEx Function Failed: (%d)%s", this, rc, NtlGetErrorMessage( rc ) );
 		return rc;
 	}
+
+#if !defined(_WIN32)
+	// On Linux, SendEx completed synchronously; post completion so worker runs CompleteSend
+	if (m_pNetworkRef && dwSendBytes > 0)
+	{
+		m_sendContext.param = this;
+		rc = m_pNetworkRef->PostIocpEventMessage(dwSendBytes, (WPARAM)this, (LPARAM)&m_sendContext);
+		if (rc != NTL_SUCCESS)
+		{
+			DecreasePostIoCount();
+			return rc;
+		}
+	}
+	else if (dwSendBytes == 0)
+	{
+		DecreasePostIoCount();
+	}
+#endif
 
 	return NTL_SUCCESS;
 }
@@ -1059,22 +1086,16 @@ int CNtlConnection::CompleteAccept(DWORD dwTransferedBytes)
 	SetStatus( STATUS_ACTIVE );
 	m_dwConnectTime = GetTickCount();
 
-	NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] Accept completed! Session=%p, Status=ACTIVE", this);
-
 	m_pAcceptorRef->OnAccepted(this);
 
-	NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] Posting NETEVENT_ACCEPT for Session=%p", this);
 	m_pNetworkRef->PostNetEventMessage( (WPARAM)NETEVENT_ACCEPT, (LPARAM)this );
 
-
-	NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] Calling PostRecv for Session=%p", this);
 	rc = PostRecv();
 	if( NTL_SUCCESS != rc )
 	{
-		NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] PostRecv returned error: %d for Session=%p", rc, this);
+		ERR_LOG(LOG_NETWORK, "Session[%X] CompleteAccept PostRecv failed: %d [%s]", this, rc, NtlGetErrorMessage(rc));
 		return rc;
 	}
-	NTL_PRINT(PRINT_SYSTEM, "[CompleteAccept] PostRecv succeeded for Session=%p", this);
 
 
 	//NTL_PRINT(PRINT_SYSTEM, "Session[%X]\tCompleteAccept Called Local[%s:%u] Remote[%s:%u]", this, GetLocalIP(), GetLocalPort(), GetRemoteIP(), GetRemotePort());

@@ -414,8 +414,39 @@ inline int CNtlSocket::RecvEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 inline int CNtlSocket::SendEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, LPWSAOVERLAPPED lpOverlapped)
 {
 #if !defined(_WIN32)
-	(void)lpBuffers; (void)dwBufferCount; (void)lpNumberOfBytesSent; (void)dwFlags; (void)lpOverlapped;
-	return ENOSYS;
+	(void)dwFlags;
+	(void)lpOverlapped;
+	if (NULL == lpBuffers || dwBufferCount == 0 || NULL == lpNumberOfBytesSent)
+	{
+		SetLastError(EINVAL);
+		return EINVAL;
+	}
+	DWORD total = 0;
+	for (DWORD i = 0; i < dwBufferCount; i++)
+	{
+		size_t len = (size_t)lpBuffers[i].len;
+		const char* buf = lpBuffers[i].buf;
+		while (len > 0)
+		{
+			ssize_t n = send(m_socket, buf, len, 0);
+			if (n < 0)
+			{
+				int e = errno;
+				if (e == EAGAIN || e == EWOULDBLOCK)
+				{
+					SetLastError(ERROR_IO_PENDING);
+					return ERROR_IO_PENDING;
+				}
+				SetLastError(e);
+				return e;
+			}
+			total += (DWORD)n;
+			buf += n;
+			len -= (size_t)n;
+		}
+	}
+	*lpNumberOfBytesSent = total;
+	return NTL_SUCCESS;
 #else
 	if( 0 != ::WSASend( m_socket, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpOverlapped, NULL) )
 	{
