@@ -13,6 +13,8 @@
 //--------------------------------------------------------------------------------------//
 void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app) 
 {
+	NTL_PRINT(PRINT_APP, "[Login] SendCharLogInReq called (Session %u, IP %s, packet size %u)", GetHandle(), GetRemoteIP(), pPacket->GetUsedSize());
+	
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
 
 	std::string username = Ntl_WC2MB(req->awchUserId);

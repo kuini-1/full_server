@@ -62,15 +62,29 @@ int CClientSession::OnDispatch(CNtlPacket * pPacket)
 	// Skip logging OpCode 0x0001 (heartbeat/ping) to reduce log spam; log all other opcodes
 	if (pHeader->wOpCode != 0x0001)
 		NTL_PRINT(PRINT_APP, "[ClientSession] Received packet OpCode: 0x%04X (Session: %u, IP: %s)", pHeader->wOpCode, GetHandle(), GetRemoteIP());
+	
+	// Debug: log OpCode value to see if it matches expected login opcodes
+	if (pHeader->wOpCode == 0x0067 || pHeader->wOpCode == UA_LOGIN_REQ || pHeader->wOpCode == UA_LOGIN_REQ_TAIWAN_CT)
+		NTL_PRINT(PRINT_APP, "[ClientSession] OpCode 0x%04X (%u) - UA_LOGIN_REQ=%u, UA_LOGIN_REQ_TAIWAN_CT=%u, UA_LOGIN_CREATEUSER_REQ=%u", 
+			pHeader->wOpCode, pHeader->wOpCode, UA_LOGIN_REQ, UA_LOGIN_REQ_TAIWAN_CT, UA_LOGIN_CREATEUSER_REQ);
+	
 	switch( pHeader->wOpCode )
 	{
 		case UA_LOGIN_REQ:
-		case UA_LOGIN_REQ_TAIWAN_CT:	{	this->SendCharLogInReq(pPacket, app);	}	break;
+		case UA_LOGIN_REQ_TAIWAN_CT:	
+		{
+			NTL_PRINT(PRINT_APP, "[ClientSession] Calling SendCharLogInReq for OpCode 0x%04X (Session %u)", pHeader->wOpCode, GetHandle());
+			this->SendCharLogInReq(pPacket, app);
+		}	break;
 		case UA_LOGIN_CREATEUSER_REQ:	{	this->SendCreateUserReq(pPacket, app);	}	break;
 		case UA_LOGIN_DISCONNECT_CN_REQ:
 		case UA_LOGIN_DISCONNECT_TW_REQ:	{	this->SendLoginDcReq(pPacket, app);	}	break;
 
-		default: {	return CNtlSession::OnDispatch(pPacket);	}break;
+		default: 
+		{
+			NTL_PRINT(PRINT_APP, "[ClientSession] OpCode 0x%04X (%u) not handled in switch, calling base OnDispatch (Session %u)", pHeader->wOpCode, pHeader->wOpCode, GetHandle());
+			return CNtlSession::OnDispatch(pPacket);
+		}	break;
 	}
 
 	return NTL_SUCCESS;
