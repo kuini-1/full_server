@@ -99,14 +99,16 @@ bool CNtlFileSerializer::SaveFile(const WCHAR* pwszFullPathFileName, bool bCrypt
 		return false;
 	char path[1024];
 	path[0] = '\0';
-	if (wcstombs(path, pwszFullPathFileName, sizeof(path)) == (size_t)-1)
+	int pathLen = WideCharToMultiByte(GetACP(), 0, pwszFullPathFileName, -1, path, sizeof(path), NULL, NULL);
+	if (pathLen == 0 || pathLen > (int)sizeof(path))
 		return false;
 	char pass[256];
 	char* pPass = NULL;
 	if (szCryptPassword)
 	{
 		pass[0] = '\0';
-		if (wcstombs(pass, szCryptPassword, sizeof(pass)) == (size_t)-1)
+		int passLen = WideCharToMultiByte(GetACP(), 0, szCryptPassword, -1, pass, sizeof(pass), NULL, NULL);
+		if (passLen == 0 || passLen > (int)sizeof(pass))
 			return false;
 		pPass = pass;
 	}
@@ -220,14 +222,16 @@ bool CNtlFileSerializer::LoadFile(const WCHAR* pwszFullPathFileName, bool bCrypt
 		return false;
 	char path[1024];
 	path[0] = '\0';
-	if (wcstombs(path, pwszFullPathFileName, sizeof(path)) == (size_t)-1)
+	int pathLen = WideCharToMultiByte(GetACP(), 0, pwszFullPathFileName, -1, path, sizeof(path), NULL, NULL);
+	if (pathLen == 0 || pathLen > (int)sizeof(path))
 		return false;
 	char pass[256];
 	char* pPass = NULL;
 	if (szCryptPassword)
 	{
 		pass[0] = '\0';
-		if (wcstombs(pass, szCryptPassword, sizeof(pass)) == (size_t)-1)
+		int passLen = WideCharToMultiByte(GetACP(), 0, szCryptPassword, -1, pass, sizeof(pass), NULL, NULL);
+		if (passLen == 0 || passLen > (int)sizeof(pass))
 			return false;
 		pPass = pass;
 	}
