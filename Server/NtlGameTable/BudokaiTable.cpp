@@ -4,7 +4,7 @@
 //
 //	Begin		:	2008-04-20
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Ju-hyoung   ( niam@ntl-inc.com )
 //
@@ -18,10 +18,22 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals that need to be compile-time constants
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer (for use in macros)
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
 
 #define BUDOKAI_TBLDAT_START(textname)								\
-	if( 0 == wcscmp( pTbldat->wstrName.c_str(), textname) )			\
-	{
+	{																\
+		WCHAR wszNameBuf[256];										\
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR)); \
+		WCHAR wszTextNameBuf[256];									\
+		WCharTLiteralToWCHAR(textname, wszTextNameBuf, sizeof(wszTextNameBuf)/sizeof(WCHAR)); \
+		if( 0 == WCHARCmp( wszNameBuf, wszTextNameBuf) )			\
+		{
 
 #define BUDOKAI_TBLDAT_END()										\
 	}																\
@@ -29,8 +41,11 @@
 
 #define BUDOKAI_SET_TBLDAT_END()																		\
 	{																									\
-		CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s)",	\
-										m_wszXmlFileName, pTbldat->wstrName.c_str() );					\
+		WCHAR wszNameBuf[256];																			\
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));			\
+		WCHAR wszFormatBuf[512];																		\
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf );				\
 		return false;																					\
 	}
 
@@ -40,9 +55,13 @@
 #define BUDOKAI_TBLDAT_SET_BYTE( table_loc, valuename, maxvalue)									\
 	if( false == ReadByte( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
 	{																								\
-		CTable::CallErrorCallbackFunction(															\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",					\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );	\
+		WCHAR wszNameBuf[256];																		\
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));		\
+		WCHAR wszValueBuf[256];																		\
+		WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR)); \
+		WCHAR wszFormatBuf[512];																	\
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf, wszValueBuf ); \
 		return false;																				\
 	}
 
@@ -50,9 +69,13 @@
 #define BUDOKAI_TBLDAT_SET_DWORD( table_loc, valuename, maxvalue)									\
 	if( false == ReadDWORD( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
 	{																								\
-		CTable::CallErrorCallbackFunction(															\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",					\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );	\
+		WCHAR wszNameBuf[256];																		\
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));		\
+		WCHAR wszValueBuf[256];																		\
+		WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR)); \
+		WCHAR wszFormatBuf[512];																	\
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf, wszValueBuf ); \
 		return false;																				\
 	}
 
@@ -60,9 +83,13 @@
 #define BUDOKAI_TBLDAT_SET_TBLIDX( table_loc, valuename, maxvalue)									\
 	if( false == ReadTBLIDX( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
 	{																								\
-		CTable::CallErrorCallbackFunction(															\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",					\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );	\
+		WCHAR wszNameBuf[256];																		\
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));		\
+		WCHAR wszValueBuf[256];																		\
+		WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR)); \
+		WCHAR wszFormatBuf[512];																	\
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf, wszValueBuf ); \
 		return false;																				\
 	}
 
@@ -70,9 +97,13 @@
 #define BUDOKAI_TBLDAT_SET_FLOAT( table_loc, valuename, maxvalue)									\
 	if( false == ReadFLOAT( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
 	{																								\
-		CTable::CallErrorCallbackFunction(															\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",					\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );	\
+		WCHAR wszNameBuf[256];																		\
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));		\
+		WCHAR wszValueBuf[256];																		\
+		WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR)); \
+		WCHAR wszFormatBuf[512];																	\
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf, wszValueBuf ); \
 		return false;																				\
 	}
 
@@ -80,9 +111,13 @@
 #define BUDOKAI_TBLDAT_SET_STR( table_loc, valuename)														\
 	if( false == ReadSTR( valuename, BUDOKAI_MAX_TBLDAT_FILE_LENGTH, pTbldat->wstrValue[table_loc] ) )		\
 	{																										\
-		CTable::CallErrorCallbackFunction(																	\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",							\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );			\
+		WCHAR wszNameBuf[256];																				\
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));				\
+		WCHAR wszValueBuf[256];																				\
+		WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR)); \
+		WCHAR wszFormatBuf[512];																			\
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf, wszValueBuf );		\
 		return false;																						\
 	}
 
@@ -93,7 +128,7 @@
 //-----------------------------------------------------------------------------------
 const WCHAR* CBudokaiTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -154,7 +189,7 @@ void CBudokaiTable::Destroy( void )
 //-----------------------------------------------------------------------------------
 void* CBudokaiTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sBUDOKAI_TBLDAT* pNewObj = new sBUDOKAI_TBLDAT;
 		if ( NULL == pNewObj )
@@ -183,7 +218,7 @@ void* CBudokaiTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 //-----------------------------------------------------------------------------------
 bool CBudokaiTable::DeallocNewTable( void* pvTable, WCHAR* pwszSheetName )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sBUDOKAI_TBLDAT* pObj = (sBUDOKAI_TBLDAT*)pvTable;
 		if ( IsBadReadPtr( pObj, sizeof(*pObj) ) ) return false;
@@ -398,8 +433,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	DWORD dwIdx = INVALID_DWORD;
 	if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_AWARDING_LOCATION_COUNT) )
 	{
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -445,8 +486,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	DWORD dwMatchDepth = INVALID_DWORD;
 	if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 32))
 	{
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -459,8 +506,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
 	case 32:	eMatchDepth = BUDOKAI_MATCH_DEPTH_32;	break;
 	default:
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -477,8 +530,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	DWORD dwMatchDepth = INVALID_DWORD;
 	if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 16))
 	{
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -490,8 +549,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
 	case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
 	default:
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -561,8 +626,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	DWORD dwMatchDepth = INVALID_DWORD;
 	if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 32 ))
 	{
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -575,8 +646,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
 	case 32:	eMatchDepth = BUDOKAI_MATCH_DEPTH_32;	break;
 	default:
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -593,8 +670,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	DWORD dwMatchDepth = INVALID_DWORD;
 	if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 16))
 	{
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -606,8 +689,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
 	case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
 	default:
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -651,8 +740,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	DWORD dwIdx = INVALID_DWORD;
 	if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_MAJOR_LOCATION_COUNT) )
 	{
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -671,8 +766,14 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	DWORD dwIdx = INVALID_DWORD;
 	if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_FINAL_LOCATION_COUNT) )
 	{
-		CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[0].c_str() );
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszValueBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction( wszFormatBuf,
+			m_wszXmlFileName, wszNameBuf, wszValueBuf );
 		return false;
 	}
 
@@ -693,7 +794,9 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	// 
 	if ( false == m_mapTableList.insert( std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat) ).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -711,64 +814,68 @@ bool CBudokaiTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstr
 {
 	static char szTemp[1024] = { 0x00, };
 
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sBUDOKAI_TBLDAT * pTbldat = (sBUDOKAI_TBLDAT*) pvTable;
 
-		if ( 0 == wcscmp( pstrDataName->c_str(), L"Tblidx" ) )
+		if ( 0 == WStringCmpLiteral(*pstrDataName, L"Tblidx") )
 		{
 			pTbldat->tblidx = READ_TBLIDX( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
 			READ_STR( pTbldat->wstrName, bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value1"))
 		{
 			READ_STR( pTbldat->wstrValue[0], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value2"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value2"))
 		{
 			READ_STR( pTbldat->wstrValue[1], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value3"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value3"))
 		{
 			READ_STR( pTbldat->wstrValue[2], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value4"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value4"))
 		{
 			READ_STR( pTbldat->wstrValue[3], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value5"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value5"))
 		{
 			READ_STR( pTbldat->wstrValue[4], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value6"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value6"))
 		{
 			READ_STR( pTbldat->wstrValue[5], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value7"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value7"))
 		{
 			READ_STR( pTbldat->wstrValue[6], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value8"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value8"))
 		{
 			READ_STR( pTbldat->wstrValue[7], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value9"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value9"))
 		{
 			READ_STR( pTbldat->wstrValue[8], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Value10"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Value10"))
 		{
 			READ_STR( pTbldat->wstrValue[9], bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Note"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Note"))
 		{
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			WCHAR wszDataNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszDataNameBuf, sizeof(wszDataNameBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszDataNameBuf);
 			return false;
 		}
 	}
@@ -1106,8 +1213,12 @@ bool CBudokaiTable::ReadSTR( WCHAR * pDest, DWORD dwDestLength, std::wstring & w
 		{
 			if (NULL != m_pfnErrorCallback)
 			{
-				CallErrorCallbackFunction(L"[File] : %s\n[Error] : The string[%s]'s length[%u] is bigger than the max. length[%u]",
-					m_wszXmlFileName, wstrSrc.c_str(), wstrSrc.length(), dwDestLength - 1);
+				WCHAR wszSrcBuf[256];
+				WStringCStrToWCHAR(wstrSrc, wszSrcBuf, sizeof(wszSrcBuf)/sizeof(WCHAR));
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : The string[%s]'s length[%u] is bigger than the max. length[%u]", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CallErrorCallbackFunction(wszFormatBuf,
+					m_wszXmlFileName, wszSrcBuf, wstrSrc.length(), dwDestLength - 1);
 			}
 
 			return false;
@@ -1157,7 +1268,65 @@ bool CBudokaiTable::GetBinaryText(std::wstring & wstrValue, CNtlSerializer& seri
 	serializer.Out(pwszText, wTextLength * sizeof(WCHAR));
 	pwszText[wTextLength] = L'\0';
 
-	wstrValue = pwszText;
+	// Convert WCHAR* (UTF-16LE) to std::wstring (wchar_t-based, UTF-32 on Linux)
+#if defined(_WIN32)
+	// On Windows, WCHAR == wchar_t (both 2 bytes), so direct conversion works
+	wstrValue = std::wstring((const wchar_t*)pwszText);
+#else
+	// On Linux, WCHAR is UTF-16LE (2 bytes), wchar_t is UTF-32 (4 bytes)
+	// Convert using iconv
+	size_t srcLen = 0;
+	const WCHAR* p = pwszText;
+	while (*p != 0) { p++; srcLen++; }
+	if (srcLen == 0)
+	{
+		wstrValue = std::wstring();
+	}
+	else
+	{
+		iconv_t cd = iconv_open("UTF-32", "UTF-16LE");
+		if (cd == (iconv_t)-1)
+		{
+			cd = iconv_open("UTF-32LE", "UTF-16LE");
+		}
+		if (cd != (iconv_t)-1)
+		{
+			size_t inbytesleft = (srcLen + 1) * sizeof(WCHAR);
+			size_t outbytesleft = (srcLen + 1) * sizeof(wchar_t);
+			wchar_t* wstr_buf = new wchar_t[srcLen + 1];
+			if (wstr_buf)
+			{
+				char* inbuf = (char*)pwszText;
+				char* outbuf = (char*)wstr_buf;
+				if (iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft) != (size_t)-1)
+				{
+					wstr_buf[srcLen] = L'\0';
+					wstrValue = std::wstring(wstr_buf);
+				}
+				else
+				{
+					// Fallback: character-by-character copy (assumes ASCII range)
+					wstrValue.clear();
+					for (size_t i = 0; i < srcLen && pwszText[i] != 0; i++)
+					{
+						wstrValue += (wchar_t)pwszText[i];
+					}
+				}
+				delete[] wstr_buf;
+			}
+			iconv_close(cd);
+		}
+		else
+		{
+			// Fallback: character-by-character copy (assumes ASCII range)
+			wstrValue.clear();
+			for (size_t i = 0; i < srcLen && pwszText[i] != 0; i++)
+			{
+				wstrValue += (wchar_t)pwszText[i];
+			}
+		}
+	}
+#endif
 
 	delete [] pwszText;
 

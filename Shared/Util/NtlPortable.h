@@ -208,6 +208,17 @@ static inline int WStringCmpWCHAR(const std::wstring& wstr, const WCHAR* wcharSt
     return WCHARCmp(tempBuf, wcharStr);
 }
 
+/* Helper function to compare std::wstring with wchar_t* literal (L"") */
+static inline int WStringCmpLiteral(const std::wstring& wstr, const wchar_t* literal) {
+    if (!literal) return wstr.empty() ? 0 : 1;
+    const wchar_t* wstr_cstr = wstr.c_str();
+    WCHAR wstrBuf[512];
+    WCharTLiteralToWCHAR(wstr_cstr, wstrBuf, sizeof(wstrBuf)/sizeof(WCHAR));
+    WCHAR literalBuf[512];
+    WCharTLiteralToWCHAR(literal, literalBuf, sizeof(literalBuf)/sizeof(WCHAR));
+    return WCHARCmp(wstrBuf, literalBuf);
+}
+
 /* Helper function to compare first n chars of std::wstring with WCHAR* */
 static inline int WStringNCmpWCHAR(const std::wstring& wstr, const WCHAR* wcharStr, size_t n) {
     if (!wcharStr) return wstr.empty() ? 0 : 1;
