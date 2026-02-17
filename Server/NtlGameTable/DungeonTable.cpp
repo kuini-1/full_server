@@ -4,7 +4,7 @@
 //
 //	Begin		:	2008-07-30
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Chung,DooSup   ( mailto:john@ntl-inc.com )
 //
@@ -18,6 +18,13 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
 
 //-----------------------------------------------------------------------------------
 //		Purpose	:
@@ -25,7 +32,7 @@
 //-----------------------------------------------------------------------------------
 const WCHAR* CDungeonTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -85,7 +92,7 @@ void CDungeonTable::Destroy( void )
 //-----------------------------------------------------------------------------------
 void* CDungeonTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDUNGEON_TBLDAT* pNewObj = new sDUNGEON_TBLDAT;
 		if ( NULL == pNewObj )
@@ -114,7 +121,7 @@ void* CDungeonTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 //-----------------------------------------------------------------------------------
 bool CDungeonTable::DeallocNewTable( void* pvTable, WCHAR* pwszSheetName )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDUNGEON_TBLDAT* pObj = (sDUNGEON_TBLDAT*)pvTable;
 		if ( IsBadReadPtr( pObj, sizeof(*pObj) ) ) return false;
@@ -141,7 +148,9 @@ bool CDungeonTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat) ).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -159,57 +168,69 @@ bool CDungeonTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstr
 {
 	static char szTemp[1024] = { 0x00, };
 
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDUNGEON_TBLDAT * pTbldat = (sDUNGEON_TBLDAT*) pvTable;
 
-		if ( 0 == wcscmp( pstrDataName->c_str(), L"Tblidx" ) )
+		if ( 0 == WStringCmpLiteral(*pstrDataName, L"Tblidx") )
 		{
 			pTbldat->tblidx = READ_TBLIDX( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Dungeon_Type" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Dungeon_Type") )
 		{
-			pTbldat->byDungeonType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pTbldat->byDungeonType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Max_Member" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Max_Member") )
 		{
-			pTbldat->byMaxMember = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pTbldat->byMaxMember = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Link_World" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Link_World") )
 		{
 			pTbldat->linkWorld = READ_TBLIDX( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Min_Level" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Min_Level") )
 		{
-			pTbldat->byMinLevel = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pTbldat->byMinLevel = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Max_Level" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Max_Level") )
 		{
-			pTbldat->byMaxLevel = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pTbldat->byMaxLevel = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Need_Item" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Need_Item") )
 		{
 			pTbldat->needItemTblidx = READ_TBLIDX( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Honor_Point"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Honor_Point"))
 		{
 			pTbldat->dwHonorPoint = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Wps_Tblidx" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Wps_Tblidx") )
 		{
 			pTbldat->wpsTblidx = READ_TBLIDX( bstrData );
 		}		
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Open_Cine" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Open_Cine") )
 		{
 			pTbldat->openCine = READ_TBLIDX( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Group_Index" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Group_Index") )
 		{
 			pTbldat->groupIdx = READ_TBLIDX( bstrData );
 		}	
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

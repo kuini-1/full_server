@@ -4,7 +4,7 @@
 //
 //	Begin		:	2009-07-13
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -17,9 +17,19 @@
 
 float CFormulaTable::m_afRate[DBO_MAX_FORMULA_IDX + 1][DBO_MAX_FORMULA_RATE_COUNT + 1];
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static const WCHAR g_wszRate[] = { 'R', 'a', 't', 'e', 0 };
+static const WCHAR g_wszRateFormat[] = { 'R', 'a', 't', 'e', '%', 'd', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CFormulaTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -52,7 +62,7 @@ void CFormulaTable::Init()
 
 void* CFormulaTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sFORMULA_TBLDAT* pNewFormula = new sFORMULA_TBLDAT;
 		if (NULL == pNewFormula)
@@ -76,7 +86,7 @@ void* CFormulaTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CFormulaTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sFORMULA_TBLDAT* pFormula = (sFORMULA_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pFormula, sizeof(*pFormula)))
@@ -117,40 +127,45 @@ bool CFormulaTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CFormulaTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sFORMULA_TBLDAT* pFormula = (sFORMULA_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Idx"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Idx"))
 		{
 			pFormula->tblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcsncmp(pstrDataName->c_str(), L"Rate", wcslen(L"Rate")))
+		else
 		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for (int i = 0 ; i < DBO_MAX_FORMULA_RATE_COUNT ; i++)
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			if (0 == WCHARNCmp(wszFieldNameBuf, g_wszRate, WCHARLen(g_wszRate)))
 			{
-				swprintf(szBuffer, 1024, L"Rate%d", i + 1);
+				bool bFound = false;
 
-				if (0 == wcscmp(pstrDataName->c_str(), szBuffer))
+				WCHAR szBuffer[1024] = { 0x00, };
+				for (int i = 0 ; i < DBO_MAX_FORMULA_RATE_COUNT ; i++)
 				{
-					pFormula->afRate[i] = READ_FLOAT(bstrData, pstrDataName->c_str());
+					NTL_SWPRINTF(szBuffer, 1024, g_wszRateFormat, i + 1);
 
-					bFound = true;
-					break;
+					if (0 == WCHARCmp(wszFieldNameBuf, szBuffer))
+					{
+						pFormula->afRate[i] = READ_FLOAT(bstrData, wszFieldNameBuf);
+
+						bFound = true;
+						break;
+					}
 				}
-			}
 
-			if (false == bFound)
+				if (false == bFound)
+				{
+					return false;
+				}
+			}	
+			else
 			{
 				return false;
 			}
-		}	
-		else
-		{
-			return false;
 		}
 	}
 	else

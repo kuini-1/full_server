@@ -8,6 +8,9 @@ static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a
 static const WCHAR g_wszSystemEffectTblidx[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', 0 };
 static const WCHAR g_wszSystemEffectType[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'T', 'y', 'p', 'e', 0 };
 static const WCHAR g_wszSystemEffectValue[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'V', 'a', 'l', 'u', 'e', 0 };
+static const WCHAR g_wszSystemEffectTblidxFormat[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', '%', 'd', 0 };
+static const WCHAR g_wszSystemEffectTypeFormat[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'T', 'y', 'p', 'e', '%', 'd', 0 };
+static const WCHAR g_wszSystemEffectValueFormat[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'V', 'a', 'l', 'u', 'e', '%', 'd', 0 };
 
 // Helper function to convert format string literal to WCHAR* buffer
 static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
@@ -157,7 +160,7 @@ bool CCharTitleTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 				WCHAR szBuffer[1024] = { 0x00, };
 				for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
 				{
-					NTL_SWPRINTF( szBuffer, 1024, L"System_Effect_Tblidx%d", i + 1 );
+					NTL_SWPRINTF( szBuffer, 1024, g_wszSystemEffectTblidxFormat, i + 1 );
 
 					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 					{
@@ -183,7 +186,7 @@ bool CCharTitleTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 				WCHAR szBuffer[1024] = { 0x00, };
 				for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
 				{
-					NTL_SWPRINTF( szBuffer, 1024, L"System_Effect_Type%d", i + 1 );
+					NTL_SWPRINTF( szBuffer, 1024, g_wszSystemEffectTypeFormat, i + 1 );
 
 					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 					{
@@ -209,7 +212,7 @@ bool CCharTitleTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 				WCHAR szBuffer[1024] = { 0x00, };
 				for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
 				{
-					NTL_SWPRINTF( szBuffer, 1024, L"System_Effect_Value%d", i + 1 );
+					NTL_SWPRINTF( szBuffer, 1024, g_wszSystemEffectValueFormat, i + 1 );
 
 					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 					{

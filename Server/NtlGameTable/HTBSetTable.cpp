@@ -7,9 +7,21 @@
 
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static const WCHAR g_wszHTBType[] = { 'H', 'T', 'B', '_', 'T', 'y', 'p', 'e', '_', 0 };
+static const WCHAR g_wszSkillTblidx[] = { 'S', 'k', 'i', 'l', 'l', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+static const WCHAR g_wszHTBTypeFormat[] = { 'H', 'T', 'B', '_', 'T', 'y', 'p', 'e', '_', '%', 'd', 0 };
+static const WCHAR g_wszSkillTblidxFormat[] = { 'S', 'k', 'i', 'l', 'l', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CHTBSetTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -39,7 +51,7 @@ void CHTBSetTable::Init()
 
 void* CHTBSetTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHTB_SET_TBLDAT* pNewHTBSet = new sHTB_SET_TBLDAT;
 		if (NULL == pNewHTBSet)
@@ -61,7 +73,7 @@ void* CHTBSetTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CHTBSetTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHTB_SET_TBLDAT* pHTBSet = (sHTB_SET_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pHTBSet, sizeof(*pHTBSet)))
@@ -89,7 +101,9 @@ bool CHTBSetTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -99,134 +113,165 @@ bool CHTBSetTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CHTBSetTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHTB_SET_TBLDAT * pHTBSet = (sHTB_SET_TBLDAT*) pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pHTBSet->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name_Text"))
 		{
 			READ_STRINGW(bstrData, pHTBSet->wszNameText, _countof(pHTBSet->wszNameText));
 		}		
-		else if ( 0 == wcscmp(pstrDataName->c_str(), L"Validity_Able") )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Validity_Able") )
 		{
-			pHTBSet->bValidity_Able = READ_BOOL( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->bValidity_Able = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"PC_Class_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"PC_Class_Bit_Flag"))
 		{
 			pHTBSet->dwPC_Class_Bit_Flag = READ_BITFLAG( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Slot_Index"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Slot_Index"))
 		{
-			pHTBSet->bySlot_Index = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->bySlot_Index = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Skill_Grade"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Skill_Grade"))
 		{
-			pHTBSet->bySkill_Grade = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->bySkill_Grade = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"HTB_Skill_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"HTB_Skill_Name"))
 		{
 			pHTBSet->HTB_Skill_Name = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Icon_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Icon_Name"))
 		{
 			READ_STRING(bstrData, pHTBSet->szIcon_Name, _countof(pHTBSet->szIcon_Name));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_EP"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_EP"))
 		{
-			pHTBSet->wNeed_EP = READ_WORD( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->wNeed_EP = READ_WORD( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Require_Train_Level"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Require_Train_Level"))
 		{
-			pHTBSet->byRequire_Train_Level = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->byRequire_Train_Level = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Require_Zenny"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Require_Zenny"))
 		{
 			pHTBSet->dwRequire_Zenny = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Next_Skill_Train_Exp"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Next_Skill_Train_Exp"))
 		{
-			pHTBSet->wNext_Skill_Train_Exp = READ_WORD( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->wNext_Skill_Train_Exp = READ_WORD( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Cool_Time"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Cool_Time"))
 		{
-			pHTBSet->wCool_Time = READ_WORD( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->wCool_Time = READ_WORD( bstrData, wszFieldNameBuf );
 			pHTBSet->dwCoolTimeInMilliSecs = pHTBSet->wCool_Time * 1000;
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Note"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Note"))
 		{
 			pHTBSet->Note = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Set_Count"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Set_Count"))
 		{
-			pHTBSet->bySetCount = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->bySetCount = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Stop_Point"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Stop_Point"))
 		{
-			pHTBSet->byStop_Point = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if( 0 == wcsncmp(pstrDataName->c_str(), L"HTB_Type_", wcslen(L"HTB_Type_") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < NTL_HTB_MAX_SKILL_COUNT_IN_SET; i++ )
-			{
-				swprintf( szBuffer, 1024, L"HTB_Type_%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
-				{
-					pHTBSet->aHTBAction[ i ].bySkillType = READ_BYTE( bstrData, pstrDataName->c_str() );
-
-					bFound = true;
-					break;
-				}
-			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-
-		}
-		else if( 0 == wcsncmp(pstrDataName->c_str(), L"Skill_Tblidx_", wcslen(L"Skill_Tblidx_") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < NTL_HTB_MAX_SKILL_COUNT_IN_SET; i++ )
-			{
-				swprintf( szBuffer, 1024, L"Skill_Tblidx_%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
-				{
-					pHTBSet->aHTBAction[ i ].skillTblidx = READ_DWORD( bstrData );
-
-					bFound = true;
-					break;
-				}
-			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Require_SP"))
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pHTBSet->wRequireSP = READ_WORD(bstrData, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHTBSet->byStop_Point = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-			return false;
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			if( 0 == WCHARNCmp(wszFieldNameBuf, g_wszHTBType, WCHARLen(g_wszHTBType)) )
+			{
+				bool bFound = false;
+
+				WCHAR szBuffer[1024] = { 0x00, };
+				for( int i = 0; i < NTL_HTB_MAX_SKILL_COUNT_IN_SET; i++ )
+				{
+					NTL_SWPRINTF( szBuffer, 1024, g_wszHTBTypeFormat, i + 1 );
+
+					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+					{
+						pHTBSet->aHTBAction[ i ].bySkillType = READ_BYTE( bstrData, wszFieldNameBuf );
+
+						bFound = true;
+						break;
+					}
+				}
+
+				if( false == bFound )
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
+				}
+
+			}
+			else if( 0 == WCHARNCmp(wszFieldNameBuf, g_wszSkillTblidx, WCHARLen(g_wszSkillTblidx)) )
+			{
+				bool bFound = false;
+
+				WCHAR szBuffer[1024] = { 0x00, };
+				for( int i = 0; i < NTL_HTB_MAX_SKILL_COUNT_IN_SET; i++ )
+				{
+					NTL_SWPRINTF( szBuffer, 1024, g_wszSkillTblidxFormat, i + 1 );
+
+					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+					{
+						pHTBSet->aHTBAction[ i ].skillTblidx = READ_DWORD( bstrData );
+
+						bFound = true;
+						break;
+					}
+				}
+
+				if( false == bFound )
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
+				}
+
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Require_SP"))
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				WCHAR wszFieldNameBuf2[256];
+				WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf2, sizeof(wszFieldNameBuf2)/sizeof(WCHAR));
+				pHTBSet->wRequireSP = READ_WORD(bstrData, wszFieldNameBuf2);
+			}
+			else
+			{
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+				return false;
+			}
 		}
 	}
 	else

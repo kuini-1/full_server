@@ -6,9 +6,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CHLSMerchantTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -38,7 +46,7 @@ void CHLSMerchantTable::Init()
 
 void* CHLSMerchantTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHLS_MERCHANT_TBLDAT* pMerchant = new sHLS_MERCHANT_TBLDAT;
 		if (NULL == pMerchant)
@@ -60,7 +68,7 @@ void* CHLSMerchantTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CHLSMerchantTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHLS_MERCHANT_TBLDAT* pMerchant = (sHLS_MERCHANT_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pMerchant, sizeof(*pMerchant)))
@@ -87,14 +95,16 @@ bool CHLSMerchantTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 		if( pExistTbldat )
 		{
 			CopyMemory( pTbldat, pExistTbldat, pTbldat->GetDataSize() );
-			// 데이타의 해제를 위한 false 반환
+			// ??????? ?????? ???? false ???
 			return true; 
 		}
 	}
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -105,42 +115,50 @@ bool CHLSMerchantTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CHLSMerchantTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHLS_MERCHANT_TBLDAT* pMerchant = (sHLS_MERCHANT_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pMerchant->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Tab_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Tab_Name"))
 		{
 			pMerchant->Tab_Name = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name_Text"))
 		{
 			READ_STRINGW(bstrData, pMerchant->wszNameText, _countof(pMerchant->wszNameText));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Tab_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Tab_Type"))
 		{
-			pMerchant->byTabType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pMerchant->byTabType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Start_Item_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Start_Item_Tblidx"))
 		{
 			pMerchant->startItemTblidx = READ_DWORD( bstrData );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"End_Item_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"End_Item_Tblidx"))
 		{
 			pMerchant->endItemTblidx = READ_DWORD( bstrData );
 		}
 		//new
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Hls_Merchant_Data_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Hls_Merchant_Data_Type"))
 		{
-			pMerchant->Hls_Merchant_Data_Type = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pMerchant->Hls_Merchant_Data_Type = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

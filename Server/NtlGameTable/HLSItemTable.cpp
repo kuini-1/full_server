@@ -4,7 +4,7 @@
 //
 //	Begin		:	2009-8-14
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Chung Doo sup   ( john@ntl-inc.com )
 //
@@ -21,9 +21,21 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static const WCHAR g_wszSubItemTblidx[] = { 'S', 'u', 'b', '_', 'I', 't', 'e', 'm', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+static const WCHAR g_wszSubItemCount[] = { 'S', 'u', 'b', '_', 'I', 't', 'e', 'm', '_', 'C', 'o', 'u', 'n', 't', '_', 0 };
+static const WCHAR g_wszSubItemTblidxFormat[] = { 'S', 'u', 'b', '_', 'I', 't', 'e', 'm', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+static const WCHAR g_wszSubItemCountFormat[] = { 'S', 'u', 'b', '_', 'I', 't', 'e', 'm', '_', 'C', 'o', 'u', 'n', 't', '_', '%', 'd', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CHLSItemTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -53,7 +65,7 @@ void CHLSItemTable::Init()
 
 void* CHLSItemTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHLS_ITEM_TBLDAT* pNewItem = new sHLS_ITEM_TBLDAT;
 		if (NULL == pNewItem)
@@ -75,7 +87,7 @@ void* CHLSItemTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CHLSItemTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHLS_ITEM_TBLDAT* pItem = (sHLS_ITEM_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pItem, sizeof(*pItem)))
@@ -102,14 +114,16 @@ bool CHLSItemTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 		if( pExistTbldat )
 		{
 			CopyMemory( pTbldat, pExistTbldat, pTbldat->GetDataSize() );
-			// 데이타의 리로드 성공을 위한 true 반환
+			// ??????? ????? ?????? ???? true ???
 			return true;  
 		}
 	}
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -121,126 +135,146 @@ bool CHLSItemTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 bool CHLSItemTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
 
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sHLS_ITEM_TBLDAT* pItem = (sHLS_ITEM_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name_Text"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			READ_STRINGW(bstrData, pItem->wszName, _countof(pItem->wszName));
 		}
 
-	//	else if (0 == wcscmp(pstrDataName->c_str(), L"Icon_Name"))
+	//	else if (0 == WStringCmpLiteral(*pstrDataName, L"Icon_Name"))
 	//	{
 	//		READ_STRING(bstrData, pItem->szIcon_Name, _countof(pItem->szIcon_Name));
 	//	}
 
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"CJI_Product_ID"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"CJI_Product_ID"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			READ_STRINGW(bstrData, pItem->wszCJIProductID, _countof(pItem->wszCJIProductID));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"HLS_Item_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"HLS_Item_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->wHLSItemType = READ_WORD(bstrData, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pItem->wHLSItemType = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Item_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Item_Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->itemTblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"On_Sale"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"On_Sale"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bOnSale = READ_BOOL(bstrData, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pItem->bOnSale = READ_BOOL(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sell_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sell_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bySellType = READ_BYTE(bstrData, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pItem->bySellType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Cash"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Cash"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->dwCash = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Discount"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Discount"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->byDiscount = READ_BYTE(bstrData, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pItem->byDiscount = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Item_Stack_Count"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Item_Stack_Count"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->byStackCount = READ_BYTE(bstrData, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pItem->byStackCount = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Display_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Display_Bit_Flag"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->wDisplayBitFlag = (WORD)READ_BITFLAG( bstrData );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Sub_Item_Tblidx_", wcslen(L"Sub_Item_Tblidx_") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < DBO_MAX_COUNT_HLSITEM_SUB_ITEM; i++ )
-			{
-				swprintf( szBuffer, 1024, L"Sub_Item_Tblidx_%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
-				{
-					pItem->asSubItem[ i ].itemTblidx = READ_DWORD( bstrData );
-
-					bFound = true;
-					break;
-				}
-			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Sub_Item_Count_", wcslen(L"Sub_Item_Count_") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < DBO_MAX_COUNT_HLSITEM_SUB_ITEM; i++ )
-			{
-				swprintf( szBuffer, 1024, L"Sub_Item_Count_%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
-				{
-					pItem->asSubItem[ i ].byStackCount = READ_BYTE(bstrData, pstrDataName->c_str());
-
-					bFound = true;
-					break;
-				}
-			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-		}
-
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-			return false;
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszSubItemTblidx, WCHARLen(g_wszSubItemTblidx)) )
+			{
+				bool bFound = false;
+
+				WCHAR szBuffer[1024] = { 0x00, };
+				for( int i = 0; i < DBO_MAX_COUNT_HLSITEM_SUB_ITEM; i++ )
+				{
+					NTL_SWPRINTF( szBuffer, 1024, g_wszSubItemTblidxFormat, i + 1 );
+
+					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+					{
+						pItem->asSubItem[ i ].itemTblidx = READ_DWORD( bstrData );
+
+						bFound = true;
+						break;
+					}
+				}
+
+				if( false == bFound )
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
+				}
+			}
+			else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszSubItemCount, WCHARLen(g_wszSubItemCount)) )
+			{
+				bool bFound = false;
+
+				WCHAR szBuffer[1024] = { 0x00, };
+				for( int i = 0; i < DBO_MAX_COUNT_HLSITEM_SUB_ITEM; i++ )
+				{
+					NTL_SWPRINTF( szBuffer, 1024, g_wszSubItemCountFormat, i + 1 );
+
+					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+					{
+						pItem->asSubItem[ i ].byStackCount = READ_BYTE(bstrData, wszFieldNameBuf);
+
+						bFound = true;
+						break;
+					}
+				}
+
+				if( false == bFound )
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
+				}
+			}
+			else
+			{
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+				return false;
+			}
 		}
 	}
 	else

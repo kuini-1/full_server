@@ -22,6 +22,7 @@
 // Static WCHAR arrays for string literals
 static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
 static const WCHAR g_wszChatCommand[] = { 'C', 'h', 'a', 't', '_', 'C', 'o', 'm', 'm', 'a', 'n', 'd', '_', 0 };
+static const WCHAR g_wszChatCommandFormat[] = { 'C', 'h', 'a', 't', '_', 'C', 'o', 'm', 'm', 'a', 'n', 'd', '_', '%', 'd', 0 };
 
 // Helper function to convert format string literal to WCHAR* buffer
 static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
@@ -156,7 +157,7 @@ bool CChatCommandTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 				WCHAR szBuffer[1024] = { 0x00, };
 				for( int i = 0; i < NTL_MAX_CHAT_COMMAND; i++ )
 				{
-					NTL_SWPRINTF( szBuffer, 1024, L"Chat_Command_%d", i + 1 );
+					NTL_SWPRINTF( szBuffer, 1024, g_wszChatCommandFormat, i + 1 );
 
 					if( 0 == WCHARCmp( wszFieldNameBuf, szBuffer) )
 					{

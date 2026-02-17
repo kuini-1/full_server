@@ -6,9 +6,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CDragonBallRewardTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -38,7 +46,7 @@ void CDragonBallRewardTable::Init()
 
 void* CDragonBallRewardTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sDRAGONBALL_REWARD_TBLDAT* pNewDragonBall = new sDRAGONBALL_REWARD_TBLDAT;
 		if (NULL == pNewDragonBall)
@@ -60,7 +68,7 @@ void* CDragonBallRewardTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePa
 
 bool CDragonBallRewardTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sDRAGONBALL_REWARD_TBLDAT* pDragonBall = (sDRAGONBALL_REWARD_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pDragonBall, sizeof(*pDragonBall)))
@@ -83,7 +91,9 @@ bool CDragonBallRewardTable::AddTable(void * pvTable, bool bReload, bool bUpdate
 
 	if ( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -94,67 +104,77 @@ bool CDragonBallRewardTable::AddTable(void * pvTable, bool bReload, bool bUpdate
 
 bool CDragonBallRewardTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sDRAGONBALL_REWARD_TBLDAT* pDragonBall = (sDRAGONBALL_REWARD_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pDragonBall->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Ball_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Ball_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pDragonBall->byBallType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pDragonBall->byBallType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Category_Depth"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Category_Depth"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pDragonBall->byRewardCategoryDepth = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pDragonBall->byRewardCategoryDepth = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
 		//new 30.11.2014
-		else if (0 == wcscmp(pstrDataName->c_str(), L"class_bit"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"class_bit"))
 		{
 			pDragonBall->dwClassBit = READ_DWORD(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Category_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Category_Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pDragonBall->rewardCategoryName = READ_DWORD( bstrData );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Category_Dialog"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Category_Dialog"))
 		{
 			pDragonBall->rewardCategoryDialog = READ_DWORD( bstrData );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Type"))
 		{
-			pDragonBall->byRewardType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pDragonBall->byRewardType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Name"))
 		{
 			pDragonBall->rewardName = READ_DWORD( bstrData );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Link_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Link_Tblidx"))
 		{
 			pDragonBall->rewardLinkTblidx = READ_DWORD( bstrData );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Zenny"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Zenny"))
 		{
 			pDragonBall->dwRewardZenny = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Dialog_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Dialog_1"))
 		{
 			pDragonBall->rewardDialog1 = READ_DWORD( bstrData );
-		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Reward_Dialog_2"))
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Reward_Dialog_2"))
 		{
 			pDragonBall->rewardDialog2 = READ_DWORD( bstrData );
-		}	
+		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

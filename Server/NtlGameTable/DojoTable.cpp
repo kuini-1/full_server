@@ -24,6 +24,9 @@ static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a
 static const WCHAR g_wszObjectTblidx[] = { 'O', 'b', 'j', 'e', 'c', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
 static const WCHAR g_wszGetPoint[] = { 'G', 'e', 't', '_', 'P', 'o', 'i', 'n', 't', 0 };
 static const WCHAR g_wszGetRock[] = { 'G', 'e', 't', '_', 'R', 'o', 'c', 'k', 0 };
+static const WCHAR g_wszObjectTblidxFormat[] = { 'O', 'b', 'j', 'e', 'c', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+static const WCHAR g_wszGetPointFormat[] = { 'G', 'e', 't', '_', 'P', 'o', 'i', 'n', 't', '%', 'd', 0 };
+static const WCHAR g_wszGetRockFormat[] = { 'G', 'e', 't', '_', 'R', 'o', 'c', 'k', '%', 'd', 0 };
 
 // Helper function to convert format string literal to WCHAR* buffer
 static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
@@ -195,7 +198,7 @@ bool CDojoTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstring
 				WCHAR szBuffer[1024] = { 0x00, };
 				for( int i = 0; i < DOJO_MAX_UPGRADE_OBJECT_COUNT; i++ )
 				{
-					NTL_SWPRINTF( szBuffer, 1024, L"Object_Tblidx_%d", i + 1 );
+					NTL_SWPRINTF( szBuffer, 1024, g_wszObjectTblidxFormat, i + 1 );
 
 					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 					{
@@ -319,7 +322,7 @@ bool CDojoTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstring
 					WCHAR szBuffer[1024] = { 0x00, };
 					for( int i = 0; i < DOJO_MAX_REWARD_TYPE_COUNT; i++ )
 					{
-						NTL_SWPRINTF( szBuffer, 1024, L"Get_Point%d", i + 1 );
+						NTL_SWPRINTF( szBuffer, 1024, g_wszGetPointFormat, i + 1 );
 
 						if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 						{
@@ -345,7 +348,7 @@ bool CDojoTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstring
 					WCHAR szBuffer[1024] = { 0x00, };
 					for( int i = 0; i < DOJO_MAX_REWARD_TYPE_COUNT; i++ )
 					{
-						NTL_SWPRINTF( szBuffer, 1024, L"Get_Rock%d", i + 1 );
+						NTL_SWPRINTF( szBuffer, 1024, g_wszGetRockFormat, i + 1 );
 
 						if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 						{
