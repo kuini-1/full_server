@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-03-27
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Doo  Sup, Chung   ( john@ntl-inc.com )
 //
@@ -17,9 +17,36 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals (Linux compatibility)
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static const WCHAR g_wszTblidx[] = { 'T', 'b', 'l', 'i', 'd', 'x', 0 };
+static const WCHAR g_wszMax[] = { 'M', 'a', 'x', 0 };
+static const WCHAR g_wszNormalTblidxRate[] = { 'N', 'o', 'r', 'm', 'a', 'l', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 'R', 'a', 't', 'e', '_', '%', 'd', 0 };
+static const WCHAR g_wszNormalDropTblidx[] = { 'N', 'o', 'r', 'm', 'a', 'l', '_', 'D', 'r', 'o', 'p', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+static const WCHAR g_wszSuperiorTblidxRate[] = { 'S', 'u', 'p', 'e', 'r', 'i', 'o', 'r', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 'R', 'a', 't', 'e', '_', '%', 'd', 0 };
+static const WCHAR g_wszSuperiorDropTblidx[] = { 'S', 'u', 'p', 'e', 'r', 'i', 'o', 'r', '_', 'D', 'r', 'o', 'p', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+static const WCHAR g_wszNormalTblidxRatePrefix[] = { 'N', 'o', 'r', 'm', 'a', 'l', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 'R', 'a', 't', 'e', '_', 0 };
+static const WCHAR g_wszNormalDropTblidxPrefix[] = { 'N', 'o', 'r', 'm', 'a', 'l', '_', 'D', 'r', 'o', 'p', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+static const WCHAR g_wszSuperiorTblidxRatePrefix[] = { 'S', 'u', 'p', 'e', 'r', 'i', 'o', 'r', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 'R', 'a', 't', 'e', '_', 0 };
+static const WCHAR g_wszSuperiorDropTblidxPrefix[] = { 'S', 'u', 'p', 'e', 'r', 'i', 'o', 'r', '_', 'D', 'r', 'o', 'p', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+static const WCHAR g_wszSuperiorDropRateControl[] = { 'S', 'u', 'p', 'e', 'r', 'i', 'o', 'r', '_', 'D', 'r', 'o', 'p', '_', 'R', 'a', 't', 'e', '_', 'C', 'o', 'n', 't', 'r', 'o', 'l', 0 };
+static const WCHAR g_wszSuperiorOptionRateControl[] = { 'S', 'u', 'p', 'e', 'r', 'i', 'o', 'r', '_', 'O', 'p', 't', 'i', 'o', 'n', '_', 'R', 'a', 't', 'e', '_', 'C', 'o', 'n', 't', 'r', 'o', 'l', 0 };
+static const WCHAR g_wszExcellentTblidxRate[] = { 'E', 'x', 'c', 'e', 'l', 'l', 'e', 'n', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 'R', 'a', 't', 'e', '_', '%', 'd', 0 };
+static const WCHAR g_wszExcellentDropTblidx[] = { 'E', 'x', 'c', 'e', 'l', 'l', 'e', 'n', 't', '_', 'D', 'r', 'o', 'p', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+static const WCHAR g_wszExcellentDropRateControl[] = { 'E', 'x', 'c', 'e', 'l', 'l', 'e', 'n', 't', '_', 'D', 'r', 'o', 'p', '_', 'R', 'a', 't', 'e', '_', 'C', 'o', 'n', 't', 'r', 'o', 'l', 0 };
+static const WCHAR g_wszLegendaryTblidxRate[] = { 'L', 'e', 'g', 'e', 'n', 'd', 'a', 'r', 'y', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 'R', 'a', 't', 'e', '_', '%', 'd', 0 };
+static const WCHAR g_wszLegendaryDropTblidx[] = { 'L', 'e', 'g', 'e', 'n', 'd', 'a', 'r', 'y', '_', 'D', 'r', 'o', 'p', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+static const WCHAR g_wszExcellentTblidxRatePrefix[] = { 'E', 'x', 'c', 'e', 'l', 'l', 'e', 'n', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 'R', 'a', 't', 'e', '_', 0 };
+static const WCHAR g_wszExcellentDropTblidxPrefix[] = { 'E', 'x', 'c', 'e', 'l', 'l', 'e', 'n', 't', '_', 'D', 'r', 'o', 'p', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+static const WCHAR g_wszLegendaryTblidxRatePrefix[] = { 'L', 'e', 'g', 'e', 'n', 'd', 'a', 'r', 'y', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 'R', 'a', 't', 'e', '_', 0 };
+static const WCHAR g_wszLegendaryDropTblidxPrefix[] = { 'L', 'e', 'g', 'e', 'n', 'd', 'a', 'r', 'y', '_', 'D', 'r', 'o', 'p', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+static const WCHAR g_wszLegendaryDropRateControl[] = { 'L', 'e', 'g', 'e', 'n', 'd', 'a', 'r', 'y', '_', 'D', 'r', 'o', 'p', '_', 'R', 'a', 't', 'e', '_', 'C', 'o', 'n', 't', 'r', 'o', 'l', 0 };
+static const WCHAR g_wszErrorFormat[] = { '[', 'F', 'i', 'l', 'e', ']', ' ', ':', ' ', '%', 's', '\n', '[', 'E', 'r', 'r', 'o', 'r', ']', ' ', ':', ' ', 'U', 'n', 'k', 'n', 'o', 'w', 'n', ' ', 'f', 'i', 'e', 'l', 'd', ' ', 'n', 'a', 'm', 'e', ' ', 'f', 'o', 'u', 'n', 'd', '!', '(', 'F', 'i', 'e', 'l', 'd', ' ', 'N', 'a', 'm', 'e', ' ', '=', ' ', '%', 's', ')', 0 };
+static const WCHAR g_wszDuplicatedFormat[] = { '[', 'F', 'i', 'l', 'e', ']', ' ', ':', ' ', '%', 's', '\r', '\n', ' ', 'T', 'a', 'b', 'l', 'e', ' ', 'T', 'b', 'l', 'i', 'd', 'x', '[', '%', 'u', ']', ' ', 'i', 's', ' ', 'D', 'u', 'p', 'l', 'i', 'c', 'a', 't', 'e', 'd', ' ', 0 };
+
 const WCHAR* CBasicDropTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -49,7 +76,7 @@ void CBasicDropTable::Init()
 
 void* CBasicDropTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sBASIC_DROP_TBLDAT* pDrop = new sBASIC_DROP_TBLDAT;
 		if (NULL == pDrop)
@@ -71,7 +98,7 @@ void* CBasicDropTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CBasicDropTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sBASIC_DROP_TBLDAT* pDrop = (sBASIC_DROP_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pDrop, sizeof(*pDrop)))
@@ -104,7 +131,7 @@ bool CBasicDropTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		CTable::CallErrorCallbackFunction(g_wszDuplicatedFormat, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -115,32 +142,48 @@ bool CBasicDropTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sBASIC_DROP_TBLDAT* pDrop = (sBASIC_DROP_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		// Convert std::wstring::c_str() to WCHAR* for comparisons
+		WCHAR wszDataNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszDataNameBuf, sizeof(wszDataNameBuf)/sizeof(WCHAR));
+
+		if (0 == WCHARCmp(wszDataNameBuf, g_wszTblidx))
 		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+			// Convert WCHAR* to wchar_t* for CheckNegativeInvalid
+			wchar_t wbuf[256];
+			for (size_t i = 0; i < 255 && wszDataNameBuf[i] != 0; i++) {
+				wbuf[i] = (wchar_t)wszDataNameBuf[i];
+			}
+			wbuf[255] = L'\0';
+			CheckNegativeInvalid( wbuf, bstrData );
 			pDrop->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Max"))
+		else if (0 == WCHARCmp(wszDataNameBuf, g_wszMax))
 		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pDrop->byMax = READ_BYTE( bstrData, pstrDataName->c_str() );
+			// Convert WCHAR* to wchar_t* for CheckNegativeInvalid
+			wchar_t wbuf[256];
+			for (size_t i = 0; i < 255 && wszDataNameBuf[i] != 0; i++) {
+				wbuf[i] = (wchar_t)wszDataNameBuf[i];
+			}
+			wbuf[255] = L'\0';
+			CheckNegativeInvalid( wbuf, bstrData );
+			pDrop->byMax = READ_BYTE( bstrData, wszDataNameBuf );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Normal_Tblidx_Rate_", wcslen(L"Normal_Tblidx_Rate_") ) )
+		else if ( 0 == WCHARNCmp(wszDataNameBuf, g_wszNormalTblidxRatePrefix, WCHARLen(g_wszNormalTblidxRatePrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_DROP_TABLE_SELECT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Normal_Tblidx_Rate_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszNormalTblidxRate, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszDataNameBuf, szBuffer) )
 				{
-					pDrop->afNoramalTblidxRate[ i ] = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+					pDrop->afNoramalTblidxRate[ i ] = READ_FLOAT( bstrData, wszDataNameBuf, 0.0f );
 
 					bFound = true;
 					break;
@@ -149,20 +192,20 @@ bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Normal_Drop_Tblidx_", wcslen(L"Normal_Drop_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszDataNameBuf, g_wszNormalDropTblidxPrefix, WCHARLen(g_wszNormalDropTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_DROP_TABLE_SELECT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Normal_Drop_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszNormalDropTblidx, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszDataNameBuf, szBuffer) )
 				{
 					pDrop->aNoramalDropTblidx[ i ] = READ_DWORD( bstrData );
 
@@ -173,22 +216,22 @@ bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Superior_Tblidx_Rate_", wcslen(L"Superior_Tblidx_Rate_") ) )
+		else if ( 0 == WCHARNCmp(wszDataNameBuf, g_wszSuperiorTblidxRatePrefix, WCHARLen(g_wszSuperiorTblidxRatePrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_DROP_TABLE_SELECT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Superior_Tblidx_Rate_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszSuperiorTblidxRate, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszDataNameBuf, szBuffer) )
 				{
-					pDrop->afSuperiorTblidxRate[ i ] = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+					pDrop->afSuperiorTblidxRate[ i ] = READ_FLOAT( bstrData, wszDataNameBuf, 0.0f );
 
 					bFound = true;
 					break;
@@ -197,20 +240,20 @@ bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Superior_Drop_Tblidx_", wcslen(L"Superior_Drop_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszDataNameBuf, g_wszSuperiorDropTblidxPrefix, WCHARLen(g_wszSuperiorDropTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_DROP_TABLE_SELECT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Superior_Drop_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszSuperiorDropTblidx, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszDataNameBuf, szBuffer) )
 				{
 					pDrop->aSuperiorDropTblidx[ i ] = READ_DWORD( bstrData );
 
@@ -221,30 +264,30 @@ bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 				return false;
 			}
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Superior_Drop_Rate_Control"))
+		else if (0 == WCHARCmp(wszDataNameBuf, g_wszSuperiorDropRateControl))
 		{
-			pDrop->fSuperior_Drop_Rate_Control = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pDrop->fSuperior_Drop_Rate_Control = READ_FLOAT( bstrData, wszDataNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Superior_Option_Rate_Control"))
+		else if (0 == WCHARCmp(wszDataNameBuf, g_wszSuperiorOptionRateControl))
 		{
-			pDrop->fSuperior_Option_Rate_Control = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pDrop->fSuperior_Option_Rate_Control = READ_FLOAT( bstrData, wszDataNameBuf, 1.0f );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Excellent_Tblidx_Rate_", wcslen(L"Excellent_Tblidx_Rate_") ) )
+		else if ( 0 == WCHARNCmp(wszDataNameBuf, g_wszExcellentTblidxRatePrefix, WCHARLen(g_wszExcellentTblidxRatePrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_DROP_TABLE_SELECT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Excellent_Tblidx_Rate_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszExcellentTblidxRate, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszDataNameBuf, szBuffer) )
 				{
-					pDrop->afExcellentTblidxRate[ i ] = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+					pDrop->afExcellentTblidxRate[ i ] = READ_FLOAT( bstrData, wszDataNameBuf, 0.0f );
 
 					bFound = true;
 					break;
@@ -253,20 +296,20 @@ bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Excellent_Drop_Tblidx_", wcslen(L"Excellent_Drop_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszDataNameBuf, g_wszExcellentDropTblidxPrefix, WCHARLen(g_wszExcellentDropTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_DROP_TABLE_SELECT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Excellent_Drop_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszExcellentDropTblidx, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszDataNameBuf, szBuffer) )
 				{
 					pDrop->aExcellentDropTblidx[ i ] = READ_DWORD( bstrData );
 
@@ -277,26 +320,26 @@ bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 				return false;
 			}
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Excellent_Drop_Rate_Control"))
+		}		
+		else if (0 == WCHARCmp(wszDataNameBuf, g_wszExcellentDropRateControl))
 		{
-			pDrop->fExcellent_Drop_Rate_Control = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pDrop->fExcellent_Drop_Rate_Control = READ_FLOAT( bstrData, wszDataNameBuf, 1.0f );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Legendary_Tblidx_Rate_", wcslen(L"Legendary_Tblidx_Rate_") ) )
+		else if ( 0 == WCHARNCmp(wszDataNameBuf, g_wszLegendaryTblidxRatePrefix, WCHARLen(g_wszLegendaryTblidxRatePrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_DROP_TABLE_SELECT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Legendary_Tblidx_Rate_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszLegendaryTblidxRate, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszDataNameBuf, szBuffer) )
 				{
-					pDrop->afLegendaryTblidxRate[ i ] = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+					pDrop->afLegendaryTblidxRate[ i ] = READ_FLOAT( bstrData, wszDataNameBuf, 0.0f );
 
 					bFound = true;
 					break;
@@ -305,20 +348,20 @@ bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Legendary_Drop_Tblidx_", wcslen(L"Legendary_Drop_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszDataNameBuf, g_wszLegendaryDropTblidxPrefix, WCHARLen(g_wszLegendaryDropTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_DROP_TABLE_SELECT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Legendary_Drop_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszLegendaryDropTblidx, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszDataNameBuf, szBuffer) )
 				{
 					pDrop->aLegendaryDropTblidx[ i ] = READ_DWORD( bstrData );
 
@@ -329,17 +372,17 @@ bool CBasicDropTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 				return false;
 			}
 		}		
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Legendary_Drop_Rate_Control"))
+		else if (0 == WCHARCmp(wszDataNameBuf, g_wszLegendaryDropRateControl))
 		{
-			pDrop->fLegendary_Drop_Rate_Control = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pDrop->fLegendary_Drop_Rate_Control = READ_FLOAT( bstrData, wszDataNameBuf, 1.0f );
 		}		
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			CTable::CallErrorCallbackFunction(g_wszErrorFormat, m_wszXmlFileName, wszDataNameBuf);
 			return false;
 		}
 	}

@@ -25,6 +25,9 @@ typedef WCHAR* BSTR;
 #endif
 #include <map>
 
+// Static empty WCHAR string for default parameters (Linux compatibility)
+static const WCHAR g_wszEmptyWCHAR[] = { 0 };
+
 class CNtlSerializer;
 class CNtlXMLDoc;
 
@@ -178,9 +181,9 @@ protected:
 
 	WORD						READ_WORD(BSTR bstr, const WCHAR* pwszFieldName, WORD wInvalidValue = INVALID_WORD);
 
-	DWORD						READ_DWORD(BSTR bstr, DWORD dwInvalidValue = INVALID_DWORD){ return CheckInvalidValue( bstr ) ? dwInvalidValue : (DWORD)(_wtoi64(bstr));}
+	DWORD						READ_DWORD(BSTR bstr, DWORD dwInvalidValue = INVALID_DWORD){ return CheckInvalidValue( bstr ) ? dwInvalidValue : (DWORD)(_wtoi64_WCHAR(bstr));}
 
-	TBLIDX						READ_TBLIDX(BSTR bstr, DWORD dwInvalidValue = INVALID_TBLIDX){ return CheckInvalidValue( bstr ) ? dwInvalidValue : (DWORD)(_wtoi64(bstr));}
+	TBLIDX						READ_TBLIDX(BSTR bstr, DWORD dwInvalidValue = INVALID_TBLIDX){ return CheckInvalidValue( bstr ) ? dwInvalidValue : (DWORD)(_wtoi64_WCHAR(bstr));}
 
 	FLOAT						READ_FLOAT(BSTR bstr, const WCHAR* pwszFieldName, float fInvalidValue = INVALID_FLOAT);
 
@@ -190,11 +193,11 @@ protected:
 
 	bool						READ_STR(std::string & rDest, BSTR bstr, const char * lpszInvalidValue = "");
 
-	bool						READ_STR(std::wstring & rDest, BSTR bstr, const WCHAR * lpwszInvalidValue = L"");
+	bool						READ_STR(std::wstring & rDest, BSTR bstr, const WCHAR * lpwszInvalidValue = g_wszEmptyWCHAR);
 
 	bool						READ_STRING(BSTR bstr, char* pszBuffer, DWORD dwBufferLength, const char* pszInvalidValue = "");
 
-	bool						READ_STRINGW(BSTR bstr, WCHAR* pwszBuffer, DWORD dwBufferLength, const WCHAR* pwszInvalidValue = L"");
+	bool						READ_STRINGW(BSTR bstr, WCHAR* pwszBuffer, DWORD dwBufferLength, const WCHAR* pwszInvalidValue = g_wszEmptyWCHAR);
 
 	bool 						READ_BOOL(BSTR bstr, const WCHAR* pwszFieldName, bool bInvalidlValue = false);
 

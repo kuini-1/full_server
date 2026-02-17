@@ -595,15 +595,34 @@ bool CTable::READ_STR(std::string & rDest, BSTR bstr, const char * lpszInvalidVa
 //		Purpose	: string ?б?
 //		Return	: ???? - true, ???? - false
 //-----------------------------------------------------------------------------------
-bool CTable::READ_STR(std::wstring & rDest, BSTR bstr, const WCHAR * lpwszInvalidValue /*= ""*/)
+bool CTable::READ_STR(std::wstring & rDest, BSTR bstr, const WCHAR * lpwszInvalidValue /*= g_wszEmptyWCHAR*/)
 {
 	if (true == CheckInvalidValue(bstr))
 	{
-		rDest = lpwszInvalidValue;
+		// Convert WCHAR* to std::wstring
+		if (lpwszInvalidValue && lpwszInvalidValue[0] != 0) {
+			size_t len = WCHARLen(lpwszInvalidValue);
+			wchar_t* wbuf = new wchar_t[len + 1];
+			for (size_t i = 0; i <= len; i++) {
+				wbuf[i] = (wchar_t)lpwszInvalidValue[i];
+			}
+			rDest = std::wstring(wbuf);
+			delete[] wbuf;
+		} else {
+			rDest = std::wstring();
+		}
 		return false;
 	}
 
-	rDest = bstr;
+	// Convert BSTR (WCHAR*) to std::wstring
+	// BSTR is WCHAR*, convert to wchar_t* for std::wstring
+	size_t len = WCHARLen(bstr);
+	wchar_t* wbuf = new wchar_t[len + 1];
+	for (size_t i = 0; i <= len; i++) {
+		wbuf[i] = (wchar_t)bstr[i];
+	}
+	rDest = std::wstring(wbuf);
+	delete[] wbuf;
 
 	return true;
 }

@@ -8,6 +8,7 @@
 #include <strings.h>
 #include <iconv.h>
 #include <cstdarg>
+#include <string>
 
 /* fopen_s: Windows returns 0 on success; we need same semantics */
 #define NTL_FOPEN(pFile, path, mode)  (((*(pFile)) = fopen((path), (mode))) != NULL)
@@ -77,6 +78,143 @@ static inline size_t WCHARLen(const WCHAR* str) {
     while (str[len] != 0)
         len++;
     return len;
+}
+
+/* wcscmp for WCHAR*: Compare two WCHAR strings */
+static inline int WCHARCmp(const WCHAR* s1, const WCHAR* s2) {
+    if (!s1) return s2 ? -1 : 0;
+    if (!s2) return 1;
+    while (*s1 && *s2) {
+        if (*s1 != *s2) return (*s1 < *s2) ? -1 : 1;
+        s1++;
+        s2++;
+    }
+    if (*s1) return 1;
+    if (*s2) return -1;
+    return 0;
+}
+
+/* wcsncmp for WCHAR*: Compare first n characters of two WCHAR strings */
+static inline int WCHARNCmp(const WCHAR* s1, const WCHAR* s2, size_t n) {
+    if (!s1) return s2 ? -1 : 0;
+    if (!s2) return 1;
+    if (n == 0) return 0;
+    size_t i = 0;
+    while (i < n && s1[i] && s2[i]) {
+        if (s1[i] != s2[i]) return (s1[i] < s2[i]) ? -1 : 1;
+        i++;
+    }
+    if (i == n) return 0;
+    if (!s1[i]) return s2[i] ? -1 : 0;
+    if (!s2[i]) return 1;
+    return 0;
+}
+
+/* _wtoi64 for WCHAR*: Convert WCHAR string to __int64 */
+static inline __int64 _wtoi64_WCHAR(const WCHAR* s) {
+    if (!s) return 0;
+#if defined(_WIN32)
+    // On Windows, WCHAR == wchar_t, so direct cast works
+    return (__int64)wcstoll((const wchar_t*)s, NULL, 10);
+#else
+    // On Linux, convert WCHAR* (UTF-16LE) to wchar_t* (UTF-32) for wcstoll
+    // For simple ASCII numbers, direct character conversion works
+    wchar_t buf[64];
+    size_t i = 0;
+    while (s[i] != 0 && i < 63 && s[i] < 128) {
+        buf[i] = (wchar_t)s[i];
+        i++;
+    }
+    buf[i] = L'\0';
+    return (__int64)wcstoll(buf, NULL, 10);
+#endif
+}
+
+/* Helper function to convert wchar_t* literal (L"") to WCHAR* at runtime */
+static inline WCHAR* WCharTLiteralToWCHAR(const wchar_t* src, WCHAR* dest, size_t destSize) {
+    if (!src || !dest || destSize == 0) {
+        if (dest && destSize > 0) dest[0] = 0;
+        return dest;
+    }
+#if defined(_WIN32)
+    // On Windows, wchar_t == WCHAR, so direct copy works
+    size_t len = 0;
+    while (src[len] != 0 && len < destSize - 1) {
+        dest[len] = (WCHAR)src[len];
+        len++;
+    }
+    dest[len] = 0;
+    return dest;
+#else
+    // On Linux, convert UTF-32 to UTF-16LE using iconv (already included at top)
+    iconv_t cd = iconv_open("UTF-16LE", "UTF-32");
+    if (cd == (iconv_t)-1) {
+        // Fallback: simple ASCII conversion
+        size_t len = 0;
+        while (src[len] != 0 && len < destSize - 1 && src[len] < 128) {
+            dest[len] = (WCHAR)src[len];
+            len++;
+        }
+        dest[len] = 0;
+        return dest;
+    }
+    
+    size_t srcLen = 0;
+    const wchar_t* p = src;
+    while (*p != 0) { p++; srcLen++; }
+    
+    char* inbuf = (char*)src;
+    char* outbuf = (char*)dest;
+    size_t inbytesleft = (srcLen + 1) * sizeof(wchar_t);
+    size_t outbytesleft = (destSize - 1) * sizeof(WCHAR);
+    
+    size_t result = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+    iconv_close(cd);
+    
+    if (result == (size_t)-1) {
+        // Fallback: simple ASCII conversion
+        size_t len = 0;
+        while (src[len] != 0 && len < destSize - 1 && src[len] < 128) {
+            dest[len] = (WCHAR)src[len];
+            len++;
+        }
+        dest[len] = 0;
+        return dest;
+    }
+    
+    // Ensure null termination
+    if (outbytesleft >= sizeof(WCHAR)) {
+        *((WCHAR*)outbuf) = 0;
+    } else {
+        dest[destSize - 1] = 0;
+    }
+    return dest;
+#endif
+}
+
+/* Helper function to convert std::wstring::c_str() to WCHAR* buffer */
+static inline WCHAR* WStringCStrToWCHAR(const std::wstring& wstr, WCHAR* dest, size_t destSize) {
+    if (!dest || destSize == 0) return dest;
+    const wchar_t* src = wstr.c_str();
+    return WCharTLiteralToWCHAR(src, dest, destSize);
+}
+
+/* Helper function to compare std::wstring with WCHAR* */
+static inline int WStringCmpWCHAR(const std::wstring& wstr, const WCHAR* wcharStr) {
+    if (!wcharStr) return wstr.empty() ? 0 : 1;
+    const wchar_t* wstr_cstr = wstr.c_str();
+    WCHAR tempBuf[512];
+    WCharTLiteralToWCHAR(wstr_cstr, tempBuf, sizeof(tempBuf)/sizeof(WCHAR));
+    return WCHARCmp(tempBuf, wcharStr);
+}
+
+/* Helper function to compare first n chars of std::wstring with WCHAR* */
+static inline int WStringNCmpWCHAR(const std::wstring& wstr, const WCHAR* wcharStr, size_t n) {
+    if (!wcharStr) return wstr.empty() ? 0 : 1;
+    const wchar_t* wstr_cstr = wstr.c_str();
+    WCHAR tempBuf[512];
+    WCharTLiteralToWCHAR(wstr_cstr, tempBuf, sizeof(tempBuf)/sizeof(WCHAR));
+    return WCHARNCmp(tempBuf, wcharStr, n);
 }
 
 /* Helper function to convert WCHAR* format string to wchar_t* for swprintf/vswprintf */
