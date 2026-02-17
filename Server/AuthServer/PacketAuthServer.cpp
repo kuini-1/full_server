@@ -17,8 +17,23 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	NTL_PRINT(PRINT_APP, "[Login] SendCharLogInReq called (Session %u, IP %s, packet size %u)", GetHandle(), GetRemoteIP(), pPacket->GetUsedSize());
 	
 	// Original Windows code uses GetPacketData() - match original behavior exactly
+	// Debug: check pointer offsets
+	BYTE* packetData = pPacket->GetPacketData();
+	BYTE* packetBuffer = pPacket->GetPacketBuffer();
+	NTL_PRINT(PRINT_APP, "[Login] GetPacketData()=%p, GetPacketBuffer()=%p, offset=%ld (Session %u)", 
+		packetData, packetBuffer, (long)(packetData - packetBuffer), GetHandle());
+	
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
 	NTL_PRINT(PRINT_APP, "[Login] Cast to struct complete, req=%p (Session %u)", req, GetHandle());
+	
+	// Debug: check raw bytes at req->awchUserId offset
+	BYTE* userIdPtr = (BYTE*)&req->awchUserId;
+	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId pointer=%p, first 10 bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X (Session %u)",
+		userIdPtr, userIdPtr[0], userIdPtr[1], userIdPtr[2], userIdPtr[3], userIdPtr[4], userIdPtr[5], userIdPtr[6], userIdPtr[7], userIdPtr[8], userIdPtr[9], GetHandle());
+	
+	// Debug: check WCHAR values
+	NTL_PRINT(PRINT_APP, "[Login] Raw WCHAR username[0-4]: 0x%04X 0x%04X 0x%04X 0x%04X 0x%04X (Session %u)", 
+		req->awchUserId[0], req->awchUserId[1], req->awchUserId[2], req->awchUserId[3], req->awchUserId[4], GetHandle());
 	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
 	// Original code: std::string username = Ntl_WC2MB(req->awchUserId); (memory leak)
