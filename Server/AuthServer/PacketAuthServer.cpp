@@ -22,14 +22,17 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
 	// Note: On Linux, wcstombs may fail if locale is not set or WCHAR data is invalid
+	// Debug: log raw WCHAR data before conversion
+	NTL_PRINT(PRINT_APP, "[Login] Raw WCHAR username[0-4]: 0x%04X 0x%04X 0x%04X 0x%04X 0x%04X (Session %u)", 
+		req->awchUserId[0], req->awchUserId[1], req->awchUserId[2], req->awchUserId[3], req->awchUserId[4], GetHandle());
 	char* usernameMB = Ntl_WC2MB(req->awchUserId);
 	if (usernameMB == NULL)
 	{
-		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(username) returned NULL - wcstombs conversion failed. First WCHAR bytes: 0x%04X 0x%04X (Session %u)", 
-			req->awchUserId[0], req->awchUserId[1], GetHandle());
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(username) returned NULL - wcstombs conversion failed (Session %u)", GetHandle());
 		return;
 	}
 	std::string username = std::string(usernameMB);
+	NTL_PRINT(PRINT_APP, "[Login] Converted username: '%s' (length %zu) (Session %u)", username.c_str(), username.length(), GetHandle());
 	delete[] usernameMB;
 	
 	char* password = Ntl_WC2MB(req->awchPasswd);
@@ -62,6 +65,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 
 		if (resultcode == AUTH_SUCCESS)
 		{
+			NTL_PRINT(PRINT_APP, "[Login] Querying database for username: '%s' (Session %u)", username.c_str(), GetHandle());
 			smart_ptr<QueryResult> result = GetAccDB.Query("SELECT AccountID,Password_hash,acc_status,isGm,lastServerFarmId,founder FROM accounts WHERE Username = \"%s\" LIMIT 1", GetAccDB.EscapeString(username).c_str());
 			if (result)
 			{
