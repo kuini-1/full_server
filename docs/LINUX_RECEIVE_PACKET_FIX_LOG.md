@@ -52,6 +52,12 @@
 - **What:** When `PostRecv()` returns `NTL_ERR_NET_SESSION_CLOSED` because `!IsStatus(ACTIVE)`, log: `[PostRecv] Session not ACTIVE (status=%d), Session=%p, IP=%s`.
 - **Use:** Tells us why session wasn’t ACTIVE (e.g. status=4 = STATUS_CLOSE). If this log never appears after rebuild, the failure path may be different.
 
+### 6. Extra diagnostics to pinpoint 100045 path
+
+- **What:** (1) In `PostRecv()`, when returning 100045 due to `m_bIsTrafficHeavy`, log `[PostRecv] Traffic heavy - returning SESSION_CLOSED, Session=%p, IP=%s`. (2) In `CompleteRecv()`, log status at start (after remote-close check) and immediately before calling `PostRecv()`: `[CompleteRecv] Start: status=%d, ...` and `[CompleteRecv] Before PostRecv: status=%d, ...`.
+- **Why:** User still sees 100045 but not the "Session not ACTIVE" log — so either build is stale or 100045 comes from the traffic-heavy branch or from the "0 bytes" branch (which already logs "Connection closed (0 bytes)"). These logs identify which path runs and whether status changes between start of CompleteRecv and PostRecv.
+- **Result:** Pending user rebuild and repro; then interpret logs to fix root cause.
+
 ---
 
 ## What Works (Do Not Regress)
@@ -76,8 +82,8 @@
 
 - **Symptom:** After client connects and sends 12 bytes, server logs: `[IOCP Worker] CompleteIO failed -> Close session. rc=100045, iomode=3`. Client disconnects; login packet not processed.
 - **rc=100045:** `NTL_ERR_NET_SESSION_CLOSED` — returned by `PostRecv()` when `IsStatus(STATUS_ACTIVE)` is false.
-- **Code in place:** CompleteRecv reorder (push bytes → PostRecv → RecvPackets(0)); FORCE_CLOSE deferred and always queued; FORCE_CLOSE handler only closes if `TakePendingForceClose()`; diagnostic log in PostRecv when !ACTIVE.
-- **Next checks:** (1) Rebuild AuthServer and run again; (2) If 100045 persists, look for "[PostRecv] Session not ACTIVE (status=...)" — if present, use status value; if absent, failure may be elsewhere or build stale; (3) Ensure no other code path sets STATUS_CLOSE or calls Close() for this session before PostRecv().
+- **Code in place:** CompleteRecv reorder (push bytes → PostRecv → RecvPackets(0)); FORCE_CLOSE deferred and always queued; FORCE_CLOSE handler only closes if `TakePendingForceClose()`; diagnostic log in PostRecv when !ACTIVE; extra logs: PostRecv "Traffic heavy" when that branch returns 100045, and CompleteRecv "Start" / "Before PostRecv" with status.
+- **Next checks:** (1) Rebuild AuthServer and run again; (2) Reproduce login and check which of these appears: "[PostRecv] Session not ACTIVE", "[PostRecv] Traffic heavy", "[PostRecv] Connection closed (0 bytes)", and the two "[CompleteRecv] ... status=..." lines — use them to see which path returns 100045 and whether status is ACTIVE at start/before PostRecv; (3) Fix root cause based on that.
 
 ---
 
