@@ -53,13 +53,24 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	
 	// Check raw bytes at awchUserId location
 	BYTE* userIdBytes = (BYTE*)&req->awchUserId;
-	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId at %p, first 6 bytes: %02X %02X %02X %02X %02X %02X", 
-		userIdBytes, userIdBytes[0], userIdBytes[1], userIdBytes[2], userIdBytes[3], userIdBytes[4], userIdBytes[5]);
+	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId at %p, first 10 bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X", 
+		userIdBytes, userIdBytes[0], userIdBytes[1], userIdBytes[2], userIdBytes[3], userIdBytes[4], userIdBytes[5], userIdBytes[6], userIdBytes[7], userIdBytes[8], userIdBytes[9]);
+	
+	// Check WCHAR values directly
+	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId WCHAR[0-4]: 0x%04X 0x%04X 0x%04X 0x%04X 0x%04X", 
+		req->awchUserId[0], req->awchUserId[1], req->awchUserId[2], req->awchUserId[3], req->awchUserId[4]);
+	
+	// Check if WCHAR string has null terminator early
+	int wcharLen = 0;
+	while (wcharLen < (NTL_MAX_SIZE_USERID_UNICODE + 1) && req->awchUserId[wcharLen] != 0)
+		wcharLen++;
+	NTL_PRINT(PRINT_APP, "[Login] WCHAR string length (until null): %d", wcharLen);
 	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
 	// Original code: std::string username = Ntl_WC2MB(req->awchUserId); (memory leak)
 	// Fixed: allocate, copy to string, then free
 	char* usernameMB = Ntl_WC2MB(req->awchUserId);
+	NTL_PRINT(PRINT_APP, "[Login] Ntl_WC2MB returned: %p, strlen=%zu", usernameMB, usernameMB ? strlen(usernameMB) : 0);
 	if (usernameMB == NULL)
 	{
 		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(username) returned NULL (Session %u)", GetHandle());
