@@ -418,12 +418,15 @@ int CNtlConnection::RecvPackets(DWORD dwTransferedBytes)
 {
 	FUNCTION_BEGIN();
 
-	IncreaseBytesRecv(dwTransferedBytes);
-
-	if (!m_recvBuffer.IncreasePushPos(dwTransferedBytes))
+	if (dwTransferedBytes > 0)
 	{
-		NTL_PRINT(PRINT_SYSTEM, "Session[%X] Recv Buffer OverFlow : BufferCur[%d] BufferMax[%d] TransferedBytes[%u]", this, m_recvBuffer.GetCurSize(), m_recvBuffer.GetQueueSize(), dwTransferedBytes);
-		return NTL_ERR_NET_SESSION_RECV_BUFFER_OVERFLOW;
+		IncreaseBytesRecv(dwTransferedBytes);
+
+		if (!m_recvBuffer.IncreasePushPos(dwTransferedBytes))
+		{
+			NTL_PRINT(PRINT_SYSTEM, "Session[%X] Recv Buffer OverFlow : BufferCur[%d] BufferMax[%d] TransferedBytes[%u]", this, m_recvBuffer.GetCurSize(), m_recvBuffer.GetQueueSize(), dwTransferedBytes);
+			return NTL_ERR_NET_SESSION_RECV_BUFFER_OVERFLOW;
+		}
 	}
 
 	int rc = NTL_SUCCESS;
@@ -920,15 +923,24 @@ int CNtlConnection::CompleteRecv(DWORD dwTransferedBytes)
 		return NTL_ERR_NET_SESSION_CLOSED;
 	}
 
-
 	UpdateTrafficInfo(dwTransferedBytes);
 
+	// Add received bytes to buffer first
+	IncreaseBytesRecv(dwTransferedBytes);
+	if (!m_recvBuffer.IncreasePushPos(dwTransferedBytes))
+	{
+		NTL_PRINT(PRINT_SYSTEM, "Session[%X] Recv Buffer OverFlow : BufferCur[%d] BufferMax[%d] TransferedBytes[%u]", this, m_recvBuffer.GetCurSize(), m_recvBuffer.GetQueueSize(), dwTransferedBytes);
+		return NTL_ERR_NET_SESSION_RECV_BUFFER_OVERFLOW;
+	}
 
-	int rc = RecvPackets(dwTransferedBytes);
+	// Re-post recv while session is still ACTIVE (before parsing/dispatch can set STATUS_CLOSE).
+	// Otherwise dispatcher may run ProcessPacket (e.g. decryption failure -> FORCE_CLOSE) before we call PostRecv(), causing rc=100045.
+	int rc = PostRecv();
 	if (rc != NTL_SUCCESS)
 		return rc;
 
-	rc = PostRecv();
+	// Parse and dispatch packets (may post NETEVENT_RECV / FORCE_CLOSE)
+	rc = RecvPackets(0);
 	if (rc != NTL_SUCCESS)
 		return rc;
 

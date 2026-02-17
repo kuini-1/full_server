@@ -745,6 +745,11 @@ int CNtlNetwork::Post(CNtlSession * pSession, CNtlPacket * pPacket)
 //-----------------------------------------------------------------------------------
 int CNtlNetwork::PostNetEventMessage(WPARAM wParam, LPARAM lParam)
 {
+	/* FORCE_CLOSE must always be queued so the IOCP worker can finish CompleteRecv(PostRecv)
+	 * before the dispatcher sets STATUS_CLOSE. Otherwise we get rc=100045. */
+	if (wParam == NETEVENT_FORCE_CLOSE)
+		return m_pNetworkProcessor->PostNetEvent(wParam, lParam);
+
 	if(m_bDirectProcess)
 		return m_pNetworkProcessor->SendNetEvent(wParam, lParam);
 	
