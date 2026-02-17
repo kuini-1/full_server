@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "NtlTokenizer.h"
 #include <cwchar>
+#if !defined(_WIN32)
+#include <iconv.h>
+#include <cstring>
+#endif
 
 CNtlTokenizer::CNtlTokenizer(const std::string &strFileName, CallTokenPack fnCallPack /* = NULL */)
 {
@@ -280,6 +284,89 @@ std::string CNtlTokenizer::WriteError(std::string strErrMsg)
 // Unicode Tokenizer
 //////////////
 
+// Helper functions for WCHAR (UTF-16) to wchar_t (UTF-32) conversion
+static size_t WCHARLen(const WCHAR* str)
+{
+	if (!str) return 0;
+	size_t len = 0;
+	while (str[len] != 0)
+		len++;
+	return len;
+}
+
+static std::wstring WCHARToWString(const WCHAR* src, size_t len)
+{
+	if (!src || len == 0)
+		return std::wstring();
+	
+#if defined(_WIN32)
+	// On Windows, WCHAR == wchar_t (both 2 bytes), so direct conversion works
+	return std::wstring((const wchar_t*)src, len);
+#else
+	// On Linux, WCHAR is UTF-16LE (2 bytes), wchar_t is UTF-32 (4 bytes)
+	// Use iconv to convert UTF-16LE to UTF-32 (native endianness)
+	// Try UTF-32 first (uses system endianness), fall back to UTF-32LE if needed
+	iconv_t cd = iconv_open("UTF-32", "UTF-16LE");
+	if (cd == (iconv_t)-1)
+	{
+		cd = iconv_open("UTF-32LE", "UTF-16LE");
+	}
+	if (cd == (iconv_t)-1)
+	{
+		// Fallback: simple ASCII conversion
+		std::wstring result;
+		result.reserve(len);
+		for (size_t i = 0; i < len; i++)
+		{
+			if (src[i] < 128)
+				result += (wchar_t)src[i];
+			else
+				result += L'?';
+		}
+		return result;
+	}
+	
+	size_t inbytesleft = len * sizeof(WCHAR);
+	size_t outbytesleft = len * sizeof(wchar_t); // UTF-32: 4 bytes per character
+	wchar_t* outbuf = new wchar_t[len + 1];
+	if (!outbuf)
+	{
+		iconv_close(cd);
+		return std::wstring();
+	}
+	
+	char* inbuf = (char*)src;
+	char* outbuf_char = (char*)outbuf;
+	
+	size_t result = iconv(cd, &inbuf, &inbytesleft, &outbuf_char, &outbytesleft);
+	iconv_close(cd);
+	
+	if (result == (size_t)-1)
+	{
+		delete[] outbuf;
+		// Fallback: simple ASCII conversion
+		std::wstring wstr;
+		wstr.reserve(len);
+		for (size_t i = 0; i < len; i++)
+		{
+			if (src[i] < 128)
+				wstr += (wchar_t)src[i];
+			else
+				wstr += L'?';
+		}
+		return wstr;
+	}
+	
+	// Calculate actual length
+	size_t actualLen = (len * sizeof(wchar_t) - outbytesleft) / sizeof(wchar_t);
+	outbuf[actualLen] = L'\0';
+	
+	std::wstring wstr(outbuf, actualLen);
+	delete[] outbuf;
+	return wstr;
+#endif
+}
+
 CNtlTokenizerW::CNtlTokenizerW(const std::string &strFileName, CallTokenPack fnCallPack /* = NULL */)
 {
 	m_pData		 = NULL;
@@ -296,15 +383,15 @@ CNtlTokenizerW::CNtlTokenizerW(const std::string &strFileName, CallTokenPack fnC
 	Tokenize();
 }
 
-CNtlTokenizerW::CNtlTokenizerW(const wchar_t *pBuffer)
+CNtlTokenizerW::CNtlTokenizerW(const WCHAR *pBuffer)
 {
 	m_pData		 = NULL;
 	m_bSuccess	 = TRUE;
 
-	m_iTotalSize = (int)wcslen(pBuffer);
-	m_pData = new wchar_t[m_iTotalSize+1];
-	m_pData[m_iTotalSize] = '\0';
-	memcpy(m_pData, pBuffer, m_iTotalSize*2);
+	m_iTotalSize = (int)WCHARLen(pBuffer);
+	m_pData = new WCHAR[m_iTotalSize+1];
+	m_pData[m_iTotalSize] = 0;
+	memcpy(m_pData, pBuffer, m_iTotalSize * sizeof(WCHAR));
 
 	m_iPeekPos = 0;
 	m_iLastLine = 0;	
@@ -357,13 +444,9 @@ BOOL CNtlTokenizerW::Load(const char *pFileName, CallTokenPack fnCallPack)
 		{// Ansi
 			m_iTotalSize = iSize;
 			m_pData = new WCHAR[m_iTotalSize+1];
-			m_pData[m_iTotalSize] = '\0';
+			m_pData[m_iTotalSize] = 0;
 
-#if defined(_WIN32)
 			::MultiByteToWideChar( GetACP(), 0, pData, -1, m_pData, m_iTotalSize + 1 );
-#else
-			mbstowcs( m_pData, pData, m_iTotalSize + 1 );
-#endif
 		}
 
 		delete [] pData;
@@ -388,8 +471,8 @@ BOOL CNtlTokenizerW::Load(const char *pFileName, CallTokenPack fnCallPack)
 
 			int nStrLen = (nSize/2);
 			m_iTotalSize = nSize/2;
-			m_pData = new wchar_t[nStrLen];
-			m_pData[nStrLen-1] = L'\0';
+			m_pData = new WCHAR[nStrLen];
+			m_pData[nStrLen-1] = 0;
 
 			fread(m_pData, nSize , 1, fp);
 		}
@@ -405,14 +488,10 @@ BOOL CNtlTokenizerW::Load(const char *pFileName, CallTokenPack fnCallPack)
 
 			fread(pData, nSize, 1, fp);
 
-			m_pData = new wchar_t[nSize];
+			m_pData = new WCHAR[nSize];
 			m_iTotalSize = nSize;
 
-#if defined(_WIN32)
 			::MultiByteToWideChar( GetACP(), 0, pData, -1, m_pData, nSize );
-#else
-			mbstowcs( m_pData, pData, nSize );
-#endif
 
 			delete [] pData;
 			pData = NULL;
@@ -429,27 +508,27 @@ BOOL CNtlTokenizerW::IsSuccess(void)
 	return m_bSuccess;
 }
 
-BOOL CNtlTokenizerW::IsSpace(wchar_t c)
+BOOL CNtlTokenizerW::IsSpace(WCHAR c)
 {
-	const wchar_t *pSpace = L" \t\r\n";
-
-	return wcschr(pSpace, c) != NULL;
+	// WCHAR is 2 bytes, can compare directly with ASCII characters
+	return (c == ' ' || c == '\t' || c == '\r' || c == '\n');
 }
 
 
-BOOL CNtlTokenizerW::IsOperator(wchar_t c)
+BOOL CNtlTokenizerW::IsOperator(WCHAR c)
 {
-	const wchar_t *pOperators = L",=();{}<+-*/>";
-
-	return wcschr(pOperators, c) != NULL;
+	// WCHAR is 2 bytes, can compare directly with ASCII characters
+	return (c == ',' || c == '=' || c == '(' || c == ')' || c == ';' || 
+	        c == '{' || c == '}' || c == '<' || c == '+' || c == '-' || 
+	        c == '*' || c == '/' || c == '>');
 }
 
 
-BOOL CNtlTokenizerW::IsRemark(wchar_t c, int iPosition)
+BOOL CNtlTokenizerW::IsRemark(WCHAR c, int iPosition)
 {
 	if (m_bInRemark)
 	{
-		if (c == L'\n') 
+		if (c == '\n') 
 		{	
 			m_bInRemark = FALSE;
 		}
@@ -457,29 +536,29 @@ BOOL CNtlTokenizerW::IsRemark(wchar_t c, int iPosition)
 	}
 	else
 	{
-		if (c == L'/')
+		if (c == '/')
 		{
 			if (
 				iPosition+1 < m_iTotalSize &&
-				m_pData[iPosition+1] == L'/')
+				m_pData[iPosition+1] == '/')
 			{
 				m_bInRemark = TRUE;
 				return TRUE;
 			}
 		}
 		/*
-		else if(c == L'-')
+		else if(c == '-')
 		{
 		if (
 		iPosition+1 < m_iTotalSize &&
-		m_pData[iPosition+1] == L'-')
+		m_pData[iPosition+1] == '-')
 		{
 		m_bInRemark = TRUE;
 		return TRUE;
 		}
 		}
 		*/
-		else if (c == L'#')
+		else if (c == '#')
 		{
 			m_bInRemark = TRUE;
 			return TRUE;
@@ -505,28 +584,28 @@ void CNtlTokenizerW::Tokenize(void)
 			IsSpace(m_pData[iCurPos])
 			))
 		{
-			if (m_pData[iCurPos] == L'\n') iCurLine++;
+			if (m_pData[iCurPos] == '\n') iCurLine++;
 			iCurPos++;
 		}
 		if (iCurPos == m_iTotalSize) break;
 
 		if (IsOperator(m_pData[iCurPos]))
 		{
-			m_dqTokens.push_back(CNtlTokenW(std::wstring(&m_pData[iCurPos], 1), iCurPos, iCurLine));
+			m_dqTokens.push_back(CNtlTokenW(WCHARToWString(&m_pData[iCurPos], 1), iCurPos, iCurLine));
 			iCurPos++;
 		}
 		else
 		{
 			int iTempPos = iCurPos;
-			if (m_pData[iTempPos] == L'"')
+			if (m_pData[iTempPos] == '"')
 			{
 				int iNumChars = 0;
 				iTempPos++;
 				while (iTempPos < m_iTotalSize)
 				{
-					if (m_pData[iTempPos] == L'"')
+					if (m_pData[iTempPos] == '"')
 					{
-						if (iTempPos+1>=m_iTotalSize || m_pData[iTempPos+1] != L'"') break;
+						if (iTempPos+1>=m_iTotalSize || m_pData[iTempPos+1] != '"') break;
 						else
 						{
 							iTempPos++;
@@ -555,7 +634,7 @@ void CNtlTokenizerW::Tokenize(void)
 				}
 				iCurPos = iTempPos+1;
 
-				m_dqTokens.push_back(CNtlTokenW(std::wstring(m_pTemp), iCurPos, iCurLine));
+				m_dqTokens.push_back(CNtlTokenW(WCHARToWString(m_pTemp, iNumChars), iCurPos, iCurLine));
 				//				delete temp;
 			}
 			else
@@ -569,7 +648,7 @@ void CNtlTokenizerW::Tokenize(void)
 				}
 
 				int iTokSize = iTempPos-iCurPos;
-				m_dqTokens.push_back(CNtlTokenW(std::wstring(&m_pData[iCurPos], iTokSize), iCurPos, iCurLine));
+				m_dqTokens.push_back(CNtlTokenW(WCHARToWString(&m_pData[iCurPos], iTokSize), iCurPos, iCurLine));
 				iCurPos += iTokSize;
 			}
 		}
@@ -580,7 +659,7 @@ std::wstring CNtlTokenizerW::PeekNextToken(int *pOffset/*=NULL*/, int *pLine /*=
 {
 	if(m_iPeekPos >= (int) m_dqTokens.size())
 	{
-		return L"";
+		return std::wstring();
 	}
 	if(pOffset != NULL) 
 		*pOffset = m_dqTokens[m_iPeekPos].iOffset;

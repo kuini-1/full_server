@@ -88,12 +88,12 @@ private:
 	int			m_iLastLine;
 	BOOL		m_bInRemark;
 
-	wchar_t		*m_pData;
+	WCHAR		*m_pData;
 	int			m_iTotalSize;
 	std::string m_strFileName;
 
 #define NTL_TOKEN_BUFF_LEN	1024
-	wchar_t		m_pTemp[NTL_TOKEN_BUFF_LEN];
+	WCHAR		m_pTemp[NTL_TOKEN_BUFF_LEN];
 
 	void Tokenize(void);
 
@@ -101,7 +101,7 @@ private:
 public:
 
 	CNtlTokenizerW(const std::string &strFileName, CallTokenPack fnCallPack = NULL);
-	CNtlTokenizerW(const wchar_t *pBuffer);
+	CNtlTokenizerW(const WCHAR *pBuffer);
 	~CNtlTokenizerW();
 
 	BOOL Load(const char *pFileName, CallTokenPack fnCallPack);
@@ -110,9 +110,9 @@ public:
 	std::wstring PeekNextToken(int *pOffset=0, int *pLine = 0);
 	void PopToPeek(void);
 
-	virtual BOOL IsSpace(wchar_t c);
-	virtual BOOL IsOperator(wchar_t c);
-	virtual BOOL IsRemark(wchar_t c, int iPosition);
+	virtual BOOL IsSpace(WCHAR c);
+	virtual BOOL IsOperator(WCHAR c);
+	virtual BOOL IsRemark(WCHAR c, int iPosition);
 
 	std::string WriteError(std::string strErrMsg);
 };
