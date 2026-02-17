@@ -925,7 +925,6 @@ int CNtlConnection::CompleteRecv(DWORD dwTransferedBytes)
 	}
 
 	UpdateTrafficInfo(dwTransferedBytes);
-	NTL_PRINT(PRINT_SYSTEM, "[CompleteRecv] Start: status=%d, Session=%p, IP=%s, bytes=%u", (int)GetStatus(), this, GetRemoteIP(), dwTransferedBytes);
 
 	// Add received bytes to buffer first
 	IncreaseBytesRecv(dwTransferedBytes);
@@ -937,7 +936,6 @@ int CNtlConnection::CompleteRecv(DWORD dwTransferedBytes)
 
 	// Re-post recv while session is still ACTIVE (before parsing/dispatch can set STATUS_CLOSE).
 	// Otherwise dispatcher may run ProcessPacket (e.g. decryption failure -> FORCE_CLOSE) before we call PostRecv(), causing rc=100045.
-	NTL_PRINT(PRINT_SYSTEM, "[CompleteRecv] Before PostRecv: status=%d, Session=%p, IP=%s", (int)GetStatus(), this, GetRemoteIP());
 	int rc = PostRecv();
 	if (rc != NTL_SUCCESS)
 		return rc;

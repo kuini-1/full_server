@@ -91,6 +91,12 @@
 - **Code in place:** PostRecv now calls `PostIocpEventMessage(dwTransferedBytes, this, &m_recvContext)` so the worker gets the real byte count; reorder (push → PostRecv → RecvPackets(0)); FORCE_CLOSE deferred and pending-flag check; optional diagnostics in CompleteRecv/PostRecv.
 - **Next:** Rebuild AuthServer, test login; if it works, optionally reduce or remove the verbose [CompleteRecv] diagnostic prints.
 
+### 8. Receive working; cleanup and NULL guard
+
+- **Result:** After fix 7, receive works: packets (OpCode 0x0004, 0x0001, 0x0067, etc.) are received and processed. Diagnostic logs showed `status=4` = STATUS_ACTIVE (enum: INIT=0, CREATE=1, ACCEPT=2, CONNECT=3, ACTIVE=4, CLOSE=5).
+- **Cleanup:** Removed the two verbose `[CompleteRecv] Start` / `Before PostRecv` logs to reduce noise.
+- **NULL m_hEventIOCP:** Logs showed "(NULL == m_hEventIOCP)" once during receive. In `PostNetEvent()`, added early return when `m_hEventIOCP` is NULL (log message and return NTL_FAIL) so we don’t call `PostQueuedCompletionStatus` with NULL. If this appears often, ensure every network’s processor has `Create()` called before any session posts events.
+
 ---
 
 ## Rules for Future Fixes

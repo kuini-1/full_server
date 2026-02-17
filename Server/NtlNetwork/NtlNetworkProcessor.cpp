@@ -220,7 +220,8 @@ int CNtlNetworkProcessor::PostNetEvent(WPARAM wParam, LPARAM lParam)
 {
 	if (NULL == m_hEventIOCP)
 	{
-		NTL_PRINT(PRINT_SYSTEM, "(NULL == m_hEventIOCP)");
+		NTL_PRINT(PRINT_SYSTEM, "(NULL == m_hEventIOCP) - dispatcher not created or already destroyed; drop event");
+		return NTL_FAIL;
 	}
 
 	if( 0 == PostQueuedCompletionStatus( m_hEventIOCP, 0, (ULONG_PTR)wParam, (LPOVERLAPPED)lParam ) )
