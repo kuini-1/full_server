@@ -285,14 +285,7 @@ std::string CNtlTokenizer::WriteError(std::string strErrMsg)
 //////////////
 
 // Helper functions for WCHAR (UTF-16) to wchar_t (UTF-32) conversion
-static size_t WCHARLen(const WCHAR* str)
-{
-	if (!str) return 0;
-	size_t len = 0;
-	while (str[len] != 0)
-		len++;
-	return len;
-}
+// Note: WCHARLen is now defined in NtlPortable.h, so we use that instead
 
 static std::wstring WCHARToWString(const WCHAR* src, size_t len)
 {
