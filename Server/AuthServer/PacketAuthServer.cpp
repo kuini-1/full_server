@@ -16,24 +16,45 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 {
 	NTL_PRINT(PRINT_APP, "[Login] SendCharLogInReq called (Session %u, IP %s, packet size %u)", GetHandle(), GetRemoteIP(), pPacket->GetUsedSize());
 	
-	// Original Windows code uses GetPacketData() - match original behavior exactly
-	// Debug: check pointer offsets
-	BYTE* packetData = pPacket->GetPacketData();
-	BYTE* packetBuffer = pPacket->GetPacketBuffer();
-	NTL_PRINT(PRINT_APP, "[Login] GetPacketData()=%p, GetPacketBuffer()=%p, offset=%ld (Session %u)", 
-		packetData, packetBuffer, (long)(packetData - packetBuffer), GetHandle());
+	// INVESTIGATION: Check packet layout and struct alignment
+	BYTE* buffer = pPacket->GetPacketBuffer();
+	BYTE* data = pPacket->GetPacketData();
+	WORD headerSize = pPacket->GetHeaderSize();
 	
+	// Check where OpCode actually is in the packet
+	WORD opCodeAtBuffer = *(WORD*)(buffer + headerSize);  // Should be OpCode (after STHeaderBase)
+	WORD opCodeAtData = *(WORD*)data;  // What GetPacketData() points to
+	
+	NTL_PRINT(PRINT_APP, "[Login] Packet layout: buffer=%p, data=%p, offset=%ld, headerSize=%u", 
+		buffer, data, (long)(data - buffer), headerSize);
+	NTL_PRINT(PRINT_APP, "[Login] OpCode at buffer+%u: 0x%04X, OpCode at data: 0x%04X", headerSize, opCodeAtBuffer, opCodeAtData);
+	
+	// Check struct layout
+	NTL_PRINT(PRINT_APP, "[Login] Struct sizes: sNTLPACKETHEADER=%zu, sUA_LOGIN_REQ_TAIWAN_CT=%zu", 
+		sizeof(sNTLPACKETHEADER), sizeof(sUA_LOGIN_REQ_TAIWAN_CT));
+	NTL_PRINT(PRINT_APP, "[Login] Struct offsets: wOpCode=%zu, awchUserId=%zu", 
+		offsetof(sUA_LOGIN_REQ_TAIWAN_CT, wOpCode), offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId));
+	
+	// Try GetPacketData() first (original Windows code)
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
-	NTL_PRINT(PRINT_APP, "[Login] Cast to struct complete, req=%p (Session %u)", req, GetHandle());
 	
-	// Debug: check raw bytes at req->awchUserId offset
-	BYTE* userIdPtr = (BYTE*)&req->awchUserId;
-	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId pointer=%p, first 10 bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X (Session %u)",
-		userIdPtr, userIdPtr[0], userIdPtr[1], userIdPtr[2], userIdPtr[3], userIdPtr[4], userIdPtr[5], userIdPtr[6], userIdPtr[7], userIdPtr[8], userIdPtr[9], GetHandle());
+	// Check if struct is aligned correctly
+	WORD structOpCode = req->wOpCode;
+	NTL_PRINT(PRINT_APP, "[Login] Cast GetPacketData() to struct: req->wOpCode=0x%04X (expected 0x%04X)", structOpCode, opCodeAtData);
 	
-	// Debug: check WCHAR values
-	NTL_PRINT(PRINT_APP, "[Login] Raw WCHAR username[0-4]: 0x%04X 0x%04X 0x%04X 0x%04X 0x%04X (Session %u)", 
-		req->awchUserId[0], req->awchUserId[1], req->awchUserId[2], req->awchUserId[3], req->awchUserId[4], GetHandle());
+	if (structOpCode != opCodeAtData)
+	{
+		// Misaligned - try GetPacketBuffer() instead
+		NTL_PRINT(PRINT_APP, "[Login] Struct misaligned with GetPacketData(), trying GetPacketBuffer() (Session %u)", GetHandle());
+		req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketBuffer();
+		structOpCode = req->wOpCode;
+		NTL_PRINT(PRINT_APP, "[Login] Cast GetPacketBuffer() to struct: req->wOpCode=0x%04X (expected 0x%04X)", structOpCode, opCodeAtBuffer);
+	}
+	
+	// Check raw bytes at awchUserId location
+	BYTE* userIdBytes = (BYTE*)&req->awchUserId;
+	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId at %p, first 6 bytes: %02X %02X %02X %02X %02X %02X", 
+		userIdBytes, userIdBytes[0], userIdBytes[1], userIdBytes[2], userIdBytes[3], userIdBytes[4], userIdBytes[5]);
 	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
 	// Original code: std::string username = Ntl_WC2MB(req->awchUserId); (memory leak)
