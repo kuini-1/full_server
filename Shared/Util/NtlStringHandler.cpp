@@ -6,6 +6,7 @@
 #else
 #include <cstdlib>
 #include <cwchar>
+#include <clocale>
 #endif
 
 
@@ -95,6 +96,14 @@ char* Ntl_WC2MB(WCHAR* pwszOriginalString)
 	::WideCharToMultiByte(::GetACP(), 0, pwszOriginalString, -1, pszResultString, iRequiredChars, NULL, NULL);
 	return pszResultString;
 #else
+	// Ensure locale is set for wcstombs (required on Linux)
+	static bool localeSet = false;
+	if (!localeSet)
+	{
+		setlocale(LC_ALL, "");
+		localeSet = true;
+	}
+	
 	size_t len = wcstombs(NULL, pwszOriginalString, 0);
 	if (len == (size_t)-1)
 		return NULL;

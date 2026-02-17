@@ -16,8 +16,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 {
 	NTL_PRINT(PRINT_APP, "[Login] SendCharLogInReq called (Session %u, IP %s, packet size %u)", GetHandle(), GetRemoteIP(), pPacket->GetUsedSize());
 	
-	// Original Windows code used GetPacketData() - try that first to match original behavior
-	// Note: Struct inherits from header, but original code worked with GetPacketData()
+	// Original Windows code uses GetPacketData() - match original behavior
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
 	NTL_PRINT(PRINT_APP, "[Login] Cast to struct complete, req=%p (Session %u)", req, GetHandle());
 	
