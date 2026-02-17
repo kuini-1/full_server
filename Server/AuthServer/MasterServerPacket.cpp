@@ -79,7 +79,8 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			if (resultcode == AUTH_SUCCESS)
 			{
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
-				app->SendTo(session, &packet);
+				int rc = app->SendTo(session, &packet);
+				ERR_LOG(LOG_USER, "Login success: sent AU_LOGIN_RES to client Session %u, Account %u, SendTo rc=%d", session->GetHandle(), req->accountId, rc);
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
 				sAU_COMMERCIAL_SETTING_NFY * res2 = (sAU_COMMERCIAL_SETTING_NFY *)packet2.GetPacketData();
@@ -105,7 +106,8 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 		res2->wOpCode = AU_LOGIN_RES;
 		res2->wResultCode = resultcode;
 		packet2.SetPacketLen(sizeof(sAU_LOGIN_RES));
-		app->SendTo(session, &packet2);
+		int rc2 = app->SendTo(session, &packet2);
+		ERR_LOG(LOG_USER, "Login failed (from master check): sent AU_LOGIN_RES to client Session %u, resultcode %d, SendTo rc=%d", session->GetHandle(), resultcode, rc2);
 
 		app->DelPlayer(req->accountId);
 	}

@@ -80,8 +80,14 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 					{
 						this->AccountID = fields[0].GetUInt32();
 
+						// MasterServer must be connected for login success path (it sends AU_LOGIN_RES to client)
+						if (app->m_pMasterServerSession == NULL)
+						{
+							resultcode = AUTH_NO_AVAILABLE_CHARACTER_SERVER;
+							ERR_LOG(LOG_SYSTEM, "Login: MasterServer not connected. User %s will get failure response. Start MasterServer and connect Auth to it.", username.c_str());
+						}
 						//check if acc already online
-						if (app->AddPlayer(this->AccountID, this) == true)
+						else if (app->AddPlayer(this->AccountID, this) == true)
 						{
 							ERR_LOG(LOG_USER, "%s Auth Success. <Online Check>Sending packet to master server \n", username.c_str());
 
@@ -120,7 +126,9 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
 			res->wOpCode = AU_LOGIN_RES;
 			res->wResultCode = resultcode;
-			app->Send(GetHandle(), &packet);
+			packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+			int sendRc = app->Send(GetHandle(), &packet);
+			ERR_LOG(LOG_USER, "Login failed: sent AU_LOGIN_RES to client Session %u, resultcode %u, Send rc=%d", GetHandle(), resultcode, sendRc);
 
 			if (m_byLoginTrys >= 5)
 			{
