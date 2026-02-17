@@ -12,6 +12,82 @@ static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t d
 	WCharTLiteralToWCHAR(fmt, dest, destSize);
 }
 
+// Helper function to convert WCHAR* to std::wstring
+static std::wstring WCHARToString(const WCHAR* src) {
+	if (!src)
+		return std::wstring();
+	
+#if defined(_WIN32)
+	// On Windows, WCHAR == wchar_t, so direct assignment works
+	return std::wstring((const wchar_t*)src);
+#else
+	// On Linux, WCHAR is UTF-16LE (2 bytes), wchar_t is UTF-32 (4 bytes)
+	// Convert using iconv
+	size_t srcLen = 0;
+	const WCHAR* p = src;
+	while (*p != 0) { p++; srcLen++; }
+	
+	if (srcLen == 0)
+		return std::wstring();
+	
+	// Allocate buffer for UTF-32 output
+	wchar_t* wstr = new wchar_t[srcLen + 1];
+	if (!wstr)
+		return std::wstring();
+	
+	iconv_t cd = iconv_open("UTF-32", "UTF-16LE");
+	if (cd == (iconv_t)-1)
+	{
+		cd = iconv_open("UTF-32LE", "UTF-16LE");
+	}
+	if (cd == (iconv_t)-1)
+	{
+		// Fallback: simple ASCII conversion
+		for (size_t i = 0; i < srcLen; i++)
+		{
+			if (src[i] < 128)
+				wstr[i] = (wchar_t)src[i];
+			else
+				wstr[i] = L'?';
+		}
+		wstr[srcLen] = L'\0';
+		std::wstring result(wstr);
+		delete[] wstr;
+		return result;
+	}
+	
+	char* inbuf = (char*)src;
+	char* outbuf = (char*)wstr;
+	size_t inbytesleft = (srcLen + 1) * sizeof(WCHAR); // Include null terminator
+	size_t outbytesleft = (srcLen + 1) * sizeof(wchar_t);
+	
+	size_t result = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+	iconv_close(cd);
+	
+	if (result == (size_t)-1)
+	{
+		// Conversion failed, fallback to ASCII
+		for (size_t i = 0; i < srcLen; i++)
+		{
+			if (src[i] < 128)
+				wstr[i] = (wchar_t)src[i];
+			else
+				wstr[i] = L'?';
+		}
+		wstr[srcLen] = L'\0';
+	}
+	else
+	{
+		// Ensure null termination
+		wstr[srcLen] = L'\0';
+	}
+	
+	std::wstring result(wstr);
+	delete[] wstr;
+	return result;
+#endif
+}
+
 // DWORD
 #define COMMONCONFIG_TBLDAT_SET_DWORD( table_loc, valuename, maxvalue)								\
 	if( false == ReadDWORD( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
@@ -502,7 +578,7 @@ bool CCommonConfigTable::GetBinaryText(std::wstring & wstrValue, CNtlSerializer&
 	serializer.Out(pwszText, wTextLength * sizeof(WCHAR));
 	pwszText[wTextLength] = L'\0';
 
-	wstrValue = pwszText;
+	wstrValue = WCHARToString(pwszText);
 
 	delete [] pwszText;
 

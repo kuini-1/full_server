@@ -65,7 +65,7 @@ void* CContentsConditionTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodeP
 
 bool CContentsConditionTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sCONTENTS_CONDITION_TBLDAT* pHelp = (sCONTENTS_CONDITION_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pHelp, sizeof(*pHelp)))
