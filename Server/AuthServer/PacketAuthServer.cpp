@@ -20,13 +20,19 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	// GetPacketBuffer() returns the full packet (header + payload), GetPacketData() skips header.
 	// So we must use GetPacketBuffer() to cast to the struct that includes header.
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketBuffer();
+	NTL_PRINT(PRINT_APP, "[Login] Cast to struct complete, req=%p (Session %u)", req, GetHandle());
 	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
+	NTL_PRINT(PRINT_APP, "[Login] About to call Ntl_WC2MB for username (Session %u)", GetHandle());
 	char* usernameMB = Ntl_WC2MB(req->awchUserId);
+	NTL_PRINT(PRINT_APP, "[Login] Ntl_WC2MB(username) returned %p (Session %u)", usernameMB, GetHandle());
 	std::string username = std::string(usernameMB);
 	delete[] usernameMB;
+	NTL_PRINT(PRINT_APP, "[Login] Username: '%s' (Session %u)", username.c_str(), GetHandle());
 	
+	NTL_PRINT(PRINT_APP, "[Login] About to call Ntl_WC2MB for password (Session %u)", GetHandle());
 	char* password = Ntl_WC2MB(req->awchPasswd);
+	NTL_PRINT(PRINT_APP, "[Login] Ntl_WC2MB(password) returned %p (Session %u)", password, GetHandle());
 
 	ERR_LOG(LOG_USER, "User %s request connection! req->wLVersion %i, req->wRVersion %i, state %hu, mac %hu\n", username.c_str(), (int)req->wLVersion, (int)req->wRVersion, req->byState, req->abyMacAddress[0]);
 	NTL_PRINT(PRINT_APP, "[Login] User %s login request (Session %u, IP %s)", username.c_str(), GetHandle(), GetRemoteIP());
