@@ -2,7 +2,7 @@
 
 **Purpose:** Track every attempt to fix "receive packet" on Linux so it behaves like Windows, and avoid breaking the client connection. Do not repeat failed approaches.
 
-**Current goal:** Client connects → handshake sent → client sends 12-byte login packet → server receives it, parses it, and processes login (no disconnect with rc=100045).
+**Current goal (full flow):** Packet handling on Linux works end-to-end: (1) **Auth:** client connects → handshake → login packet received and processed → client receives AU_LOGIN_RES and can proceed. (2) **Char server:** client joins char server and receives responses. (3) **In-game:** client loads into game. This log is updated until all three work 100%.
 
 ---
 
@@ -86,10 +86,10 @@
 
 ## Current State (as of this log)
 
-- **Symptom (resolved):** After client connects and sends 12 bytes, server was closing with rc=100045 because the RECV completion was posted with **0** as the byte count.
-- **Root cause (fix 7):** PostRecv (Linux) used the 2-arg `PostIocpEventMessage(this, &m_recvContext)`, so the IOCP worker got `CompleteRecv(0)` and returned 100045 at the remote-close check.
-- **Code in place:** PostRecv now calls `PostIocpEventMessage(dwTransferedBytes, this, &m_recvContext)` so the worker gets the real byte count; reorder (push → PostRecv → RecvPackets(0)); FORCE_CLOSE deferred and pending-flag check; optional diagnostics in CompleteRecv/PostRecv.
-- **Next:** Rebuild AuthServer, test login; if it works, optionally reduce or remove the verbose [CompleteRecv] diagnostic prints.
+- **Auth receive:** Working. Client connects, handshake, login packet (e.g. 87 bytes, OpCode 0x0067) received and dispatched; "[ClientSession] Received packet OpCode" confirms ProcessPacket runs.
+- **Login not completing in-game:** Auth processes login but client may not receive AU_LOGIN_RES. Success path requires MasterServer connected (Auth sends online-check, MasterServer responds, then Auth sends AU_LOGIN_RES to client). If MasterServer not running, Auth now sends failure (AUTH_NO_AVAILABLE_CHARACTER_SERVER) to client so client gets a response. See PacketAuthServer.cpp / MasterServerPacket.cpp and ensure MasterServer is running for login success.
+- **Log flood (fixed):** ValidCheck and PostRecv EAGAIN logs throttled to once per 5 min so packet/login logs stay visible (fix 10).
+- **Code in place:** Byte count in RECV completion (fix 7); reorder push → PostRecv → RecvPackets(0); FORCE_CLOSE deferred + pending flag; dispatcher IOCP lazy-create on Linux (fix 9); Auth MasterServer NULL check and AU_LOGIN_RES logging; log throttle (fix 10).
 
 ### 8. Receive working; cleanup and NULL guard
 
@@ -103,6 +103,19 @@
 
 - **Symptom:** "(NULL == m_hEventIOCP)" appeared repeatedly when client received data; NETEVENT_RECV was dropped so the 87-byte login packet (and others) were never dispatched to ProcessPacket.
 - **Fix:** On Linux only, in `PostNetEvent()` when `m_hEventIOCP` is NULL, call `Create()` once under a static mutex so the dispatcher IOCP is created; then post the event to it. The dispatcher thread will use the new handle on its next loop and process events. After rebuild you should see "[NetworkProcessor] Lazy-created dispatcher IOCP (was NULL)" once, then login and other packets processed normally.
+
+### 10. Throttle ValidCheck and PostRecv EAGAIN logs
+
+- **Symptom:** Logs flooded with "[ValidCheck] Retrying PostRecv (retry #N)" and "[PostRecv] No data available (ERROR_IO_PENDING)" so important logs (received packet, login, etc.) were hard to see.
+- **Fix:** (1) ValidCheck: log at most once per **5 minutes per session** (was every 100 retries ≈ 1 s). (2) PostRecv EAGAIN: log at most once per **5 minutes globally** (was every 5 s). Keep "[PostRecv] *** DATA RECEIVED! ***" and "[ClientSession] Received packet OpCode" as-is so receive activity stays visible.
+
+---
+
+## Remaining Work (until 100% fixed)
+
+- [ ] **Login:** Auth receives login packet (OpCode 0x0067) and sends AU_LOGIN_RES to client; client receives it and proceeds. (Depends on MasterServer being connected for success path; failure path sends response from PacketAuthServer.)
+- [ ] **Char server:** Client connects to char server; join flow works on Linux (receive/send).
+- [ ] **In-game:** Client loads into game; all packet exchange works.
 
 ---
 

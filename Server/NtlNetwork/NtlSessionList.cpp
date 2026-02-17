@@ -118,27 +118,23 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 			if (pSession->IsStatus(CNtlConnection::STATUS_ACTIVE))
 			{
 				// Retry PostRecv more frequently (every 10ms) to detect data faster
-				// Use a per-session timestamp to avoid calling too frequently
 				static std::map<CNtlSession*, DWORD> s_lastRetryTime;
 				static std::map<CNtlSession*, DWORD> s_retryCount;
+				static std::map<CNtlSession*, DWORD> s_lastLogTime;
 				DWORD dwNow = GetTickCount();
 				DWORD dwLastRetry = s_lastRetryTime[pSession];
 				if (dwLastRetry == 0 || (dwNow - dwLastRetry >= 10))
 				{
 					s_lastRetryTime[pSession] = dwNow;
 					s_retryCount[pSession] = (s_retryCount[pSession] ? s_retryCount[pSession] : 0) + 1;
-					
-					// Log retry activity occasionally (every 100 retries = ~1 second)
-					if (s_retryCount[pSession] % 100 == 0)
+					// Log at most once per 5 minutes per session so important logs (packets, login) stay visible
+					DWORD dwLastLog = s_lastLogTime[pSession];
+					if (dwLastLog == 0 || (dwNow - dwLastLog >= 300000))
 					{
-						NTL_PRINT(PRINT_SYSTEM, "[ValidCheck] Retrying PostRecv for Session=%p, IP=%s (retry #%u)", pSession, pSession->GetRemoteIP(), s_retryCount[pSession]);
+						s_lastLogTime[pSession] = dwNow;
+						NTL_PRINT(PRINT_SYSTEM, "[ValidCheck] PostRecv poll Session=%p, IP=%s (retry #%u)", pSession, pSession->GetRemoteIP(), s_retryCount[pSession]);
 					}
-					
-					// PostRecv will call recv() directly on non-blocking socket
-					// If data is available, it will receive it and post to IOCP
-					// If not, it will return ERROR_IO_PENDING (which we ignore here)
 					int rc = pSession->PostRecv();
-					// Log errors occasionally to debug (but throttle to avoid spam)
 					static DWORD s_dwLastErrorLog = 0;
 					if (rc != NTL_SUCCESS && rc != NTL_ERR_NET_SESSION_CLOSED && (dwNow - s_dwLastErrorLog > 5000))
 					{

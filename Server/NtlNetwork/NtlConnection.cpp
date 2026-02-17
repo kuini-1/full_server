@@ -636,13 +636,13 @@ int CNtlConnection::PostRecv()
 			// No data available yet - decrement count since this isn't a true pending operation
 			// The retry logic in ValidCheck will call PostRecv again when data arrives
 			DecreasePostIoCount();
-			// Log occasionally to verify retry is working (but throttle to avoid spam)
+			// Throttle log so important logs (packets, login) stay visible (once per 5 min globally)
 			static DWORD s_dwLastPendingLog = 0;
 			DWORD dwNow = GetTickCount();
-			if (dwNow - s_dwLastPendingLog > 5000) // Log every 5 seconds max
+			if (dwNow - s_dwLastPendingLog > 300000)
 			{
 				s_dwLastPendingLog = dwNow;
-				NTL_PRINT(PRINT_SYSTEM, "[PostRecv] No data available (ERROR_IO_PENDING) for Session=%p, IP=%s - retry logic will check again", this, GetRemoteIP());
+				NTL_PRINT(PRINT_SYSTEM, "[PostRecv] No data (EAGAIN) for Session=%p, IP=%s - poll continues", this, GetRemoteIP());
 			}
 			return NTL_SUCCESS;
 		}
