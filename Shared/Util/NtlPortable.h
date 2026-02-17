@@ -110,12 +110,12 @@ static inline int WCHARNCmp(const WCHAR* s1, const WCHAR* s2, size_t n) {
     return 0;
 }
 
-/* _wtoi64 for WCHAR*: Convert WCHAR string to __int64 */
-static inline __int64 _wtoi64_WCHAR(const WCHAR* s) {
+/* _wtoi64 for WCHAR*: Convert WCHAR string to long long (__int64 equivalent) */
+static inline long long _wtoi64_WCHAR(const WCHAR* s) {
     if (!s) return 0;
 #if defined(_WIN32)
     // On Windows, WCHAR == wchar_t, so direct cast works
-    return (__int64)wcstoll((const wchar_t*)s, NULL, 10);
+    return (long long)wcstoll((const wchar_t*)s, NULL, 10);
 #else
     // On Linux, convert WCHAR* (UTF-16LE) to wchar_t* (UTF-32) for wcstoll
     // For simple ASCII numbers, direct character conversion works
@@ -126,7 +126,7 @@ static inline __int64 _wtoi64_WCHAR(const WCHAR* s) {
         i++;
     }
     buf[i] = L'\0';
-    return (__int64)wcstoll(buf, NULL, 10);
+    return (long long)wcstoll(buf, NULL, 10);
 #endif
 }
 
