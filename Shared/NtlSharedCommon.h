@@ -675,31 +675,125 @@ static inline void GetSystemTimeAsFileTime(FILETIME* lpSystemTimeAsFileTime)
 /* GetACP: active code page; on Linux return 0 (use locale) */
 static inline int GetACP(void) { return 0; }
 
-/* WideCharToMultiByte / MultiByteToWideChar: minimal wrappers for wchar_t <-> char conversion */
-#include <cwchar>
-#include <stdlib.h>
+/* WideCharToMultiByte / MultiByteToWideChar: wrappers for UTF-16LE <-> UTF-8 conversion */
+#include <cstring>
+#include <iconv.h>
+#include <errno.h>
 static inline int WideCharToMultiByte_linux(int, unsigned long, const WCHAR* src, int srcLen, char* dst, int dstSize, const char*, void*)
 {
 	if (!src) return 0;
-	size_t wlen = (srcLen < 0) ? wcslen(src) + 1 : (size_t)(srcLen + 1);
-	if (dst && dstSize > 0) {
-		size_t r = wcstombs(dst, src, (size_t)dstSize);
-		if (r == (size_t)-1) return 0;
-		return (int)r + (r > 0 && dst[r - 1] != '\0' ? 1 : 0);
+	
+	// Calculate source length (WCHAR is unsigned short = 2 bytes, UTF-16LE)
+	size_t srcLenBytes;
+	if (srcLen < 0) {
+		// Count until null terminator (2-byte null)
+		const WCHAR* p = src;
+		while (*p != 0) p++;
+		srcLenBytes = (p - src + 1) * sizeof(WCHAR); // Include null terminator
+	} else {
+		srcLenBytes = (size_t)(srcLen + 1) * sizeof(WCHAR); // Include null terminator
 	}
-	/* Get required size: use upper bound wcslen*MB_CUR_MAX+1 */
-	return (int)(wcslen(src) * (size_t)MB_CUR_MAX + 1);
+	
+	if (dst && dstSize > 0) {
+		// Convert UTF-16LE to UTF-8 using iconv
+		iconv_t cd = iconv_open("UTF-8", "UTF-16LE");
+		if (cd == (iconv_t)-1) {
+			// Fallback: simple ASCII conversion
+			size_t len = 0;
+			const WCHAR* p = src;
+			while (*p != 0 && len < (size_t)(dstSize - 1)) {
+				if (*p < 128) {
+					dst[len++] = (char)*p;
+				} else {
+					dst[len++] = '?';
+				}
+				p++;
+			}
+			dst[len] = '\0';
+			return (int)len;
+		}
+		
+		char* inbuf = (char*)src;
+		char* outbuf = dst;
+		size_t inbytesleft = srcLenBytes;
+		size_t outbytesleft = (size_t)dstSize;
+		
+		size_t result = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+		iconv_close(cd);
+		
+		if (result == (size_t)-1) {
+			return 0;
+		}
+		
+		// Ensure null termination
+		if (outbytesleft > 0) {
+			*outbuf = '\0';
+		}
+		
+		return (int)(dstSize - outbytesleft);
+	}
+	
+	// Get required size: convert to estimate UTF-8 length
+	// UTF-8 can be 1-4 bytes per UTF-16 char, but most ASCII is 1 byte
+	// Use upper bound: assume 4 bytes per UTF-16 char
+	size_t wlen = 0;
+	const WCHAR* p = src;
+	while (*p != 0) { p++; wlen++; }
+	return (int)(wlen * 4 + 1); // Upper bound estimate
 }
 static inline int MultiByteToWideChar_linux(int, unsigned long, const char* src, int srcLen, WCHAR* dst, int dstSize)
 {
 	if (!src) return 0;
-	if (dst && dstSize > 0) {
-		size_t r = mbstowcs(dst, src, (size_t)dstSize);
-		if (r == (size_t)-1) return 0;
-		return (int)r + (r > 0 && dst[r - 1] != L'\0' ? 1 : 0);
+	
+	size_t srcLenBytes;
+	if (srcLen < 0) {
+		srcLenBytes = strlen(src) + 1; // Include null terminator
+	} else {
+		srcLenBytes = (size_t)(srcLen + 1);
 	}
-	/* Get required size: use upper bound strlen+1 */
-	return (int)(strlen(src) + 1);
+	
+	if (dst && dstSize > 0) {
+		// Convert UTF-8 to UTF-16LE using iconv
+		iconv_t cd = iconv_open("UTF-16LE", "UTF-8");
+		if (cd == (iconv_t)-1) {
+			// Fallback: simple ASCII conversion
+			size_t len = 0;
+			const char* p = src;
+			while (*p != '\0' && len < (size_t)(dstSize - 1)) {
+				if ((unsigned char)*p < 128) {
+					dst[len++] = (WCHAR)(unsigned char)*p;
+				} else {
+					dst[len++] = '?';
+				}
+				p++;
+			}
+			dst[len] = 0;
+			return (int)len;
+		}
+		
+		char* inbuf = (char*)src;
+		char* outbuf = (char*)dst;
+		size_t inbytesleft = srcLenBytes;
+		size_t outbytesleft = (size_t)dstSize * sizeof(WCHAR);
+		
+		size_t result = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+		iconv_close(cd);
+		
+		if (result == (size_t)-1) {
+			return 0;
+		}
+		
+		// Ensure null termination (2-byte null)
+		if (outbytesleft >= sizeof(WCHAR)) {
+			*((WCHAR*)outbuf) = 0;
+		}
+		
+		return (int)((dstSize * sizeof(WCHAR) - outbytesleft) / sizeof(WCHAR));
+	}
+	
+	// Get required size: estimate UTF-16 length (usually same or less than UTF-8)
+	size_t len = (srcLen < 0) ? strlen(src) : (size_t)srcLen;
+	return (int)(len + 1); // Upper bound estimate
 }
 #define WideCharToMultiByte(cp, flags, src, srcLen, dst, dstSize, def, used) WideCharToMultiByte_linux(cp, flags, src, srcLen, dst, dstSize, def, used)
 #define MultiByteToWideChar(cp, flags, src, srcLen, dst, dstSize) MultiByteToWideChar_linux(cp, flags, src, srcLen, dst, dstSize)
