@@ -131,6 +131,12 @@
 - **Debug logs added:** (1) OpCode comparison log shows enum values at runtime. (2) Switch match log confirms SendCharLogInReq is called. (3) Function entry log. (4) Packet size and pointer validation. (5) Step-by-step logs before/after each Ntl_WC2MB call.
 - **Fix:** (1) Fixed memory leak: original `std::string username = Ntl_WC2MB(...)` was wrong (Ntl_WC2MB returns char* that must be freed). Now: allocate, copy to string, free. (2) Added NULL checks for Ntl_WC2MB return values. (3) Added packet size validation before accessing struct fields. (4) All early returns are safe (password cleanup handles NULL). After rebuild, logs will show exactly where the function stops if it still crashes.
 
+### 15. Fix packet pointer: use GetPacketBuffer() not GetPacketData() for structs that include header
+
+- **Symptom:** "[Login] ERROR: Packet too small for struct (size 87 < struct size)" - packet size check failed even though 87 bytes is correct.
+- **Root cause:** `sUA_LOGIN_REQ_TAIWAN_CT` inherits from `sNTLPACKETHEADER` (via `BEGIN_PROTOCOL` macro), so the struct **includes the header** as the first member. But `GetPacketData()` returns a pointer to data **after** the header. So casting `GetPacketData()` to `sUA_LOGIN_REQ_TAIWAN_CT*` was wrong - we were pointing to payload but treating it as if it started with header.
+- **Fix:** Changed from `pPacket->GetPacketData()` to `pPacket->GetPacketBuffer()` when casting to structs that inherit from `sNTLPACKETHEADER`. `GetPacketBuffer()` returns the full packet (header + payload), which matches the struct layout. Updated size check to compare `packetSize < sizeof(sUA_LOGIN_REQ_TAIWAN_CT)` directly.
+
 ---
 
 ## Remaining Work (until 100% fixed)

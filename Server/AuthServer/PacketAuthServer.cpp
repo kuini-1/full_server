@@ -29,19 +29,24 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 		return;
 	}
 	
-	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
+	// sUA_LOGIN_REQ_TAIWAN_CT inherits from sNTLPACKETHEADER, so it includes the header.
+	// GetPacketBuffer() returns the full packet (header + payload), GetPacketData() skips header.
+	// So we must use GetPacketBuffer() to cast to the struct that includes header.
+	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketBuffer();
 	if (req == NULL)
 	{
 		NTL_PRINT(PRINT_APP, "[Login] ERROR: req pointer is NULL after cast (Session %u)", GetHandle());
 		return;
 	}
 	
-	NTL_PRINT(PRINT_APP, "[Login] Packet data pointer valid, packet size %u, attempting username conversion (Session %u)", packetSize, GetHandle());
+	NTL_PRINT(PRINT_APP, "[Login] Packet buffer pointer valid, packet size %u, struct size %u, attempting username conversion (Session %u)", 
+		packetSize, (unsigned)sizeof(sUA_LOGIN_REQ_TAIWAN_CT), GetHandle());
 	
-	// Safety check: ensure we can read from req before accessing fields
-	if ((char*)req + sizeof(sUA_LOGIN_REQ_TAIWAN_CT) > (char*)pPacket->GetPacketData() + packetSize)
+	// Safety check: ensure packet is large enough for the struct (which includes header)
+	if (packetSize < sizeof(sUA_LOGIN_REQ_TAIWAN_CT))
 	{
-		NTL_PRINT(PRINT_APP, "[Login] ERROR: Packet too small for struct (size %u < struct size) (Session %u)", packetSize, GetHandle());
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Packet too small (size %u < struct size %u) (Session %u)", 
+			packetSize, (unsigned)sizeof(sUA_LOGIN_REQ_TAIWAN_CT), GetHandle());
 		return;
 	}
 	
@@ -218,7 +223,8 @@ void CClientSession::SendLoginDcReq(CNtlPacket * pPacket, CAuthServer * app)
 //--------------------------------------------------------------------------------------//
 void CClientSession::SendCreateUserReq(CNtlPacket * pPacket, CAuthServer * app)
 {
-	sUA_LOGIN_CREATEUSER_REQ * req = (sUA_LOGIN_CREATEUSER_REQ *)pPacket->GetPacketData();
+	// Struct inherits from sNTLPACKETHEADER, so use GetPacketBuffer() not GetPacketData()
+	sUA_LOGIN_CREATEUSER_REQ * req = (sUA_LOGIN_CREATEUSER_REQ *)pPacket->GetPacketBuffer();
 
 	CNtlPacket packet(sizeof(sAU_LOGIN_CREATEUSER_RES));
 	sAU_LOGIN_CREATEUSER_RES * res = (sAU_LOGIN_CREATEUSER_RES *)packet.GetPacketData();
