@@ -120,6 +120,11 @@
 - **Fix:** In PostRecv (Linux), when `recv()` returns 104, treat like EBADF: return `NTL_ERR_NET_SESSION_CLOSED` and log "[PostRecv] Connection reset by peer (104) for Session=..., IP=...". Session still closes (correct); log explains the reason. Root cause of peer reset is separate (e.g. Char server closing the connection right after connect).
 - **Note:** Rebuild **all** servers (Auth, Master, Char) with the same NtlNetwork so they get: ValidCheck throttle (once per 5 min), PostRecv EAGAIN throttle, 4-byte/0x0001 filters, and ECONNRESET handling. CharServer logs showing "Retrying PostRecv" every 100 retries mean it was built before the throttle.
 
+### 13. Filter 12-byte receives and add login processing logs
+
+- **Symptom:** MasterServer spammed with "[PostRecv] *** DATA RECEIVED! 12 bytes ***" (server-to-server heartbeat). Login packet received but no logs showing login processing or response sent.
+- **Fix:** (1) PostRecv: filter 12-byte receives (server heartbeat) in addition to 4-byte. (2) Login handler: add `NTL_PRINT` logs at key points (login request received, MasterServer check, success/failure response sent) so login flow is visible even if `ERR_LOG` doesn't show in console. Logs: "[Login] User ... login request", "[Login] User ...: Auth success, sending online check", "[Login] User ...: Login failed, sent AU_LOGIN_RES", "[Login] Login success: sent AU_LOGIN_RES".
+
 ---
 
 ## Remaining Work (until 100% fixed)

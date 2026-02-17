@@ -20,6 +20,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	
 
 	ERR_LOG(LOG_USER, "User %s request connection! req->wLVersion %i, req->wRVersion %i, state %hu, mac %hu\n", username.c_str(), (int)req->wLVersion, (int)req->wRVersion, req->byState, req->abyMacAddress[0]);
+	NTL_PRINT(PRINT_APP, "[Login] User %s login request (Session %u, IP %s)", username.c_str(), GetHandle(), GetRemoteIP());
 	
 //	if((int)req->wRVersion == 40 && (int)req->wLVersion == 71) //only allow clients to connect with R version 40 and lversion 71
 //	{
@@ -85,11 +86,13 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 						{
 							resultcode = AUTH_NO_AVAILABLE_CHARACTER_SERVER;
 							ERR_LOG(LOG_SYSTEM, "Login: MasterServer not connected. User %s will get failure response. Start MasterServer and connect Auth to it.", username.c_str());
+							NTL_PRINT(PRINT_APP, "[Login] User %s: MasterServer not connected, sending failure (Session %u)", username.c_str(), GetHandle());
 						}
 						//check if acc already online
 						else if (app->AddPlayer(this->AccountID, this) == true)
 						{
 							ERR_LOG(LOG_USER, "%s Auth Success. <Online Check>Sending packet to master server \n", username.c_str());
+							NTL_PRINT(PRINT_APP, "[Login] User %s: Auth success, sending online check to MasterServer (Session %u, AccountID %u)", username.c_str(), GetHandle(), this->AccountID);
 
 							//send check req if player online to master server
 							CNtlPacket packet(sizeof(sAM_ON_PLAYER_CHECK_REQ));
@@ -129,6 +132,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 			packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
 			int sendRc = app->Send(GetHandle(), &packet);
 			ERR_LOG(LOG_USER, "Login failed: sent AU_LOGIN_RES to client Session %u, resultcode %u, Send rc=%d", GetHandle(), resultcode, sendRc);
+			NTL_PRINT(PRINT_APP, "[Login] User %s: Login failed, sent AU_LOGIN_RES to client (Session %u, resultcode %u, Send rc=%d)", username.c_str(), GetHandle(), resultcode, sendRc);
 
 			if (m_byLoginTrys >= 5)
 			{

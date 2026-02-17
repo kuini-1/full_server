@@ -81,6 +81,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
 				int rc = app->SendTo(session, &packet);
 				ERR_LOG(LOG_USER, "Login success: sent AU_LOGIN_RES to client Session %u, Account %u, SendTo rc=%d", session->GetHandle(), req->accountId, rc);
+				NTL_PRINT(PRINT_APP, "[Login] Login success: sent AU_LOGIN_RES to client (Session %u, Account %u, SendTo rc=%d)", session->GetHandle(), req->accountId, rc);
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
 				sAU_COMMERCIAL_SETTING_NFY * res2 = (sAU_COMMERCIAL_SETTING_NFY *)packet2.GetPacketData();
@@ -108,6 +109,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 		packet2.SetPacketLen(sizeof(sAU_LOGIN_RES));
 		int rc2 = app->SendTo(session, &packet2);
 		ERR_LOG(LOG_USER, "Login failed (from master check): sent AU_LOGIN_RES to client Session %u, resultcode %d, SendTo rc=%d", session->GetHandle(), resultcode, rc2);
+		NTL_PRINT(PRINT_APP, "[Login] Login failed (from master check): sent AU_LOGIN_RES to client (Session %u, resultcode %d, SendTo rc=%d)", session->GetHandle(), resultcode, rc2);
 
 		app->DelPlayer(req->accountId);
 	}
