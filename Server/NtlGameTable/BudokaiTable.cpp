@@ -21,34 +21,10 @@
 // Static WCHAR arrays for string literals that need to be compile-time constants
 static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
 
-// Helper function to convert format string literal to WCHAR* buffer (for use in macros)
+// Helper function to convert format string literal to WCHAR* buffer
 static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
 	WCharTLiteralToWCHAR(fmt, dest, destSize);
 }
-
-#define BUDOKAI_TBLDAT_START(textname)								\
-	{																\
-		WCHAR wszNameBuf[256];										\
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR)); \
-		WCHAR wszTextNameBuf[256];									\
-		WCharTLiteralToWCHAR(textname, wszTextNameBuf, sizeof(wszTextNameBuf)/sizeof(WCHAR)); \
-		if( 0 == WCHARCmp( wszNameBuf, wszTextNameBuf) )			\
-		{
-
-#define BUDOKAI_TBLDAT_END()										\
-		}															\
-		else
-
-#define BUDOKAI_SET_TBLDAT_END()																		\
-		{																								\
-			WCHAR wszNameBuf[256];																		\
-			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));		\
-			WCHAR wszFormatBuf[512];																	\
-			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
-			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf );			\
-			return false;																				\
-		}																								\
-	}
 
 
 
@@ -248,211 +224,205 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	//----------------------------------
 	// Junior
 
-	BUDOKAI_TBLDAT_START(L"Junior_OpenTerm")
+	if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_OpenTerm") )
+	{
 		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJiniorOpenTerm, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Junior_OpenDayOfWeek")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJiniorOpenDayOfWeek, 6)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Junior_OpenHour")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJiniorOpenHour, 23)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Junior_OpenMinute")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJiniorOpenMinute, 59)
-	BUDOKAI_TBLDAT_END()
-
-
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_OpenDayOfWeek") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJiniorOpenDayOfWeek, 6)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_OpenHour") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJiniorOpenHour, 23)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_OpenMinute") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJiniorOpenMinute, 59)
+	}
 	//----------------------------------
 	// Adult
-
-	BUDOKAI_TBLDAT_START(L"OpenTerm")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byOpenTerm, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"OpenDayOfWeek")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byOpenDayOfWeek, 6)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"OpenHour")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byOpenHour, 23)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"OpenMinute")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byOpenMinute, 59)
-	BUDOKAI_TBLDAT_END()
-
-
-	BUDOKAI_TBLDAT_START(L"Junior_Level_Min")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJuniorLevelMin, 100)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Junior_Level_Max")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJuniorLevelMax, 100)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Adult_Level_Min")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byAdultLevelMin, 100)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Adult_Level_Max")
-	BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byAdultLevelMax, 100)
-	BUDOKAI_TBLDAT_END()
-
-
-	BUDOKAI_TBLDAT_START(L"MatchIntervalTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMatchIntervalTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Budokai_Restart_Delay_Time")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwBudokaiRestartDelayTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"OpenNoticeTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwOpenNoticeTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"DojoRecommendTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwDojoRecommendTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"RegisterTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwRegisterTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"MinorMatch_WaitTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMinorMatch_WaitTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"MajorMatch_WaitTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMajorMatch_WaitTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"FinalMatch_WaitTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwFinalMatch_WaitTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Budokai_End_Time")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwBudokaiEndTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"OpenTerm") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byOpenTerm, INVALID_BYTE)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"OpenDayOfWeek") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byOpenDayOfWeek, 6)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"OpenHour") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byOpenHour, 23)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"OpenMinute") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byOpenMinute, 59)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_Level_Min") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJuniorLevelMin, 100)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_Level_Max") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byJuniorLevelMax, 100)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Adult_Level_Min") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byAdultLevelMin, 100)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Adult_Level_Max") )
+	{
+		BUDOKAI_TBLDAT_SET_BYTE( 0, m_sBudokaiTblInfo.byAdultLevelMax, 100)
+	}
 
 
-	BUDOKAI_TBLDAT_START(L"MinorMatch_Last_Alram")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMinorMatch_AlramTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"MajorMatch_Last_Alram")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMajorMatch_AlramTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"FinalMatch_Last_Alram")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwFinalMatch_AlramTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-
-	BUDOKAI_TBLDAT_START(L"FinalMatch_DirectionTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwFinalMatchDirectionTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"FinalMatch_AwardingTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwAwardingTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Tenkaichi_EndingWaitTime")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwEndingWaitTime, INVALID_DWORD)
-	BUDOKAI_TBLDAT_END()
-
-
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"MatchIntervalTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMatchIntervalTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Budokai_Restart_Delay_Time") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwBudokaiRestartDelayTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"OpenNoticeTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwOpenNoticeTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"DojoRecommendTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwDojoRecommendTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"RegisterTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwRegisterTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"MinorMatch_WaitTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMinorMatch_WaitTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"MajorMatch_WaitTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMajorMatch_WaitTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"FinalMatch_WaitTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwFinalMatch_WaitTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Budokai_End_Time") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwBudokaiEndTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"MinorMatch_Last_Alram") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMinorMatch_AlramTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"MajorMatch_Last_Alram") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwMajorMatch_AlramTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"FinalMatch_Last_Alram") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwFinalMatch_AlramTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"FinalMatch_DirectionTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwFinalMatchDirectionTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"FinalMatch_AwardingTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwAwardingTime, INVALID_DWORD)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Tenkaichi_EndingWaitTime") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.dwEndingWaitTime, INVALID_DWORD)
+	}
 	// WorldMap Index
-	BUDOKAI_TBLDAT_START(L"MinorMatch_MapIndex")
-	BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sIndividualWorldTblidx.minorMatch, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"MajorMatch_MapIndex")
-	BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sIndividualWorldTblidx.majorMatch, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"FinalMatch_MapIndex")
-	BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sIndividualWorldTblidx.finalMatch, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_END()
-
-
-	BUDOKAI_TBLDAT_START(L"Party_MinorMatch_MapIndex")
-	BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sTeamWorldTblidx.minorMatch, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Party_MajorMatch_MapIndex")
-	BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sTeamWorldTblidx.majorMatch, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Party_FinalMatch_MapIndex")
-	BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sTeamWorldTblidx.finalMatch, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_END()
-
-
-	BUDOKAI_TBLDAT_START(L"Open_Notice")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.wszOpenNotice)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Dojo_Recommend")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.wszDojoRecommend)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Request")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.wszRequest)
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"NewsRandom_1")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[0])
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"NewsRandom_2")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[1])
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"NewsRandom_3")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[2])
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"NewsRandom_4")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[3])
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"NewsRandom_5")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[4])
-	BUDOKAI_TBLDAT_END()
-
-	BUDOKAI_TBLDAT_START(L"Award")
-	BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.wszAward)
-	BUDOKAI_TBLDAT_END()
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"MinorMatch_MapIndex") )
+	{
+		BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sIndividualWorldTblidx.minorMatch, INVALID_TBLIDX)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"MajorMatch_MapIndex") )
+	{
+		BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sIndividualWorldTblidx.majorMatch, INVALID_TBLIDX)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"FinalMatch_MapIndex") )
+	{
+		BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sIndividualWorldTblidx.finalMatch, INVALID_TBLIDX)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Party_MinorMatch_MapIndex") )
+	{
+		BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sTeamWorldTblidx.minorMatch, INVALID_TBLIDX)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Party_MajorMatch_MapIndex") )
+	{
+		BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sTeamWorldTblidx.majorMatch, INVALID_TBLIDX)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Party_FinalMatch_MapIndex") )
+	{
+		BUDOKAI_TBLDAT_SET_TBLIDX( 0, m_sBudokaiTblInfo.sTeamWorldTblidx.finalMatch, INVALID_TBLIDX)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Open_Notice") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.wszOpenNotice)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Dojo_Recommend") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.wszDojoRecommend)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Request") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.wszRequest)
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"NewsRandom_1") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[0])
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"NewsRandom_2") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[1])
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"NewsRandom_3") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[2])
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"NewsRandom_4") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[3])
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"NewsRandom_5") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.awszNews[4])
+	}
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Award") )
+	{
+		BUDOKAI_TBLDAT_SET_STR( 0, m_sBudokaiTblInfo.sNoticeFile.wszAward)
+	}
 
 
 	// location
-	BUDOKAI_TBLDAT_START(L"Awarding_Location_Team")
-	DWORD dwIdx = INVALID_DWORD;
-	if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_AWARDING_LOCATION_COUNT) )
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Awarding_Location_Team") )
 	{
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
+		DWORD dwIdx = INVALID_DWORD;
+		if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_AWARDING_LOCATION_COUNT) )
+		{
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		BUDOKAI_TBLDAT_SET_FLOAT( 1, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vLoc.x, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 2, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vLoc.y, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 3, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vLoc.z, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 4, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vDir.x, INVALID_FLOAT)
+		m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vDir.y = 0.0f;
+		BUDOKAI_TBLDAT_SET_FLOAT( 5, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vDir.z, INVALID_FLOAT)
 	}
-
-	BUDOKAI_TBLDAT_SET_FLOAT( 1, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vLoc.x, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 2, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vLoc.y, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 3, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vLoc.z, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 4, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vDir.x, INVALID_FLOAT)
-	m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vDir.y = 0.0f;
-	BUDOKAI_TBLDAT_SET_FLOAT( 5, m_sBudokaiTblInfo.aAwardingLoc[dwIdx].vDir.z, INVALID_FLOAT)
-
-	BUDOKAI_TBLDAT_END()
 
 
 
@@ -460,336 +430,338 @@ bool CBudokaiTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	// Junior Reward
 
 	// MinorMatch Individual Reward ---------------------------------------------------------
-	BUDOKAI_TBLDAT_START(L"Junior_Minormatch_Reward_Personal")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.dwKillCountPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.dwBaseMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.dwWinnerMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.winnerItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.byWinerItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.loserItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.byLoserItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_Minormatch_Reward_Personal") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.dwKillCountPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.dwBaseMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.dwWinnerMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.winnerItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.byWinerItemStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.loserItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sJuniorIndividualReward.sMinorMatch.byLoserItemStackCount, INVALID_BYTE)
+	}
 	// MinorMatch Team Reward ---------------------------------------------------------
-	BUDOKAI_TBLDAT_START(L"Junior_Minormatch_Reward_Party")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.dwKillCountPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.dwBaseMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.dwWinnerMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.winnerItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.byWinerItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.loserItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.byLoserItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
-
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_Minormatch_Reward_Party") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.dwKillCountPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.dwBaseMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.dwWinnerMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.winnerItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.byWinerItemStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.loserItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sJuniorTeamReward.sMinorMatch.byLoserItemStackCount, INVALID_BYTE)
+	}
 	// Junior MajorMatch Individual Reward ---------------------------------------------------------
-	BUDOKAI_TBLDAT_START(L"Junior_Major_Reward_Personal")
-	DWORD dwMatchDepth = INVALID_DWORD;
-	if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 32))
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_Major_Reward_Personal") )
 	{
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
+		DWORD dwMatchDepth = INVALID_DWORD;
+		if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 32))
+		{
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		eBUDOKAI_MATCH_DEPTH eMatchDepth = INVALID_BUDOKAI_MATCH_DEPTH;
+		switch(dwMatchDepth)
+		{
+		case 2:		eMatchDepth = BUDOKAI_MATCH_DEPTH_2;	break;
+		case 4:		eMatchDepth = BUDOKAI_MATCH_DEPTH_4;	break;
+		case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
+		case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
+		case 32:	eMatchDepth = BUDOKAI_MATCH_DEPTH_32;	break;
+		default:
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].dwBaseMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].dwWinnerMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].winnerItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].byWinerItemStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].loserItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].byLoserItemStackCount, INVALID_BYTE)
 	}
-
-	eBUDOKAI_MATCH_DEPTH eMatchDepth = INVALID_BUDOKAI_MATCH_DEPTH;
-	switch(dwMatchDepth)
-	{
-	case 2:		eMatchDepth = BUDOKAI_MATCH_DEPTH_2;	break;
-	case 4:		eMatchDepth = BUDOKAI_MATCH_DEPTH_4;	break;
-	case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
-	case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
-	case 32:	eMatchDepth = BUDOKAI_MATCH_DEPTH_32;	break;
-	default:
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
-	}
-
-	BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].dwBaseMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].dwWinnerMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].winnerItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].byWinerItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].loserItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sJuniorIndividualReward.aMajorMatch[eMatchDepth].byLoserItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
 	// Junior MajorMatch Team Reward ---------------------------------------------------------
-	BUDOKAI_TBLDAT_START(L"Junior_Major_Reward_Party")
-	DWORD dwMatchDepth = INVALID_DWORD;
-	if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 16))
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_Major_Reward_Party") )
 	{
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
+		DWORD dwMatchDepth = INVALID_DWORD;
+		if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 16))
+		{
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		eBUDOKAI_MATCH_DEPTH eMatchDepth = INVALID_BUDOKAI_MATCH_DEPTH;
+		switch(dwMatchDepth)
+		{
+		case 2:		eMatchDepth = BUDOKAI_MATCH_DEPTH_2;	break;
+		case 4:		eMatchDepth = BUDOKAI_MATCH_DEPTH_4;	break;
+		case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
+		case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
+		default:
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].dwBaseMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].dwWinnerMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].winnerItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].byWinerItemStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].loserItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].byLoserItemStackCount, INVALID_BYTE)
 	}
-
-	eBUDOKAI_MATCH_DEPTH eMatchDepth = INVALID_BUDOKAI_MATCH_DEPTH;
-	switch(dwMatchDepth)
-	{
-	case 2:		eMatchDepth = BUDOKAI_MATCH_DEPTH_2;	break;
-	case 4:		eMatchDepth = BUDOKAI_MATCH_DEPTH_4;	break;
-	case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
-	case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
-	default:
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
-	}
-
-	BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].dwBaseMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].dwWinnerMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].winnerItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].byWinerItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].loserItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sJuniorTeamReward.aMajorMatch[eMatchDepth].byLoserItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
 	// Awarding Individual Reward
-	BUDOKAI_TBLDAT_START(L"Junior_Awarding_Reward_Personal")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sWinner.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 1, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sWinner.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 2, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sWinner.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_DWORD( 3, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sSemiWinner.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 4, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sSemiWinner.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 5, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sSemiWinner.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_DWORD( 6, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sOther.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 7, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sOther.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 8, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sOther.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_Awarding_Reward_Personal") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sWinner.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 1, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sWinner.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 2, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sWinner.byStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_DWORD( 3, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sSemiWinner.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 4, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sSemiWinner.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 5, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sSemiWinner.byStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_DWORD( 6, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sOther.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 7, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sOther.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 8, m_sBudokaiTblInfo.sJuniorIndividualReward.sAwarding.sOther.byStackCount, INVALID_BYTE)
+	}
 	// Awarding Team Reward
-	BUDOKAI_TBLDAT_START(L"Junior_Awarding_Reward_Party")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sWinner.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 1, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sWinner.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 2, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sWinner.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_DWORD( 3, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sSemiWinner.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 4, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sSemiWinner.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 5, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sSemiWinner.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_DWORD( 6, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sOther.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 7, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sOther.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 8, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sOther.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Junior_Awarding_Reward_Party") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sWinner.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 1, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sWinner.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 2, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sWinner.byStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_DWORD( 3, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sSemiWinner.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 4, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sSemiWinner.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 5, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sSemiWinner.byStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_DWORD( 6, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sOther.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 7, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sOther.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 8, m_sBudokaiTblInfo.sJuniorTeamReward.sAwarding.sOther.byStackCount, INVALID_BYTE)
+	}
 
 
 	//---------------------------------------------------------------------------------------
 	// Adult Reward
 
 	// MinorMatch Individual Reward ---------------------------------------------------------
-	BUDOKAI_TBLDAT_START(L"Minormatch_Reward_Personal")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.dwKillCountPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.dwBaseMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.dwWinnerMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.winnerItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.byWinerItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.loserItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.byLoserItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Minormatch_Reward_Personal") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.dwKillCountPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.dwBaseMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.dwWinnerMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.winnerItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.byWinerItemStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.loserItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sIndividualReward.sMinorMatch.byLoserItemStackCount, INVALID_BYTE)
+	}
 	// MinorMatch Team Reward ---------------------------------------------------------
-	BUDOKAI_TBLDAT_START(L"Minormatch_Reward_Party")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.dwKillCountPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.dwBaseMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.dwWinnerMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.winnerItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.byWinerItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.loserItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.byLoserItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
-
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Minormatch_Reward_Party") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.dwKillCountPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.dwBaseMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.dwWinnerMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.winnerItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.byWinerItemStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.loserItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sTeamReward.sMinorMatch.byLoserItemStackCount, INVALID_BYTE)
+	}
 	// MajorMatch Individual Reward ---------------------------------------------------------
-	BUDOKAI_TBLDAT_START(L"Major_Reward_Personal")
-	DWORD dwMatchDepth = INVALID_DWORD;
-	if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 32 ))
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Major_Reward_Personal") )
 	{
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
+		DWORD dwMatchDepth = INVALID_DWORD;
+		if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 32 ))
+		{
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		eBUDOKAI_MATCH_DEPTH eMatchDepth = INVALID_BUDOKAI_MATCH_DEPTH;
+		switch(dwMatchDepth)
+		{
+		case 2:		eMatchDepth = BUDOKAI_MATCH_DEPTH_2;	break;
+		case 4:		eMatchDepth = BUDOKAI_MATCH_DEPTH_4;	break;
+		case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
+		case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
+		case 32:	eMatchDepth = BUDOKAI_MATCH_DEPTH_32;	break;
+		default:
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].dwBaseMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].dwWinnerMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].winnerItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].byWinerItemStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].loserItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].byLoserItemStackCount, INVALID_BYTE)
 	}
-
-	eBUDOKAI_MATCH_DEPTH eMatchDepth = INVALID_BUDOKAI_MATCH_DEPTH;
-	switch(dwMatchDepth)
-	{
-	case 2:		eMatchDepth = BUDOKAI_MATCH_DEPTH_2;	break;
-	case 4:		eMatchDepth = BUDOKAI_MATCH_DEPTH_4;	break;
-	case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
-	case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
-	case 32:	eMatchDepth = BUDOKAI_MATCH_DEPTH_32;	break;
-	default:
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
-	}
-
-	BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].dwBaseMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].dwWinnerMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].winnerItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].byWinerItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].loserItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sIndividualReward.aMajorMatch[eMatchDepth].byLoserItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
 	// MajorMatch Team Reward ---------------------------------------------------------
-	BUDOKAI_TBLDAT_START(L"Major_Reward_Party")
-	DWORD dwMatchDepth = INVALID_DWORD;
-	if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 16))
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Major_Reward_Party") )
 	{
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
+		DWORD dwMatchDepth = INVALID_DWORD;
+		if( false == ReadDWORD( dwMatchDepth, pTbldat->wstrValue[0], 16))
+		{
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		eBUDOKAI_MATCH_DEPTH eMatchDepth = INVALID_BUDOKAI_MATCH_DEPTH;
+		switch(dwMatchDepth)
+		{
+		case 2:		eMatchDepth = BUDOKAI_MATCH_DEPTH_2;	break;
+		case 4:		eMatchDepth = BUDOKAI_MATCH_DEPTH_4;	break;
+		case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
+		case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
+		default:
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].dwBaseMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].dwWinnerMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].winnerItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].byWinerItemStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].loserItem, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].byLoserItemStackCount, INVALID_BYTE)
 	}
-
-	eBUDOKAI_MATCH_DEPTH eMatchDepth = INVALID_BUDOKAI_MATCH_DEPTH;
-	switch(dwMatchDepth)
-	{
-	case 2:		eMatchDepth = BUDOKAI_MATCH_DEPTH_2;	break;
-	case 4:		eMatchDepth = BUDOKAI_MATCH_DEPTH_4;	break;
-	case 8:		eMatchDepth = BUDOKAI_MATCH_DEPTH_8;	break;
-	case 16:	eMatchDepth = BUDOKAI_MATCH_DEPTH_16;	break;
-	default:
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
-	}
-
-	BUDOKAI_TBLDAT_SET_DWORD( 1, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].dwBaseMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_DWORD( 2, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].dwWinnerMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 3, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].winnerItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 4, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].byWinerItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 5, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].loserItem, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 6, m_sBudokaiTblInfo.sTeamReward.aMajorMatch[eMatchDepth].byLoserItemStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
 	// Awarding Individual Reward
-	BUDOKAI_TBLDAT_START(L"Awarding_Reward_Personal")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sWinner.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 1, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sWinner.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 2, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sWinner.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_DWORD( 3, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sSemiWinner.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 4, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sSemiWinner.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 5, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sSemiWinner.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_DWORD( 6, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sOther.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 7, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sOther.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 8, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sOther.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Awarding_Reward_Personal") )
+	{
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sWinner.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 1, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sWinner.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 2, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sWinner.byStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_DWORD( 3, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sSemiWinner.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 4, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sSemiWinner.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 5, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sSemiWinner.byStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_DWORD( 6, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sOther.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 7, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sOther.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 8, m_sBudokaiTblInfo.sIndividualReward.sAwarding.sOther.byStackCount, INVALID_BYTE)
+	}
 	// Awarding Team Reward
-	BUDOKAI_TBLDAT_START(L"Awarding_Reward_Party")
-	BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sTeamReward.sAwarding.sWinner.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 1, m_sBudokaiTblInfo.sTeamReward.sAwarding.sWinner.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 2, m_sBudokaiTblInfo.sTeamReward.sAwarding.sWinner.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_DWORD( 3, m_sBudokaiTblInfo.sTeamReward.sAwarding.sSemiWinner.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 4, m_sBudokaiTblInfo.sTeamReward.sAwarding.sSemiWinner.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 5, m_sBudokaiTblInfo.sTeamReward.sAwarding.sSemiWinner.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_SET_DWORD( 6, m_sBudokaiTblInfo.sTeamReward.sAwarding.sOther.dwMudosaPoint, INVALID_DWORD)
-	BUDOKAI_TBLDAT_SET_TBLIDX( 7, m_sBudokaiTblInfo.sTeamReward.sAwarding.sOther.itemTblidx, INVALID_TBLIDX)
-	BUDOKAI_TBLDAT_SET_BYTE( 8, m_sBudokaiTblInfo.sTeamReward.sAwarding.sOther.byStackCount, INVALID_BYTE)
-	BUDOKAI_TBLDAT_END()
-
-
-	// Major Match Player Location
-	BUDOKAI_TBLDAT_START(L"Major_Location")
-	DWORD dwIdx = INVALID_DWORD;
-	if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_MAJOR_LOCATION_COUNT) )
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Awarding_Reward_Party") )
 	{
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
+		BUDOKAI_TBLDAT_SET_DWORD( 0, m_sBudokaiTblInfo.sTeamReward.sAwarding.sWinner.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 1, m_sBudokaiTblInfo.sTeamReward.sAwarding.sWinner.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 2, m_sBudokaiTblInfo.sTeamReward.sAwarding.sWinner.byStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_DWORD( 3, m_sBudokaiTblInfo.sTeamReward.sAwarding.sSemiWinner.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 4, m_sBudokaiTblInfo.sTeamReward.sAwarding.sSemiWinner.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 5, m_sBudokaiTblInfo.sTeamReward.sAwarding.sSemiWinner.byStackCount, INVALID_BYTE)
+		BUDOKAI_TBLDAT_SET_DWORD( 6, m_sBudokaiTblInfo.sTeamReward.sAwarding.sOther.dwMudosaPoint, INVALID_DWORD)
+		BUDOKAI_TBLDAT_SET_TBLIDX( 7, m_sBudokaiTblInfo.sTeamReward.sAwarding.sOther.itemTblidx, INVALID_TBLIDX)
+		BUDOKAI_TBLDAT_SET_BYTE( 8, m_sBudokaiTblInfo.sTeamReward.sAwarding.sOther.byStackCount, INVALID_BYTE)
 	}
-
-	BUDOKAI_TBLDAT_SET_FLOAT( 1, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vLoc.x, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 2, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vLoc.y, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 3, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vLoc.z, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 4, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vDir.x, INVALID_FLOAT)
-	m_sBudokaiTblInfo.aMajorLoc[dwIdx].vDir.y = 0.0f;
-	BUDOKAI_TBLDAT_SET_FLOAT( 5, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vDir.z, INVALID_FLOAT)
-
-	BUDOKAI_TBLDAT_END()
-
-
 	// Major Match Player Location
-	BUDOKAI_TBLDAT_START(L"Final_Location")
-	DWORD dwIdx = INVALID_DWORD;
-	if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_FINAL_LOCATION_COUNT) )
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Major_Location") )
 	{
-		WCHAR wszNameBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
-		WCHAR wszValueBuf[256];
-		WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
-		WCHAR wszFormatBuf[512];
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
-		CTable::CallErrorCallbackFunction( wszFormatBuf,
-			m_wszXmlFileName, wszNameBuf, wszValueBuf );
-		return false;
+		DWORD dwIdx = INVALID_DWORD;
+		if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_MAJOR_LOCATION_COUNT) )
+		{
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
+
+		BUDOKAI_TBLDAT_SET_FLOAT( 1, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vLoc.x, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 2, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vLoc.y, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 3, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vLoc.z, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 4, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vDir.x, INVALID_FLOAT)
+		m_sBudokaiTblInfo.aMajorLoc[dwIdx].vDir.y = 0.0f;
+		BUDOKAI_TBLDAT_SET_FLOAT( 5, m_sBudokaiTblInfo.aMajorLoc[dwIdx].vDir.z, INVALID_FLOAT)
 	}
+	// Major Match Player Location
+	else if( 0 == WStringCmpLiteral(pTbldat->wstrName, L"Final_Location") )
+	{
+		DWORD dwIdx = INVALID_DWORD;
+		if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[0], BUDOKAI_MAX_FINAL_LOCATION_COUNT) )
+		{
+			WCHAR wszNameBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			WCHAR wszValueBuf[256];
+			WStringCStrToWCHAR(pTbldat->wstrValue[0], wszValueBuf, sizeof(wszValueBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction( wszFormatBuf,
+				m_wszXmlFileName, wszNameBuf, wszValueBuf );
+			return false;
+		}
 
-	BUDOKAI_TBLDAT_SET_FLOAT( 1, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vLoc.x, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 2, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vLoc.y, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 3, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vLoc.z, INVALID_FLOAT)
-	BUDOKAI_TBLDAT_SET_FLOAT( 4, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vDir.x, INVALID_FLOAT)
-	m_sBudokaiTblInfo.aFinalLoc[dwIdx].vDir.y = 0.0f;
-	BUDOKAI_TBLDAT_SET_FLOAT( 5, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vDir.z, INVALID_FLOAT)
-
-	BUDOKAI_TBLDAT_END()
-
-
+		BUDOKAI_TBLDAT_SET_FLOAT( 1, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vLoc.x, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 2, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vLoc.y, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 3, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vLoc.z, INVALID_FLOAT)
+		BUDOKAI_TBLDAT_SET_FLOAT( 4, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vDir.x, INVALID_FLOAT)
+		m_sBudokaiTblInfo.aFinalLoc[dwIdx].vDir.y = 0.0f;
+		BUDOKAI_TBLDAT_SET_FLOAT( 5, m_sBudokaiTblInfo.aFinalLoc[dwIdx].vDir.z, INVALID_FLOAT)
+	}
 	// end -----------------------------------------------------------------------
-	BUDOKAI_SET_TBLDAT_END()
+	else
+	{
+		WCHAR wszNameBuf[256];
+		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf );
+		return false;
+	}
 
 
 	// 
