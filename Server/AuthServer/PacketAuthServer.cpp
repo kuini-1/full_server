@@ -35,14 +35,14 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	NTL_PRINT(PRINT_APP, "[Login] Struct offsets: wOpCode=%zu, awchUserId=%zu", 
 		offsetof(sUA_LOGIN_REQ_TAIWAN_CT, wOpCode), offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId));
 	
+	// Try GetPacketData() first (original Windows code)
+	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
+	
 	// Check actual memory location vs expected
 	BYTE* expectedUserIdStart = data + offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId);
 	BYTE* actualUserIdStart = (BYTE*)&req->awchUserId;
 	NTL_PRINT(PRINT_APP, "[Login] Expected awchUserId at data+%zu=%p, actual at %p, difference=%ld bytes", 
 		offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId), expectedUserIdStart, actualUserIdStart, (long)(actualUserIdStart - expectedUserIdStart));
-	
-	// Try GetPacketData() first (original Windows code)
-	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
 	
 	// Check if struct is aligned correctly
 	WORD structOpCode = req->wOpCode;
