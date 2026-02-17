@@ -99,6 +99,13 @@
 
 ---
 
+### 9. Lazy-create dispatcher IOCP when NULL (Linux)
+
+- **Symptom:** "(NULL == m_hEventIOCP)" appeared repeatedly when client received data; NETEVENT_RECV was dropped so the 87-byte login packet (and others) were never dispatched to ProcessPacket.
+- **Fix:** On Linux only, in `PostNetEvent()` when `m_hEventIOCP` is NULL, call `Create()` once under a static mutex so the dispatcher IOCP is created; then post the event to it. The dispatcher thread will use the new handle on its next loop and process events. After rebuild you should see "[NetworkProcessor] Lazy-created dispatcher IOCP (was NULL)" once, then login and other packets processed normally.
+
+---
+
 ## Rules for Future Fixes
 
 1. **Do not** change the accept or send path in a way that stops the client from connecting or receiving the handshake.

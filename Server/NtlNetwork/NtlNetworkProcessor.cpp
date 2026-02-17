@@ -218,9 +218,25 @@ void CNtlNetworkProcessor::ProcessNetEvent(ULONG_PTR netEvent, CNtlSession *pSes
 //-----------------------------------------------------------------------------------
 int CNtlNetworkProcessor::PostNetEvent(WPARAM wParam, LPARAM lParam)
 {
+#if !defined(_WIN32)
+	// On Linux, dispatcher IOCP can be NULL if Create() was never run for this processor (e.g. init order).
+	// Lazy-create once so NETEVENT_RECV and other events are dispatched instead of dropped.
 	if (NULL == m_hEventIOCP)
 	{
-		NTL_PRINT(PRINT_SYSTEM, "(NULL == m_hEventIOCP) - dispatcher not created or already destroyed; drop event");
+		static pthread_mutex_t s_lazyMutex = PTHREAD_MUTEX_INITIALIZER;
+		pthread_mutex_lock(&s_lazyMutex);
+		if (NULL == m_hEventIOCP)
+		{
+			int rc = Create();
+			if (rc == NTL_SUCCESS)
+				NTL_PRINT(PRINT_SYSTEM, "[NetworkProcessor] Lazy-created dispatcher IOCP (was NULL)");
+		}
+		pthread_mutex_unlock(&s_lazyMutex);
+	}
+#endif
+	if (NULL == m_hEventIOCP)
+	{
+		NTL_PRINT(PRINT_SYSTEM, "(NULL == m_hEventIOCP) - dispatcher not created; drop event");
 		return NTL_FAIL;
 	}
 
