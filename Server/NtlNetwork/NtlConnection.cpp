@@ -667,9 +667,8 @@ int CNtlConnection::PostRecv()
 		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] *** DATA RECEIVED! %u bytes for Session=%p, IP=%s, posting to IOCP ***", dwTransferedBytes, this, GetRemoteIP());
 		// Set param in IOCONTEXT so worker thread can extract session pointer
 		m_recvContext.param = this;
-		// Post completion to IOCP - use PostIocpEventMessage which internally posts to IOCP
-		// wParam = completion key (session pointer), lParam = overlapped structure
-		m_pNetworkRef->PostIocpEventMessage((WPARAM)this, (LPARAM)&m_recvContext);
+		// Post completion with byte count so worker runs CompleteRecv(dwTransferedBytes); 2-arg overload posts 0 and causes rc=100045.
+		m_pNetworkRef->PostIocpEventMessage(dwTransferedBytes, (WPARAM)this, (LPARAM)&m_recvContext);
 		// Note: PostIoCount stays incremented - CompleteRecv will decrement it after processing
 	}
 	else if (dwTransferedBytes == 0)

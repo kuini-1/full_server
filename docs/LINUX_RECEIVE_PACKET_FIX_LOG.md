@@ -56,7 +56,13 @@
 
 - **What:** (1) In `PostRecv()`, when returning 100045 due to `m_bIsTrafficHeavy`, log `[PostRecv] Traffic heavy - returning SESSION_CLOSED, Session=%p, IP=%s`. (2) In `CompleteRecv()`, log status at start (after remote-close check) and immediately before calling `PostRecv()`: `[CompleteRecv] Start: status=%d, ...` and `[CompleteRecv] Before PostRecv: status=%d, ...`.
 - **Why:** User still sees 100045 but not the "Session not ACTIVE" log — so either build is stale or 100045 comes from the traffic-heavy branch or from the "0 bytes" branch (which already logs "Connection closed (0 bytes)"). These logs identify which path runs and whether status changes between start of CompleteRecv and PostRecv.
-- **Result:** Pending user rebuild and repro; then interpret logs to fix root cause.
+- **Result:** Logs still did not appear — led to checking how worker gets byte count; see fix 7.
+
+### 7. Pass received byte count when posting RECV completion (root cause)
+
+- **What:** On Linux, when PostRecv() has data and posts to IOCP, we were calling `PostIocpEventMessage((WPARAM)this, (LPARAM)&m_recvContext)` (2-arg overload). The 2-arg overload calls `PostIOCPEvent(wParam, lParam)`, which on Linux posts **0** as `dwBytesTransferred`. The worker then runs `CompleteRecv(0)` → first line `if (0 == dwTransferedBytes) return NTL_ERR_NET_SESSION_CLOSED` → rc=100045. No diagnostic logs run because we never get past that check.
+- **Fix:** Call the 3-arg overload: `PostIocpEventMessage(dwTransferedBytes, (WPARAM)this, (LPARAM)&m_recvContext)` so the worker receives the actual byte count and runs `CompleteRecv(12)` (or whatever was received).
+- **Result:** **Root cause.** After this change, rebuild and test; login receive should work.
 
 ---
 
@@ -80,10 +86,10 @@
 
 ## Current State (as of this log)
 
-- **Symptom:** After client connects and sends 12 bytes, server logs: `[IOCP Worker] CompleteIO failed -> Close session. rc=100045, iomode=3`. Client disconnects; login packet not processed.
-- **rc=100045:** `NTL_ERR_NET_SESSION_CLOSED` — returned by `PostRecv()` when `IsStatus(STATUS_ACTIVE)` is false.
-- **Code in place:** CompleteRecv reorder (push bytes → PostRecv → RecvPackets(0)); FORCE_CLOSE deferred and always queued; FORCE_CLOSE handler only closes if `TakePendingForceClose()`; diagnostic log in PostRecv when !ACTIVE; extra logs: PostRecv "Traffic heavy" when that branch returns 100045, and CompleteRecv "Start" / "Before PostRecv" with status.
-- **Next checks:** (1) Rebuild AuthServer and run again; (2) Reproduce login and check which of these appears: "[PostRecv] Session not ACTIVE", "[PostRecv] Traffic heavy", "[PostRecv] Connection closed (0 bytes)", and the two "[CompleteRecv] ... status=..." lines — use them to see which path returns 100045 and whether status is ACTIVE at start/before PostRecv; (3) Fix root cause based on that.
+- **Symptom (resolved):** After client connects and sends 12 bytes, server was closing with rc=100045 because the RECV completion was posted with **0** as the byte count.
+- **Root cause (fix 7):** PostRecv (Linux) used the 2-arg `PostIocpEventMessage(this, &m_recvContext)`, so the IOCP worker got `CompleteRecv(0)` and returned 100045 at the remote-close check.
+- **Code in place:** PostRecv now calls `PostIocpEventMessage(dwTransferedBytes, this, &m_recvContext)` so the worker gets the real byte count; reorder (push → PostRecv → RecvPackets(0)); FORCE_CLOSE deferred and pending-flag check; optional diagnostics in CompleteRecv/PostRecv.
+- **Next:** Rebuild AuthServer, test login; if it works, optionally reduce or remove the verbose [CompleteRecv] diagnostic prints.
 
 ---
 
