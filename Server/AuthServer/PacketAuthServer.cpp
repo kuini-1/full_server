@@ -16,23 +16,20 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 {
 	NTL_PRINT(PRINT_APP, "[Login] SendCharLogInReq called (Session %u, IP %s, packet size %u)", GetHandle(), GetRemoteIP(), pPacket->GetUsedSize());
 	
-	// Original Windows code uses GetPacketData() - match original behavior
+	// Original Windows code uses GetPacketData() - match original behavior exactly
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
 	NTL_PRINT(PRINT_APP, "[Login] Cast to struct complete, req=%p (Session %u)", req, GetHandle());
 	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
-	// Note: On Linux, wcstombs may fail if locale is not set or WCHAR data is invalid
-	// Debug: log raw WCHAR data before conversion
-	NTL_PRINT(PRINT_APP, "[Login] Raw WCHAR username[0-4]: 0x%04X 0x%04X 0x%04X 0x%04X 0x%04X (Session %u)", 
-		req->awchUserId[0], req->awchUserId[1], req->awchUserId[2], req->awchUserId[3], req->awchUserId[4], GetHandle());
+	// Original code: std::string username = Ntl_WC2MB(req->awchUserId); (memory leak)
+	// Fixed: allocate, copy to string, then free
 	char* usernameMB = Ntl_WC2MB(req->awchUserId);
 	if (usernameMB == NULL)
 	{
-		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(username) returned NULL - wcstombs conversion failed (Session %u)", GetHandle());
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(username) returned NULL (Session %u)", GetHandle());
 		return;
 	}
 	std::string username = std::string(usernameMB);
-	NTL_PRINT(PRINT_APP, "[Login] Converted username: '%s' (length %zu) (Session %u)", username.c_str(), username.length(), GetHandle());
 	delete[] usernameMB;
 	
 	char* password = Ntl_WC2MB(req->awchPasswd);
