@@ -35,6 +35,12 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	NTL_PRINT(PRINT_APP, "[Login] Struct offsets: wOpCode=%zu, awchUserId=%zu", 
 		offsetof(sUA_LOGIN_REQ_TAIWAN_CT, wOpCode), offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId));
 	
+	// Check actual memory location vs expected
+	BYTE* expectedUserIdStart = data + offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId);
+	BYTE* actualUserIdStart = (BYTE*)&req->awchUserId;
+	NTL_PRINT(PRINT_APP, "[Login] Expected awchUserId at data+%zu=%p, actual at %p, difference=%ld bytes", 
+		offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId), expectedUserIdStart, actualUserIdStart, (long)(actualUserIdStart - expectedUserIdStart));
+	
 	// Try GetPacketData() first (original Windows code)
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
 	
@@ -56,9 +62,15 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId at %p, first 10 bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X", 
 		userIdBytes, userIdBytes[0], userIdBytes[1], userIdBytes[2], userIdBytes[3], userIdBytes[4], userIdBytes[5], userIdBytes[6], userIdBytes[7], userIdBytes[8], userIdBytes[9]);
 	
-	// Check WCHAR values directly
-	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId WCHAR[0-4]: 0x%04X 0x%04X 0x%04X 0x%04X 0x%04X", 
-		req->awchUserId[0], req->awchUserId[1], req->awchUserId[2], req->awchUserId[3], req->awchUserId[4]);
+	// Check WCHAR values directly - use proper format for WCHAR (unsigned short)
+	NTL_PRINT(PRINT_APP, "[Login] req->awchUserId WCHAR[0-4]: 0x%04hX 0x%04hX 0x%04hX 0x%04hX 0x%04hX", 
+		(unsigned short)req->awchUserId[0], (unsigned short)req->awchUserId[1], (unsigned short)req->awchUserId[2], 
+		(unsigned short)req->awchUserId[3], (unsigned short)req->awchUserId[4]);
+	
+	// Also check what's at the expected location
+	WCHAR* expectedWChar = (WCHAR*)(data + offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId));
+	NTL_PRINT(PRINT_APP, "[Login] Expected location WCHAR[0-2]: 0x%04hX 0x%04hX 0x%04hX", 
+		(unsigned short)expectedWChar[0], (unsigned short)expectedWChar[1], (unsigned short)expectedWChar[2]);
 	
 	// Check if WCHAR string has null terminator early
 	int wcharLen = 0;
