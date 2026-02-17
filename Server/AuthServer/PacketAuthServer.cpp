@@ -78,11 +78,21 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 		wcharLen++;
 	NTL_PRINT(PRINT_APP, "[Login] WCHAR string length (until null): %d", wcharLen);
 	
+	// Check bytes at WCHAR[2] location - why is it reading null?
+	BYTE* wchar2Bytes = (BYTE*)&req->awchUserId[2];
+	NTL_PRINT(PRINT_APP, "[Login] Bytes at &req->awchUserId[2]: %02X %02X (WCHAR[2]=0x%04hX)", 
+		wchar2Bytes[0], wchar2Bytes[1], (unsigned short)req->awchUserId[2]);
+	
+	// Check what's actually in the packet at offset+4 (where WCHAR[2] should be)
+	BYTE* packetAtOffset4 = data + offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId) + (2 * sizeof(WCHAR));
+	NTL_PRINT(PRINT_APP, "[Login] Packet bytes at data+offset+4: %02X %02X (should be 65 00 for third 'e')", packetAtOffset4[0], packetAtOffset4[1]);
+	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
 	// Original code: std::string username = Ntl_WC2MB(req->awchUserId); (memory leak)
 	// Fixed: allocate, copy to string, then free
 	char* usernameMB = Ntl_WC2MB(req->awchUserId);
-	NTL_PRINT(PRINT_APP, "[Login] Ntl_WC2MB returned: %p, strlen=%zu", usernameMB, usernameMB ? strlen(usernameMB) : 0);
+	NTL_PRINT(PRINT_APP, "[Login] Ntl_WC2MB returned: %p, strlen=%zu, content='%s'", 
+		usernameMB, usernameMB ? strlen(usernameMB) : 0, usernameMB ? usernameMB : "(null)");
 	if (usernameMB == NULL)
 	{
 		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(username) returned NULL (Session %u)", GetHandle());
