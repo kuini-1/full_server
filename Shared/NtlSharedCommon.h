@@ -52,6 +52,13 @@ typedef unsigned __int64 ntl_uint64;
 #ifndef INOUT
 #define INOUT
 #endif
+
+// Define WCHAR before including NtlPortable.h (needed for inline functions in NtlPortable.h)
+// Wide char and fixed-width types (MSVC __int8/16/32/64; use standard types on Linux)
+// WCHAR must be 2 bytes (UTF-16) to match Windows and the game protocol
+// On Linux, wchar_t is 4 bytes (UTF-32), so we use unsigned short instead
+typedef unsigned short WCHAR;
+
 #include "Util/NtlPortable.h"
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -187,10 +194,11 @@ typedef unsigned long ULONG;
 #define PtrToUlong(ptr) ((ULONG)(uintptr_t)(ptr))
 #endif
 
-// Wide char and fixed-width types (MSVC __int8/16/32/64; use standard types on Linux)
-// WCHAR must be 2 bytes (UTF-16) to match Windows and the game protocol
-// On Linux, wchar_t is 4 bytes (UTF-32), so we use unsigned short instead
+// WCHAR is already defined above (before NtlPortable.h include) to avoid circular dependency
+// This typedef is kept for Windows compatibility but is redundant on Linux
+#ifndef WCHAR
 typedef unsigned short WCHAR;
+#endif
 #ifndef __int8
 typedef signed char __int8;
 #endif
