@@ -647,11 +647,16 @@ int CNtlConnection::PostRecv()
 			return NTL_SUCCESS;
 		}
 		// Handle EBADF (error 9) - bad file descriptor (socket closed/invalid)
-		// This is expected if the socket was closed, so don't log it as an error
 		if (rc == EBADF || rc == 9)
 		{
 			DecreasePostIoCount();
-			// Socket is invalid/closed - this is normal if connection was closed
+			return NTL_ERR_NET_SESSION_CLOSED;
+		}
+		// Handle ECONNRESET (104) - connection reset by peer (e.g. client closed before we recv)
+		if (rc == 104)
+		{
+			DecreasePostIoCount();
+			NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Connection reset by peer (104) for Session=%p, IP=%s", this, GetRemoteIP());
 			return NTL_ERR_NET_SESSION_CLOSED;
 		}
 #endif

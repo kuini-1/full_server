@@ -114,6 +114,12 @@
 - **Symptom:** "[ClientSession] Received packet OpCode: 0x0001" and "[PostRecv] *** DATA RECEIVED! 4 bytes ***" spammed (heartbeat/ping).
 - **Fix:** (1) ClientSession: log only when `wOpCode != 0x0001`. (2) PostRecv: log only when `dwTransferedBytes != 4`. Other opcodes and other sizes still logged.
 
+### 12. Treat ECONNRESET (104) as connection closed in PostRecv (Linux)
+
+- **Symptom:** MasterServer: "PostRecv returned error: 104" in CompleteAccept for Char server connection; session closed and "CHAR SERVER DISCONNECTED". Error 104 = ECONNRESET (connection reset by peer).
+- **Fix:** In PostRecv (Linux), when `recv()` returns 104, treat like EBADF: return `NTL_ERR_NET_SESSION_CLOSED` and log "[PostRecv] Connection reset by peer (104) for Session=..., IP=...". Session still closes (correct); log explains the reason. Root cause of peer reset is separate (e.g. Char server closing the connection right after connect).
+- **Note:** Rebuild **all** servers (Auth, Master, Char) with the same NtlNetwork so they get: ValidCheck throttle (once per 5 min), PostRecv EAGAIN throttle, 4-byte/0x0001 filters, and ECONNRESET handling. CharServer logs showing "Retrying PostRecv" every 100 retries mean it was built before the throttle.
+
 ---
 
 ## Remaining Work (until 100% fixed)
