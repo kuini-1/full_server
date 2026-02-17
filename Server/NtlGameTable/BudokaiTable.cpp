@@ -37,8 +37,7 @@ static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t d
 
 #define BUDOKAI_TBLDAT_END()										\
 		}															\
-	}																\
-	else
+		else
 
 #define BUDOKAI_SET_TBLDAT_END()																		\
 		{																								\
