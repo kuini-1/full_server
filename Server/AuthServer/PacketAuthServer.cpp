@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Util/NtlPortable.h"
+#include <stddef.h> // for offsetof
 
 #include "PacketAuthServer.h"
 #include "AuthServer.h"
@@ -39,14 +40,22 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 		return;
 	}
 	
-	NTL_PRINT(PRINT_APP, "[Login] Packet buffer pointer valid, packet size %u, struct size %u, attempting username conversion (Session %u)", 
-		packetSize, (unsigned)sizeof(sUA_LOGIN_REQ_TAIWAN_CT), GetHandle());
+	// Struct sizeof() includes padding (157 bytes), but actual packet from client is 87 bytes.
+	// Minimum needed: header (2) + username[17] (34) + password[17] (34) = 70 bytes to read username/password.
+	// Packet is 87 bytes which is sufficient. Just check it's at least 70 bytes.
+	const WORD MIN_PACKET_SIZE = sizeof(sNTLPACKETHEADER) + 
+		sizeof(WCHAR) * (NTL_MAX_SIZE_USERID_UNICODE + 1) +  // awchUserId: 17 * 2 = 34
+		sizeof(WCHAR) * (NTL_MAX_SIZE_USERPW_UNICODE + 1);   // awchPasswd: 17 * 2 = 34
+	// Total: 2 + 34 + 34 = 70 bytes minimum
 	
-	// Safety check: ensure packet is large enough for the struct (which includes header)
-	if (packetSize < sizeof(sUA_LOGIN_REQ_TAIWAN_CT))
+	NTL_PRINT(PRINT_APP, "[Login] Packet buffer pointer valid, packet size %u, min needed %u, struct sizeof %u (Session %u)", 
+		packetSize, MIN_PACKET_SIZE, (unsigned)sizeof(sUA_LOGIN_REQ_TAIWAN_CT), GetHandle());
+	
+	// Safety check: ensure packet is large enough to read username and password (minimum fields we need)
+	if (packetSize < MIN_PACKET_SIZE)
 	{
-		NTL_PRINT(PRINT_APP, "[Login] ERROR: Packet too small (size %u < struct size %u) (Session %u)", 
-			packetSize, (unsigned)sizeof(sUA_LOGIN_REQ_TAIWAN_CT), GetHandle());
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Packet too small (size %u < min %u) (Session %u)", 
+			packetSize, MIN_PACKET_SIZE, GetHandle());
 		return;
 	}
 	

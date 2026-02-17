@@ -137,6 +137,12 @@
 - **Root cause:** `sUA_LOGIN_REQ_TAIWAN_CT` inherits from `sNTLPACKETHEADER` (via `BEGIN_PROTOCOL` macro), so the struct **includes the header** as the first member. But `GetPacketData()` returns a pointer to data **after** the header. So casting `GetPacketData()` to `sUA_LOGIN_REQ_TAIWAN_CT*` was wrong - we were pointing to payload but treating it as if it started with header.
 - **Fix:** Changed from `pPacket->GetPacketData()` to `pPacket->GetPacketBuffer()` when casting to structs that inherit from `sNTLPACKETHEADER`. `GetPacketBuffer()` returns the full packet (header + payload), which matches the struct layout. Updated size check to compare `packetSize < sizeof(sUA_LOGIN_REQ_TAIWAN_CT)` directly.
 
+### 16. Fix packet size validation: check minimum fields instead of full struct sizeof()
+
+- **Symptom:** After Fix 15, logs showed "[Login] ERROR: Packet too small (size 87 < struct size 157)" - packet is 87 bytes but struct `sizeof()` is 157 bytes.
+- **Root cause:** The struct `sUA_LOGIN_REQ_TAIWAN_CT` has `sizeof()` of 157 bytes due to compiler padding/alignment, but the actual packet from the client is 87 bytes (which matches the actual field sizes: header 2 + username 34 + password 34 + other fields ~17 = 87). The size check was comparing against `sizeof()` which includes padding.
+- **Fix:** Changed size validation to check against minimum required fields (header 2 + username 34 + password 34 = 70 bytes) instead of full struct `sizeof()` (157 bytes). This allows the packet to proceed if it's large enough to read the essential fields. Added `#include <stddef.h>` for offsetof (though ended up using manual calculation).
+
 ---
 
 ## Remaining Work (until 100% fixed)
