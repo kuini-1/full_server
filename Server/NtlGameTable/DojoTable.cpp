@@ -4,7 +4,7 @@
 //
 //	Begin		:	2008-12-29
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Chung,DooSup   ( mailto:john@ntl-inc.com )
 //
@@ -19,13 +19,24 @@
 #include "NtlSerializer.h"
 
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static const WCHAR g_wszObjectTblidx[] = { 'O', 'b', 'j', 'e', 'c', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+static const WCHAR g_wszGetPoint[] = { 'G', 'e', 't', '_', 'P', 'o', 'i', 'n', 't', 0 };
+static const WCHAR g_wszGetRock[] = { 'G', 'e', 't', '_', 'R', 'o', 'c', 'k', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 //-----------------------------------------------------------------------------------
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
 const WCHAR* CDojoTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -85,7 +96,7 @@ void CDojoTable::Destroy( void )
 //-----------------------------------------------------------------------------------
 void* CDojoTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDOJO_TBLDAT* pNewObj = new sDOJO_TBLDAT;
 		if ( NULL == pNewObj )
@@ -114,7 +125,7 @@ void* CDojoTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 //-----------------------------------------------------------------------------------
 bool CDojoTable::DeallocNewTable( void* pvTable, WCHAR* pwszSheetName )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDOJO_TBLDAT* pObj = (sDOJO_TBLDAT*)pvTable;
 		if ( IsBadReadPtr( pObj, sizeof(*pObj) ) ) return false;
@@ -141,7 +152,9 @@ bool CDojoTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat) ).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -159,86 +172,92 @@ bool CDojoTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstring
 {
 	static char szTemp[1024] = { 0x00, };
 
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDOJO_TBLDAT * pTbldat = (sDOJO_TBLDAT*) pvTable;
 
-		if ( 0 == wcscmp( pstrDataName->c_str(), L"Tblidx" ) )
+		if ( 0 == WStringCmpLiteral(*pstrDataName, L"Tblidx") )
 		{
 			pTbldat->tblidx = READ_TBLIDX( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Zone_Tblidx" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Zone_Tblidx") )
 		{
 			pTbldat->zoneTblidx = READ_TBLIDX( bstrData );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Object_Tblidx_", wcslen(L"Object_Tblidx_") ) )
+		else
 		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < DOJO_MAX_UPGRADE_OBJECT_COUNT; i++ )
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszObjectTblidx, WCHARLen(g_wszObjectTblidx)) )
 			{
-				swprintf( szBuffer, 1024, L"Object_Tblidx_%d", i + 1 );
+				bool bFound = false;
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				WCHAR szBuffer[1024] = { 0x00, };
+				for( int i = 0; i < DOJO_MAX_UPGRADE_OBJECT_COUNT; i++ )
 				{
-					pTbldat->objectTblidx[ i ] = READ_DWORD( bstrData );
+					NTL_SWPRINTF( szBuffer, 1024, L"Object_Tblidx_%d", i + 1 );
 
-					bFound = true;
-					break;
+					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+					{
+						pTbldat->objectTblidx[ i ] = READ_DWORD( bstrData );
+
+						bFound = true;
+						break;
+					}
+				}
+
+				if( false == bFound )
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
 				}
 			}
-
-			if( false == bFound )
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Map_Name") )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
+				pTbldat->mapName = READ_TBLIDX( bstrData );
 			}
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Map_Name" ) )
-		{
-			pTbldat->mapName = READ_TBLIDX( bstrData );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Receive_Hour" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byReceiveHour = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Receive_Minute" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byReceiveMinute = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Repeat_Type" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byRepeatType = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Repeat_Time" ) )
-		{
-			pTbldat->byRepeatTime = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Week_Bit_Flag" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->wWeekBitFlag = (WORD)READ_BITFLAG( bstrData );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Receive_Duration" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byReceiveDuration = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Reject_Duration" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byRejectDuration = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Standby_Duration" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byStandbyDuration = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Initial_Duration" ) )
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Receive_Hour") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byReceiveHour = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Receive_Minute") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byReceiveMinute = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Repeat_Type") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byRepeatType = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Repeat_Time") )
+			{
+				pTbldat->byRepeatTime = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Week_Bit_Flag") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->wWeekBitFlag = (WORD)READ_BITFLAG( bstrData );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Receive_Duration") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byReceiveDuration = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Reject_Duration") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byRejectDuration = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Standby_Duration") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byStandbyDuration = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Initial_Duration") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pTbldat->byInitialDuration = READ_BYTE( bstrData, pstrDataName->c_str() );
@@ -293,58 +312,66 @@ bool CDojoTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstring
 		{
 			pTbldat->rockTblidx = READ_DWORD( bstrData );
 		}		
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Get_Point", wcslen(L"Get_Point") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < DOJO_MAX_REWARD_TYPE_COUNT; i++ )
-			{
-				swprintf( szBuffer, 1024, L"Get_Point%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszGetPoint, WCHARLen(g_wszGetPoint)) )
 				{
-					pTbldat->asRawrd[ i ].dwGetPoint = READ_DWORD( bstrData );
+					bool bFound = false;
 
-					bFound = true;
-					break;
+					WCHAR szBuffer[1024] = { 0x00, };
+					for( int i = 0; i < DOJO_MAX_REWARD_TYPE_COUNT; i++ )
+					{
+						NTL_SWPRINTF( szBuffer, 1024, L"Get_Point%d", i + 1 );
+
+						if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+						{
+							pTbldat->asRawrd[ i ].dwGetPoint = READ_DWORD( bstrData );
+
+							bFound = true;
+							break;
+						}
+					}
+
+					if( false == bFound )
+					{
+						WCHAR wszFormatBuf[512];
+						FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+						CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+						return false;
+					}
+				}
+				else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszGetRock, WCHARLen(g_wszGetRock)) )
+				{
+					bool bFound = false;
+
+					WCHAR szBuffer[1024] = { 0x00, };
+					for( int i = 0; i < DOJO_MAX_REWARD_TYPE_COUNT; i++ )
+					{
+						NTL_SWPRINTF( szBuffer, 1024, L"Get_Rock%d", i + 1 );
+
+						if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+						{
+							pTbldat->asRawrd[ i ].byGetRock = READ_BYTE( bstrData, wszFieldNameBuf );
+
+							bFound = true;
+							break;
+						}
+					}
+
+					if( false == bFound )
+					{
+						WCHAR wszFormatBuf[512];
+						FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+						CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+						return false;
+					}
+				}
+				else
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
 				}
 			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Get_Rock", wcslen(L"Get_Rock") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < DOJO_MAX_REWARD_TYPE_COUNT; i++ )
-			{
-				swprintf( szBuffer, 1024, L"Get_Rock%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
-				{
-					pTbldat->asRawrd[ i ].byGetRock = READ_BYTE( bstrData, pstrDataName->c_str() );
-
-					bFound = true;
-					break;
-				}
-			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-		}
-		else
-		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-			return false;
 		}
 	}
 	else

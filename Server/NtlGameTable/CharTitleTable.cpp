@@ -3,11 +3,20 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static const WCHAR g_wszSystemEffectTblidx[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', 0 };
+static const WCHAR g_wszSystemEffectType[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'T', 'y', 'p', 'e', 0 };
+static const WCHAR g_wszSystemEffectValue[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 'V', 'a', 'l', 'u', 'e', 0 };
 
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
 
 const WCHAR* CCharTitleTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -37,7 +46,7 @@ void CCharTitleTable::Init()
 
 void* CCharTitleTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sCHARTITLE_TBLDAT* pNewHelp = new sCHARTITLE_TBLDAT;
 		if (NULL == pNewHelp)
@@ -59,7 +68,7 @@ void* CCharTitleTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CCharTitleTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sCHARTITLE_TBLDAT* pHelp = (sCHARTITLE_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pHelp, sizeof(*pHelp)))
@@ -82,7 +91,9 @@ bool CCharTitleTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -93,121 +104,137 @@ bool CCharTitleTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CCharTitleTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sCHARTITLE_TBLDAT* pHelp = (sCHARTITLE_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pHelp->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
 			pHelp->tblNameIndex = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Contents_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Contents_Type"))
 		{
-			pHelp->byContentsType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHelp->byContentsType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Direct_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Direct_Type"))
 		{
-			pHelp->byRepresentationType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pHelp->byRepresentationType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Bone_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Bone_Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRINGW(bstrData, pHelp->wszBoneName, _countof(pHelp->wszBoneName));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Effect_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Effect_Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRINGW(bstrData, pHelp->wszEffectName, _countof(pHelp->wszEffectName));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Effect_Sound"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Effect_Sound"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRINGW(bstrData, pHelp->wszEffectSound, _countof(pHelp->wszEffectSound));
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"System_Effect_Tblidx", wcslen(L"System_Effect_Tblidx") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
-			{
-				swprintf( szBuffer, 1024, L"System_Effect_Tblidx%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
-				{
-					pHelp->atblSystem_Effect_Index[ i ] = READ_DWORD( bstrData );
-
-					bFound = true;
-					break;
-				}
-			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"System_Effect_Type", wcslen(L"System_Effect_Type") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
-			{
-				swprintf( szBuffer, 1024, L"System_Effect_Type%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
-				{
-					pHelp->abySystem_Effect_Type[ i ] = READ_BYTE( bstrData, pstrDataName->c_str() );
-
-					bFound = true;
-					break;
-				}
-			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"System_Effect_Value", wcslen(L"System_Effect_Value") ) )
-		{
-			bool bFound = false;
-
-			WCHAR szBuffer[1024] = { 0x00, };
-			for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
-			{
-				swprintf( szBuffer, 1024, L"System_Effect_Value%d", i + 1 );
-
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
-				{
-					pHelp->abySystem_Effect_Value[ i ] = READ_BYTE( bstrData, pstrDataName->c_str() );
-
-					bFound = true;
-					break;
-				}
-			}
-
-			if( false == bFound )
-			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-				return false;
-			}
-		}
-
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
-			return false;
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszSystemEffectTblidx, WCHARLen(g_wszSystemEffectTblidx)) )
+			{
+				bool bFound = false;
+
+				WCHAR szBuffer[1024] = { 0x00, };
+				for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
+				{
+					NTL_SWPRINTF( szBuffer, 1024, L"System_Effect_Tblidx%d", i + 1 );
+
+					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+					{
+						pHelp->atblSystem_Effect_Index[ i ] = READ_DWORD( bstrData );
+
+						bFound = true;
+						break;
+					}
+				}
+
+				if( false == bFound )
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
+				}
+			}
+			else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszSystemEffectType, WCHARLen(g_wszSystemEffectType)) )
+			{
+				bool bFound = false;
+
+				WCHAR szBuffer[1024] = { 0x00, };
+				for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
+				{
+					NTL_SWPRINTF( szBuffer, 1024, L"System_Effect_Type%d", i + 1 );
+
+					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+					{
+						pHelp->abySystem_Effect_Type[ i ] = READ_BYTE( bstrData, wszFieldNameBuf );
+
+						bFound = true;
+						break;
+					}
+				}
+
+				if( false == bFound )
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
+				}
+			}
+			else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszSystemEffectValue, WCHARLen(g_wszSystemEffectValue)) )
+			{
+				bool bFound = false;
+
+				WCHAR szBuffer[1024] = { 0x00, };
+				for( int i = 0; i < NTL_MAX_CHAR_TITLE_EFFECT; i++ )
+				{
+					NTL_SWPRINTF( szBuffer, 1024, L"System_Effect_Value%d", i + 1 );
+
+					if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
+					{
+						pHelp->abySystem_Effect_Value[ i ] = READ_BYTE( bstrData, wszFieldNameBuf );
+
+						bFound = true;
+						break;
+					}
+				}
+
+				if( false == bFound )
+				{
+					WCHAR wszFormatBuf[512];
+					FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+					CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+					return false;
+				}
+			}
+			else
+			{
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
+				return false;
+			}
 		}
 	}
 	else

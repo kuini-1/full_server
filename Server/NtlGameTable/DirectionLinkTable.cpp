@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-06-01
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -20,13 +20,21 @@
 #include "NtlBitFlag.h"
 
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 //-----------------------------------------------------------------------------------
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
 const WCHAR* CDirectionLinkTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -91,7 +99,7 @@ void CDirectionLinkTable::Destroy( void )
 //-----------------------------------------------------------------------------------
 void* CDirectionLinkTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDIRECTION_LINK_TBLDAT* pNewObj = new sDIRECTION_LINK_TBLDAT;
 		if ( NULL == pNewObj )
@@ -120,7 +128,7 @@ void* CDirectionLinkTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage
 //-----------------------------------------------------------------------------------
 bool CDirectionLinkTable::DeallocNewTable( void* pvTable, WCHAR* pwszSheetName )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDIRECTION_LINK_TBLDAT* pObj = (sDIRECTION_LINK_TBLDAT*)pvTable;
 		if ( IsBadReadPtr( pObj, sizeof(*pObj) ) ) return false;
@@ -164,7 +172,9 @@ bool CDirectionLinkTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -182,33 +192,35 @@ bool CDirectionLinkTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std
 {
 	static char szTemp[1024] = { 0x00, };
 
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sDIRECTION_LINK_TBLDAT * pTbldat = (sDIRECTION_LINK_TBLDAT*) pvTable;
 
-		if ( 0 == wcscmp( pstrDataName->data(), L"Tblidx" ) )
+		if ( 0 == WStringCmpLiteral(*pstrDataName, L"Tblidx") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pTbldat->tblidx = READ_TBLIDX( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->data(), L"Function_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Function_Name"))
 		{
 			READ_STRING( bstrData, pTbldat->szFunctionName, _countof(pTbldat->szFunctionName) );			
 		}
-		else if (0 == wcscmp(pstrDataName->data(), L"Note"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Note"))
 		{
 			READ_STRING( bstrData, pTbldat->szNote, _countof(pTbldat->szNote) );
 		}
-		else if ( 0 == wcscmp( pstrDataName->data(), L"Type" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Type") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pTbldat->byType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->data(), L"Animation_ID" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Animation_ID") )
 		{
 			pTbldat->dwAnimationID = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->data(), L"Direction_Func_Flag" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Direction_Func_Flag") )
 		{
 			pTbldat->byFuncFlag = (BYTE) READ_BITFLAG( bstrData );
 		}

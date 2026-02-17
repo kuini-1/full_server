@@ -3,11 +3,17 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
 
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
 
 const WCHAR* CDynamicFieldSystemTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -39,7 +45,7 @@ void CDynamicFieldSystemTable::Init()
 
 void* CDynamicFieldSystemTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sDYNAMIC_FIELD_SYSTEM_TBLDAT* pNewHelp = new sDYNAMIC_FIELD_SYSTEM_TBLDAT;
 		if (NULL == pNewHelp)
@@ -61,7 +67,7 @@ void* CDynamicFieldSystemTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCode
 
 bool CDynamicFieldSystemTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sDYNAMIC_FIELD_SYSTEM_TBLDAT* pHelp = (sDYNAMIC_FIELD_SYSTEM_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pHelp, sizeof(*pHelp)))
@@ -84,7 +90,9 @@ bool CDynamicFieldSystemTable::AddTable(void * pvTable, bool bReload, bool bUpda
 
 	if (false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second)
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", m_wszXmlFileName, pTbldat->tblidx);
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx);
 		_ASSERTE(0);
 		return false;
 	}
@@ -100,11 +108,11 @@ bool CDynamicFieldSystemTable::AddTable(void * pvTable, bool bReload, bool bUpda
 
 bool CDynamicFieldSystemTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sDYNAMIC_FIELD_SYSTEM_TBLDAT* pHelp = (sDYNAMIC_FIELD_SYSTEM_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pHelp->tblidx = READ_DWORD(bstrData);
 		}
@@ -112,7 +120,11 @@ bool CDynamicFieldSystemTable::SetTableData(void* pvTable, WCHAR* pwszSheetName,
 
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

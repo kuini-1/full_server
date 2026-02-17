@@ -6,9 +6,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CExpTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -38,7 +46,7 @@ void CExpTable::Init()
 
 void* CExpTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sEXP_TBLDAT* pNewExp = new sEXP_TBLDAT;
 		if (NULL == pNewExp)
@@ -60,7 +68,7 @@ void* CExpTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CExpTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sEXP_TBLDAT* pExp = (sEXP_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pExp, sizeof(*pExp)))
@@ -83,14 +91,14 @@ bool CExpTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	sEXP_TBLDAT * pTbldat = (sEXP_TBLDAT*) pvTable;
 	sEXP_TBLDAT * pExistTbldat = NULL;
 
-	// Reload인경우 Data를 찾아 Update해준다
+	// Reload???? Data?? ??? Update?????
 	if( bReload )
 	{
 		pExistTbldat = (sEXP_TBLDAT*) FindData( pTbldat->tblidx );
 		if( pExistTbldat )
 		{
 			CopyMemory( pTbldat, pExistTbldat, pTbldat->GetDataSize() );
-			// 데이타의 해제를 위한 false 반환
+			// ??????? ?????? ???? false ???
 			return true; 
 		}
 	}
@@ -108,45 +116,49 @@ bool CExpTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 bool CExpTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
 
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sEXP_TBLDAT* pExp = (sEXP_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Level"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Level"))
 		{
 			pExp->tblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"EXP"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"EXP"))
 		{
 			pExp->dwExp = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_EXP"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_EXP"))
 		{
 			pExp->dwNeed_Exp = READ_DWORD(bstrData);
 		}
 		//new
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Normal_Race"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Normal_Race"))
 		{
-			pExp->wNormal_Race = READ_WORD(bstrData, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pExp->wNormal_Race = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Super_Race"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Super_Race"))
 		{
-			pExp->wSuperRace = READ_WORD(bstrData, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			pExp->wSuperRace = READ_WORD(bstrData, wszFieldNameBuf);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Mob_Exp"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Mob_Exp"))
 		{
 			pExp->dwMobExp = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Phy_Defence_Ref"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Phy_Defence_Ref"))
 		{
 			pExp->dwPhyDefenceRef = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Eng_Defence_Ref"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Eng_Defence_Ref"))
 		{
 			pExp->dwEngDefenceRef = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Mob_Zenny"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Mob_Zenny"))
 		{
 			pExp->dwMobZenny = READ_DWORD( bstrData );
 		}
