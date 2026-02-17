@@ -27,6 +27,7 @@ static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t d
 }
 
 #define BUDOKAI_TBLDAT_START(textname)								\
+	{																\
 		WCHAR wszNameBuf[256];										\
 		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR)); \
 		WCHAR wszTextNameBuf[256];									\
@@ -35,17 +36,18 @@ static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t d
 		{
 
 #define BUDOKAI_TBLDAT_END()										\
-	}																\
-	else
+		}															\
+		else
 
 #define BUDOKAI_SET_TBLDAT_END()																		\
-	{																									\
-		WCHAR wszNameBuf[256];																			\
-		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));			\
-		WCHAR wszFormatBuf[512];																		\
-		FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
-		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf );				\
-		return false;																					\
+		{																								\
+			WCHAR wszNameBuf[256];																		\
+			WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));		\
+			WCHAR wszFormatBuf[512];																	\
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR)); \
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszNameBuf );			\
+			return false;																				\
+		}																								\
 	}
 
 
