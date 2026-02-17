@@ -143,6 +143,20 @@
 - **Root cause:** The struct `sUA_LOGIN_REQ_TAIWAN_CT` has `sizeof()` of 157 bytes due to compiler padding/alignment, but the actual packet from the client is 87 bytes (which matches the actual field sizes: header 2 + username 34 + password 34 + other fields ~17 = 87). The size check was comparing against `sizeof()` which includes padding.
 - **Fix:** Changed size validation to check against minimum required fields (header 2 + username 34 + password 34 = 70 bytes) instead of full struct `sizeof()` (157 bytes). This allows the packet to proceed if it's large enough to read the essential fields. Added `#include <stddef.h>` for offsetof (though ended up using manual calculation).
 
+### 17. Fix WCHAR size mismatch: Linux wchar_t (4 bytes) vs Windows WCHAR (2 bytes)
+
+- **Symptom:** Login packet received correctly (87 bytes). Raw bytes show correct UTF-16: `65 00 65 00 65 00` = "eee". But `req->awchUserId[2]` reads as `0x0000` instead of `0x0065`. `Ntl_WC2MB` returns strlen=6 (correct for "eee") but username shows as "e" (truncated). Struct alignment is correct (`difference=0 bytes`).
+- **Root cause:** On Windows, `WCHAR` is `wchar_t` which is 2 bytes (UTF-16). On Linux, `WCHAR` was defined as `wchar_t` which is 4 bytes (UTF-32). The game protocol expects 2-byte UTF-16, so when Linux reads `WCHAR[2]`, it reads 8 bytes ahead instead of 4 bytes, causing misalignment. The struct reads `WCHAR[2]` as null even though the raw bytes show another 'e'.
+- **Fix:** 
+  1. Changed `WCHAR` definition in `Shared/NtlSharedCommon.h` from `typedef wchar_t WCHAR;` to `typedef unsigned short WCHAR;` on Linux (matches Windows 2-byte size).
+  2. Updated `Ntl_MB2WC` and `Ntl_WC2MB` in `Shared/Util/NtlStringHandler.cpp` to use `iconv` for UTF-8 <-> UTF-16LE conversion instead of `mbstowcs`/`wcstombs` (which expect `wchar_t`).
+  3. Added `iconv` library linking in `CMakeLists.txt` for the Util library.
+- **Files Modified:**
+  - `Shared/NtlSharedCommon.h`: Changed `WCHAR` typedef to `unsigned short` on Linux
+  - `Shared/Util/NtlStringHandler.cpp`: Updated conversion functions to use `iconv` for UTF-16LE
+  - `CMakeLists.txt`: Added `iconv` library linking for Util
+- **Result:** [Pending test - should fix username truncation issue]
+
 ---
 
 ## Remaining Work (until 100% fixed)

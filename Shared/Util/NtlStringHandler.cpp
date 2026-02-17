@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <cwchar>
 #include <clocale>
+#include <iconv.h>
+#include <errno.h>
+#include <string.h>
 #endif
 
 
@@ -67,14 +70,50 @@ WCHAR* Ntl_MB2WC(char* pszOriginalString)
 	::MultiByteToWideChar(::GetACP(), 0, pszOriginalString, -1, pwszResultString, iRequiredChars);
 	return pwszResultString;
 #else
-	size_t len = mbstowcs(NULL, pszOriginalString, 0);
-	if (len == (size_t)-1)
-		return NULL;
-	WCHAR* pwszResultString = new WCHAR[len + 1];
+	// On Linux, WCHAR is unsigned short (UTF-16LE), not wchar_t (UTF-32)
+	// Use iconv to convert UTF-8 to UTF-16LE
+	iconv_t cd = iconv_open("UTF-16LE", "UTF-8");
+	if (cd == (iconv_t)-1)
+	{
+		// Fallback: simple ASCII conversion (not ideal but better than nothing)
+		size_t len = strlen(pszOriginalString);
+		WCHAR* pwszResultString = new WCHAR[len + 1];
+		if (NULL == pwszResultString)
+			return NULL;
+		for (size_t i = 0; i < len; i++)
+		{
+			if ((unsigned char)pszOriginalString[i] < 128)
+				pwszResultString[i] = (unsigned short)(unsigned char)pszOriginalString[i];
+			else
+				pwszResultString[i] = '?'; // Invalid character
+		}
+		pwszResultString[len] = 0;
+		return pwszResultString;
+	}
+	
+	size_t inbytesleft = strlen(pszOriginalString);
+	size_t outbytesleft = (inbytesleft + 1) * sizeof(WCHAR); // UTF-16 can be up to 2 bytes per UTF-8 byte
+	WCHAR* pwszResultString = new WCHAR[inbytesleft + 1];
 	if (NULL == pwszResultString)
+	{
+		iconv_close(cd);
 		return NULL;
-	mbstowcs(pwszResultString, pszOriginalString, len + 1);
-	pwszResultString[len] = 0;
+	}
+	
+	char* inbuf = pszOriginalString;
+	char* outbuf = (char*)pwszResultString;
+	
+	size_t result = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+	iconv_close(cd);
+	
+	if (result == (size_t)-1)
+	{
+		delete[] pwszResultString;
+		return NULL;
+	}
+	
+	// Null terminate
+	*((WCHAR*)outbuf) = 0;
 	return pwszResultString;
 #endif
 }
@@ -96,22 +135,58 @@ char* Ntl_WC2MB(WCHAR* pwszOriginalString)
 	::WideCharToMultiByte(::GetACP(), 0, pwszOriginalString, -1, pszResultString, iRequiredChars, NULL, NULL);
 	return pszResultString;
 #else
-	// Ensure locale is set for wcstombs (required on Linux)
-	static bool localeSet = false;
-	if (!localeSet)
+	// On Linux, WCHAR is unsigned short (UTF-16LE), not wchar_t (UTF-32)
+	// Use iconv to convert UTF-16LE to UTF-8
+	iconv_t cd = iconv_open("UTF-8", "UTF-16LE");
+	if (cd == (iconv_t)-1)
 	{
-		setlocale(LC_ALL, "");
-		localeSet = true;
+		// Fallback: simple ASCII conversion (not ideal but better than nothing)
+		size_t len = 0;
+		while (pwszOriginalString[len] != 0)
+			len++;
+		char* pszResultString = new char[len + 1];
+		if (NULL == pszResultString)
+			return NULL;
+		for (size_t i = 0; i < len; i++)
+		{
+			if (pwszOriginalString[i] < 128)
+				pszResultString[i] = (char)pwszOriginalString[i];
+			else
+				pszResultString[i] = '?'; // Invalid character
+		}
+		pszResultString[len] = '\0';
+		return pszResultString;
 	}
 	
-	size_t len = wcstombs(NULL, pwszOriginalString, 0);
-	if (len == (size_t)-1)
-		return NULL;
-	char* pszResultString = new char[len + 1];
+	// Calculate input length (UTF-16LE string length in bytes)
+	size_t wlen = 0;
+	while (pwszOriginalString[wlen] != 0)
+		wlen++;
+	size_t inbytesleft = (wlen + 1) * sizeof(WCHAR); // Include null terminator
+	
+	// Estimate output size (UTF-8 can be up to 4 bytes per UTF-16 char, but usually 1-3)
+	size_t outbytesleft = (wlen + 1) * 4;
+	char* pszResultString = new char[outbytesleft];
 	if (NULL == pszResultString)
+	{
+		iconv_close(cd);
 		return NULL;
-	wcstombs(pszResultString, pwszOriginalString, len + 1);
-	pszResultString[len] = '\0';
+	}
+	
+	char* inbuf = (char*)pwszOriginalString;
+	char* outbuf = pszResultString;
+	
+	size_t result = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+	iconv_close(cd);
+	
+	if (result == (size_t)-1)
+	{
+		delete[] pszResultString;
+		return NULL;
+	}
+	
+	// Null terminate
+	*outbuf = '\0';
 	return pszResultString;
 #endif
 }

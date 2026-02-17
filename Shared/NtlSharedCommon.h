@@ -188,7 +188,9 @@ typedef unsigned long ULONG;
 #endif
 
 // Wide char and fixed-width types (MSVC __int8/16/32/64; use standard types on Linux)
-typedef wchar_t WCHAR;
+// WCHAR must be 2 bytes (UTF-16) to match Windows and the game protocol
+// On Linux, wchar_t is 4 bytes (UTF-32), so we use unsigned short instead
+typedef unsigned short WCHAR;
 #ifndef __int8
 typedef signed char __int8;
 #endif
