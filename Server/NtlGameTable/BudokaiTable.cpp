@@ -27,7 +27,6 @@ static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t d
 }
 
 #define BUDOKAI_TBLDAT_START(textname)								\
-	{																\
 		WCHAR wszNameBuf[256];										\
 		WStringCStrToWCHAR(pTbldat->wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR)); \
 		WCHAR wszTextNameBuf[256];									\
