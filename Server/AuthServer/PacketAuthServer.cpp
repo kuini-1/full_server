@@ -13,13 +13,61 @@
 //--------------------------------------------------------------------------------------//
 void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app) 
 {
-	NTL_PRINT(PRINT_APP, "[Login] SendCharLogInReq called (Session %u, IP %s, packet size %u)", GetHandle(), GetRemoteIP(), pPacket->GetUsedSize());
+	WORD packetSize = pPacket->GetUsedSize();
+	NTL_PRINT(PRINT_APP, "[Login] SendCharLogInReq called (Session %u, IP %s, packet size %u)", GetHandle(), GetRemoteIP(), packetSize);
+	
+	if (pPacket == NULL || pPacket->GetPacketData() == NULL)
+	{
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: pPacket or GetPacketData() is NULL (Session %u)", GetHandle());
+		return;
+	}
+	
+	// Check packet size - sUA_LOGIN_REQ_TAIWAN_CT should be at least header + some data
+	if (packetSize < sizeof(sNTLPACKETHEADER))
+	{
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Packet too small (%u < %u) (Session %u)", packetSize, (unsigned)sizeof(sNTLPACKETHEADER), GetHandle());
+		return;
+	}
 	
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
-
-	std::string username = Ntl_WC2MB(req->awchUserId);
-	char* password = Ntl_WC2MB(req->awchPasswd);
+	if (req == NULL)
+	{
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: req pointer is NULL after cast (Session %u)", GetHandle());
+		return;
+	}
 	
+	NTL_PRINT(PRINT_APP, "[Login] Packet data pointer valid, packet size %u, attempting username conversion (Session %u)", packetSize, GetHandle());
+	
+	// Safety check: ensure we can read from req before accessing fields
+	if ((char*)req + sizeof(sUA_LOGIN_REQ_TAIWAN_CT) > (char*)pPacket->GetPacketData() + packetSize)
+	{
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Packet too small for struct (size %u < struct size) (Session %u)", packetSize, GetHandle());
+		return;
+	}
+	
+	std::string username;
+	char* password = NULL;
+	
+	// Try to read username - if it crashes here we'll see where
+	NTL_PRINT(PRINT_APP, "[Login] About to call Ntl_WC2MB for username (Session %u)", GetHandle());
+	char* usernameMB = Ntl_WC2MB(req->awchUserId);
+	if (usernameMB == NULL)
+	{
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB returned NULL for username (Session %u)", GetHandle());
+		return;
+	}
+	username = std::string(usernameMB);
+	delete[] usernameMB;
+	NTL_PRINT(PRINT_APP, "[Login] Username converted: '%s' (Session %u)", username.c_str(), GetHandle());
+	
+	NTL_PRINT(PRINT_APP, "[Login] About to call Ntl_WC2MB for password (Session %u)", GetHandle());
+	password = Ntl_WC2MB(req->awchPasswd);
+	if (password == NULL)
+	{
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB returned NULL for password (Session %u)", GetHandle());
+		return;
+	}
+	NTL_PRINT(PRINT_APP, "[Login] Password converted (Session %u)", GetHandle());
 
 	ERR_LOG(LOG_USER, "User %s request connection! req->wLVersion %i, req->wRVersion %i, state %hu, mac %hu\n", username.c_str(), (int)req->wLVersion, (int)req->wRVersion, req->byState, req->abyMacAddress[0]);
 	NTL_PRINT(PRINT_APP, "[Login] User %s login request (Session %u, IP %s)", username.c_str(), GetHandle(), GetRemoteIP());

@@ -125,6 +125,12 @@
 - **Symptom:** MasterServer spammed with "[PostRecv] *** DATA RECEIVED! 12 bytes ***" (server-to-server heartbeat). Login packet received but no logs showing login processing or response sent.
 - **Fix:** (1) PostRecv: filter 12-byte receives (server heartbeat) in addition to 4-byte. (2) Login handler: add `NTL_PRINT` logs at key points (login request received, MasterServer check, success/failure response sent) so login flow is visible even if `ERR_LOG` doesn't show in console. Logs: "[Login] User ... login request", "[Login] User ...: Auth success, sending online check", "[Login] User ...: Login failed, sent AU_LOGIN_RES", "[Login] Login success: sent AU_LOGIN_RES".
 
+### 14. Debug login handler crash and fix username/password conversion
+
+- **Symptom:** Login packet (OpCode 0x0067 = UA_LOGIN_REQ_TAIWAN_CT) received, `SendCharLogInReq` called, but function stops before username log. Function appears to crash or return early when accessing packet data.
+- **Debug logs added:** (1) OpCode comparison log shows enum values at runtime. (2) Switch match log confirms SendCharLogInReq is called. (3) Function entry log. (4) Packet size and pointer validation. (5) Step-by-step logs before/after each Ntl_WC2MB call.
+- **Fix:** (1) Fixed memory leak: original `std::string username = Ntl_WC2MB(...)` was wrong (Ntl_WC2MB returns char* that must be freed). Now: allocate, copy to string, free. (2) Added NULL checks for Ntl_WC2MB return values. (3) Added packet size validation before accessing struct fields. (4) All early returns are safe (password cleanup handles NULL). After rebuild, logs will show exactly where the function stops if it still crashes.
+
 ---
 
 ## Remaining Work (until 100% fixed)
