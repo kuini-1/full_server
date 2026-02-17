@@ -16,23 +16,29 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 {
 	NTL_PRINT(PRINT_APP, "[Login] SendCharLogInReq called (Session %u, IP %s, packet size %u)", GetHandle(), GetRemoteIP(), pPacket->GetUsedSize());
 	
-	// sUA_LOGIN_REQ_TAIWAN_CT inherits from sNTLPACKETHEADER, so it includes the header.
-	// GetPacketBuffer() returns the full packet (header + payload), GetPacketData() skips header.
-	// So we must use GetPacketBuffer() to cast to the struct that includes header.
-	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketBuffer();
+	// Original Windows code used GetPacketData() - try that first to match original behavior
+	// Note: Struct inherits from header, but original code worked with GetPacketData()
+	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
 	NTL_PRINT(PRINT_APP, "[Login] Cast to struct complete, req=%p (Session %u)", req, GetHandle());
 	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
-	NTL_PRINT(PRINT_APP, "[Login] About to call Ntl_WC2MB for username (Session %u)", GetHandle());
+	// Note: On Linux, wcstombs may fail if locale is not set or WCHAR data is invalid
 	char* usernameMB = Ntl_WC2MB(req->awchUserId);
-	NTL_PRINT(PRINT_APP, "[Login] Ntl_WC2MB(username) returned %p (Session %u)", usernameMB, GetHandle());
+	if (usernameMB == NULL)
+	{
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(username) returned NULL - wcstombs conversion failed. First WCHAR bytes: 0x%04X 0x%04X (Session %u)", 
+			req->awchUserId[0], req->awchUserId[1], GetHandle());
+		return;
+	}
 	std::string username = std::string(usernameMB);
 	delete[] usernameMB;
-	NTL_PRINT(PRINT_APP, "[Login] Username: '%s' (Session %u)", username.c_str(), GetHandle());
 	
-	NTL_PRINT(PRINT_APP, "[Login] About to call Ntl_WC2MB for password (Session %u)", GetHandle());
 	char* password = Ntl_WC2MB(req->awchPasswd);
-	NTL_PRINT(PRINT_APP, "[Login] Ntl_WC2MB(password) returned %p (Session %u)", password, GetHandle());
+	if (password == NULL)
+	{
+		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(password) returned NULL - wcstombs conversion failed (Session %u)", GetHandle());
+		return;
+	}
 
 	ERR_LOG(LOG_USER, "User %s request connection! req->wLVersion %i, req->wRVersion %i, state %hu, mac %hu\n", username.c_str(), (int)req->wLVersion, (int)req->wRVersion, req->byState, req->abyMacAddress[0]);
 	NTL_PRINT(PRINT_APP, "[Login] User %s login request (Session %u, IP %s)", username.c_str(), GetHandle(), GetRemoteIP());
