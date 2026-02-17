@@ -200,11 +200,16 @@ if(UNIX AND NOT APPLE)
   find_package(OpenSSL REQUIRED)
   target_link_libraries(Util PUBLIC OpenSSL::Crypto)
   # iconv is needed for UTF-8 <-> UTF-16LE conversion (WCHAR is unsigned short on Linux)
+  # On most Linux systems, iconv is part of glibc and doesn't need a separate library.
+  # Try to find libiconv (separate library), but if not found, assume it's in libc (common case).
   find_library(ICONV_LIB iconv)
   if(ICONV_LIB)
     target_link_libraries(Util PUBLIC ${ICONV_LIB})
+    message(STATUS "Found iconv library: ${ICONV_LIB}")
   else()
-    message(WARNING "iconv library not found - UTF-16 conversion may fail")
+    # iconv is usually in libc (glibc) on Linux, so no separate library needed
+    # The code will compile and link fine without explicitly linking libiconv
+    message(STATUS "iconv not found as separate library - assuming it's in libc (glibc)")
   endif()
 endif()
 
