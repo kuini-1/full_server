@@ -109,6 +109,11 @@
 - **Symptom:** Logs flooded with "[ValidCheck] Retrying PostRecv (retry #N)" and "[PostRecv] No data available (ERROR_IO_PENDING)" so important logs (received packet, login, etc.) were hard to see.
 - **Fix:** (1) ValidCheck: log at most once per **5 minutes per session** (was every 100 retries ≈ 1 s). (2) PostRecv EAGAIN: log at most once per **5 minutes globally** (was every 5 s). Keep "[PostRecv] *** DATA RECEIVED! ***" and "[ClientSession] Received packet OpCode" as-is so receive activity stays visible.
 
+### 11. Filter OpCode 0x0001 and 4-byte receive logs
+
+- **Symptom:** "[ClientSession] Received packet OpCode: 0x0001" and "[PostRecv] *** DATA RECEIVED! 4 bytes ***" spammed (heartbeat/ping).
+- **Fix:** (1) ClientSession: log only when `wOpCode != 0x0001`. (2) PostRecv: log only when `dwTransferedBytes != 4`. Other opcodes and other sizes still logged.
+
 ---
 
 ## Remaining Work (until 100% fixed)

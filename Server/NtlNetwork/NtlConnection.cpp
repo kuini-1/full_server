@@ -664,7 +664,9 @@ int CNtlConnection::PostRecv()
 	// On Linux, RecvEx completed synchronously with data, so post completion to IOCP immediately
 	if (m_pNetworkRef && dwTransferedBytes > 0)
 	{
-		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] *** DATA RECEIVED! %u bytes for Session=%p, IP=%s, posting to IOCP ***", dwTransferedBytes, this, GetRemoteIP());
+		// Log only when not 4 bytes (0x0001 header-only / heartbeat) to reduce spam
+		if (dwTransferedBytes != 4)
+			NTL_PRINT(PRINT_SYSTEM, "[PostRecv] *** DATA RECEIVED! %u bytes for Session=%p, IP=%s, posting to IOCP ***", dwTransferedBytes, this, GetRemoteIP());
 		// Set param in IOCONTEXT so worker thread can extract session pointer
 		m_recvContext.param = this;
 		// Post completion with byte count so worker runs CompleteRecv(dwTransferedBytes); 2-arg overload posts 0 and causes rc=100045.

@@ -59,7 +59,9 @@ int CClientSession::OnDispatch(CNtlPacket * pPacket)
 	CAuthServer * app = (CAuthServer*)NtlSfxGetApp();
 
 	sNTLPACKETHEADER * pHeader = (sNTLPACKETHEADER *)pPacket->GetPacketData();
-	NTL_PRINT(PRINT_APP, "[ClientSession] Received packet OpCode: 0x%04X (Session: %u, IP: %s)", pHeader->wOpCode, GetHandle(), GetRemoteIP());
+	// Skip logging OpCode 0x0001 (heartbeat/ping) to reduce log spam; log all other opcodes
+	if (pHeader->wOpCode != 0x0001)
+		NTL_PRINT(PRINT_APP, "[ClientSession] Received packet OpCode: 0x%04X (Session: %u, IP: %s)", pHeader->wOpCode, GetHandle(), GetRemoteIP());
 	switch( pHeader->wOpCode )
 	{
 		case UA_LOGIN_REQ:
