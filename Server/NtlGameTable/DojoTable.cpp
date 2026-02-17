@@ -261,60 +261,62 @@ bool CDojoTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstring
 				pTbldat->byStandbyDuration = READ_BYTE( bstrData, wszFieldNameBuf );
 			}
 			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Initial_Duration") )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byInitialDuration = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Ready_Duration" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byReadyDuration = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Battle_Duration" ) )
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byBattleDuration = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Receive_Point"))
-		{
-			pTbldat->dwReceivePoint = READ_DWORD( bstrData );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Receive_Zeny"))
-		{
-			pTbldat->dwReceiveZenny = READ_DWORD( bstrData );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Controller_Tblidx"))
-		{
-			pTbldat->controllerTblidx = READ_DWORD( bstrData );
-		}		
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Battle_Point_Goal"))
-		{
-			pTbldat->dwBattlePointGoal = READ_DWORD( bstrData );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Battle_Point_Get"))
-		{
-			pTbldat->dwBattlePointGet = READ_DWORD( bstrData );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Battle_Point_Charge"))
-		{
-			pTbldat->dwBattlePointCharge = READ_DWORD( bstrData );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Charge_Point_Goal"))
-		{
-			pTbldat->dwChargePointGoal = READ_DWORD( bstrData );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Charge_Time"))
-		{
-			pTbldat->dwChargeTime = READ_DWORD( bstrData );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Charge_Time_Point"))
-		{
-			pTbldat->dwChageTimePoint = READ_DWORD( bstrData );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Rock_Tblidx"))
-		{
-			pTbldat->rockTblidx = READ_DWORD( bstrData );
-		}		
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byInitialDuration = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Ready_Duration") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byReadyDuration = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Battle_Duration") )
+			{
+				CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+				pTbldat->byBattleDuration = READ_BYTE( bstrData, wszFieldNameBuf );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Receive_Point"))
+			{
+				pTbldat->dwReceivePoint = READ_DWORD( bstrData );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Receive_Zeny"))
+			{
+				pTbldat->dwReceiveZenny = READ_DWORD( bstrData );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Controller_Tblidx"))
+			{
+				pTbldat->controllerTblidx = READ_DWORD( bstrData );
+			}		
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Battle_Point_Goal"))
+			{
+				pTbldat->dwBattlePointGoal = READ_DWORD( bstrData );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Battle_Point_Get"))
+			{
+				pTbldat->dwBattlePointGet = READ_DWORD( bstrData );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Battle_Point_Charge"))
+			{
+				pTbldat->dwBattlePointCharge = READ_DWORD( bstrData );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Charge_Point_Goal"))
+			{
+				pTbldat->dwChargePointGoal = READ_DWORD( bstrData );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Charge_Time"))
+			{
+				pTbldat->dwChargeTime = READ_DWORD( bstrData );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Charge_Time_Point"))
+			{
+				pTbldat->dwChageTimePoint = READ_DWORD( bstrData );
+			}
+			else if (0 == WStringCmpLiteral(*pstrDataName, L"Rock_Tblidx"))
+			{
+				pTbldat->rockTblidx = READ_DWORD( bstrData );
+			}
+			else
+			{
 				if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszGetPoint, WCHARLen(g_wszGetPoint)) )
 				{
 					bool bFound = false;

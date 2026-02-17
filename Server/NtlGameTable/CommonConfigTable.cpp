@@ -61,10 +61,10 @@ static std::wstring WCHARToString(const WCHAR* src) {
 	size_t inbytesleft = (srcLen + 1) * sizeof(WCHAR); // Include null terminator
 	size_t outbytesleft = (srcLen + 1) * sizeof(wchar_t);
 	
-	size_t result = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+	size_t iconv_result = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
 	iconv_close(cd);
 	
-	if (result == (size_t)-1)
+	if (iconv_result == (size_t)-1)
 	{
 		// Conversion failed, fallback to ASCII
 		for (size_t i = 0; i < srcLen; i++)
@@ -82,9 +82,9 @@ static std::wstring WCHARToString(const WCHAR* src) {
 		wstr[srcLen] = L'\0';
 	}
 	
-	std::wstring result(wstr);
+	std::wstring wstr_result(wstr);
 	delete[] wstr;
-	return result;
+	return wstr_result;
 #endif
 }
 

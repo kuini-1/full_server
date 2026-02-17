@@ -333,7 +333,9 @@ bool CDirectionLinkTable::CheckData(sDIRECTION_LINK_TBLDAT * pTbldat)
 		BIT_FLAG_TEST( pTbldat->byFuncFlag, DIRECTION_FUNC_FLAG_KEEPUP ) )
 	{
 		_ASSERT( 0 );
-		CTable::CallErrorCallbackFunction( L"file[%s] index[%u] : The value error.( byFuncFlag can't set DIRECTION_FUNC_FLAG_TIMEOUT and DIRECTION_FUNC_FLAG_KEEPUP simultaneously)", m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"file[%s] index[%u] : The value error.( byFuncFlag can't set DIRECTION_FUNC_FLAG_TIMEOUT and DIRECTION_FUNC_FLAG_KEEPUP simultaneously)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		return false;
 	}
 
