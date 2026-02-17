@@ -45,6 +45,9 @@ public:
 
 	const UINT32					GetUniqueHandle() { return m_uniqueHandle; }
 
+	/** Set when posting NETEVENT_FORCE_CLOSE; TakePendingForceClose() used by handler to avoid stale close on reused session. */
+	void							SetPendingForceClose() { m_bPendingForceClose = true; }
+	bool							TakePendingForceClose() { bool v = m_bPendingForceClose; m_bPendingForceClose = false; return v; }
 
 public:
 
@@ -86,6 +89,8 @@ private:
 	int								m_nDecryptionFailureCount;
 
 	UINT32							m_uniqueHandle;
+
+	bool							m_bPendingForceClose;
 
 };
 

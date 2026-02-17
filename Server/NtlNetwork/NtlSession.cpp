@@ -60,6 +60,8 @@ void CNtlSession::Init()
 	m_nDecryptionFailureCount = 0;
 
 	m_uniqueHandle = INVALID_HSESSION;
+
+	m_bPendingForceClose = false;
 }
 
 
@@ -211,7 +213,8 @@ int CNtlSession::ProcessPacket()
 			{
 				m_pNetworkRef->RegisterBlockedIp(GetRemoteAddr().GetAddr());
 				/* Defer close so the IOCP worker can finish CompleteRecv (PostRecv) before we set STATUS_CLOSE.
-				 * Otherwise the worker sees !ACTIVE and closes the session with rc=100045. */
+				 * Mark pending so handler only closes this session (not a reused session with same pointer). */
+				SetPendingForceClose();
 				m_pNetworkRef->PostNetEventMessage((WPARAM)NETEVENT_FORCE_CLOSE, (LPARAM)this);
 				m_nDecryptionFailureCount = 0;
 			}

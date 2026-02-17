@@ -1,0 +1,13 @@
+---
+description: Before changing Linux receive/recv/CompleteRecv/PostRecv, read the fix log to avoid breaking the client connection
+alwaysApply: true
+globs: Server/NtlNetwork/NtlConnection.cpp, Server/NtlNetwork/NtlSession.cpp, Server/NtlNetwork/NtlSessionList.cpp, Server/NtlNetwork/NtlNetworkProcessor.cpp, Server/NtlNetwork/NtlNetwork.cpp, Server/NtlNetwork/NtlSession.h
+---
+# Linux Receive Packet
+
+When changing **receive packet** behavior on Linux (NtlConnection CompleteRecv, PostRecv, RecvPackets; NtlSession ProcessPacket; NETEVENT_FORCE_CLOSE; NtlSessionList ValidCheck PostRecv retry):
+
+1. **Read first:** [docs/LINUX_RECEIVE_PACKET_FIX_LOG.md](docs/LINUX_RECEIVE_PACKET_FIX_LOG.md)
+2. **Do not** repeat approaches listed there as failed or as breaking the connection.
+3. **Preserve** the order in CompleteRecv: push received bytes → PostRecv() → RecvPackets(0). Do not set STATUS_CLOSE before the worker calls PostRecv().
+4. **After** any new fix attempt, append to the log: what was tried, result (worked/failed), and update "What Works" / "What Failed" if needed.

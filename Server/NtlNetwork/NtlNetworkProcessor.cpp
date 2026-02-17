@@ -195,10 +195,14 @@ void CNtlNetworkProcessor::ProcessNetEvent(ULONG_PTR netEvent, CNtlSession *pSes
 
 		case NETEVENT_FORCE_CLOSE:
 		{
-			pSession->SetStatus(CNtlConnection::STATUS_CLOSE);
-			if (pSession->CheckDisconnect(false))
+			/* Only close if this session requested it; skip stale events for reused session pointers. */
+			if (pSession->TakePendingForceClose())
 			{
-				ERR_LOG(LOG_NETWORK, "Session[%X] FORCE_CLOSE: disconnecting. Local Port[%u], Remote IP[%s]", pSession, pSession->GetLocalPort(), pSession->GetRemoteIP());
+				pSession->SetStatus(CNtlConnection::STATUS_CLOSE);
+				if (pSession->CheckDisconnect(false))
+				{
+					ERR_LOG(LOG_NETWORK, "Session[%X] FORCE_CLOSE: disconnecting. Local Port[%u], Remote IP[%s]", pSession, pSession->GetLocalPort(), pSession->GetRemoteIP());
+				}
 			}
 		}
 		break;

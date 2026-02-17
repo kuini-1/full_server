@@ -577,6 +577,7 @@ int CNtlConnection::PostRecv()
 
 	if( false == IsStatus( STATUS_ACTIVE ) )
 	{
+		NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Session not ACTIVE (status=%d), Session=%p, IP=%s - returning SESSION_CLOSED", (int)GetStatus(), this, GetRemoteIP());
 		Disconnect( false );
 		return NTL_ERR_NET_SESSION_CLOSED; //if we do here NTL_SUCCESS then connection will stay forever active..
 	}
