@@ -70,6 +70,15 @@
 /* strtok_s(str, delim, ctx) -> strtok_r */
 #define NTL_STRTOK(str, delim, ctx)  strtok_r((str), (delim), (ctx))
 
+/* WCHARLen: Calculate length of WCHAR* string (WCHAR is unsigned short, not wchar_t on Linux) */
+static inline size_t WCHARLen(const WCHAR* str) {
+    if (!str) return 0;
+    size_t len = 0;
+    while (str[len] != 0)
+        len++;
+    return len;
+}
+
 /* Helper function to convert WCHAR* format string to wchar_t* for swprintf/vswprintf */
 static inline wchar_t* WCHARFormatToWCharT(const WCHAR* fmt) {
     if (!fmt) return NULL;

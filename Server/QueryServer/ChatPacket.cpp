@@ -1201,7 +1201,7 @@ void CChatServerSession::RecvMutePlayerNfy(CNtlPacket * pPacket, CQueryServer * 
 
 		//enter mail
 		GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u, \"%ls\", \"%ls\", %zu,%zu,%u,%u,%u,%u,%u,%u,%u)",
-			charid, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_BASIC, (int)wcslen(req->wchReason), req->wchReason, req->awchGmCharName, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
+			charid, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_BASIC, (int)WCHARLen(req->wchReason), req->wchReason, req->awchGmCharName, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
 	}
 	else // unmute
 	{

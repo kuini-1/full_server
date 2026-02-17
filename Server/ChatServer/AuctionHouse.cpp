@@ -212,7 +212,7 @@ void CAutionhouse::LoadAuctionHouseData(CPlayer* pPlayer, sGT_TENKAICHIDAISIJYOU
 			std::string strSearch;
 			std::string strItemName;
 
-			if (wcslen(req->awchItemName) > 0)
+			if (WCHARLen(req->awchItemName) > 0)
 			{
 				strSearch = ws2s(req->awchItemName);
 				strItemName = ws2s(data->awchItemName);
@@ -225,7 +225,7 @@ void CAutionhouse::LoadAuctionHouseData(CPlayer* pPlayer, sGT_TENKAICHIDAISIJYOU
 				(req->byMinLevel == INVALID_BYTE || req->byMinLevel <= data->byItemLevel) &&
 				(req->byMaxLevel == INVALID_BYTE || req->byMaxLevel >= data->byItemLevel) &&
 				(req->byRank == INVALID_BYTE || req->byRank == data->byRank) &&
-				(wcslen(req->awchItemName) == 0 || strItemName.find(strSearch) != std::string::npos)
+				(WCHARLen(req->awchItemName) == 0 || strItemName.find(strSearch) != std::string::npos)
 			)
 				temp.push_back(it->second);
 		}

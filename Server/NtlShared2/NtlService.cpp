@@ -180,7 +180,7 @@ bool Dbo_IsNameTooShort_Ntl(WCHAR* pwszName)
 
 bool Dbo_IsNameTooShort_CjiKorea(WCHAR* pwszName)
 {
-	if (wcslen(pwszName) < NTL_MIN_SIZE_CHAR_NAME)
+	if (WCHARLen(pwszName) < NTL_MIN_SIZE_CHAR_NAME)
 	{
 		return true;
 	}
