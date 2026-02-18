@@ -525,7 +525,7 @@ void CServerPassiveSession::RecvSystemDisplayText(CNtlPacket * pPacket)
 	sTU_SYSTEM_DISPLAY_TEXT * res = (sTU_SYSTEM_DISPLAY_TEXT *)packet.GetPacketData();
 	res->wOpCode = TU_SYSTEM_DISPLAY_TEXT;
 	res->byDisplayType = req->byDisplayType;
-	res->wMessageLengthInUnicode = (WORD)wcslen(req->wszMessage);
+	res->wMessageLengthInUnicode = (WORD)WCHARLen(req->wszMessage);
 	NTL_SAFE_WCSCPY(res->wszMessage, req->wszMessage);
 	packet.SetPacketLen(sizeof(sTU_SYSTEM_DISPLAY_TEXT));
 	g_pPlayerManager->SendMsgToAll(&packet);
