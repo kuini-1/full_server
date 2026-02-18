@@ -190,7 +190,9 @@ void CDragonballHunt::EndEvent()
 	ERR_LOG(LOG_GENERAL, "<Dragonball Hunt Event> End. Total Dragonballs dropped: %u", m_dwDragonballDropCount);
 
 	CNtlStringW msg;
-	msg.Format(L"Dragonball Hunt Event End! Dragonballs dropped: %u", m_dwDragonballDropCount);
+	WCHAR wszFormatBuf[256];
+	WCharTLiteralToWCHAR(L"Dragonball Hunt Event End! Dragonballs dropped: %u", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+	msg.Format(wszFormatBuf, m_dwDragonballDropCount);
 
 	Init();
 

@@ -184,7 +184,9 @@ void CGameProcessor::StartServerShutdownNotice(BYTE minutes)
 	CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 	sGU_SYSTEM_DISPLAY_TEXT* res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 	res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-	res->wMessageLengthInUnicode = (WORD)msg.Format(L"Server will shutdown in %u minutes!", minutes);
+	WCHAR wszFormatBuf[256];
+	WCharTLiteralToWCHAR(L"Server will shutdown in %u minutes!", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+	res->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf, minutes);
 	res->byDisplayType = 3;
 	NTL_SAFE_WCSCPY(res->awchMessage, msg.c_str());
 	packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));

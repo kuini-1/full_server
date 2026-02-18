@@ -30,7 +30,7 @@ void CScsManager::TestGenerate(CPlayer * pPlayer)
 	sGU_SCS_CHECK_REQ * res = (sGU_SCS_CHECK_REQ *)packet.GetPacketData();
 	res->wOpCode = GU_SCS_CHECK_REQ;
 	res->byCount = 15; //must be 15
-	memset(res->achData, NULL, sizeof(res->achData));
+	memset(res->achData, 0, sizeof(res->achData));
 
 	//std::ifstream image;
 	//image.open("C:\\Users\\Administrator\\Desktop\\DBOG\\resource\\server_data\\scs\\aaa.jpg", std::ios_base::binary);

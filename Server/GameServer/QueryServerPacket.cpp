@@ -2545,7 +2545,7 @@ void CQueryServerSession::RecvCashItemInfo(CNtlPacket * pPacket)
 			packet.SetPacketLen(sizeof(sGU_CASHITEM_INFO));
 			g_pApp->Send(pOwner->GetClientSessionID(), &packet);
 
-			memset(res->aInfo, NULL, sizeof(res->aInfo));
+			memset(res->aInfo, 0, sizeof(res->aInfo));
 			res->byCount = 0;
 		}
 

@@ -567,7 +567,7 @@ void CDojo::EndWar()
 
 	m_dwNextUpdate = 0;
 	m_matchStateInfo.tmNextStepTime = app->GetTime() + (3600 * 24); //block dojo war for next 24h
-	memset(&m_warPoint, NULL, sizeof(m_warPoint));
+	memset(&m_warPoint, 0, sizeof(m_warPoint));
 	m_warPoint.dojoTblidx = GetDojoTblidx();
 	m_attGuildId = INVALID_GUILDID;
 

@@ -29,7 +29,7 @@ bool CCharacterAtt::Create(CCharacter* pChar)
 void CCharacterAtt::Init()
 {
 	m_pOwnerRef = NULL;
-	memset(&m_pAttribute, NULL, sizeof(sAVATAR_ATTRIBUTE));
+	memset(&m_pAttribute, 0, sizeof(sAVATAR_ATTRIBUTE));
 	m_abyBattle_Attribute[0] = m_abyBattle_Attribute[1] = m_abyBattle_Attribute[2] = BATTLE_ATTRIBUTE_NONE;
 
 	m_wSubWeaponPhysicalOffence = 0;

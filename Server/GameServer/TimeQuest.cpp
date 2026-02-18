@@ -63,7 +63,7 @@ void CTimeQuest::Initalize()
 	m_pScript = NULL;
 	memset(memberCharId, INVALID_CHARACTERID, sizeof(memberCharId));
 	m_pTimeQuestTbldat = NULL;
-	memset(&m_ruleInfo, NULL, sizeof(m_ruleInfo));
+	memset(&m_ruleInfo, 0, sizeof(m_ruleInfo));
 }
 
 

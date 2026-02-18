@@ -312,8 +312,8 @@ void CSkill::CastSkill(HOBJECT hAppointTargetHandle, BYTE byApplyTargetCount, HO
 		res->hAppointedTarget = m_hUseAppointedTarget;
 		res->bIsSkillHarmful = Dbo_IsHarmfulEffectType(m_pSkillDataRef->bySkill_Active_Type) && m_pSkillDataRef->byApply_Target != DBO_SKILL_APPLY_TARGET_PARTY;
 		
-		memset(res->aSkillResult, NULL, sizeof(res->aSkillResult));
-		memset(&m_actionSkill, NULL, sizeof(m_actionSkill));
+		memset(res->aSkillResult, 0, sizeof(res->aSkillResult));
+		memset(&m_actionSkill, 0, sizeof(m_actionSkill));
 
 		m_actionSkill.bCanTargetRecoverOnHit = true;
 		//NTL_PRINT(PRINT_APP,"CastSkill: m_byApplyTargetCount %u, m_hUseAppointedTarget %u, byApplyTargetCount %u, res->bIsSkillHarmful %i, bySkill_Active_Type %u",

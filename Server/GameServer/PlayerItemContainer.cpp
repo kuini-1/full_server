@@ -15,7 +15,7 @@
 CPlayerItemContainer::CPlayerItemContainer()
 {
 	m_map_CharItems.clear();
-	memset(m_arr_ActiveBags, NULL, sizeof(m_arr_ActiveBags));
+	memset(m_arr_ActiveBags, 0, sizeof(m_arr_ActiveBags));
 
 	for (int i = 0; i < EQUIP_SLOT_TYPE_COUNT; i++)
 		UnsetItemBrief(i);
@@ -806,11 +806,11 @@ void CPlayerItemContainer::CopyItemAttributesTo(CCharacterAtt* pCharAtt)
 
 	int nSetEarringCount = 0;
 	sITEM_TBLDAT* setEarringIdx[NTL_SET_ITEM_SEMI_COUNT]; //semi because we can only have max 2
-	memset(setEarringIdx, NULL, sizeof(setEarringIdx));
+	memset(setEarringIdx, 0, sizeof(setEarringIdx));
 
 	int nSetRingCount = 0;
 	sITEM_TBLDAT* setRingIdx[NTL_SET_ITEM_SEMI_COUNT]; //semi because we can only have max 2
-	memset(setRingIdx, NULL, sizeof(setRingIdx));
+	memset(setRingIdx, 0, sizeof(setRingIdx));
 
 	//	for (TItemsMap::iterator it = m_map_CharItems.begin(); it != m_map_CharItems.end(); it++)
 	for (BYTE a = 0; a < EQUIP_SLOT_TYPE_COUNT; a++)

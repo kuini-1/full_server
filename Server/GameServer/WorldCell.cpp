@@ -25,7 +25,7 @@ void CWorldCell::Init()
 	m_vEnd.Reset();
 	m_pParent = NULL;
 	m_pWorldZoneRef = NULL;
-	memset(m_sibling, NULL, sizeof(m_sibling));
+	memset(m_sibling, 0, sizeof(m_sibling));
 	m_dwNearbyPlayerCount = 0;
 }
 

@@ -60,7 +60,7 @@ bool CSvrScrFormulaExpress::Create()
 	m_mapStr2Func.insert(std::make_pair("RandomRange", funcRand));
 	m_mapFuncInfo.insert(std::make_pair(SSD_FORMULA_FUNCTION_RANDOMRANGE, funcRand));
 
-	memset(m_szMsg, NULL, sizeof(m_szMsg));
+	memset(m_szMsg, 0, sizeof(m_szMsg));
 
 	return true;
 }

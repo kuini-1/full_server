@@ -83,7 +83,9 @@ void CExpEvent::StartEvent(bool bStartByCommand/* = true*/)
 	CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 	sGU_SYSTEM_DISPLAY_TEXT * res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 	res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-	res->wMessageLengthInUnicode = (WORD)msg.Format(L"Weekend EXP Event Started! Bonus Exp = %i Percent", EXP_BONUS);
+	WCHAR wszFormatBuf[256];
+	WCharTLiteralToWCHAR(L"Weekend EXP Event Started! Bonus Exp = %i Percent", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+	res->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf, EXP_BONUS);
 	res->byDisplayType = SERVER_TEXT_EMERGENCY;
 	NTL_SAFE_WCSCPY(res->awchMessage, msg.c_str());
 	packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
@@ -125,7 +127,9 @@ void CExpEvent::LoadEvent(CGameObject * pChar)
 	sGU_SYSTEM_DISPLAY_TEXT * resMsg = (sGU_SYSTEM_DISPLAY_TEXT *)packetMsg.GetPacketData();
 	resMsg->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
 	resMsg->byDisplayType = SERVER_TEXT_EMERGENCY;
-	resMsg->wMessageLengthInUnicode = (WORD)msg.Format(L"Weekend EXP Event is Live! Bonus Exp = %i Percent", EXP_BONUS);
+	WCHAR wszFormatBuf[256];
+	WCharTLiteralToWCHAR(L"Weekend EXP Event is Live! Bonus Exp = %i Percent", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+	resMsg->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf, EXP_BONUS);
 	NTL_SAFE_WCSCPY(resMsg->awchMessage, msg.c_str());
 	pChar->SendPacket(&packetMsg);
 }

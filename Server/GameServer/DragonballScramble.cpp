@@ -35,7 +35,7 @@ void CDragonballScramble::Init()
 	m_bOnOff = false;
 	m_timeStart = INVALID_DBOTIME;
 
-	memset(m_arrBalls, NULL, sizeof(m_arrBalls));
+	memset(m_arrBalls, 0, sizeof(m_arrBalls));
 	m_mapPlayers.clear();
 }
 

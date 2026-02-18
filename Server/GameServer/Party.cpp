@@ -542,7 +542,7 @@ void CParty::LeaveParty(CPlayer* player)
 				{
 					if(ee+1 <= NTL_MAX_MEMBER_IN_PARTY)
 					{
-						memset(&m_memberInfo[ee + 1], NULL, sizeof(sPARTY_MEMBER_INFO));
+						memset(&m_memberInfo[ee + 1], 0, sizeof(sPARTY_MEMBER_INFO));
 						m_memberInfo[ee + 1].hHandle = INVALID_HOBJECT;
 					}
 				}
@@ -641,7 +641,7 @@ void CParty::SetMemberInfo(CPlayer* pPlayer, int nMemberCount)
 	}
 	else
 	{
-		memset(&m_memberInfo[nMemberCount], NULL, sizeof(sPARTY_MEMBER_INFO));
+		memset(&m_memberInfo[nMemberCount], 0, sizeof(sPARTY_MEMBER_INFO));
 		m_memberInfo[nMemberCount].hHandle = INVALID_HOBJECT;
 	}
 }
@@ -736,7 +736,7 @@ void CParty::KickPartyMember(CPlayer* kickedplayer)
 				{
 					if(ee+1 <= NTL_MAX_MEMBER_IN_PARTY)
 					{
-						memset(&m_memberInfo[ee + 1], NULL, sizeof(sPARTY_MEMBER_INFO));
+						memset(&m_memberInfo[ee + 1], 0, sizeof(sPARTY_MEMBER_INFO));
 						m_memberInfo[ee + 1].hHandle = INVALID_HOBJECT;
 					}
 				}
@@ -1568,7 +1568,7 @@ void CParty::ResetRankBattleInfo()
 	m_rankBattleInfo.rankBattleTblidx = INVALID_TBLIDX;
 	m_rankBattleInfo.hObject = INVALID_HOBJECT;
 	m_rankBattleInfo.byMemberCount = 0;
-	memset(m_rankBattleInfo.asMember, NULL, sizeof(m_rankBattleInfo.asMember));
+	memset(m_rankBattleInfo.asMember, 0, sizeof(m_rankBattleInfo.asMember));
 }
 
 int CParty::GetPartyLevel()

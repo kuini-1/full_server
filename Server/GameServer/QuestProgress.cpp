@@ -50,7 +50,7 @@ void CQuestProgress::Init()
 		m_QuestProgressInfo.uData.sQInfoV0.sETSlot.asExceptTimer[i].uiRemainTime = 0;
 	}
 
-	memset(m_pQuestTimer, NULL, sizeof(m_pQuestTimer));
+	memset(m_pQuestTimer, 0, sizeof(m_pQuestTimer));
 
 	m_bFailOnDeath = false;
 	m_bFailOnPlayerLogout = false;

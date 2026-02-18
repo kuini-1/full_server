@@ -558,10 +558,10 @@ void CPlayer::Initialize()
 	player_data.sLocalize.pcProfileCT.timeP = 0;
 
 	memset(&player_data.sMark, 0xffffffff, sizeof(player_data.sMark));
-	memset(&player_data.sMixData, NULL, sizeof(player_data.sMixData));
-	memset(&player_data.sPcShape, NULL, sizeof(player_data.sPcShape));
-	memset(&player_data.vBindDir, NULL, sizeof(player_data.vBindDir));
-	memset(&player_data.vBindLoc, NULL, sizeof(player_data.vBindLoc));
+	memset(&player_data.sMixData, 0, sizeof(player_data.sMixData));
+	memset(&player_data.sPcShape, 0, sizeof(player_data.sPcShape));
+	memset(&player_data.vBindDir, 0, sizeof(player_data.vBindDir));
+	memset(&player_data.vBindLoc, 0, sizeof(player_data.vBindLoc));
 
 	player_data.bCombatMode = false;
 
@@ -573,7 +573,7 @@ void CPlayer::Initialize()
 	dwLastMailLoad = 0;
 	m_dwMailSentTime = 0;
 
-	memset(&warFogFlag, NULL, sizeof(warFogFlag));
+	memset(&warFogFlag, 0, sizeof(warFogFlag));
 
 	ZeroMemory(TitleIndexFlag, NTL_MAX_CHAR_TITLE_COUNT_IN_FLAG);
 
@@ -3562,7 +3562,8 @@ void CPlayer::CreatePrivateShop()
 			packet2.SetPacketLen(sizeof(sGU_PRIVATESHOP_CREATE_NFY));
 			Broadcast(&packet2, this);
 
-			SendCharStatePrivateShop(false, PRIVATESHOP_STATE_NULL, L"");
+			WCHAR wszEmptyBuf[1] = { 0 };
+			SendCharStatePrivateShop(false, PRIVATESHOP_STATE_NULL, wszEmptyBuf);
 
 			return;
 		}

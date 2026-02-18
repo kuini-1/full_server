@@ -42,8 +42,8 @@ CItem::CItem()
 	item_data.itemId = 0;
 	ZeroMemory(item_data.awchMaker, NTL_MAX_SIZE_CHAR_NAME + 1);
 	m_pOwner = NULL;
-	memset(&item_data, NULL, sizeof(sITEM_DATA));
-	memset(&m_pProto, NULL, sizeof(sITEM_TBLDAT));
+	memset(&item_data, 0, sizeof(sITEM_DATA));
+	memset(&m_pProto, 0, sizeof(sITEM_TBLDAT));
 
 	item_data.itemId = INVALID_ITEMID;
 
@@ -1271,7 +1271,7 @@ void CItem::Cast()
 									bool bRewardReceived = false;
 									int nCount = 0;
 									int nReward[NTL_QUEST_PROBABILITY_MAX_COUNT];
-									memset(nReward, NULL, sizeof(nReward));
+									memset(nReward, 0, sizeof(nReward));
 
 									REPEAT_LOOP2:
 									for (int c = 0; c < qProbTbl->byCount; c++)

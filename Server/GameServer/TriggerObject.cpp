@@ -986,7 +986,7 @@ WORD CTriggerObject::ProcessTsEntity(CNtlTSEntity * pEntity, CPlayer* pPlayer)
 				bool bRewardReceived = false;
 				int nCount = 0;
 				int nReward[NTL_QUEST_PROBABILITY_MAX_COUNT];
-				memset(nReward, NULL, sizeof(nReward));
+				memset(nReward, 0, sizeof(nReward));
 
 			LOOP_REPEAT:
 				for (int c = 0; c < pProbabilityData->byCount; c++)

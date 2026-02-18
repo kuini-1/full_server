@@ -839,7 +839,9 @@ ACMD(do_playercount)
 	sGU_SYSTEM_DISPLAY_TEXT* resMsg = (sGU_SYSTEM_DISPLAY_TEXT*)packetMsg.GetPacketData();
 	resMsg->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
 	resMsg->byDisplayType = SERVER_TEXT_SYSTEM;
-	resMsg->wMessageLengthInUnicode = (WORD)msg.Format(L"%d Players Online", g_pObjectManager->GetPlayerCount());
+	WCHAR wszFormatBuf[256];
+	WCharTLiteralToWCHAR(L"%d Players Online", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+	resMsg->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf, g_pObjectManager->GetPlayerCount());
 	NTL_SAFE_WCSCPY(resMsg->awchMessage, msg.c_str());
 	pPlayer->SendPacket(&packetMsg);
 }
@@ -3391,7 +3393,9 @@ ACMD(do_br)
 		CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 		sGU_SYSTEM_DISPLAY_TEXT* res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 		res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-		res->wMessageLengthInUnicode = (WORD)msg.Format(L"Battle Royale system error: Singleton not initialized!");
+		WCHAR wszFormatBuf[256];
+		WCharTLiteralToWCHAR(L"Battle Royale system error: Singleton not initialized!", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		res->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf);
 		res->byDisplayType = SERVER_TEXT_SYSTEM;
 		NTL_SAFE_WCSCPY(res->awchMessage, msg.c_str());
 		packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
@@ -3405,7 +3409,9 @@ ACMD(do_br)
 		CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 		sGU_SYSTEM_DISPLAY_TEXT* res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 		res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-		res->wMessageLengthInUnicode = (WORD)msg.Format(L"Battle Royale event is already active!");
+		WCHAR wszFormatBuf[256];
+		WCharTLiteralToWCHAR(L"Battle Royale event is already active!", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		res->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf);
 		res->byDisplayType = SERVER_TEXT_SYSTEM;
 		NTL_SAFE_WCSCPY(res->awchMessage, msg.c_str());
 		packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
@@ -3420,7 +3426,9 @@ ACMD(do_br)
 	CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 	sGU_SYSTEM_DISPLAY_TEXT* res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 	res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-	res->wMessageLengthInUnicode = (WORD)msg.Format(L"Battle Royale event started!");
+	WCHAR wszFormatBuf[256];
+	WCharTLiteralToWCHAR(L"Battle Royale event started!", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+	res->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf);
 	res->byDisplayType = SERVER_TEXT_SYSTEM;
 	NTL_SAFE_WCSCPY(res->awchMessage, msg.c_str());
 	packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));

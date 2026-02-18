@@ -30,7 +30,7 @@ void CItemPet::Initialize()
 	m_npcTblidx = INVALID_TBLIDX;
 	m_bySourceType = DBO_OBJECT_SOURCE_ITEM;
 
-	memset(m_dwSkillCooldown, NULL, sizeof(m_dwSkillCooldown));
+	memset(m_dwSkillCooldown, 0, sizeof(m_dwSkillCooldown));
 
 	m_bCanLoot = false;
 	m_bCanRemoteSell = false;

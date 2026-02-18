@@ -17,7 +17,7 @@ CSvrScrFormulaDeclare::~CSvrScrFormulaDeclare()
 
 bool CSvrScrFormulaDeclare::Create()
 {
-	memset(m_szMsg, NULL, sizeof(m_szMsg));
+	memset(m_szMsg, 0, sizeof(m_szMsg));
 
 	m_mapStr2Var.insert(std::make_pair("int", SSD_VARIABLE_INTEGER));
 	m_mapStr2Var.insert(std::make_pair("float", SSD_VARIABLE_FLOAT));

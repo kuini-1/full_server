@@ -70,7 +70,7 @@ bool CBuffManager::Create(CCharacter *pOwnerRef)
 void CBuffManager::Destroy()
 {
 	m_pOwnerRef = NULL;
-	memset(m_apBuff, NULL, sizeof(m_apBuff));
+	memset(m_apBuff, 0, sizeof(m_apBuff));
 
 	//CLEAR BLESS BUFF
 	for (unsigned int pos = m_blessBuffList.Begin();
@@ -146,7 +146,7 @@ void CBuffManager::Destroy()
 void CBuffManager::Init()
 {
 	m_pOwnerRef = NULL;
-	memset(m_apBuff, NULL, sizeof(m_apBuff));
+	memset(m_apBuff, 0, sizeof(m_apBuff));
 }
 
 

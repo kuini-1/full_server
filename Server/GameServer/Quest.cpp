@@ -29,7 +29,7 @@ CQuest::CQuest()
 	setQuestItems.clear();
 	m_pkOwner = NULL;
 
-	memset(m_stCQInfo.abyQCInfo, NULL, sizeof(m_stCQInfo.abyQCInfo));
+	memset(m_stCQInfo.abyQCInfo, 0, sizeof(m_stCQInfo.abyQCInfo));
 
 	m_byLastSlot = 0;
 	m_vErasedDungeonQuestIDs.clear();

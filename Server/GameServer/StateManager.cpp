@@ -336,11 +336,11 @@ void CStateManager::Init()
 	m_qwConditionFlag = 0;
 	m_eAirState = AIR_STATE_OFF;
 
-	memset(m_apConditionState, NULL, sizeof(m_apConditionState));
+	memset(m_apConditionState, 0, sizeof(m_apConditionState));
 	
-	memset(m_apStateInstance, NULL, sizeof(m_apStateInstance));
-	memset(m_apAspectStateInstance, NULL, sizeof(m_apAspectStateInstance));
-	memset(m_apConditionStateInstance, NULL, sizeof(m_apConditionStateInstance));
+	memset(m_apStateInstance, 0, sizeof(m_apStateInstance));
+	memset(m_apAspectStateInstance, 0, sizeof(m_apAspectStateInstance));
+	memset(m_apConditionStateInstance, 0, sizeof(m_apConditionStateInstance));
 }
 
 void CStateManager::Destroy()

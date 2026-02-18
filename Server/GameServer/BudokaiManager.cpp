@@ -103,7 +103,7 @@ void CBudokaiManager::Init()
 	m_bPartyAdultBudokaiBegan = false;
 	m_bPartyJuniorBudokaiBegan = false;
 
-	memset(&m_stateInfo, NULL, sizeof(m_stateInfo));
+	memset(&m_stateInfo, 0, sizeof(m_stateInfo));
 	
 	m_matchStateInfo[BUDOKAI_MATCH_TYPE_INDIVIDIAUL].byState = INVALID_BUDOKAI_MATCHSTATE;
 	m_matchStateInfo[BUDOKAI_MATCH_TYPE_INDIVIDIAUL].tmNextStepTime = 0;
@@ -714,7 +714,7 @@ void CBudokaiManager::CloseBudokai()
 
 
 
-	memset(&m_stateInfo, NULL, sizeof(m_stateInfo));
+	memset(&m_stateInfo, 0, sizeof(m_stateInfo));
 
 	m_matchStateInfo[BUDOKAI_MATCH_TYPE_INDIVIDIAUL].byState = INVALID_BUDOKAI_MATCHSTATE;
 	m_matchStateInfo[BUDOKAI_MATCH_TYPE_INDIVIDIAUL].tmNextStepTime = 0;
@@ -5655,7 +5655,7 @@ void CBudokaiManager::FinalMatchAwarding(sTOURNAMENT_MATCH * match)
 					rChat->sData.sBudokaiRecord.byBudokaiType = m_type;
 					rChat->sData.sBudokaiRecord.byMatchType = m_matchType;
 					rChat->sData.sBudokaiRecord.byMemberCount = 1;
-					memset(rChat->sData.sBudokaiRecord.awszMember, NULL, sizeof(rChat->sData.sBudokaiRecord.awszMember));
+					memset(rChat->sData.sBudokaiRecord.awszMember, 0, sizeof(rChat->sData.sBudokaiRecord.awszMember));
 					NTL_SAFE_WCSCPY(rChat->sData.sBudokaiRecord.awszMember[0], pPlayer->GetCharName());
 					pChat.SetPacketLen(sizeof(sGT_BROADCASTING_SYSTEM_NFY));
 					app->SendTo(app->GetChatServerSession(), &pChat);
@@ -5764,7 +5764,7 @@ void CBudokaiManager::FinalMatchAwarding(sTOURNAMENT_MATCH * match)
 				rChat->sData.sBudokaiRecord.byBudokaiType = m_type;
 				rChat->sData.sBudokaiRecord.byMatchType = m_matchType;
 				rChat->sData.sBudokaiRecord.byMemberCount = 0;
-				memset(rChat->sData.sBudokaiRecord.awszMember, NULL, sizeof(rChat->sData.sBudokaiRecord.awszMember));
+				memset(rChat->sData.sBudokaiRecord.awszMember, 0, sizeof(rChat->sData.sBudokaiRecord.awszMember));
 
 				for (BYTE byMemberCount = 0; byMemberCount < partyInfo->byMemberCount; byMemberCount++)
 				{

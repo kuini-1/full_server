@@ -17,7 +17,7 @@ const DWORD TIME_DELETE_DELAY = 1000;
 CObjectManager::CObjectManager()
 {
 	uiSerialId = MAX_GAME_OBJECT + 1;
-	memset(m_objectArray, NULL, sizeof(m_objectArray));
+	memset(m_objectArray, 0, sizeof(m_objectArray));
 	m_dwLpEpEventId = 100;
 }
 
