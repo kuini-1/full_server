@@ -262,7 +262,9 @@ bool CNeighborServerInfoManager::RefreshServerFarmInfo(sDBO_GAME_SERVER_FARM_INF
 	printf("Add new Server farm. ID %u \n", pServerFarmInfoRef->serverFarmId);
 
 	//escapeTarget.c_str()
-	WCHAR* name = L"??";
+	WCHAR wszNameBuf[8];
+	WCharTLiteralToWCHAR(L"??", wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+	WCHAR* name = wszNameBuf;
 	char* target = Ntl_WC2MB(name);
 	std::string charname = target;
 	//std::string escapeTarget = GetCharDB.EscapeString(target);
@@ -1050,7 +1052,7 @@ bool CNeighborServerInfoManager::GenerateAuthKey(void* pvAuthKey, ACCOUNTID acci
 		m_mapAuthKeys.erase(it);
 	}
 
-	memset(pvAuthKey, NULL, sizeof(pvAuthKey));
+	memset(pvAuthKey, 0, sizeof(pvAuthKey));
 	memcpy(pvAuthKey, AUTHKEY_KEY, NTL_MAX_SIZE_AUTH_KEY);
 
 	if (CreateAuthKey(pvAuthKey, NTL_MAX_SIZE_AUTH_KEY) == false)
@@ -1066,7 +1068,7 @@ bool CNeighborServerInfoManager::GenerateAuthKey(void* pvAuthKey, ACCOUNTID acci
 
 void CNeighborServerInfoManager::GenerateAuthKey(BYTE* pvAuthKey)
 {
-	memset(pvAuthKey, NULL, sizeof(pvAuthKey));
+	memset(pvAuthKey, 0, sizeof(pvAuthKey));
 	memcpy(pvAuthKey, AUTHKEY_KEY, NTL_MAX_SIZE_AUTH_KEY);
 
 	CreateAuthKey(pvAuthKey, NTL_MAX_SIZE_AUTH_KEY);
