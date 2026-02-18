@@ -995,7 +995,7 @@ void CChatServerSession::RecvAuctionHouseSellCancelReq(CNtlPacket * pPacket, CQu
 		{
 			if (sTENKAICHIDAISIJYOU_DATA* pData = g_pAH->GetItem(req->nItem))
 			{
-				int mailtextsize = (int)wcslen(req->wchText);
+				int mailtextsize = (int)WCHARLen(req->wchText);
 				DBOTIME createtime = time(NULL);
 				DBOTIME endtime = createtime + (10 * 86400); // 10 days
 				SYSTEMTIME ti;
@@ -1054,8 +1054,8 @@ void CChatServerSession::RecvAuctionHouseBuyReq(CNtlPacket * pPacket, CQueryServ
 				SYSTEMTIME ti;
 				GetLocalTime(&ti);
 
-				int buyTextSize = (int)wcslen(req->wchBuyText);
-				int sellTextSize = (int)wcslen(req->wchSellText);
+				int buyTextSize = (int)WCHARLen(req->wchBuyText);
+				int sellTextSize = (int)WCHARLen(req->wchSellText);
 
 				//enter email to database <buyer>
 				GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, itemId, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%zu,'[DBOG]System',%zu,%zu,%u,%u,%u,%u,%u,%u,%u)",
@@ -1110,7 +1110,7 @@ void CChatServerSession::RecvAuctionHouseServerDataReq(CNtlPacket * pPacket, CQu
 			app->Send(GetHandle(), &packet);
 
 			res->byCurPacketCount = 0;
-			memset(res->sData, NULL, sizeof(res->sData));
+			memset(res->sData, 0, sizeof(res->sData));
 		}
 
 	}
@@ -1147,7 +1147,7 @@ void CChatServerSession::RecvAuctionHousePeriodEndReq(CNtlPacket * pPacket, CQue
 
 		//enter email to database
 		GetCharDB.Execute("INSERT INTO mail (CharID, SenderType, MailType, TextSize, Text, itemId, FromName, CreateTime, EndTime, RemainDay,year,month,day,hour,minute,second) VALUES (%u,%u,%u,%u,\"%ls\",%zu,'[DBOG]System',%zu,%zu,%u,%u,%u,%u,%u,%u,%u)",
-			pData->charId, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_ITEM, (int)wcslen(req->wchText), req->wchText, pData->itemId, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
+			pData->charId, eMAIL_SENDER_TYPE_SYSTEM, eMAIL_TYPE_ITEM, (int)WCHARLen(req->wchText), req->wchText, pData->itemId, createtime, endtime, 10, ti.wYear, ti.wMonth, ti.wDay, ti.wHour, ti.wMinute, ti.wSecond);
 
 
 		//delete & remove from AH & DB

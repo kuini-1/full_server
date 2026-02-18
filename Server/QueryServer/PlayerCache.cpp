@@ -226,7 +226,7 @@ void CAccountCache::SendCashshopLoadRes(CHARACTERID charId, HOBJECT hHandle)
 			app->Send(GetSession(), &packet);
 
 			res->byCount = 0;
-			memset(res->aInfo, NULL, sizeof(res->aInfo));
+			memset(res->aInfo, 0, sizeof(res->aInfo));
 		}
 	}
 }
