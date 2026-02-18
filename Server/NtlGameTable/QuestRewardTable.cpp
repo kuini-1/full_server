@@ -203,7 +203,7 @@ bool CQuestRewardTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Type_2"))
 		{
-			pQuestReward->arsSelRwd[2].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pQuestReward->arsSelRwd[2].byRewardType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Idx_2"))
 		{
