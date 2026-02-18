@@ -203,8 +203,15 @@ bool CTextServerTable::LoadFromBinary(CNtlSerializer& serializer, bool bReload, 
 		serializer.Out(pwszText, wTextLength * sizeof(WCHAR));
 		pwszText[wTextLength] = L'\0';
 
-		pTableData->wstrText = pwszText;
-
+		/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+		{
+			size_t len = WCHARLen(pwszText);
+			wchar_t* wbuf = new wchar_t[len + 1];
+			for (size_t i = 0; i <= len; i++)
+				wbuf[i] = (wchar_t)pwszText[i];
+			pTableData->wstrText = std::wstring(wbuf);
+			delete[] wbuf;
+		}
 		delete [] pwszText;
 
 		//  [4/26/2008 zeroera] : ???? : ????????? Load?? ??????? File Loading???? ???????

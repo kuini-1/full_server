@@ -18,6 +18,11 @@
 #include "NtlStringHandler.h"
 #include <cstdarg>
 
+/* Helper function to convert format string literal to WCHAR* buffer */
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 Dbo_TableErrorCallback CTable::m_pfnErrorCallback = NULL;
 void* CTable::m_pvErrorCallbackArg = NULL;
 
@@ -438,7 +443,9 @@ char CTable::READ_CHAR(BSTR bstr, const WCHAR* pwszFieldName, BYTE chInvalidValu
 	INT64 nTemp = _wtoi64(bstr);
 	if( nTemp < -128 || nTemp > 127)
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = char, Value = %s)", m_wszXmlFileName, pwszFieldName, bstr);
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = char, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pwszFieldName, bstr);
 		return chInvalidValue;
 	}
 
@@ -460,7 +467,9 @@ BYTE CTable::READ_BYTE(BSTR bstr, const WCHAR* pwszFieldName, BYTE byInvalidValu
 	DWORD dwTemp = (DWORD)_wtoi64(bstr);
 	if( dwTemp >= INVALID_BYTE )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = BYTE, Value = %s)", m_wszXmlFileName, pwszFieldName, bstr);
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = BYTE, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pwszFieldName, bstr);
 		return byInvalidValue;
 	}
 
@@ -482,7 +491,9 @@ WORD CTable::READ_WORD(BSTR bstr, const WCHAR* pwszFieldName, WORD wInvalidValue
 	DWORD dwTemp = (DWORD)_wtoi64(bstr);
 	if( dwTemp >= INVALID_WORD )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = WORD, Value = %s)", m_wszXmlFileName, pwszFieldName, bstr);
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = WORD, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pwszFieldName, bstr);
 		return wInvalidValue;
 	}
 
@@ -504,7 +515,9 @@ float CTable::READ_FLOAT(BSTR bstr, const WCHAR* pwszFieldName, float fInvalidVa
 	double fTemp = _wtof(bstr);
 	if( fTemp >= INVALID_FLOAT )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = float, Value = %s)", m_wszXmlFileName, pwszFieldName, bstr);
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = float, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pwszFieldName, bstr);
 		return fInvalidValue;
 	}
 
@@ -525,7 +538,9 @@ DOUBLE CTable::READ_DOUBLE(BSTR bstr, const WCHAR* pwszFieldName, double dInvali
 	double dTemp = _wtof(bstr);
 	if( dTemp >= INVALID_DOUBLE )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = double, Value = %s)", m_wszXmlFileName, pwszFieldName, bstr);
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = double, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pwszFieldName, bstr);
 		return dInvalidValue;
 	}
 
@@ -546,7 +561,9 @@ bool CTable::READ_BOOL(BSTR bstr, const WCHAR* pwszFieldName, bool bInvalidlValu
 	DWORD dwTemp = (DWORD)_wtoi64(bstr);
 	if( dwTemp > (DWORD) true )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = bool, Value = %s)", m_wszXmlFileName, pwszFieldName, bstr);
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\n[Error] : The value exceeds the max. value of the field!(Field Name = %s, Field Type = bool, Value = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pwszFieldName, bstr);
 		return bInvalidlValue;
 	}
 
@@ -654,8 +671,10 @@ bool CTable::READ_STRING(BSTR bstr, char* pszBuffer, DWORD dwBufferLength, const
 		{
 			if (NULL != m_pfnErrorCallback)
 			{
-				CallErrorCallbackFunction(L"[File] : %s\n[Error] : The string[%s]'s length[%u] is bigger than the max. length[%u]",
-						m_wszXmlFileName, bstr, (DWORD)nRequiredBytes, dwBufferLength - 1);
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : The string[%s]'s length[%u] is bigger than the max. length[%u]",
+						wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, bstr, (DWORD)nRequiredBytes, dwBufferLength - 1);
 			}
 
 			return false;
@@ -694,12 +713,15 @@ bool CTable::READ_STRINGW(BSTR bstr, WCHAR* pwszBuffer, DWORD dwBufferLength, co
 
 	if (false == CheckInvalidValue(bstr))
 	{
-		if (dwBufferLength < (wcslen(bstr) + 1))
+		size_t bstrLen = WCHARLen(bstr);
+		if (dwBufferLength < (bstrLen + 1))
 		{
 			if (NULL != m_pfnErrorCallback)
 			{
-				CallErrorCallbackFunction(L"[File] : %s\n[Error] : The string[%s]'s length[%u] is bigger than the max. length[%u]",
-						m_wszXmlFileName, bstr, wcslen(bstr), dwBufferLength - 1);
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : The string[%s]'s length[%u] is bigger than the max. length[%u]",
+						wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, bstr, (unsigned)bstrLen, dwBufferLength - 1);
 			}
 
 			return false;

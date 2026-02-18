@@ -222,8 +222,27 @@ static inline int _wtoi(const WCHAR* s) { return (int)_wtoi64_WCHAR(s); }
 #ifndef _wtoi64
 static inline __int64 _wtoi64(const wchar_t* s) { return (__int64)wcstoll(s, NULL, 10); }
 #endif
+#if !defined(_WIN32)
+/* Linux: BSTR/WCHAR* overload so _wtoi64(bstr) works */
+static inline __int64 _wtoi64(const WCHAR* s) { return (__int64)_wtoi64_WCHAR(s); }
+#endif
 #ifndef _wtof
 static inline double _wtof(const wchar_t* s) { return wcstod(s, NULL); }
+#endif
+#if !defined(_WIN32)
+/* Linux: BSTR/WCHAR* overload so _wtof(bstr) works */
+static inline double _wtof(const WCHAR* s) {
+	if (!s) return 0.0;
+	/* Convert WCHAR* to wchar_t* for wcstod */
+	wchar_t buf[64];
+	size_t i = 0;
+	while (s[i] != 0 && i < 63 && s[i] < 128) {
+		buf[i] = (wchar_t)s[i];
+		i++;
+	}
+	buf[i] = L'\0';
+	return wcstod(buf, NULL);
+}
 #endif
 #ifndef _atoi64
 static inline __int64 _atoi64(const char* s) { return (__int64)strtoll(s, NULL, 10); }
