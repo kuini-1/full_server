@@ -173,7 +173,9 @@ void CDragonballScramble::StartEvent(bool bStartByCommand/* = true*/)
 	res->wSeasonState = eSTART;
 	g_pObjectManager->SendPacketToAll(&packet);
 
-	WCHAR* wMsg = L"Dragonball Scramble Event Started!";
+	WCHAR wszMsgBuf[256];
+	WCharTLiteralToWCHAR(L"Dragonball Scramble Event Started!", wszMsgBuf, sizeof(wszMsgBuf)/sizeof(WCHAR));
+	WCHAR* wMsg = wszMsgBuf;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 

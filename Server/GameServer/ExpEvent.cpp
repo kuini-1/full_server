@@ -102,14 +102,16 @@ void CExpEvent::EndEvent()
 
 	ERR_LOG(LOG_GENERAL, "<Weekend EXP Event> End.");
 
-	WCHAR* wMsg = L"Weekend EXP Event End!";
+	WCHAR wszMsgBuf[256];
+	WCharTLiteralToWCHAR(L"Weekend EXP Event End!", wszMsgBuf, sizeof(wszMsgBuf)/sizeof(WCHAR));
+	WCHAR* wMsg = wszMsgBuf;
 
 	Init();
 
 	CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 	sGU_SYSTEM_DISPLAY_TEXT * res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 	res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-	res->wMessageLengthInUnicode = (WORD)wcslen(wMsg);
+	res->wMessageLengthInUnicode = (WORD)WCHARLen(wMsg);
 	res->byDisplayType = SERVER_TEXT_EMERGENCY;
 	NTL_SAFE_WCSCPY(res->awchMessage, wMsg);
 	packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));

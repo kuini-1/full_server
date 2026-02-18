@@ -167,7 +167,9 @@ void CDragonballHunt::StartEvent(bool bStartByCommand/* = true*/)
 	res->nEndTime = m_timeEnd;
 	g_pObjectManager->SendPacketToAll(&packet);
 
-	WCHAR* wMsg = L"Dragonball Hunt Event Started!";
+	WCHAR wszMsgBuf[256];
+	WCharTLiteralToWCHAR(L"Dragonball Hunt Event Started!", wszMsgBuf, sizeof(wszMsgBuf)/sizeof(WCHAR));
+	WCHAR* wMsg = wszMsgBuf;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 

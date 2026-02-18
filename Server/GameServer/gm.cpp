@@ -3059,12 +3059,14 @@ ACMD(do_exp)
 	{
 		pPlayer->SetExpReceiveDisabled(true);
 
-		WCHAR* msg = L"Receive EXP has been disabled";
+		WCHAR wszMsgBuf[256];
+		WCharTLiteralToWCHAR(L"Receive EXP has been disabled", wszMsgBuf, sizeof(wszMsgBuf)/sizeof(WCHAR));
+		WCHAR* msg = wszMsgBuf;
 
 		CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 		sGU_SYSTEM_DISPLAY_TEXT * res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 		res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-		res->wMessageLengthInUnicode = wcslen(msg);
+		res->wMessageLengthInUnicode = WCHARLen(msg);
 		res->byDisplayType = SERVER_TEXT_SYSTEM;
 		NTL_SAFE_WCSCPY(res->awchMessage, msg);
 		packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
@@ -3074,12 +3076,14 @@ ACMD(do_exp)
 	{
 		pPlayer->SetExpReceiveDisabled(false);
 
-		WCHAR* msg = L"Receive EXP has been enabled";
+		WCHAR wszMsgBuf[256];
+		WCharTLiteralToWCHAR(L"Receive EXP has been enabled", wszMsgBuf, sizeof(wszMsgBuf)/sizeof(WCHAR));
+		WCHAR* msg = wszMsgBuf;
 
 		CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 		sGU_SYSTEM_DISPLAY_TEXT * res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 		res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-		res->wMessageLengthInUnicode = wcslen(msg);
+		res->wMessageLengthInUnicode = WCHARLen(msg);
 		res->byDisplayType = SERVER_TEXT_SYSTEM;
 		NTL_SAFE_WCSCPY(res->awchMessage, msg);
 		packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
