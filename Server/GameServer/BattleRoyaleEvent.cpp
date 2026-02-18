@@ -178,7 +178,9 @@ void BattleRoyaleEvent::StartEvent()
 	CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 	sGU_SYSTEM_DISPLAY_TEXT* res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 	res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-	res->wMessageLengthInUnicode = (WORD)msg.Format(L"Battle Royale Event Started! Accept the teleport proposal to join!");
+	WCHAR wszFormatBuf[256];
+	WCharTLiteralToWCHAR(L"Battle Royale Event Started! Accept the teleport proposal to join!", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+	res->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf);
 	res->byDisplayType = SERVER_TEXT_EMERGENCY;
 	NTL_SAFE_WCSCPY(res->awchMessage, msg.c_str());
 	packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
@@ -548,7 +550,9 @@ void BattleRoyaleEvent::TickProcess(DWORD dwTick)
 				CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 				sGU_SYSTEM_DISPLAY_TEXT* res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 				res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-				res->wMessageLengthInUnicode = (WORD)msg.Format(L"Battle Royale Preparation Phase Started! Kill monsters to level up!");
+				WCHAR wszFormatBuf[256];
+				WCharTLiteralToWCHAR(L"Battle Royale Preparation Phase Started! Kill monsters to level up!", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				res->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf);
 				res->byDisplayType = SERVER_TEXT_SYSNOTICE;
 				NTL_SAFE_WCSCPY(res->awchMessage, msg.c_str());
 				packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
@@ -581,7 +585,9 @@ void BattleRoyaleEvent::TickProcess(DWORD dwTick)
 				CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 				sGU_SYSTEM_DISPLAY_TEXT* res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
 				res->wOpCode = GU_SYSTEM_DISPLAY_TEXT;
-				res->wMessageLengthInUnicode = (WORD)msg.Format(L"PvP Phase Started! Eliminate all other players!");
+				WCHAR wszFormatBuf[256];
+				WCharTLiteralToWCHAR(L"PvP Phase Started! Eliminate all other players!", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				res->wMessageLengthInUnicode = (WORD)msg.Format(wszFormatBuf);
 				res->byDisplayType = SERVER_TEXT_EMERGENCY;
 				NTL_SAFE_WCSCPY(res->awchMessage, msg.c_str());
 				packet.SetPacketLen(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
