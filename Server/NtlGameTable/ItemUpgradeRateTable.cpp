@@ -104,17 +104,18 @@ bool CItemUpgradeRateTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, st
 	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_UPGRADE_RATE_TBLDAT* pHelp = (sITEM_UPGRADE_RATE_TBLDAT*)pvTable;
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf) / sizeof(WCHAR));
 
 		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pHelp->tblidx = READ_DWORD( bstrData );
 		}
-
-
 		else
 		{
-
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf) / sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}
