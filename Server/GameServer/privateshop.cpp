@@ -253,7 +253,7 @@ void CPrivateShop::UpdatePrice(BYTE bySlot, DWORD dwNewPrice)
 
 void CPrivateShop::OpenShop(bool bIsOwnerEmpty, BYTE byNoticeSize, WCHAR* wcNotice, WCHAR* wcPrivateShopName)
 {
-	if (wcslen(wcNotice) >= NTL_MAX_PRIVATESHOP_NOTICE_IN_UNICODE || wcslen(wcPrivateShopName) > NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE)
+	if (WCHARLen(wcNotice) >= NTL_MAX_PRIVATESHOP_NOTICE_IN_UNICODE || WCHARLen(wcPrivateShopName) > NTL_MAX_PRIVATESHOP_NAME_IN_UNICODE)
 	{
 		CNtlPacket packet(sizeof(sGU_PRIVATESHOP_OPEN_RES));
 		sGU_PRIVATESHOP_OPEN_RES* res = (sGU_PRIVATESHOP_OPEN_RES*)packet.GetPacketData();
@@ -262,7 +262,7 @@ void CPrivateShop::OpenShop(bool bIsOwnerEmpty, BYTE byNoticeSize, WCHAR* wcNoti
 		packet.SetPacketLen(sizeof(sGU_PRIVATESHOP_OPEN_RES));
 		m_pkPC->SendPacket(&packet);
 
-		ERR_LOG(LOG_GENERAL, "ERROR PRIVATE-SHOP NOTICE OR NAME TOO LONG. Notice-size %u, name-size %u, Player %u", wcslen(wcNotice), wcslen(wcPrivateShopName), m_pkPC->GetCharID());
+		ERR_LOG(LOG_GENERAL, "ERROR PRIVATE-SHOP NOTICE OR NAME TOO LONG. Notice-size %u, name-size %u, Player %u", WCHARLen(wcNotice), WCHARLen(wcPrivateShopName), m_pkPC->GetCharID());
 
 		return;
 	}
