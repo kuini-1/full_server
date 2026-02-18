@@ -161,7 +161,11 @@ void CAccountCache::OnLoadEventReward(QueryResultVector & results, HOBJECT hHand
 			res->asInfo[res->byCount].charId = f[1].GetUInt32();
 			res->asInfo[res->byCount].eventTblidx = f[0].GetUInt32();
 
-			const WCHAR* wchName = s2ws(f[2].GetString()).c_str();
+			/* std::wstring to WCHAR*: on Linux wchar_t is UTF-32, WCHAR is UTF-16LE */
+			std::wstring wstrName = s2ws(f[2].GetString());
+			WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+			WStringCStrToWCHAR(wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+			const WCHAR* wchName = wszNameBuf;
 
 			res->asNameInfo[res->byCount].charId = res->asInfo[res->byCount].charId;
 			NTL_SAFE_WCSCPY(res->asNameInfo[res->byCount].awchName, wchName);
