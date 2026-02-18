@@ -6449,7 +6449,16 @@ void CBudokaiManager::JoinTeamReq(CPlayer * pPlayer, WCHAR * wszTeamName)
 
 	WORD wResultcode = CheckBudokaiOpen(pPlayer);
 
-	std::wstring wstrTeamName = wszTeamName;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	std::wstring wstrTeamName;
+	{
+		size_t len = WCHARLen(wszTeamName);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)wszTeamName[i];
+		wstrTeamName = std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	int nameLen = (int)wstrTeamName.length();
 

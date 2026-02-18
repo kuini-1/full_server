@@ -139,7 +139,7 @@ void CChatServerSession::RecvGuildInfoRefreshedNfy(CNtlPacket * pPacket)
 			pGuild->SetGuildFunctionFlag(req->qwGuildFunctionFlag);
 		}
 
-		if (wcslen(req->wszGuildName) > 0)
+		if (WCHARLen(req->wszGuildName) > 0)
 		{
 			pGuild->SetGuildName(req->wszGuildName);
 			g_pGuildManager->UpdateGuildName(req->guildId, req->wszGuildName);
