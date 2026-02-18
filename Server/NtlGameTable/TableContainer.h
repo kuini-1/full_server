@@ -332,7 +332,7 @@ public:
 
 	void							SetPath(char* pszPath);
 
-	void							SetPath(WCHAR* pwszPath) { m_wstrPath = pwszPath; }
+	void							SetPath(WCHAR* pwszPath);
 
 protected:
 
@@ -365,7 +365,7 @@ protected:
 private:
 
 	template<class T>
-	void DboCreateTable(const char *szClassName, CNtlFileSerializer & serializer, const wchar_t * pwszFileName, T **pTable, CTableContainer::ICallBack *pCall)
+	void DboCreateTable(const char *szClassName, CNtlFileSerializer & serializer, const WCHAR * pwszFileName, T **pTable, CTableContainer::ICallBack *pCall)
 	{
 		if (!*pTable)
 		{

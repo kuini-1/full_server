@@ -489,13 +489,37 @@ void CTableContainer::SetPath(char* pszPath)
 	Ntl_CleanUpHeapStringW(pwszPath);
 }
 
+void CTableContainer::SetPath(WCHAR* pwszPath)
+{
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	if (!pwszPath)
+	{
+		m_wstrPath.clear();
+		return;
+	}
+	size_t len = WCHARLen(pwszPath);
+	wchar_t* wbuf = new wchar_t[len + 1];
+	for (size_t i = 0; i <= len; i++)
+		wbuf[i] = (wchar_t)pwszPath[i];
+	m_wstrPath = std::wstring(wbuf);
+	delete[] wbuf;
+}
+
 //-----------------------------------------------------------------------------------
 //		Purpose	:
 //		Return	:
 //-----------------------------------------------------------------------------------
 bool CTableContainer::Create(CNtlBitFlagManager& rTableFlag, WCHAR* pwszPath, CTableFileNameList* pFileNameList, CTable::eLOADING_METHOD eLoadingMethod, DWORD dwCodePage, ICallBack* pCall)
 {
-	m_wstrPath = pwszPath;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszPath);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszPath[i];
+		m_wstrPath = std::wstring(wbuf);
+		delete[] wbuf;
+	}
 	m_eLoadingMethod = eLoadingMethod;
 	m_dwCodePage = dwCodePage;
 
