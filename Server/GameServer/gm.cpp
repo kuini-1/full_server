@@ -1509,7 +1509,9 @@ ACMD(do_additem)
 
 	if (wcslen(wstrName.c_str()) > 0)
 	{
-		pTarget = g_pObjectManager->FindByName(wstrName.c_str());
+		WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+		WStringCStrToWCHAR(wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		pTarget = g_pObjectManager->FindByName(wszNameBuf);
 		if (pTarget == NULL || pTarget->IsInitialized() == false)
 			return;
 	}
@@ -2065,7 +2067,10 @@ ACMD(do_pm)
 		}
 	}
 
-	if (CPlayer* pTarget = g_pObjectManager->FindByName(s2ws(strName).c_str()))
+	std::wstring wstrName = s2ws(strName);
+	WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+	WStringCStrToWCHAR(wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+	if (CPlayer* pTarget = g_pObjectManager->FindByName(wszNameBuf))
 	{
 		CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_TEXT));
 		sGU_SYSTEM_DISPLAY_TEXT * res = (sGU_SYSTEM_DISPLAY_TEXT*)packet.GetPacketData();
@@ -2127,9 +2132,10 @@ ACMD(do_warp)
 	std::string strToken = pToken->PeekNextToken(NULL, &iLine);
 
 	std::wstring name = std::wstring(strToken.begin(), strToken.end());
-	const wchar_t* wname = name.c_str();
+	WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+	WStringCStrToWCHAR(name, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
 
-	CCharacter* target = g_pObjectManager->FindByName(wname);
+	CCharacter* target = g_pObjectManager->FindByName(wszNameBuf);
 	if (target && target->GetCurWorld() && target->GetCurWorld()->GetTbldat()->bDynamic == false) //avoid teleporting by gm code into dungeon
 		pPlayer->StartTeleport(target->GetCurLoc(), target->GetCurDir(), target->GetWorldID(), TELEPORT_TYPE_COMMAND);
 }
@@ -2140,9 +2146,10 @@ ACMD(do_call)
 	std::string strToken = pToken->PeekNextToken(NULL, &iLine);
 
 	std::wstring name = std::wstring(strToken.begin(), strToken.end());
-	const wchar_t* wname = name.c_str();
+	WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+	WStringCStrToWCHAR(name, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
 
-	CCharacter* target = g_pObjectManager->FindByName(wname);
+	CCharacter* target = g_pObjectManager->FindByName(wszNameBuf);
 	if (target && target->GetCurWorld() && target->GetCurWorld()->GetTbldat()->bDynamic == false) //avoid teleporting by gm code into dungeon
 		target->StartTeleport(pPlayer->GetCurLoc(), pPlayer->GetCurDir(), pPlayer->GetWorldID(), TELEPORT_TYPE_COMMAND);
 }
@@ -2279,9 +2286,10 @@ ACMD(do_dc)
 	pToken->PopToPeek();
 	std::string strToken = pToken->PeekNextToken(NULL, &iLine);
 	std::wstring name = std::wstring(strToken.begin(), strToken.end());
-	const wchar_t* wname = name.c_str();
+	WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+	WStringCStrToWCHAR(name, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
 
-	CPlayer* target = g_pObjectManager->FindByName(wname);
+	CPlayer* target = g_pObjectManager->FindByName(wszNameBuf);
 	if (target && target->IsInitialized())
 		target->GetClientSession()->Disconnect(false);
 }
@@ -2291,9 +2299,10 @@ ACMD(do_kill)
 	pToken->PopToPeek();
 	std::string strToken = pToken->PeekNextToken(NULL, &iLine);
 	std::wstring name = std::wstring(strToken.begin(), strToken.end());
-	const wchar_t* wname = name.c_str();
+	WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+	WStringCStrToWCHAR(name, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
 
-	CPlayer* target = g_pObjectManager->FindByName(wname);
+	CPlayer* target = g_pObjectManager->FindByName(wszNameBuf);
 	if (target && target->IsInitialized())
 		target->Faint(pPlayer, FAINT_REASON_COMMAND);
 }
@@ -2382,7 +2391,9 @@ ACMD(do_bann)
 		}
 	}
 
-	CPlayer* target = g_pObjectManager->FindByName(name.c_str());
+	WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+	WStringCStrToWCHAR(name, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+	CPlayer* target = g_pObjectManager->FindByName(wszNameBuf);
 	if (target && target->IsInitialized())
 	{
 		target->Bann(text, byDuration, pPlayer->GetAccountID());
@@ -2635,7 +2646,9 @@ ACMD(do_test)
 
 	if (pPlayer->GetParty() == NULL)
 	{
-		wcsncpy(res->wszPartyName, charname.c_str(), NTL_MAX_SIZE_PARTY_NAME + 1);
+		WCHAR wszPartyNameBuf[NTL_MAX_SIZE_PARTY_NAME + 1];
+		WStringCStrToWCHAR(charname, wszPartyNameBuf, sizeof(wszPartyNameBuf)/sizeof(WCHAR));
+		NTL_WCSNCPY_S(res->wszPartyName, NTL_MAX_SIZE_PARTY_NAME + 1, wszPartyNameBuf, NTL_MAX_SIZE_PARTY_NAME + 1);
 
 		CParty* party = g_pPartyManager->CreateParty(pPlayer, res->wszPartyName);
 		if (party)
@@ -2936,7 +2949,9 @@ ACMD(do_addtitle)
 
 	if (wcslen(wstrName.c_str()) > 0)
 	{
-		pTarget = g_pObjectManager->FindByName(wstrName.c_str());
+		WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+		WStringCStrToWCHAR(wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		pTarget = g_pObjectManager->FindByName(wszNameBuf);
 		if (pTarget == NULL || pTarget->IsInitialized() == false)
 			return;
 	}
@@ -2970,7 +2985,9 @@ ACMD(do_deltitle)
 
 	if (wcslen(wstrName.c_str()) > 0)
 	{
-		pTarget = g_pObjectManager->FindByName(wstrName.c_str());
+		WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+		WStringCStrToWCHAR(wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		pTarget = g_pObjectManager->FindByName(wszNameBuf);
 		if (pTarget == NULL || pTarget->IsInitialized() == false)
 			return;
 	}
@@ -3214,7 +3231,9 @@ ACMD(do_addmudosa)
 
 	if (wcslen(wstrName.c_str()) > 0)
 	{
-		pTarget = g_pObjectManager->FindByName(wstrName.c_str());
+		WCHAR wszNameBuf[NTL_MAX_SIZE_CHAR_NAME + 1];
+		WStringCStrToWCHAR(wstrName, wszNameBuf, sizeof(wszNameBuf)/sizeof(WCHAR));
+		pTarget = g_pObjectManager->FindByName(wszNameBuf);
 		if (pTarget == NULL || pTarget->IsInitialized() == false)
 			return;
 	}
