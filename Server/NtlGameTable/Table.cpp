@@ -758,6 +758,17 @@ void CTable::CheckNegativeInvalid(const wchar_t* pwszFormatString, BSTR bstr)
 	}
 }
 
+#if !defined(_WIN32)
+void CTable::CheckNegativeInvalid(const WCHAR* pwszFormatString, BSTR bstr)
+{
+	if( CheckInvalidValue( bstr ) )
+	{
+		(void)pwszFormatString;
+		_ASSERTE( !"@?? ???? ?? ???? ?ʵ??Դϴ?." );
+	}
+}
+#endif
+
 //-----------------------------------------------------------------------------------
 //		Purpose	:
 //		Return	:
