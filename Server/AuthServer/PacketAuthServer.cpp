@@ -185,6 +185,14 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 			smart_ptr<QueryResult> result = GetAccDB.Query("SELECT AccountID,Password_hash,acc_status,isGm,lastServerFarmId,founder FROM accounts WHERE Username = \"%s\" LIMIT 1", GetAccDB.EscapeString(username).c_str());
 			if (result)
 			{
+				NTL_PRINT(PRINT_APP, "[Login] Database query succeeded, found user record");
+			}
+			else
+			{
+				NTL_PRINT(PRINT_APP, "[Login] ERROR: Database query failed or returned NULL for username '%s'", username.c_str());
+			}
+			if (result)
+			{
 				Field* fields = result->Fetch();
 				const char* storedHash = fields[1].GetString();
 				

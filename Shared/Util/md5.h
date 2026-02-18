@@ -29,6 +29,9 @@
 // string.h for memcpy.
 #include <stdio.h>
 #include <string.h>
+#ifndef _WIN32
+#include <stdint.h>
+#endif
 
 #pragma region MD5 defines
 // Constants for MD5Transform routine.
@@ -106,7 +109,6 @@ typedef unsigned short int UINT2;
 #ifdef _WIN32
 typedef unsigned long int UINT4;
 #else
-#include <stdint.h>
 typedef uint32_t UINT4;
 #endif
 
