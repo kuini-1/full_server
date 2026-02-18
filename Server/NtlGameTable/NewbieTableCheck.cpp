@@ -21,6 +21,18 @@
 static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
 static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
 
+/* CCheckTable does not inherit CTable, so READ_STR is not available. Convert BSTR (WCHAR*) to std::wstring locally. */
+static void BSTRToWString(BSTR bstr, std::wstring& rDest)
+{
+	if (!bstr) { rDest.clear(); return; }
+	size_t len = WCHARLen(bstr);
+	wchar_t* wbuf = new wchar_t[len + 1];
+	for (size_t i = 0; i <= len; i++)
+		wbuf[i] = (wchar_t)bstr[i];
+	rDest = std::wstring(wbuf);
+	delete[] wbuf;
+}
+
 const WCHAR* CNewbieTableCheck::m_pwszSheetList[] =
 {
 	g_wszTableDataKOR,
@@ -121,7 +133,7 @@ bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 
 		if (0 == WStringCmpLiteral(*pstrDataName, L"Field_Name"))
 		{
-			READ_STR(pNewbie->wstrField_Name, bstrData);
+			BSTRToWString(bstrData, pNewbie->wstrField_Name);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Only_N"))
 		{
@@ -173,7 +185,7 @@ bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table"))
 		{
-			READ_STR(pNewbie->wstrTable, bstrData);
+			BSTRToWString(bstrData, pNewbie->wstrTable);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Look_Up_Level"))
 		{
@@ -181,7 +193,7 @@ bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table_Level"))
 		{
-			READ_STR(pNewbie->wstrTable_Level, bstrData);
+			BSTRToWString(bstrData, pNewbie->wstrTable_Level);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Look_Up_Field"))
 		{
@@ -189,11 +201,11 @@ bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Field"))
 		{
-			READ_STR(pNewbie->wstrField, bstrData);
+			BSTRToWString(bstrData, pNewbie->wstrField);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table_Field"))
 		{
-			READ_STR(pNewbie->wstrTable_Field, bstrData);
+			BSTRToWString(bstrData, pNewbie->wstrTable_Field);
 		}
 		else
 		{
