@@ -157,27 +157,34 @@ void CPartyMatching::Register(CPlayer* player, BYTE byDifficulty, BYTE byDungeon
 		WCHAR msg[255];
 		if (byDungeonType == ePARTY_MATCHING_DUNGEON_TYPE_ULTIMATE_DUNGEON)
 		{
-			NTL_SWPRINTF(msg, 255, L"Party matching [UD %u] register in Party Search Menu", byRegion);
+			WCHAR wszFormatBuf[256];
+			WCharTLiteralToWCHAR(L"Party matching [UD %u] register in Party Search Menu", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			NTL_SWPRINTF(msg, 255, wszFormatBuf, byRegion);
 			NTL_SAFE_WCSNCPY(res->awchMessage, msg, WCHARLen(msg));
 			res->wMessageLengthInUnicode = WCHARLen(msg);
 
 		}
 		else if (byDungeonType == ePARTY_MATCHING_DUNGEON_TYPE_TIMEMACHINE_QUEST)
 		{
-
-			NTL_SWPRINTF(msg, 255, L"Party matching [TMQ %u] register in Party Search Menu", byRegion);
+			WCHAR wszFormatBuf[256];
+			WCharTLiteralToWCHAR(L"Party matching [TMQ %u] register in Party Search Menu", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			NTL_SWPRINTF(msg, 255, wszFormatBuf, byRegion);
 			NTL_SAFE_WCSNCPY(res->awchMessage, msg, WCHARLen(msg));
 			res->wMessageLengthInUnicode = WCHARLen(msg);
 		}
 		else if (byDungeonType == ePARTY_MATCHING_DUNGEON_TYPE_CC_BATTLE_DUNGEON)
 		{
-			NTL_SWPRINTF(msg, 255, L"Party matching [CCBD %u] register in Party Search Menu", byRegion);
+			WCHAR wszFormatBuf[256];
+			WCharTLiteralToWCHAR(L"Party matching [CCBD %u] register in Party Search Menu", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			NTL_SWPRINTF(msg, 255, wszFormatBuf, byRegion);
 			NTL_SAFE_WCSNCPY(res->awchMessage, msg, WCHARLen(msg));
 			res->wMessageLengthInUnicode = WCHARLen(msg);
 		}
 		else if (byDungeonType == ePARTY_MATCHING_DUNGEON_TYPE_RANK_BATTLE)
 		{
-			NTL_SWPRINTF(msg, 255, L"Party matching [Ranked Battle %u] register in Party Search Menu", byRegion);
+			WCHAR wszFormatBuf[256];
+			WCharTLiteralToWCHAR(L"Party matching [Ranked Battle %u] register in Party Search Menu", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			NTL_SWPRINTF(msg, 255, wszFormatBuf, byRegion);
 			NTL_SAFE_WCSNCPY(res->awchMessage, msg, WCHARLen(msg));
 			res->wMessageLengthInUnicode = WCHARLen(msg);
 		}
@@ -185,7 +192,9 @@ void CPartyMatching::Register(CPlayer* player, BYTE byDifficulty, BYTE byDungeon
 			return;
 
 		res->hSubject = player->GetID();
-		NTL_SAFE_WCSCPY(res->awchSenderCharName, L"System");
+		WCHAR wszSystemBuf[32];
+		WCharTLiteralToWCHAR(L"System", wszSystemBuf, sizeof(wszSystemBuf)/sizeof(WCHAR));
+		NTL_SAFE_WCSCPY(res->awchSenderCharName, wszSystemBuf);
 		res->serverChannelId = app->GetGsChannel();
 		packet.SetPacketLen(sizeof(sTU_CHAT_MESSAGE_FIND_PARTY));
 		g_pObjectManager->SendPacketToAll(&packet);		
