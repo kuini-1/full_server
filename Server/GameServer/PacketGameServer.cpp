@@ -64,7 +64,21 @@
 #include "BusSystem.h"
 #include "scsManager.h"
 
+// Helper functions for WCHAR string literals (Linux compatibility)
+static const WCHAR* GetUnnamedPartyName() {
+	static WCHAR s_wszUnnamed[NTL_MAX_SIZE_PARTY_NAME + 1];
+	static bool initialized = false;
+	if (!initialized) {
+		WCharTLiteralToWCHAR(L"Unnamed", s_wszUnnamed, sizeof(s_wszUnnamed)/sizeof(WCHAR));
+		initialized = true;
+	}
+	return s_wszUnnamed;
+}
 
+static const WCHAR* GetEmptyString() {
+	static WCHAR s_wszEmpty[1] = {0};
+	return s_wszEmpty;
+}
 
 //--------------------------------------------------------------------------------------//
 //		WHEN RECEIVE INVALID PACKET
@@ -3476,7 +3490,7 @@ void CClientSession::RecvCreatePartyReq(CNtlPacket * pPacket)
 		res->wResultCode = GAME_FAIL;
 	else if(cPlayer->GetParty() == NULL)
 	{
-		wmemcpy(res->wszPartyName, req->wszPartyName, NTL_MAX_SIZE_PARTY_NAME + 1);
+		memcpy(res->wszPartyName, req->wszPartyName, (NTL_MAX_SIZE_PARTY_NAME + 1) * sizeof(WCHAR));
 
 		CParty * party = g_pPartyManager->CreateParty(cPlayer, req->wszPartyName);
 		if (party)
@@ -3769,8 +3783,7 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 							//check if a party already exist. if not then create one and make invitor to leader
 							if (invitor->GetParty() == NULL && cPlayer->GetPartyID() == INVALID_PARTYID)
 							{
-								static const WCHAR s_wszUnnamed[] = L"Unnamed";
-								CParty * party = g_pPartyManager->CreateParty(invitor, const_cast<WCHAR*>(s_wszUnnamed), true);
+								CParty * party = g_pPartyManager->CreateParty(invitor, const_cast<WCHAR*>(GetUnnamedPartyName()), true);
 								if (party)
 								{
 									if (party->AddPartyMember(cPlayer) == true)
@@ -9906,8 +9919,7 @@ void CClientSession::RecvClosePrivateShopReq(CNtlPacket * pPacket)
 		packet2.SetPacketLen(sizeof(sGU_PRIVATESHOP_CLOSE_NFY));
 		cPlayer->Broadcast(&packet2, cPlayer);
 
-		static WCHAR s_wszEmpty[] = L"";
-		cPlayer->SendCharStatePrivateShop(true, PRIVATESHOP_STATE_CLOSE, s_wszEmpty);
+		cPlayer->SendCharStatePrivateShop(true, PRIVATESHOP_STATE_CLOSE, const_cast<WCHAR*>(GetEmptyString()));
 
 		cPlayer->GetPrivateShop()->CloseShop();
 	}
