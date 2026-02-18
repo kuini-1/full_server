@@ -32,8 +32,8 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	// Check struct layout
 	NTL_PRINT(PRINT_APP, "[Login] Struct sizes: sNTLPACKETHEADER=%zu, sUA_LOGIN_REQ_TAIWAN_CT=%zu", 
 		sizeof(sNTLPACKETHEADER), sizeof(sUA_LOGIN_REQ_TAIWAN_CT));
-	NTL_PRINT(PRINT_APP, "[Login] Struct offsets: wOpCode=%zu, awchUserId=%zu", 
-		offsetof(sUA_LOGIN_REQ_TAIWAN_CT, wOpCode), offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId));
+	NTL_PRINT(PRINT_APP, "[Login] Struct offsets: wOpCode=%zu, awchUserId=%zu, awchPasswd=%zu", 
+		offsetof(sUA_LOGIN_REQ_TAIWAN_CT, wOpCode), offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId), offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchPasswd));
 	
 	// Try GetPacketData() first (original Windows code)
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
@@ -87,6 +87,37 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	BYTE* packetAtOffset4 = data + offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchUserId) + (2 * sizeof(WCHAR));
 	NTL_PRINT(PRINT_APP, "[Login] Packet bytes at data+offset+4: %02X %02X (should be 65 00 for third 'e')", packetAtOffset4[0], packetAtOffset4[1]);
 	
+	// PASSWORD FIELD DEBUGGING - similar to username debugging
+	NTL_PRINT(PRINT_APP, "[Login] === PASSWORD FIELD DEBUGGING ===");
+	BYTE* expectedPasswdStart = data + offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchPasswd);
+	BYTE* actualPasswdStart = (BYTE*)&req->awchPasswd;
+	NTL_PRINT(PRINT_APP, "[Login] Expected awchPasswd at data+%zu=%p, actual at %p, difference=%ld bytes", 
+		offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchPasswd), expectedPasswdStart, actualPasswdStart, (long)(actualPasswdStart - expectedPasswdStart));
+	
+	// Check raw bytes at awchPasswd location
+	BYTE* passwdBytes = (BYTE*)&req->awchPasswd;
+	NTL_PRINT(PRINT_APP, "[Login] req->awchPasswd at %p, first 20 bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X", 
+		passwdBytes, passwdBytes[0], passwdBytes[1], passwdBytes[2], passwdBytes[3], passwdBytes[4], passwdBytes[5], passwdBytes[6], passwdBytes[7], passwdBytes[8], passwdBytes[9],
+		passwdBytes[10], passwdBytes[11], passwdBytes[12], passwdBytes[13], passwdBytes[14], passwdBytes[15], passwdBytes[16], passwdBytes[17], passwdBytes[18], passwdBytes[19]);
+	
+	// Check WCHAR values directly
+	NTL_PRINT(PRINT_APP, "[Login] req->awchPasswd WCHAR[0-9]: 0x%04hX 0x%04hX 0x%04hX 0x%04hX 0x%04hX 0x%04hX 0x%04hX 0x%04hX 0x%04hX 0x%04hX", 
+		(unsigned short)req->awchPasswd[0], (unsigned short)req->awchPasswd[1], (unsigned short)req->awchPasswd[2], 
+		(unsigned short)req->awchPasswd[3], (unsigned short)req->awchPasswd[4], (unsigned short)req->awchPasswd[5],
+		(unsigned short)req->awchPasswd[6], (unsigned short)req->awchPasswd[7], (unsigned short)req->awchPasswd[8], (unsigned short)req->awchPasswd[9]);
+	
+	// Check what's at the expected location
+	WCHAR* expectedPasswdWChar = (WCHAR*)(data + offsetof(sUA_LOGIN_REQ_TAIWAN_CT, awchPasswd));
+	NTL_PRINT(PRINT_APP, "[Login] Expected location awchPasswd WCHAR[0-4]: 0x%04hX 0x%04hX 0x%04hX 0x%04hX 0x%04hX", 
+		(unsigned short)expectedPasswdWChar[0], (unsigned short)expectedPasswdWChar[1], (unsigned short)expectedPasswdWChar[2],
+		(unsigned short)expectedPasswdWChar[3], (unsigned short)expectedPasswdWChar[4]);
+	
+	// Check if WCHAR string has null terminator
+	int passwdWcharLen = 0;
+	while (passwdWcharLen < (NTL_MAX_SIZE_USERPW_UNICODE + 1) && req->awchPasswd[passwdWcharLen] != 0)
+		passwdWcharLen++;
+	NTL_PRINT(PRINT_APP, "[Login] Password WCHAR string length (until null): %d", passwdWcharLen);
+	
 	// Fix memory leak: Ntl_WC2MB returns char* that must be freed with delete[]
 	// Original code: std::string username = Ntl_WC2MB(req->awchUserId); (memory leak)
 	// Fixed: allocate, copy to string, then free
@@ -101,11 +132,30 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	std::string username = std::string(usernameMB);
 	delete[] usernameMB;
 	
+	// Convert password from WCHAR to multibyte
 	char* password = Ntl_WC2MB(req->awchPasswd);
+	NTL_PRINT(PRINT_APP, "[Login] Ntl_WC2MB(password) returned: %p, strlen=%zu", 
+		password, password ? strlen(password) : 0);
 	if (password == NULL)
 	{
 		NTL_PRINT(PRINT_APP, "[Login] ERROR: Ntl_WC2MB(password) returned NULL - wcstombs conversion failed (Session %u)", GetHandle());
 		return;
+	}
+	
+	// Log password details (masked for security - only show length and first/last chars)
+	size_t passwdLen = strlen(password);
+	if (passwdLen > 0)
+	{
+		char firstChar = password[0];
+		char lastChar = password[passwdLen - 1];
+		NTL_PRINT(PRINT_APP, "[Login] Password extracted: length=%zu, first_char='%c' (0x%02X), last_char='%c' (0x%02X)", 
+			passwdLen, firstChar, (unsigned char)firstChar, lastChar, (unsigned char)lastChar);
+		// Show full password in debug mode (be careful in production!)
+		NTL_PRINT(PRINT_APP, "[Login] Password content: '%s'", password);
+	}
+	else
+	{
+		NTL_PRINT(PRINT_APP, "[Login] WARNING: Password length is 0!");
 	}
 
 	ERR_LOG(LOG_USER, "User %s request connection! req->wLVersion %i, req->wRVersion %i, state %hu, mac %hu\n", username.c_str(), (int)req->wLVersion, (int)req->wRVersion, req->byState, req->abyMacAddress[0]);
@@ -135,14 +185,33 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 			smart_ptr<QueryResult> result = GetAccDB.Query("SELECT AccountID,Password_hash,acc_status,isGm,lastServerFarmId,founder FROM accounts WHERE Username = \"%s\" LIMIT 1", GetAccDB.EscapeString(username).c_str());
 			if (result)
 			{
+				Field* fields = result->Fetch();
+				const char* storedHash = fields[1].GetString();
+				
+				// MD5 HASH DEBUGGING
+				NTL_PRINT(PRINT_APP, "[Login] === MD5 PASSWORD VALIDATION DEBUGGING ===");
+				NTL_PRINT(PRINT_APP, "[Login] Password before hashing: length=%zu, content='%s'", strlen(password), password);
+				
 				MD5 md;
 				char md5pwd[NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER];
 				snprintf(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, "%s", md.digestString(password));
-
-				Field* fields = result->Fetch();
-
-				if (0 != NTL_STRICMP(fields[1].GetString(), md5pwd)) //check password
+				
+				NTL_PRINT(PRINT_APP, "[Login] Computed MD5 hash: '%s' (length=%zu)", md5pwd, strlen(md5pwd));
+				NTL_PRINT(PRINT_APP, "[Login] Stored MD5 hash: '%s' (length=%zu)", storedHash ? storedHash : "(null)", storedHash ? strlen(storedHash) : 0);
+				
+				// Compare hashes
+				int cmpResult = NTL_STRICMP(storedHash, md5pwd);
+				NTL_PRINT(PRINT_APP, "[Login] Hash comparison result: %d (0=match, non-zero=mismatch)", cmpResult);
+				
+				if (0 != cmpResult) //check password
+				{
 					resultcode = AUTH_WRONG_PASSWORD;
+					NTL_PRINT(PRINT_APP, "[Login] Password mismatch! Computed hash '%s' != stored hash '%s'", md5pwd, storedHash ? storedHash : "(null)");
+				}
+				else
+				{
+					NTL_PRINT(PRINT_APP, "[Login] Password hash match! Authentication successful.");
+				}
 				else
 				{
 					bool isGm = (fields[3].GetBYTE() > ADMIN_LEVEL_EARLY_ACCESS);
