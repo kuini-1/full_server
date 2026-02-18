@@ -89,7 +89,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 							sAM_ON_PLAYER_CHECK_REQ * res = (sAM_ON_PLAYER_CHECK_REQ *)packet.GetPacketData();
 							res->wOpCode = AM_ON_PLAYER_CHECK_REQ;
 							res->accountId = this->AccountID;
-							wcscpy_s(res->awchUserId, NTL_MAX_SIZE_USERID_UNICODE + 1, req->awchUserId);
+							NTL_WCSCPY_S(res->awchUserId, NTL_MAX_SIZE_USERID_UNICODE + 1, req->awchUserId);
 							res->bIsGM = isGm;
 							res->dwAllowedFunctionForDeveloper = DBO_ALLOWED_FUNC_FOR_DEV_FLAG_HUMAN + DBO_ALLOWED_FUNC_FOR_DEV_FLAG_NAMEK + DBO_ALLOWED_FUNC_FOR_DEV_FLAG_MAJIN;
 							res->lastServerFarmId = fields[4].GetBYTE();
@@ -161,7 +161,7 @@ void CClientSession::SendCreateUserReq(CNtlPacket * pPacket, CAuthServer * app)
 	sAU_LOGIN_CREATEUSER_RES * res = (sAU_LOGIN_CREATEUSER_RES *)packet.GetPacketData();
 	res->wOpCode = AU_LOGIN_CREATEUSER_RES;
 	res->wResultCode = AUTH_SUCCESS;
-	wcscpy_s(res->awchUserId, NTL_MAX_SIZE_USERID_UNICODE + 1, req->awchUserId);
+	NTL_WCSCPY_S(res->awchUserId, NTL_MAX_SIZE_USERID_UNICODE + 1, req->awchUserId);
 	packet.SetPacketLen(sizeof(sAU_LOGIN_CREATEUSER_RES));
 	app->SendTo(this, &packet);
 }

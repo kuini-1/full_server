@@ -87,10 +87,21 @@
   - Removed internal address setting in Character Server registration
   - Removed retry logic for `AddPlayer` in `PacketAuthServer.cpp`
   - Removed extra logging throughout login flow
-  - Changed `NTL_WCSCPY_S` back to `wcscpy_s` to match original
 - **Result:** **COMPLETED** - Code now matches original Windows implementation exactly.
 - **Files restored:** `Server/AuthServer/MasterServerPacket.cpp`, `Server/CharServer/MasterServerSession.cpp`, `Server/AuthServer/PacketAuthServer.cpp`, `Server/CharServer/PacketCharServer.cpp`, `Server/CharServer/ClientSession.cpp`, `Server/AuthServer/ClientSession.cpp`, `Server/MasterServer/CharPacket.cpp`
 - **Date:** 2026-02-18
+
+### 4. Fix wcscpy_s for Linux Build
+
+- **Symptom:** Build error on Linux: `'wcscpy_s' was not declared in this scope`. Original Windows code uses `wcscpy_s` directly, but this function doesn't exist on Linux.
+- **Root cause:** `wcscpy_s` is a Windows-specific secure string function. On Linux, we need to use the portable macro `NTL_WCSCPY_S` defined in `NtlPortable.h`.
+- **Fix:** Changed `wcscpy_s` to `NTL_WCSCPY_S` in `PacketAuthServer.cpp`:
+  - Line 92: `AM_ON_PLAYER_CHECK_REQ` packet creation
+  - Line 164: `AU_LOGIN_CREATEUSER_RES` packet creation
+- **Result:** **WORKED** - Build succeeds on Linux. `NTL_WCSCPY_S` is available through `NtlSharedCommon.h` → `NtlPortable.h` include chain.
+- **Files changed:** `Server/AuthServer/PacketAuthServer.cpp`
+- **Date:** 2026-02-18
+- **Note:** This is a legitimate Linux port fix using the existing portable macro, not a workaround. The macro works on both Windows and Linux.
 
 ---
 
@@ -121,7 +132,8 @@
 ## What Works
 
 1. **MD5 hash fix (UINT4 typedef)** - Use `uint32_t` for `UINT4` on Linux instead of `unsigned long int`
-2. **Original Windows code structure** - Match Windows code exactly, don't add workarounds
+2. **wcscpy_s portable macro** - Use `NTL_WCSCPY_S` instead of `wcscpy_s` on Linux (macro available through `NtlSharedCommon.h` → `NtlPortable.h`)
+3. **Original Windows code structure** - Match Windows code exactly, don't add workarounds
 
 ---
 
