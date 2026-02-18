@@ -41,10 +41,13 @@ private:
 
 };
 
+/* Static WCHAR array for sheet name (L"" is wchar_t* on Linux, needs WCHAR*) */
+static const WCHAR g_wszTableDataKOR_Tmp[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
 template<typename T1>
 const WCHAR* CTableTmp<T1>::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR_Tmp,
 	NULL
 };
 
@@ -99,7 +102,9 @@ inline bool CTableTmp<T1>::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if (false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second)
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", m_wszXmlFileName, pTbldat->tblidx);
+		WCHAR wszFormatBuf[512];
+		WCharTLiteralToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx);
 		_ASSERTE(0);
 		return false;
 	}

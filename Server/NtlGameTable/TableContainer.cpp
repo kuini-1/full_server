@@ -2429,7 +2429,10 @@ bool CTableContainer::ReloadTable(CTable* pTable, CNtlFileSerializer& serializer
 		{
 			wstrFullPath += L".xml";
 
-			if ( false == pTable->LoadFromXml( (WCHAR*) wstrFullPath.c_str(), true, false ) )
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFromXml */
+			WCHAR wszPathBuf[512];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			if ( false == pTable->LoadFromXml(wszPathBuf, true, false ) )
 			{
 				return false;
 			}
@@ -2440,7 +2443,10 @@ bool CTableContainer::ReloadTable(CTable* pTable, CNtlFileSerializer& serializer
 		{
 			wstrFullPath += L".rdf";
 			
-			serializer.LoadFile( (WCHAR*) wstrFullPath.c_str(), false );
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile */
+			WCHAR wszPathBuf[512];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			serializer.LoadFile(wszPathBuf, false);
 
 			if ( false == pTable->LoadFromBinary(serializer, true, false ) )
 			{
@@ -2454,7 +2460,12 @@ bool CTableContainer::ReloadTable(CTable* pTable, CNtlFileSerializer& serializer
 		{
 			wstrFullPath += L".edf";
 
-			serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile. Also convert L"" literal to WCHAR* */
+			WCHAR wszPathBuf[512];
+			WCHAR wszKeyBuf[64];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			WCharTLiteralToWCHAR(L"KEY_FOR_GAME_DATA_TABLE", wszKeyBuf, sizeof(wszKeyBuf)/sizeof(WCHAR));
+			serializer.LoadFile(wszPathBuf, true, wszKeyBuf);
 			
 			int nDataSize = 0;
 			serializer >> nDataSize;
@@ -2524,7 +2535,10 @@ bool CTableContainer::UpdateTable(CTable* pTable, CNtlFileSerializer& serializer
 		{
 			wstrFullPath += L".xml";
 
-			if ( false == pTable->LoadFromXml( (WCHAR*) wstrFullPath.c_str(), false, true ) )
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFromXml */
+			WCHAR wszPathBuf[512];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			if ( false == pTable->LoadFromXml(wszPathBuf, false, true ) )
 			{
 				return false;
 			}
@@ -2535,7 +2549,10 @@ bool CTableContainer::UpdateTable(CTable* pTable, CNtlFileSerializer& serializer
 		{
 			wstrFullPath += L".rdf";
 			
-			serializer.LoadFile( (WCHAR*) wstrFullPath.c_str(), false );
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile */
+			WCHAR wszPathBuf[512];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			serializer.LoadFile(wszPathBuf, false);
 
 			if ( false == pTable->LoadFromBinary(serializer, false, true ) )
 			{
@@ -2549,7 +2566,12 @@ bool CTableContainer::UpdateTable(CTable* pTable, CNtlFileSerializer& serializer
 		{
 			wstrFullPath += L".edf";
 
-			serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile. Also convert L"" literal to WCHAR* */
+			WCHAR wszPathBuf[512];
+			WCHAR wszKeyBuf[64];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			WCharTLiteralToWCHAR(L"KEY_FOR_GAME_DATA_TABLE", wszKeyBuf, sizeof(wszKeyBuf)/sizeof(WCHAR));
+			serializer.LoadFile(wszPathBuf, true, wszKeyBuf);
 			
 			int nDataSize = 0;
 			serializer >> nDataSize;
@@ -2603,7 +2625,15 @@ bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFile
 
 	wstrFullPath = m_wstrPath;
 	wstrFullPath += L"\\";
-	wstrFullPath += pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		wstrFullPath += std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	switch (m_eLoadingMethod)
 	{
@@ -2611,7 +2641,10 @@ bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFile
 	{
 		wstrFullPath += L".xml";
 
-		if (false == pTextAllTable->LoadFromXml((WCHAR*)(wstrFullPath.c_str())))
+		/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFromXml */
+		WCHAR wszPathBuf[512];
+		WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+		if (false == pTextAllTable->LoadFromXml(wszPathBuf))
 		{
 			return false;
 		}
@@ -2622,7 +2655,10 @@ bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFile
 	{
 		wstrFullPath += L".rdf";
 
-		serializer.LoadFile((WCHAR*)(wstrFullPath.c_str()), false);
+		/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile */
+		WCHAR wszPathBuf[512];
+		WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+		serializer.LoadFile(wszPathBuf, false);
 
 		if (false == pTextAllTable->LoadFromBinary(serializer, false, true))
 		{
@@ -2635,7 +2671,12 @@ bool CTableContainer::UpdateTextAllTable(CTextAllTable * pTextAllTable, CNtlFile
 	{
 		wstrFullPath += L".edf";
 
-		serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
+		/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile. Also convert L"" literal to WCHAR* */
+		WCHAR wszPathBuf[512];
+		WCHAR wszKeyBuf[64];
+		WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+		WCharTLiteralToWCHAR(L"KEY_FOR_GAME_DATA_TABLE", wszKeyBuf, sizeof(wszKeyBuf)/sizeof(WCHAR));
+		serializer.LoadFile(wszPathBuf, true, wszKeyBuf);
 
 		int nDataSize = 0;
 		serializer >> nDataSize;
@@ -2701,7 +2742,15 @@ bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serial
 
 	wstrFullPath = m_wstrPath;
 	wstrFullPath += L"\\";
-	wstrFullPath += pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		wstrFullPath += std::wstring(wbuf);
+		delete[] wbuf;
+	}
 	
 	switch (m_eLoadingMethod)
 	{
@@ -2709,7 +2758,10 @@ bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serial
 		{
 			wstrFullPath += L".xml";
 
-			if ( false == pTable->LoadFromXml( (WCHAR*) wstrFullPath.c_str(), false, false ) )
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFromXml */
+			WCHAR wszPathBuf[512];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			if ( false == pTable->LoadFromXml(wszPathBuf, false, false ) )
 			{
 				return false;
 			}
@@ -2720,7 +2772,10 @@ bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serial
 		{
 			wstrFullPath += L".rdf";
 
-			serializer.LoadFile( (WCHAR*) wstrFullPath.c_str() );
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile */
+			WCHAR wszPathBuf[512];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			serializer.LoadFile(wszPathBuf);
 
 			if (false == pTable->LoadFromBinary( serializer, false, false ) )
 			{
@@ -2733,7 +2788,12 @@ bool CTableContainer::InitializeTable(CTable* pTable, CNtlFileSerializer& serial
 		{
 			wstrFullPath += L".edf";
 
-			serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile. Also convert L"" literal to WCHAR* */
+			WCHAR wszPathBuf[512];
+			WCHAR wszKeyBuf[64];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			WCharTLiteralToWCHAR(L"KEY_FOR_GAME_DATA_TABLE", wszKeyBuf, sizeof(wszKeyBuf)/sizeof(WCHAR));
+			serializer.LoadFile(wszPathBuf, true, wszKeyBuf);
 
 			int nDataSize = 0;
 			serializer >> nDataSize;
@@ -2796,7 +2856,15 @@ bool CTableContainer::InitializePackTable(CTable* pTable, CNtlFileSerializer& se
 
 	wstrFullPath = m_wstrPath;
 	wstrFullPath += L"\\";
-	wstrFullPath += pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		wstrFullPath += std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	char* pchFileName = Ntl_WC2MB((WCHAR*)wstrFullPath.c_str());
 	const char* pszCryptPassword = NULL;
@@ -2915,7 +2983,15 @@ bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSeri
 
 	wstrFullPath = m_wstrPath;
 	wstrFullPath += L"\\";
-	wstrFullPath += pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		wstrFullPath += std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	switch (m_eLoadingMethod)
 	{
@@ -2923,7 +2999,10 @@ bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSeri
 		{
 			wstrFullPath += L".xml";
 
-			if (false == pTextAllTable->LoadFromXml((WCHAR*)(wstrFullPath.c_str())))
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFromXml */
+			WCHAR wszPathBuf[512];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			if (false == pTextAllTable->LoadFromXml(wszPathBuf))
 			{
 				return false;
 			}
@@ -2934,7 +3013,10 @@ bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSeri
 		{
 			wstrFullPath += L".rdf";
 
-			serializer.LoadFile((WCHAR*)(wstrFullPath.c_str()), false);
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile */
+			WCHAR wszPathBuf[512];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			serializer.LoadFile(wszPathBuf, false);
 
 			if (false == pTextAllTable->LoadFromBinary(serializer, false, false))
 			{
@@ -2947,7 +3029,12 @@ bool CTableContainer::InitializeTable(CTextAllTable* pTextAllTable, CNtlFileSeri
 		{
 			wstrFullPath += L".edf";
 
-			serializer.LoadFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for LoadFile. Also convert L"" literal to WCHAR* */
+			WCHAR wszPathBuf[512];
+			WCHAR wszKeyBuf[64];
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));
+			WCharTLiteralToWCHAR(L"KEY_FOR_GAME_DATA_TABLE", wszKeyBuf, sizeof(wszKeyBuf)/sizeof(WCHAR));
+			serializer.LoadFile(wszPathBuf, true, wszKeyBuf);
 
 			int nDataSize = 0;
 			serializer >> nDataSize;
@@ -3010,7 +3097,15 @@ bool CTableContainer::InitializePackTable(CTextAllTable* pTextAllTable, CNtlFile
 
 	wstrFullPath = m_wstrPath;
 	wstrFullPath += L"\\";
-	wstrFullPath += pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		wstrFullPath += std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	char* pchFileName = Ntl_WC2MB((WCHAR*)wstrFullPath.c_str());
 	const char* pszCryptPassword = NULL;
