@@ -276,6 +276,19 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 						{
 							ERR_LOG(LOG_USER, "%s Auth Success. <Online Check>Sending packet to master server \n", username.c_str());
 							NTL_PRINT(PRINT_APP, "[Login] User %s: Auth success, sending online check to MasterServer (Session %u, AccountID %u)", username.c_str(), GetHandle(), this->AccountID);
+							
+							// Check Character Server availability before sending to Master
+							sDBO_SERVER_INFO* pCharServerCheck = g_pServerInfoManager->GetIdlestServerInfo(NTL_SERVER_TYPE_CHARACTER, 0, 0);
+							if (pCharServerCheck == NULL)
+							{
+								NTL_PRINT(PRINT_APP, "[Login] WARNING: No Character Server available before sending to MasterServer");
+							}
+							else
+							{
+								NTL_PRINT(PRINT_APP, "[Login] Character Server available: Index=%u, IP=%s, Port=%u, Load=%u/%u", 
+									pCharServerCheck->byServerIndex, pCharServerCheck->achPublicAddress, 
+									pCharServerCheck->wPortForClient, pCharServerCheck->dwLoad, pCharServerCheck->dwMaxLoad);
+							}
 
 							//send check req if player online to master server
 							CNtlPacket packet(sizeof(sAM_ON_PLAYER_CHECK_REQ));
@@ -287,7 +300,8 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 							res->dwAllowedFunctionForDeveloper = DBO_ALLOWED_FUNC_FOR_DEV_FLAG_HUMAN + DBO_ALLOWED_FUNC_FOR_DEV_FLAG_NAMEK + DBO_ALLOWED_FUNC_FOR_DEV_FLAG_MAJIN;
 							res->lastServerFarmId = fields[4].GetBYTE();
 							packet.SetPacketLen(sizeof(sAM_ON_PLAYER_CHECK_REQ));
-							app->SendTo(app->m_pMasterServerSession, &packet);
+							int sendRc = app->SendTo(app->m_pMasterServerSession, &packet);
+							NTL_PRINT(PRINT_APP, "[Login] Sent AM_ON_PLAYER_CHECK_REQ to MasterServer (AccountID %u, SendTo rc=%d)", this->AccountID, sendRc);
 						}
 						else
 						{
