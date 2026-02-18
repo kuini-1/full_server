@@ -5,7 +5,7 @@
 //
 //	Begin		:	2006-03-27
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Doo  Sup, Chung   ( john@ntl-inc.com )
 //
@@ -19,9 +19,12 @@
 #include "NtlCharacter.h"
 #include "NtlSerializer.h"
 
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
+
 const WCHAR* CNewbieTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 CNewbieTable::CNewbieTable(void)
@@ -53,7 +56,7 @@ void CNewbieTable::Init()
 
 void* CNewbieTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNEWBIE_TBLDAT* pNewSpawn = new sNEWBIE_TBLDAT;
 		if (NULL == pNewSpawn)
@@ -75,7 +78,7 @@ void* CNewbieTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CNewbieTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNEWBIE_TBLDAT* pNewbie = (sNEWBIE_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pNewbie, sizeof(*pNewbie)))
@@ -124,12 +127,14 @@ bool CNewbieTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pNewbie->tblidx, pNewbie)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pNewbie->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pNewbie->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
 
-	//  [6/7/2006 john] : 추가 : race, class 에 따른 tbldat 저장
+	//  [6/7/2006 john] : ??? : race, class ?? ???? tbldat ????
 	if( false == SetNewbieTbldat( pNewbie->byRace, pNewbie->byClass, pNewbie ) )
 	{
 		_ASSERTE( 0 );
@@ -143,80 +148,98 @@ bool CNewbieTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CNewbieTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNEWBIE_TBLDAT* pNewbie = (sNEWBIE_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszItemTblidxPrefix[] = { 'I', 't', 'e', 'm', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+		static const WCHAR g_wszItemTblidxFormat[] = { 'I', 't', 'e', 'm', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+		static const WCHAR g_wszPositionPrefix[] = { 'P', 'o', 's', 'i', 't', 'i', 'o', 'n', '_', 0 };
+		static const WCHAR g_wszPositionFormat[] = { 'P', 'o', 's', 'i', 't', 'i', 'o', 'n', '_', '%', 'd', 0 };
+		static const WCHAR g_wszStackQuantityPrefix[] = { 'S', 't', 'a', 'c', 'k', '_', 'Q', 'u', 'a', 'n', 't', 'i', 't', 'y', '_', 0 };
+		static const WCHAR g_wszStackQuantityFormat[] = { 'S', 't', 'a', 'c', 'k', '_', 'Q', 'u', 'a', 'n', 't', 'i', 't', 'y', '_', '%', 'd', 0 };
+		static const WCHAR g_wszSkillTblidxPrefix[] = { 'S', 'k', 'i', 'l', 'l', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+		static const WCHAR g_wszSkillTblidxFormat[] = { 'S', 'k', 'i', 'l', 'l', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+		static const WCHAR g_wszQuickTblidxPrefix[] = { 'Q', 'u', 'i', 'c', 'k', '_', 'T', 'b', 'l', 'i', 'd', 'x', 0 };
+		static const WCHAR g_wszQuickTblidxFormat[] = { 'Q', 'u', 'i', 'c', 'k', '_', 'T', 'b', 'l', 'i', 'd', 'x', '%', 'd', 0 };
+		static const WCHAR g_wszQuickTypePrefix[] = { 'Q', 'u', 'i', 'c', 'k', '_', 'T', 'y', 'p', 'e', 0 };
+		static const WCHAR g_wszQuickTypeFormat[] = { 'Q', 'u', 'i', 'c', 'k', '_', 'T', 'y', 'p', 'e', '%', 'd', 0 };
+		static const WCHAR g_wszQuickPositionPrefix[] = { 'Q', 'u', 'i', 'c', 'k', '_', 'P', 'o', 's', 'i', 't', 'i', 'o', 'n', 0 };
+		static const WCHAR g_wszQuickPositionFormat[] = { 'Q', 'u', 'i', 'c', 'k', '_', 'P', 'o', 's', 'i', 't', 'i', 'o', 'n', '%', 'd', 0 };
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pNewbie->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Race"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Race"))
 		{
-			pNewbie->byRace = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pNewbie->byRace = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Class"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Class"))
 		{
-			pNewbie->byClass = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pNewbie->byClass = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"World_Id"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"World_Id"))
 		{
 			pNewbie->world_Id = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Tutorial_World_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Tutorial_World_Tblidx"))
 		{
 			pNewbie->tutorialWorld = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Spawn_Loc_X"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Spawn_Loc_X"))
 		{
-			pNewbie->vSpawn_Loc.x = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNewbie->vSpawn_Loc.x = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Spawn_Loc_Y"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Spawn_Loc_Y"))
 		{
-			pNewbie->vSpawn_Loc.y = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNewbie->vSpawn_Loc.y = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Spawn_Loc_Z"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Spawn_Loc_Z"))
 		{
-			pNewbie->vSpawn_Loc.z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNewbie->vSpawn_Loc.z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Spawn_Dir_X"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Spawn_Dir_X"))
 		{
-			pNewbie->vSpawn_Dir.x = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pNewbie->vSpawn_Dir.x = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Spawn_Dir_Z"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Spawn_Dir_Z"))
 		{
-			pNewbie->vSpawn_Dir.z = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pNewbie->vSpawn_Dir.z = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Bind_Loc_X"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Bind_Loc_X"))
 		{
-			pNewbie->vBind_Loc.x = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNewbie->vBind_Loc.x = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Bind_Loc_Y"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Bind_Loc_Y"))
 		{
-			pNewbie->vBind_Loc.y = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNewbie->vBind_Loc.y = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Bind_Loc_Z"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Bind_Loc_Z"))
 		{
-			pNewbie->vBind_Loc.z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNewbie->vBind_Loc.z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Bind_Dir_X"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Bind_Dir_X"))
 		{
-			pNewbie->vBind_Dir.x = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pNewbie->vBind_Dir.x = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Bind_Dir_Z"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Bind_Dir_Z"))
 		{
-			pNewbie->vBind_Dir.z = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pNewbie->vBind_Dir.z = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Item_Tblidx_", wcslen(L"Item_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszItemTblidxPrefix, WCHARLen(g_wszItemTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NEWBIE_ITEM; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Item_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszItemTblidxFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pNewbie->aitem_Tblidx[ i ] = READ_DWORD( bstrData );
 
@@ -227,22 +250,24 @@ bool CNewbieTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Position_", wcslen(L"Position_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszPositionPrefix, WCHARLen(g_wszPositionPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NEWBIE_ITEM; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Position_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszPositionFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pNewbie->abyPos[ i ] = READ_BYTE( bstrData, pstrDataName->c_str(), EQUIP_SLOT_TYPE_UNKNOWN );
+					pNewbie->abyPos[ i ] = READ_BYTE( bstrData, wszFieldNameBuf, EQUIP_SLOT_TYPE_UNKNOWN );
 
 					bFound = true;
 					break;
@@ -251,22 +276,24 @@ bool CNewbieTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Stack_Quantity_", wcslen(L"Stack_Quantity_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszStackQuantityPrefix, WCHARLen(g_wszStackQuantityPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NEWBIE_ITEM; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Stack_Quantity_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszStackQuantityFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pNewbie->abyStack_Quantity[ i ] = READ_BYTE( bstrData, pstrDataName->c_str(), 1 );
+					pNewbie->abyStack_Quantity[ i ] = READ_BYTE( bstrData, wszFieldNameBuf, 1 );
 
 					bFound = true;
 					break;
@@ -275,20 +302,22 @@ bool CNewbieTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Skill_Tblidx_", wcslen(L"Skill_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszSkillTblidxPrefix, WCHARLen(g_wszSkillTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NEWBIE_SKILL; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Skill_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszSkillTblidxFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pNewbie->aSkillTblidx[ i ] = READ_DWORD( bstrData );
 
@@ -299,20 +328,22 @@ bool CNewbieTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Quick_Tblidx", wcslen(L"Quick_Tblidx") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszQuickTblidxPrefix, WCHARLen(g_wszQuickTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NEWBIE_QUICKSLOT_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Quick_Tblidx%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszQuickTblidxFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pNewbie->asQuickData[ i ].tbilidx = READ_DWORD( bstrData );
 
@@ -323,22 +354,24 @@ bool CNewbieTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Quick_Type", wcslen(L"Quick_Type") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszQuickTypePrefix, WCHARLen(g_wszQuickTypePrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NEWBIE_QUICKSLOT_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Quick_Type%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszQuickTypeFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pNewbie->asQuickData[ i ].byType = READ_BYTE( bstrData, pstrDataName->c_str() );
+					pNewbie->asQuickData[ i ].byType = READ_BYTE( bstrData, wszFieldNameBuf );
 
 					bFound = true;
 					break;
@@ -347,22 +380,24 @@ bool CNewbieTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Quick_Position", wcslen(L"Quick_Position") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszQuickPositionPrefix, WCHARLen(g_wszQuickPositionPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NEWBIE_QUICKSLOT_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Quick_Position%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszQuickPositionFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pNewbie->asQuickData[ i ].byQuickSlot = READ_BYTE( bstrData, pstrDataName->c_str() );
+					pNewbie->asQuickData[ i ].byQuickSlot = READ_BYTE( bstrData, wszFieldNameBuf );
 
 					bFound = true;
 					break;
@@ -371,29 +406,33 @@ bool CNewbieTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Map_Name_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Map_Name_Tblidx"))
 		{
 			pNewbie->mapNameTblidx = READ_DWORD( bstrData );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"QItem_Tblidx_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"QItem_Tblidx_1"))
 		{
 			pNewbie->qItemTblidx1 = READ_DWORD( bstrData );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"QPosition_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"QPosition_1"))
 		{
-			pNewbie->byQPosition1 = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pNewbie->byQPosition1 = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"QStack_Quantity_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"QStack_Quantity_1"))
 		{
-			pNewbie->byQStackQuantity1 = READ_BYTE( bstrData , pstrDataName->c_str() );
+			pNewbie->byQStackQuantity1 = READ_BYTE( bstrData , wszFieldNameBuf );
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

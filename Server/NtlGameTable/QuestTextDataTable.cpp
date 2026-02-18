@@ -4,9 +4,17 @@
 #include "QuestTextDataTable.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CQuestTextDataTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -36,7 +44,7 @@ void CQuestTextDataTable::Init()
 
 void* CQuestTextDataTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_TEXT_DATA_TBLDAT* pQuestTextData = new sQUEST_TEXT_DATA_TBLDAT;
 		if (NULL == pQuestTextData)
@@ -58,7 +66,7 @@ void* CQuestTextDataTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CQuestTextDataTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_TEXT_DATA_TBLDAT* pQuestTextData = (sQUEST_TEXT_DATA_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pQuestTextData, sizeof(*pQuestTextData)))
@@ -80,7 +88,9 @@ bool CQuestTextDataTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	sQUEST_TEXT_DATA_TBLDAT* pTbldat = (sQUEST_TEXT_DATA_TBLDAT*)pvTable;
 	if( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -91,15 +101,18 @@ bool CQuestTextDataTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CQuestTextDataTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_TEXT_DATA_TBLDAT* pQuestTextData = (sQUEST_TEXT_DATA_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Quest_Text_Index"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Quest_Text_Index"))
 		{
 			pQuestTextData->tblidx = READ_TBLIDX(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Quest_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Quest_Text"))
 		{
 			if ( false == READ_STR( pQuestTextData->wstrText, bstrData) )
 			{
@@ -108,7 +121,9 @@ bool CQuestTextDataTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std:
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}
@@ -211,7 +226,7 @@ bool CQuestTextDataTable::LoadFromBinary(CNtlSerializer& serializer, bool bReloa
 
 		delete [] pwszText;
 
-		//  [4/26/2008 zeroera] : 설명 : 실패하더라도 Load의 종료여부는 File Loading에서 결정한다
+		//  [4/26/2008 zeroera] : ???? : ????????? Load?? ??????? File Loading???? ???????
 		if( false == AddTable(pTableData, bReload, bUpdate) )
 		{
 			delete pTableData;

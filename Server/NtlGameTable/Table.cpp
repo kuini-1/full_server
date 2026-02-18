@@ -551,7 +551,8 @@ bool CTable::READ_BOOL(BSTR bstr, const WCHAR* pwszFieldName, bool bInvalidlValu
 	}
 
 
-	return (bool) ( wcscmp( L"0", bstr ) ? true : false );
+	static const WCHAR g_wszZero[] = { '0', 0 };
+	return (bool)( WCHARCmp( (const WCHAR*)bstr, g_wszZero ) != 0 );
 }
 
 
@@ -794,21 +795,25 @@ void CTable::CallErrorCallbackFunction(const char* pszFormatString, ...)
 //-----------------------------------------------------------------------------------
 void CTable::CallErrorCallbackFunction(const WCHAR* pwszFormatString, ...)
 {
+	if (NULL == m_pfnErrorCallback)
+		return;
+
+	WCHAR wszErrorMessage[1024 + 1];
+	char szErrorMessage[1024 + 1];
+	ZeroMemory(wszErrorMessage, sizeof(wszErrorMessage));
+	ZeroMemory(szErrorMessage, sizeof(szErrorMessage));
+
+	va_list args;
+	va_start(args, pwszFormatString);
 #if defined(_WIN32)
-	if (NULL != m_pfnErrorCallback)
-	{
-		WCHAR wszErrorMessage[1024 + 1];
-		char szErrorMessage[1024 + 1];
-
-		va_list args;
-		va_start(args, pwszFormatString);
-		vswprintf(wszErrorMessage, _countof(wszErrorMessage), pwszFormatString, args);
-		va_end(args);
-
-		::WideCharToMultiByte(::GetACP(), 0, wszErrorMessage, -1, szErrorMessage, _countof(szErrorMessage), NULL, NULL);
-		m_pfnErrorCallback(szErrorMessage, m_pvErrorCallbackArg);
-	}
+	vswprintf(wszErrorMessage, _countof(wszErrorMessage), pwszFormatString, args);
+	::WideCharToMultiByte(::GetACP(), 0, wszErrorMessage, -1, szErrorMessage, (int)_countof(szErrorMessage), NULL, NULL);
 #else
-	(void)pwszFormatString;
+	NTL_VSWPRINTF(wszErrorMessage, _countof(wszErrorMessage), pwszFormatString, args);
+	WideCharToMultiByte(GetACP(), 0, wszErrorMessage, -1, szErrorMessage, (int)_countof(szErrorMessage), NULL, NULL);
 #endif
+	va_end(args);
+	szErrorMessage[_countof(szErrorMessage) - 1] = '\0';
+
+	m_pfnErrorCallback(szErrorMessage, m_pvErrorCallbackArg);
 }

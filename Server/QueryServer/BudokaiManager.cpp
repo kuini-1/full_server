@@ -285,7 +285,7 @@ void CBudokaiManager::JoinTeam(HOBJECT handle, CHARACTERID charId, WCHAR * wszTe
 	{
 		for (std::map<JOINID, sBUDOKAI_JOIN_INFO>::iterator it = m_mapJoinInfo.begin(); it != m_mapJoinInfo.end(); it++)
 		{
-			if (wcscmp(it->second.sTeamInfo.wszTeamName, res->wszTeamName) == 0)
+			if (WCHARCmp(it->second.sTeamInfo.wszTeamName, res->wszTeamName) == 0)
 			{
 				res->wResultCode = GAME_BUDOKAI_INVALID_TEAM_NAME;
 				break;

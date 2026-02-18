@@ -6,9 +6,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CSetItemTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -38,7 +46,7 @@ void CSetItemTable::Init()
 
 void* CSetItemTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSET_ITEM_TBLDAT* pSetItem = new sSET_ITEM_TBLDAT;
 		if (NULL == pSetItem)
@@ -60,7 +68,7 @@ void* CSetItemTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CSetItemTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSET_ITEM_TBLDAT* pSetItem = (sSET_ITEM_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pSetItem, sizeof(*pSetItem)))
@@ -92,14 +100,16 @@ bool CSetItemTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 		if( pExistTbldat )
 		{
 			CopyMemory( pTbldat, pExistTbldat, pTbldat->GetDataSize() );
-			// 데이타의 해제를 위한 false 반환
+			// ??????? ?????? ???? false ???
 			return true; 
 		}
 	}
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -110,37 +120,43 @@ bool CSetItemTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CSetItemTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSET_ITEM_TBLDAT* pSetItem = (sSET_ITEM_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszItemTblidxPrefix[] = { 'I', 't', 'e', 'm', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+		static const WCHAR g_wszItemTblidxFormat[] = { 'I', 't', 'e', 'm', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pSetItem->tblidx = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp(pstrDataName->c_str(), L"Validity_Able") )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Validity_Able") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pSetItem->bValidity_Able = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pSetItem->bValidity_Able = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Semi_Set_Option"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Semi_Set_Option"))
 		{
 			pSetItem->semiSetOption = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Full_Set_Option"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Full_Set_Option"))
 		{
 			pSetItem->fullSetOption = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Item_Tblidx_", wcslen(L"Item_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszItemTblidxPrefix, WCHARLen(g_wszItemTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_SET_ITEM_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Item_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszItemTblidxFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pSetItem->aItemTblidx[ i ] = READ_DWORD( bstrData );
 
@@ -151,13 +167,17 @@ bool CSetItemTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstri
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

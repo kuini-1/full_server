@@ -6,9 +6,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CPortalTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -38,7 +46,7 @@ void CPortalTable::Init()
 
 void* CPortalTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sPORTAL_TBLDAT* pPortal = new sPORTAL_TBLDAT;
 		if (NULL == pPortal)
@@ -60,7 +68,7 @@ void* CPortalTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CPortalTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sPORTAL_TBLDAT* pPortal = (sPORTAL_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pPortal, sizeof(*pPortal)))
@@ -83,7 +91,9 @@ bool CPortalTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -94,70 +104,77 @@ bool CPortalTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CPortalTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sPORTAL_TBLDAT* pPortal = (sPORTAL_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszPointPrefix[] = { 'P', 'o', 'i', 'n', 't', '_', 0 };
+		static const WCHAR g_wszZenyPrefix[] = { 'Z', 'e', 'n', 'y', '_', 0 };
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pPortal->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Point_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Point_Name"))
 		{
 			pPortal->dwPointName = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Point_Name_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Point_Name_Text"))
 		{
 			READ_STRING(bstrData, pPortal->szPointNameText, _countof(pPortal->szPointNameText));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"World"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"World"))
 		{
 			pPortal->worldId = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Grade"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Grade"))
 		{
-			pPortal->byGrade = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pPortal->byGrade = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Loc_X"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Loc_X"))
 		{
-			pPortal->vLoc.x = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pPortal->vLoc.x = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Loc_Y"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Loc_Y"))
 		{
-			pPortal->vLoc.y = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pPortal->vLoc.y = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Loc_Z"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Loc_Z"))
 		{
-			pPortal->vLoc.z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pPortal->vLoc.z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Dir_X"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Dir_X"))
 		{
-			pPortal->vDir.x = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pPortal->vDir.x = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Dir_Z"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Dir_Z"))
 		{
-			pPortal->vDir.z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pPortal->vDir.z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Map_X"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Map_X"))
 		{
-			pPortal->vMap.x = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pPortal->vMap.x = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Map_Y"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Map_Y"))
 		{
-			pPortal->vMap.z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pPortal->vMap.z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Point_", wcslen(L"Point_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszPointPrefix, WCHARLen(g_wszPointPrefix)) )
 		{
 			bool bFound = false;
 
+			static const WCHAR g_wszPointFormat[] = { 'P', 'o', 'i', 'n', 't', '_', '%', 'd', 0 };
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < DBO_MAX_POINT_PORTAL; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Point_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszPointFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pPortal->aPoint[ i ] = READ_BYTE( bstrData, pstrDataName->c_str() );
+					pPortal->aPoint[ i ] = READ_BYTE( bstrData, wszFieldNameBuf );
 
 					bFound = true;
 					break;
@@ -165,20 +182,23 @@ bool CPortalTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 			}
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Zeny_", wcslen(L"Zeny_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszZenyPrefix, WCHARLen(g_wszZenyPrefix)) )
 		{
 			bool bFound = false;
 
+			static const WCHAR g_wszZenyFormat[] = { 'Z', 'e', 'n', 'y', '_', '%', 'd', 0 };
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < DBO_MAX_POINT_PORTAL; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Zeny_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszZenyFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pPortal->adwPointZenny[ i ] = READ_DWORD( bstrData );
 
@@ -188,13 +208,17 @@ bool CPortalTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstrin
 			}
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

@@ -6,9 +6,12 @@
 #include "NtlSerializer.h"
 #include "NtlStringHandler.h"
 
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
+
 const WCHAR* CTextTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -37,7 +40,7 @@ BOOL CTextTable::Create(DWORD dwCodePage, INT nField, INT nType )
 
 VOID* CTextTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sTEXT_TBLDAT* pNewText = new sTEXT_TBLDAT;
 		if ( NULL == pNewText )
@@ -59,7 +62,7 @@ VOID* CTextTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 
 bool CTextTable::DeallocNewTable( VOID* pvTable, WCHAR* pwszSheetName )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sTEXT_TBLDAT* pText = (sTEXT_TBLDAT*)pvTable;
 		if ( IsBadReadPtr( pText, sizeof( *pText ) ) )
@@ -82,7 +85,9 @@ bool CTextTable::AddTable( VOID* pvTable, bool bReload, bool bUpdate )
 
 	if( !m_mapTableList.insert( std::pair<TBLIDX,sTBLDAT*>( pTbldat->tblidx, pTbldat ) ).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -92,7 +97,7 @@ bool CTextTable::AddTable( VOID* pvTable, bool bReload, bool bUpdate )
 
 bool CTextTable::SetTableData( VOID* pvTable, WCHAR* pwszSheetName, TYPE eType, BSTR bstrData )
 {
-	if( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sTEXT_TBLDAT* pChatCommand = (sTEXT_TBLDAT*)pvTable;
 
@@ -189,7 +194,7 @@ bool CTextTable::LoadFromBinary(CNtlSerializer& serializer, bool bReload, bool b
 
 		delete [] pwszText;
 
-		//  [4/26/2008 zeroera] : ���� : �����ϴ��� Load�� ���Ῡ�δ� File Loading���� �����Ѵ�
+		//  [4/26/2008 zeroera] : ???? : ????????? Load?? ??????? File Loading???? ???????
 		if( false == AddTable(pTableData, bReload, bUpdate) )
 		{
 			delete pTableData;
@@ -244,7 +249,7 @@ bool CTextTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, 
 
 	while( ppwszSheetList[dwSheetIndex] )
 	{
-		swprintf( wszXPath, _countof(wszXPath), rowXPathFormat, ppwszSheetList[dwSheetIndex], m_nField );
+		NTL_SWPRINTF( wszXPath, _countof(wszXPath), (const WCHAR*)rowXPathFormat, ppwszSheetList[dwSheetIndex], m_nField );
 
 		IXMLDOMNodeList* pIndexNodeList = NULL;
 		pIndexNodeList = pXmlDoc->SelectNodeList( wszXPath );
@@ -295,7 +300,7 @@ bool CTextTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, 
 			return false;
 		}
 
-		// ������ ������.
+		// ?????? ??????.
 		for( INT j = 0 ; j < nIndexLength ; ++j )
 		{
 			VOID* pvTable = AllocNewTable( ppwszSheetList[dwSheetIndex], m_dwCodePage );
@@ -418,7 +423,7 @@ bool CTextTable::InitializeFromXmlDoc(CNtlXMLDoc* pXmlDoc, WCHAR* pwszFileName, 
 
 				pCellNode->Release();
 				DeallocNewTable( pvTable, ppwszSheetList[dwSheetIndex] );
-				_ASSERT( 0 );		// Index�� �ְ� Data�� �����ΰ��?
+				_ASSERT( 0 );		// Index?? ??? Data?? ?????????
 				break;
 				#endif
 
@@ -514,7 +519,7 @@ BOOL CTextTable::GetText( TBLIDX tblidx, std::wstring* pwstr )
 
 		return FALSE;
 	}
-	else if( !wcscmp( pData->wstrText.c_str(), L"" ) )
+	else if( WStringCmpLiteral( pData->wstrText, L"" ) == 0 )
 	{
 		//  swprintf_s( buf, 256, L"%d Tbl %u Index is Invalid", m_nType, tblidx );
 		//  *pwstr = buf;
@@ -629,9 +634,8 @@ std::wstring CMapNameTextTable::GetAreaName( TBLIDX tblidx )
 
 VOID CMapNameTextTable::GetErrorText( TBLIDX tblidx, std::wstring* pwString )
 {
-	WCHAR buf[256];
-	swprintf( buf, 256, L"TextTable::MapName Error : %u Index is Wrong", tblidx );
-	(*pwString) = buf;
+	static const WCHAR g_wszMapNameErrorFormat[] = { 'T', 'e', 'x', 't', 'T', 'a', 'b', 'l', 'e', ':', ':', 'M', 'a', 'p', 'N', 'a', 'm', 'e', ' ', 'E', 'r', 'r', 'o', 'r', ' ', ':', ' ', '%', 'u', ' ', 'I', 'n', 'd', 'e', 'x', ' ', 'i', 's', ' ', 'W', 'r', 'o', 'n', 'g', 0 };
+	Ntl_GenerateFormattedStringW( *pwString, (WCHAR*)g_wszMapNameErrorFormat, tblidx );
 }
 
 CTextAllTable::CTextAllTable(VOID)

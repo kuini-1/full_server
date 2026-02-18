@@ -5,7 +5,7 @@
 //
 //	Begin		:	2006-03-27
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Doo  Sup, Chung   ( john@ntl-inc.com )
 //
@@ -17,9 +17,13 @@
 #include "NewbieTableCheck.h"
 #include "NtlDebug.h"
 #include "NtlCharacter.h"
+
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
+
 const WCHAR* CNewbieTableCheck::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 CNewbieTableCheck::CNewbieTableCheck(void)
@@ -52,7 +56,7 @@ void CNewbieTableCheck::Init()
 
 void* CNewbieTableCheck::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNEWBIE_CHECK_TBLDAT* pNewSpawn = new sNEWBIE_CHECK_TBLDAT;
 		if (NULL == pNewSpawn)
@@ -74,7 +78,7 @@ void* CNewbieTableCheck::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CNewbieTableCheck::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNEWBIE_CHECK_TBLDAT* pNewbie = (sNEWBIE_CHECK_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pNewbie, sizeof(*pNewbie)))
@@ -90,7 +94,7 @@ bool CNewbieTableCheck::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 
 bool CNewbieTableCheck::AddTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if ( 0 != wcscmp(pwszSheetName, L"Table_Data_KOR") )
+	if ( 0 != WCHARCmp(pwszSheetName, g_wszTableDataKOR) )
 	{
 		_ASSERTE( 0 );
 		return false;
@@ -111,89 +115,93 @@ bool CNewbieTableCheck::AddTable(void* pvTable, WCHAR* pwszSheetName)
 
 bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNEWBIE_CHECK_TBLDAT* pNewbie = (sNEWBIE_CHECK_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Field_Name"))
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Field_Name"))
 		{
 			pNewbie->wstrField_Name = (bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Only_N"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Only_N"))
 		{
 			pNewbie->byOnly_N = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Invalid_Check"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Invalid_Check"))
 		{
 			pNewbie->byInvalid_Check = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"N_From_N"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"N_From_N"))
 		{
 			pNewbie->byN_From_N = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Min"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Min"))
 		{
 			pNewbie->nMin = (_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Max"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Max"))
 		{
 			pNewbie->nMax = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"N_Above"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"N_Above"))
 		{
 			pNewbie->byN_Above = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Above"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Above"))
 		{
 			pNewbie->nAbove = (_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"N_Below"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"N_Below"))
 		{
 			pNewbie->byN_Below = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Below"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Below"))
 		{
 			pNewbie->nBelow = (_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"String_Below"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"String_Below"))
 		{
 			pNewbie->byString_Below = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"String"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"String"))
 		{
 			pNewbie->nString = (_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"In_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"In_Tblidx"))
 		{
 			pNewbie->byIn_Tblidx = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Table"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table"))
 		{
 			pNewbie->wstrTable = (bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Look_Up_Level"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Look_Up_Level"))
 		{
 			pNewbie->byLook_Up_Level = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Table_Level"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table_Level"))
 		{
 			pNewbie->wstrTable_Level = (bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Look_Up_Field"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Look_Up_Field"))
 		{
 			pNewbie->byLook_Up_Field = (BYTE)(_wtoi(bstrData));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Field"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Field"))
 		{
 			pNewbie->wstrField = (bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Table_Field"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table_Field"))
 		{
 			pNewbie->wstrTable_Field = (bstrData);
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

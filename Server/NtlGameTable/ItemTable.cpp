@@ -5,10 +5,12 @@
 #include "NtlSerializer.h"
 #include "NtlRandom.h"
 
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
 
 const WCHAR* CItemTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -38,7 +40,7 @@ void CItemTable::Init()
 
 void* CItemTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_TBLDAT* pNewItem = new sITEM_TBLDAT;
 		if (NULL == pNewItem)
@@ -60,7 +62,7 @@ void* CItemTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CItemTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_TBLDAT* pItem = (sITEM_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pItem, sizeof(*pItem)))
@@ -106,7 +108,9 @@ bool CItemTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -118,376 +122,381 @@ bool CItemTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 bool CItemTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
 	
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_TBLDAT* pItem = (sITEM_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name_Text"))
 		{
 			READ_STRINGW(bstrData, pItem->wszNameText, _countof(pItem->wszNameText));
 		}
-		else if ( 0 == wcscmp(pstrDataName->c_str(), L"Validity_Able") )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Validity_Able") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bValidity_Able = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pItem->bValidity_Able = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
 			pItem->Name = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Icon_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Icon_Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRING(bstrData, pItem->szIcon_Name, _countof(pItem->szIcon_Name));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Model_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Model_Type"))
 		{
-			pItem->byModel_Type = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byModel_Type = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Model"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Model"))
 		{
 			READ_STRING(bstrData, pItem->szModel, _countof(pItem->szModel));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sub_Weapon_Act_Model"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sub_Weapon_Act_Model"))
 		{
 			READ_STRING(bstrData, pItem->szSub_Weapon_Act_Model, _countof(pItem->szSub_Weapon_Act_Model));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Item_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Item_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->byItem_Type = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byItem_Type = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Equip_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Equip_Type"))
 		{
-			pItem->byEquip_Type = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byEquip_Type = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Equip_Slot_Type_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Equip_Slot_Type_Bit_Flag"))
 		{
 			pItem->dwEquip_Slot_Type_Bit_Flag = (DWORD)READ_BITFLAG( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Function_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Function_Bit_Flag"))
 		{
 			pItem->wFunction_Bit_Flag = (WORD)READ_BITFLAG( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Max_Stack"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Max_Stack"))
 		{
-			pItem->byMax_Stack = READ_BYTE( bstrData, pstrDataName->c_str(), NTL_UNSTACKABLE_ITEM_COUNT );
+			pItem->byMax_Stack = READ_BYTE( bstrData, wszFieldNameBuf, NTL_UNSTACKABLE_ITEM_COUNT );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Rank"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Rank"))
 		{
-			pItem->byRank = READ_BYTE( bstrData, pstrDataName->c_str(), 0 );
+			pItem->byRank = READ_BYTE( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Weight"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Weight"))
 		{
 			pItem->dwWeight = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Cost"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Cost"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->dwCost = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sell_Price"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sell_Price"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->dwSell_Price = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Durability"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Durability"))
 		{
-			pItem->byDurability = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byDurability = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Durability_Count"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Durability_Count"))
 		{
-			pItem->byDurability_Count = READ_BYTE(bstrData, pstrDataName->c_str(), 0);
+			pItem->byDurability_Count = READ_BYTE(bstrData, wszFieldNameBuf, 0);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Battle_Attribute"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Battle_Attribute"))
 		{
-			pItem->byBattle_Attribute = READ_BYTE(bstrData, pstrDataName->c_str(), BATTLE_ATTRIBUTE_NONE);
+			pItem->byBattle_Attribute = READ_BYTE(bstrData, wszFieldNameBuf, BATTLE_ATTRIBUTE_NONE);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Physical_Offence"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Physical_Offence"))
 		{
-			pItem->wPhysical_Offence = READ_WORD(bstrData, pstrDataName->c_str());
+			pItem->wPhysical_Offence = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Energy_Offence"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Energy_Offence"))
 		{
-			pItem->wEnergy_Offence = READ_WORD(bstrData, pstrDataName->c_str());
+			pItem->wEnergy_Offence = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Physical_Piercing_Offence"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Physical_Piercing_Offence"))
 		{
-//			pItem->wPhysical_Piercing_Offence = READ_WORD(bstrData, pstrDataName->c_str());
+//			pItem->wPhysical_Piercing_Offence = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Energy_Piercing_Offence"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Energy_Piercing_Offence"))
 		{
-//			pItem->wEnergy_Piercing_Offence = READ_WORD(bstrData, pstrDataName->c_str());
+//			pItem->wEnergy_Piercing_Offence = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Physical_Defence"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Physical_Defence"))
 		{
-			pItem->wPhysical_Defence = READ_WORD(bstrData, pstrDataName->c_str());
+			pItem->wPhysical_Defence = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Energy_Defence"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Energy_Defence"))
 		{
-			pItem->wEnergy_Defence = READ_WORD(bstrData, pstrDataName->c_str());
+			pItem->wEnergy_Defence = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Range_Bonus"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Range_Bonus"))
 		{
-			pItem->fAttack_Range_Bonus = READ_FLOAT(bstrData, pstrDataName->c_str());
+			pItem->fAttack_Range_Bonus = READ_FLOAT(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Speed_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Speed_Rate"))
 		{
-			pItem->wAttack_Speed_Rate = READ_WORD(bstrData, pstrDataName->c_str());
+			pItem->wAttack_Speed_Rate = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Level"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Level"))
 		{
-			pItem->byNeed_Min_Level = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byNeed_Min_Level = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Max_Level"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Max_Level"))
 		{
-			pItem->byNeed_Max_Level = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byNeed_Max_Level = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Class_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Class_Bit_Flag"))
 		{			
 			pItem->dwNeed_Class_Bit_Flag = READ_BITFLAG( bstrData, NTL_ITEM_ALL_USE_FLAG);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Gender_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Gender_Bit_Flag"))
 		{			
 			pItem->dwNeed_Gender_Bit_Flag = READ_BITFLAG( bstrData, NTL_ITEM_ALL_USE_FLAG);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Class_Special"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Class_Special"))
 		{
-			pItem->byClass_Special = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byClass_Special = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Race_Special"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Race_Special"))
 		{
-			pItem->byRace_Special = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byRace_Special = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Str"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Str"))
 		{
-			pItem->wNeed_Str = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->wNeed_Str = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Con"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Con"))
 		{
-			pItem->wNeed_Con = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->wNeed_Con = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Foc"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Foc"))
 		{
-			pItem->wNeed_Foc = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->wNeed_Foc = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Dex"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Dex"))
 		{
-			pItem->wNeed_Dex = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->wNeed_Dex = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Sol"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Sol"))
 		{
-			pItem->wNeed_Sol = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->wNeed_Sol = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Eng"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Eng"))
 		{
-			pItem->wNeed_Eng = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->wNeed_Eng = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Set_Item_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Set_Item_Tblidx"))
 		{
 			pItem->set_Item_Tblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Note"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Note"))
 		{
 			pItem->Note = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Bag_Size"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Bag_Size"))
 		{
-			pItem->byBag_Size = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byBag_Size = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Scouter_Watt"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Scouter_Watt"))
 		{
-			pItem->wScouter_Watt = READ_WORD(bstrData, pstrDataName->c_str());
+			pItem->wScouter_Watt = READ_WORD(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Scouter_MaxPower"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Scouter_MaxPower"))
 		{
 			pItem->dwScouter_MaxPower = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Scouter_Parts_Type_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Scouter_Parts_Type_1"))
 		{
-			pItem->byScouter_Parts_Type1 = READ_BYTE(bstrData, pstrDataName->c_str(), SCOUTER_PARTS_NONE);
+			pItem->byScouter_Parts_Type1 = READ_BYTE(bstrData, wszFieldNameBuf, SCOUTER_PARTS_NONE);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Scouter_Parts_Type_2"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Scouter_Parts_Type_2"))
 		{
-			pItem->byScouter_Parts_Type2 = READ_BYTE(bstrData, pstrDataName->c_str(), SCOUTER_PARTS_NONE);
+			pItem->byScouter_Parts_Type2 = READ_BYTE(bstrData, wszFieldNameBuf, SCOUTER_PARTS_NONE);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Scouter_Parts_Type_3"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Scouter_Parts_Type_3"))
 		{
-			pItem->byScouter_Parts_Type3 = READ_BYTE(bstrData, pstrDataName->c_str(), SCOUTER_PARTS_NONE);
+			pItem->byScouter_Parts_Type3 = READ_BYTE(bstrData, wszFieldNameBuf, SCOUTER_PARTS_NONE);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Scouter_Parts_Type_4"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Scouter_Parts_Type_4"))
 		{
-			pItem->byScouter_Parts_Type4 = READ_BYTE(bstrData, pstrDataName->c_str(), SCOUTER_PARTS_NONE);
+			pItem->byScouter_Parts_Type4 = READ_BYTE(bstrData, wszFieldNameBuf, SCOUTER_PARTS_NONE);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Use_Item_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Use_Item_Tblidx"))
 		{
 			pItem->Use_Item_Tblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"bCan_Have_Option"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"bCan_Have_Option"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bIsCanHaveOption = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pItem->bIsCanHaveOption = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Item_Option_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Item_Option_Tblidx"))
 		{
 			pItem->Item_Option_Tblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Item_Group"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Item_Group"))
 		{
-			pItem->byItemGroup = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byItemGroup = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Charm_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Charm_Tblidx"))
 		{
 			pItem->Charm_Tblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Costume_Hide_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Costume_Hide_Bit_Flag"))
 		{
 			pItem->wCostumeHideBitFlag = (WORD)READ_BITFLAG(bstrData);
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Item_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Item_Tblidx"))
 		{
 			pItem->NeedItemTblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Common_Point"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Common_Point"))
 		{
 			pItem->CommonPoint = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Common_Point_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Common_Point_Type"))
 		{
-			pItem->byCommonPointType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byCommonPointType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}		
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Function"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Function"))
 		{
-			pItem->byNeedFunction = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byNeedFunction = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Use_Duration_Max" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Use_Duration_Max" ))
 		{
 			pItem->dwUseDurationMax = READ_DWORD( bstrData );
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Duration_Type" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Duration_Type" ))
 		{
-			pItem->byDurationType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byDurationType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Contents_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Contents_Tblidx"))
 		{
 			pItem->contentsTblidx = READ_TBLIDX(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Duration_Group"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Duration_Group"))
 		{
 			pItem->dwDurationGroup = READ_DWORD(bstrData);
 		}
 
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Drop_Level" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Drop_Level" ))
 		{
-			pItem->byDropLevel = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byDropLevel = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Create_Enchant_Rate_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Create_Enchant_Rate_Tblidx"))
 		{
 			pItem->enchantRateTblidx = READ_TBLIDX(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Excellent_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Excellent_Tblidx"))
 		{
 			pItem->excellentTblidx = READ_TBLIDX(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Rare_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Rare_Tblidx"))
 		{
 			pItem->rareTblidx = READ_TBLIDX(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Legendary_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Legendary_Tblidx"))
 		{
 			pItem->legendaryTblidx = READ_TBLIDX(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Create_Superior_Able"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Create_Superior_Able"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bCreateSuperiorAble = READ_BOOL( bstrData, pstrDataName->c_str(), false );
+			pItem->bCreateSuperiorAble = READ_BOOL( bstrData, wszFieldNameBuf, false );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Create_Excellent_Able"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Create_Excellent_Able"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bCreateExcellentAble = READ_BOOL( bstrData, pstrDataName->c_str(), false );
+			pItem->bCreateExcellentAble = READ_BOOL( bstrData, wszFieldNameBuf, false );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Create_Rare_Able"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Create_Rare_Able"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bCreateRareAble = READ_BOOL( bstrData, pstrDataName->c_str(), false );
+			pItem->bCreateRareAble = READ_BOOL( bstrData, wszFieldNameBuf, false );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Create_Legendary_Able"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Create_Legendary_Able"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bCreateLegendaryAble = READ_BOOL( bstrData, pstrDataName->c_str(), false );
+			pItem->bCreateLegendaryAble = READ_BOOL( bstrData, wszFieldNameBuf, false );
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Restrict_Type" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Restrict_Type" ))
 		{
-			pItem->byRestrictType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byRestrictType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"fAtk_Phy"))
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->fAttack_Physical_Revision = READ_FLOAT( bstrData, pstrDataName->c_str() );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"fAtk_Eng"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"fAtk_Phy"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->fAttack_Energy_Revision = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pItem->fAttack_Physical_Revision = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"fDef_Phy"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"fAtk_Eng"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->fDefence_Physical_Revision = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pItem->fAttack_Energy_Revision = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"fDef_Eng"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"fDef_Phy"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->fDefence_Energy_Revision = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pItem->fDefence_Physical_Revision = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"TMP_Category_Type" ))
-		{
-			pItem->byTmpTabType = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Can_Renewal"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"fDef_Eng"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bIsCanRenewal = READ_BOOL( bstrData, pstrDataName->c_str(), false );
+			pItem->fDefence_Energy_Revision = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Disassamble_Bit_Flag"))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"TMP_Category_Type" ))
+		{
+			pItem->byTmpTabType = READ_BYTE( bstrData, wszFieldNameBuf );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Can_Renewal"))
+		{
+			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+			pItem->bIsCanRenewal = READ_BOOL( bstrData, wszFieldNameBuf, false );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Disassamble_Bit_Flag"))
 		{
 			pItem->wDisassemble_Bit_Flag = (WORD)READ_BITFLAG( bstrData );
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Normal_Min" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Normal_Min" ))
 		{
-			pItem->byDisassembleNormalMin = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byDisassembleNormalMin = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Normal_Max" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Normal_Max" ))
 		{
-			pItem->byDisassembleNormalMax = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byDisassembleNormalMax = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Rank_Up_Min" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Rank_Up_Min" ))
 		{
-			pItem->byDisassembleUpperMin = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byDisassembleUpperMin = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Rank_Up_Max" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Rank_Up_Max" ))
 		{
-			pItem->byDisassembleUpperMax = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byDisassembleUpperMax = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if(0 == wcscmp(pstrDataName->c_str(), L"Drop_Visual" ))
+		else if(0 == WStringCmpLiteral(*pstrDataName, L"Drop_Visual" ))
 		{
-			pItem->byDropVisual = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byDropVisual = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
 
 
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

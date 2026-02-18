@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-06-07
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Ju-hyoung   ( niam@ntl-inc.com )
 //
@@ -20,6 +20,8 @@
 
 #include "NtlWorld.h"
 
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
 
 //-----------------------------------------------------------------------------------
 //		Purpose	:
@@ -27,7 +29,7 @@
 //-----------------------------------------------------------------------------------
 const WCHAR* CRankBattleTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -87,7 +89,7 @@ void CRankBattleTable::Destroy( void )
 //-----------------------------------------------------------------------------------
 void* CRankBattleTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sRANKBATTLE_TBLDAT* pNewObj = new sRANKBATTLE_TBLDAT;
 		if ( NULL == pNewObj )
@@ -116,7 +118,7 @@ void* CRankBattleTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 //-----------------------------------------------------------------------------------
 bool CRankBattleTable::DeallocNewTable( void* pvTable, WCHAR* pwszSheetName )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sRANKBATTLE_TBLDAT* pObj = (sRANKBATTLE_TBLDAT*)pvTable;
 		if ( IsBadReadPtr( pObj, sizeof(*pObj) ) ) return false;
@@ -141,9 +143,11 @@ bool CRankBattleTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	sRANKBATTLE_TBLDAT * pTbldat = (sRANKBATTLE_TBLDAT*)pvTable;
 
-	if ( false == m_mapTableList.insert( std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat) ).second )
+		if ( false == m_mapTableList.insert( std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat) ).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -161,23 +165,26 @@ bool CRankBattleTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::w
 {
 	static char szTemp[1024] = { 0x00, };
 
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sRANKBATTLE_TBLDAT * pTbldat = (sRANKBATTLE_TBLDAT*) pvTable;
 
-		if ( 0 == wcscmp( pstrDataName->c_str(), L"Tblidx" ) )
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if ( 0 == WStringCmpLiteral( *pstrDataName, L"Tblidx" ) )
 		{
 			pTbldat->tblidx = READ_TBLIDX( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+			CheckNegativeInvalid( wszFieldNameBuf, bstrData );
 
 			READ_STRINGW( bstrData, pTbldat->wszName, _countof(pTbldat->wszName) );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Rule_Type" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Rule_Type" ) )
 		{
-			BYTE byMatchRule = READ_BYTE( bstrData, pstrDataName->c_str() );
+			BYTE byMatchRule = READ_BYTE( bstrData, wszFieldNameBuf );
 			if( 1 == byMatchRule )
 			{
 				pTbldat->byRuleType = GAMERULE_RANKBATTLE;				
@@ -196,152 +203,156 @@ bool CRankBattleTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::w
 			}
 			else
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : invalid \"Rule_Type\"[%u] (Field Name = %s)", m_wszXmlFileName, byMatchRule, pstrDataName->c_str());
+				WCHAR wszRuleFmt[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : invalid \"Rule_Type\"[%u] (Field Name = %s)", wszRuleFmt, sizeof(wszRuleFmt)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszRuleFmt, m_wszXmlFileName, byMatchRule, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Battle_Mode" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Battle_Mode" ) )
 		{
-			pTbldat->byBattleMode = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pTbldat->byBattleMode = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Map_Index" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Map_Index" ) )
 		{
 			pTbldat->worldTblidx = READ_TBLIDX( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Need_Item" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Need_Item" ) )
 		{
 			pTbldat->needItemTblidx = READ_TBLIDX( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Need_Zenny"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Need_Zenny"))
 		{
 			pTbldat->dwZenny = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Min_Level" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Min_Level" ) )
 		{
-			pTbldat->byMinLevel = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pTbldat->byMinLevel = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Max_Level" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Max_Level" ) )
 		{
-			pTbldat->byMaxLevel = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pTbldat->byMaxLevel = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Battle_Count" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Battle_Count" ) )
 		{
-			pTbldat->byBattleCount = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pTbldat->byBattleCount = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"WaitTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"WaitTime"))
 		{
 			pTbldat->dwWaitTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"DirectionTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"DirectionTime"))
 		{
 			pTbldat->dwDirectionTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"MatchReadyTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"MatchReadyTime"))
 		{
 			pTbldat->dwMatchReadyTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"StageReadyTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"StageReadyTime"))
 		{
 			pTbldat->dwStageReadyTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"StageRunTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"StageRunTime"))
 		{
 			pTbldat->dwStageRunTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"StageFinishTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"StageFinishTime"))
 		{
 			pTbldat->dwStageFinishTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"MatchFinishTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"MatchFinishTime"))
 		{
 			pTbldat->dwMatchFinishTime = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"BossDirection_Time" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"BossDirection_Time" ) )
 		{
 			pTbldat->dwBossDirectionTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"BossKill_Time"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"BossKill_Time"))
 		{
 			pTbldat->dwBossKillTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"BossEndingTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"BossEndingTime"))
 		{
 			pTbldat->dwBossEndingTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"EndTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"EndTime"))
 		{
 			pTbldat->dwEndTime = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"KO_Score"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"KO_Score"))
 		{
-			pTbldat->chScoreKO = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chScoreKO = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"OutofArea_Score"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"OutofArea_Score"))
 		{
-			pTbldat->chScoreOutOfArea= READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chScoreOutOfArea= READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Pointwin_Score"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Pointwin_Score"))
 		{
-			pTbldat->chScorePointWin = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chScorePointWin = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Draw_Score"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Draw_Score"))
 		{
-			pTbldat->chScoreDraw = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chScoreDraw = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Lost_Score"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Lost_Score"))
 		{
-			pTbldat->chScoreLose = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chScoreLose = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Excellent_Result"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Excellent_Result"))
 		{
-			pTbldat->chResultExcellent = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chResultExcellent = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Greate_Result"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Greate_Result"))
 		{
-			pTbldat->chResultGreate = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chResultGreate = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Good_Result"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Good_Result"))
 		{
-			pTbldat->chResultGood = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chResultGood = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Draw_Result"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Draw_Result"))
 		{
-			pTbldat->chResultDraw = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chResultDraw = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Lost_Result"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Lost_Result"))
 		{
-			pTbldat->chResultLose = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chResultLose = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"PerfectWinner_Score"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"PerfectWinner_Score"))
 		{
-			pTbldat->chBonusPerfectWinner = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chBonusPerfectWinner = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"NormalWinner_Score"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"NormalWinner_Score"))
 		{
-			pTbldat->chBonusNormalWinner = READ_CHAR( bstrData, pstrDataName->c_str() );
+			pTbldat->chBonusNormalWinner = READ_CHAR( bstrData, wszFieldNameBuf );
 		}
 
 		//new
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Day_Entry_Num"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Day_Entry_Num"))
 		{
-			pTbldat->byDayEntryNum = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pTbldat->byDayEntryNum = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"OutSide_Able"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"OutSide_Able"))
 		{
-			pTbldat->bOutSizeAble = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pTbldat->bOutSizeAble = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Info_Index"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Info_Index"))
 		{
 			pTbldat->dwInfoIndex = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"StageMinClearTime"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"StageMinClearTime"))
 		{
 			pTbldat->dwStateMinClearTime = READ_DWORD( bstrData );
 		}
 
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

@@ -3,9 +3,11 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static inline void FormatStringToWCHAR_ServerConfig(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
 
 #define SERVERCONFIG_TBLDAT_START(textname)							\
-	if( 0 == wcscmp( pTbldat->wstrName.c_str(), textname) )			\
+	if( 0 == WStringCmpLiteral( pTbldat->wstrName, textname) )		\
 	{
 
 #define SERVERCONFIG_TBLDAT_END()									\
@@ -13,7 +15,7 @@
 
 
 #define SERVERCONFIG_TBLDAT_START_SEC(textname)						\
-	if( 0 == wcscmp( pTbldat->wstrValue[0].c_str(), textname) )		\
+	if( 0 == WStringCmpLiteral( pTbldat->wstrValue[0], textname) )	\
 	{
 
 #define SERVERCONFIG_TBLDAT_END_SEC()								\
@@ -23,66 +25,66 @@
 // BYTE
 #define SERVERCONFIG_TBLDAT_SET_BYTE( table_loc, valuename, maxvalue)								\
 	if( false == ReadByte( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
-	{																								\
-		CTable::CallErrorCallbackFunction(															\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",					\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );	\
+	{	WCHAR _fmt[512], _n[256], _v[256];															\
+		FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", _fmt, 512);	\
+		WStringCStrToWCHAR(pTbldat->wstrName, _n, 256); WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], _v, 256);	\
+		CTable::CallErrorCallbackFunction(_fmt, m_wszXmlFileName, _n, _v);							\
 		return false;																				\
 	}
 
 // DWORD
 #define SERVERCONFIG_TBLDAT_SET_DWORD( table_loc, valuename, maxvalue)								\
 	if( false == ReadDWORD( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
-	{																								\
-		CTable::CallErrorCallbackFunction(															\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",					\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );	\
+	{	WCHAR _fmt[512], _n[256], _v[256];															\
+		FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", _fmt, 512);	\
+		WStringCStrToWCHAR(pTbldat->wstrName, _n, 256); WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], _v, 256);	\
+		CTable::CallErrorCallbackFunction(_fmt, m_wszXmlFileName, _n, _v);							\
 		return false;																				\
 	}
 
 // TBLIDX
 #define SERVERCONFIG_TBLDAT_SET_TBLIDX( table_loc, valuename, maxvalue)								\
 	if( false == ReadTBLIDX( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
-	{																								\
-		CTable::CallErrorCallbackFunction(															\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",					\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );	\
+	{	WCHAR _fmt[512], _n[256], _v[256];															\
+		FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", _fmt, 512);	\
+		WStringCStrToWCHAR(pTbldat->wstrName, _n, 256); WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], _v, 256);	\
+		CTable::CallErrorCallbackFunction(_fmt, m_wszXmlFileName, _n, _v);							\
 		return false;																				\
 	}
 
 
 #define SERVERCONFIG_TBLDAT_SET_FLOAT( table_loc, valuename, maxvalue)								\
 	if( false == ReadFLOAT( valuename, pTbldat->wstrValue[table_loc], maxvalue) )					\
-	{																								\
-		CTable::CallErrorCallbackFunction(															\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",					\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );	\
+	{	WCHAR _fmt[512], _n[256], _v[256];															\
+		FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", _fmt, 512);	\
+		WStringCStrToWCHAR(pTbldat->wstrName, _n, 256); WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], _v, 256);	\
+		CTable::CallErrorCallbackFunction(_fmt, m_wszXmlFileName, _n, _v);							\
 		return false;																				\
 	}
 
 
 #define SERVERCONFIG_TBLDAT_SET_STR( table_loc, valuename)													\
 	if( false == ReadSTR( valuename, BUDOKAI_MAX_TBLDAT_FILE_LENGTH, pTbldat->wstrValue[table_loc] ) )		\
-	{																										\
-		CTable::CallErrorCallbackFunction(																	\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",							\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );			\
+	{	WCHAR _fmt[512], _n[256], _v[256];																	\
+		FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", _fmt, 512);	\
+		WStringCStrToWCHAR(pTbldat->wstrName, _n, 256); WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], _v, 256);	\
+		CTable::CallErrorCallbackFunction(_fmt, m_wszXmlFileName, _n, _v);								\
 		return false;																						\
 	}
 
 #define SERVERCONFIG_TBLDAT_SET_BOOL( table_loc, valuename)												\
 	if( false == ReadBOOL( valuename, pTbldat->wstrValue[table_loc]) )									\
-	{																									\
-		CTable::CallErrorCallbackFunction(																\
-			L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",						\
-			m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[table_loc].c_str() );		\
+	{	WCHAR _fmt[512], _n[256], _v[256];																	\
+		FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", _fmt, 512);	\
+		WStringCStrToWCHAR(pTbldat->wstrName, _n, 256); WStringCStrToWCHAR(pTbldat->wstrValue[table_loc], _v, 256);	\
+		CTable::CallErrorCallbackFunction(_fmt, m_wszXmlFileName, _n, _v);								\
 		return false;																					\
 	}
 
 
 const WCHAR* CServerConfigTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -115,7 +117,7 @@ void CServerConfigTable::Init()
 
 void* CServerConfigTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSERVERCONFIG_TBLDAT* pNewHelp = new sSERVERCONFIG_TBLDAT;
 		if (NULL == pNewHelp)
@@ -137,7 +139,7 @@ void* CServerConfigTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CServerConfigTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSERVERCONFIG_TBLDAT* pHelp = (sSERVERCONFIG_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pHelp, sizeof(*pHelp)))
@@ -244,8 +246,10 @@ bool CServerConfigTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 			DWORD dwIdx = INVALID_DWORD;
 			if( false == ReadDWORD( dwIdx, pTbldat->wstrValue[1], INVALID_DWORD) )
 			{
-				CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
-					m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[1].c_str() );
+				WCHAR _fmt[512], _n[256], _v[256];
+				FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)", _fmt, 512);
+				WStringCStrToWCHAR(pTbldat->wstrName, _n, 256); WStringCStrToWCHAR(pTbldat->wstrValue[1], _v, 256);
+				CTable::CallErrorCallbackFunction(_fmt, m_wszXmlFileName, _n, _v);
 				return false;
 			}
 
@@ -421,7 +425,9 @@ bool CServerConfigTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR_ServerConfig(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -432,11 +438,14 @@ bool CServerConfigTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CServerConfigTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSERVERCONFIG_TBLDAT* pHelp = (sSERVERCONFIG_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pHelp->tblidx = READ_DWORD( bstrData );
 		}
@@ -444,7 +453,9 @@ bool CServerConfigTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::
 
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}
@@ -734,8 +745,10 @@ bool CServerConfigTable::ReadSTR( WCHAR * pDest, DWORD dwDestLength, std::wstrin
 		{
 			if (NULL != m_pfnErrorCallback)
 			{
-				CallErrorCallbackFunction(L"[File] : %s\n[Error] : The string[%s]'s length[%u] is bigger than the max. length[%u]",
-					m_wszXmlFileName, wstrSrc.c_str(), wstrSrc.length(), dwDestLength - 1);
+				WCHAR wszFormatBuf[512], wszSrcBuf[256];
+				FormatStringToWCHAR_ServerConfig(L"[File] : %s\n[Error] : The string[%s]'s length[%u] is bigger than the max. length[%u]", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				WStringCStrToWCHAR(wstrSrc, wszSrcBuf, sizeof(wszSrcBuf)/sizeof(WCHAR));
+				CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszSrcBuf, (unsigned)wstrSrc.length(), (unsigned)(dwDestLength - 1));
 			}
 
 			return false;
@@ -759,9 +772,9 @@ bool CServerConfigTable::ReadSTR( WCHAR * pDest, DWORD dwDestLength, std::wstrin
 //-----------------------------------------------------------------------------------
 bool CServerConfigTable::ReadBOOL( bool & rDest, std::wstring & wstrValue)
 {
-	if(0 == wcscmp( wstrValue.c_str(), L"false"))
+	if(0 == WStringCmpLiteral( wstrValue, L"false"))
 		rDest = false;
-	else if (0 == wcscmp( wstrValue.c_str(), L"true"))
+	else if (0 == WStringCmpLiteral( wstrValue, L"true"))
 		rDest = true;
 	else
 		return false;

@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-03-15
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Doo Sup, Chung ( john@ntl-inc.com )
 //
@@ -20,9 +20,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CNPCTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -52,7 +60,7 @@ void CNPCTable::Init()
 
 void* CNPCTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNPC_TBLDAT* pNewNPC = new sNPC_TBLDAT;
 		if (NULL == pNewNPC)
@@ -74,7 +82,7 @@ void* CNPCTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CNPCTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNPC_TBLDAT* pNPC = (sNPC_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pNPC, sizeof(*pNPC)))
@@ -121,7 +129,9 @@ bool CNPCTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -133,212 +143,226 @@ bool CNPCTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 bool CNPCTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
 	
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sNPC_TBLDAT* pNPC = (sNPC_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszUseSkillTimePrefix[] = { 'U', 's', 'e', '_', 'S', 'k', 'i', 'l', 'l', '_', 'T', 'i', 'm', 'e', '_', 0 };
+		static const WCHAR g_wszUseSkillTimeFormat[] = { 'U', 's', 'e', '_', 'S', 'k', 'i', 'l', 'l', '_', 'T', 'i', 'm', 'e', '_', '%', 'd', 0 };
+		static const WCHAR g_wszUseSkillTblidxPrefix[] = { 'U', 's', 'e', '_', 'S', 'k', 'i', 'l', 'l', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+		static const WCHAR g_wszUseSkillTblidxFormat[] = { 'U', 's', 'e', '_', 'S', 'k', 'i', 'l', 'l', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+		static const WCHAR g_wszUseSkillBasisPrefix[] = { 'U', 's', 'e', '_', 'S', 'k', 'i', 'l', 'l', '_', 'B', 'a', 's', 'i', 's', '_', 0 };
+		static const WCHAR g_wszUseSkillBasisFormat[] = { 'U', 's', 'e', '_', 'S', 'k', 'i', 'l', 'l', '_', 'B', 'a', 's', 'i', 's', '_', '%', 'd', 0 };
+		static const WCHAR g_wszUseSkillLPPrefix[] = { 'U', 's', 'e', '_', 'S', 'k', 'i', 'l', 'l', '_', 'L', 'P', '_', 0 };
+		static const WCHAR g_wszUseSkillLPFormat[] = { 'U', 's', 'e', '_', 'S', 'k', 'i', 'l', 'l', '_', 'L', 'P', '_', '%', 'd', 0 };
+		static const WCHAR g_wszMerchantTblidxPrefix[] = { 'M', 'e', 'r', 'c', 'h', 'a', 'n', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+		static const WCHAR g_wszMerchantTblidxFormat[] = { 'M', 'e', 'r', 'c', 'h', 'a', 'n', 't', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pNPC->tblidx = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp(pstrDataName->c_str(), L"Validity_Able") )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Validity_Able") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->bValidity_Able = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pNPC->bValidity_Able = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
 			pNPC->Name = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name_Text"))
 		{
 			READ_STRING(bstrData, pNPC->szNameText, _countof(pNPC->szNameText));
 			READ_STRINGW(bstrData, pNPC->wszNameText, _countof(pNPC->wszNameText));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Model"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Model"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRING(bstrData, pNPC->szModel, _countof(pNPC->szModel));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Level"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Level"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->byLevel = READ_BYTE( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->byLevel = READ_BYTE( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Job"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Job"))
 		{
-			pNPC->byJob = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pNPC->byJob = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Function_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Function_Bit_Flag"))
 		{
 			pNPC->dwFunc_Bit_Flag = READ_BITFLAG( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Ai_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Ai_Bit_Flag"))
 		{
 			pNPC->dwAi_Bit_Flag = READ_BITFLAG( bstrData, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Dialog_Script_Index"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Dialog_Script_Index"))
 		{
 			pNPC->Dialog_Script_Index = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Battle_Attribute"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Battle_Attribute"))
 		{
-			pNPC->byBattle_Attribute = READ_BYTE( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->byBattle_Attribute = READ_BYTE( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"NPC_type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"NPC_type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->byNpcType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pNPC->byNpcType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_LP"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_LP"))
 		{
 			pNPC->dwBasic_LP = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"LP_Regeneration"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"LP_Regeneration"))
 		{
-			pNPC->wLP_Regeneration = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wLP_Regeneration = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_EP"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_EP"))
 		{
-			pNPC->wBasic_EP = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wBasic_EP = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"EP_Regeneration"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"EP_Regeneration"))
 		{
-			pNPC->wEP_Regeneration = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wEP_Regeneration = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Type"))
-		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->byAttack_Type = READ_BYTE( bstrData, pstrDataName->c_str() );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Physical_Offence"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->wBasic_Physical_Offence = READ_WORD( bstrData, pstrDataName->c_str() );
+			pNPC->byAttack_Type = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Energy_Offence"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Physical_Offence"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->wBasic_Energy_Offence = READ_WORD( bstrData, pstrDataName->c_str() );
+			pNPC->wBasic_Physical_Offence = READ_WORD( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Physical_Defence"))
-		{
-			pNPC->wBasic_Physical_Defence = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Energy_Defence"))
-		{
-			pNPC->wBasic_Energy_Defence = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Str"))
-		{
-			pNPC->wBasicStr = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Con"))
-		{
-			pNPC->wBasicCon = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Foc"))
-		{
-			pNPC->wBasicFoc = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Dex"))
-		{
-			pNPC->wBasicDex = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sol"))
-		{
-			pNPC->wBasicSol = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Eng"))
-		{
-			pNPC->wBasicEng = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Scale"))
-		{
-			pNPC->fScale = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Walk_Speed_Origin"))
-		{
-			pNPC->fWalk_Speed_Origin = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Walk_Speed"))
-		{
-			pNPC->fWalk_Speed = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Run_Speed_Origin"))
-		{
-			pNPC->fRun_Speed_Origin = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Run_Speed"))
-		{
-			pNPC->fRun_Speed = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
-		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Radius_X"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Energy_Offence"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->fRadius_X = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNPC->wBasic_Energy_Offence = READ_WORD( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Radius_Z"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Physical_Defence"))
+		{
+			pNPC->wBasic_Physical_Defence = READ_WORD( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Energy_Defence"))
+		{
+			pNPC->wBasic_Energy_Defence = READ_WORD( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Str"))
+		{
+			pNPC->wBasicStr = READ_WORD( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Con"))
+		{
+			pNPC->wBasicCon = READ_WORD( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Foc"))
+		{
+			pNPC->wBasicFoc = READ_WORD( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Dex"))
+		{
+			pNPC->wBasicDex = READ_WORD( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sol"))
+		{
+			pNPC->wBasicSol = READ_WORD( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Eng"))
+		{
+			pNPC->wBasicEng = READ_WORD( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Scale"))
+		{
+			pNPC->fScale = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Walk_Speed_Origin"))
+		{
+			pNPC->fWalk_Speed_Origin = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Walk_Speed"))
+		{
+			pNPC->fWalk_Speed = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Run_Speed_Origin"))
+		{
+			pNPC->fRun_Speed_Origin = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Run_Speed"))
+		{
+			pNPC->fRun_Speed = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
+		}
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Radius_X"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->fRadius_Z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNPC->fRadius_X = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Speed_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Radius_Z"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->wAttack_Speed_Rate = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->fRadius_Z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Cool_Time"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Speed_Rate"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->wAttackCoolTime = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wAttack_Speed_Rate = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Range"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Cool_Time"))
 		{
-			pNPC->fAttack_Range = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+			pNPC->wAttackCoolTime = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Attack_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Range"))
 		{
-			pNPC->wAttack_Rate = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->fAttack_Range = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Dodge_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Attack_Rate"))
 		{
-			pNPC->wDodge_Rate = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wAttack_Rate = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Block_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Dodge_Rate"))
 		{
-			pNPC->wBlock_Rate = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wDodge_Rate = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Curse_Success_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Block_Rate"))
 		{
-			pNPC->wCurse_Success_Rate = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wBlock_Rate = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Curse_Tolerance_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Curse_Success_Rate"))
 		{
-			pNPC->wCurse_Tolerance_Rate = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wCurse_Success_Rate = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sight_Range"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Curse_Tolerance_Rate"))
 		{
-			pNPC->wSight_Range = READ_BYTE( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wCurse_Tolerance_Rate = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Scan_Range"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sight_Range"))
 		{
-			pNPC->wScan_Range = READ_BYTE( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wSight_Range = READ_BYTE( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Use_Skill_Time_", wcslen(L"Use_Skill_Time_") ) )
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Scan_Range"))
+		{
+			pNPC->wScan_Range = READ_BYTE( bstrData, wszFieldNameBuf, 0 );
+		}
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszUseSkillTimePrefix, WCHARLen(g_wszUseSkillTimePrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NPC_HAVE_SKILL; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Use_Skill_Time_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszUseSkillTimeFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pNPC->wUse_Skill_Time[ i ] = READ_WORD( bstrData, pstrDataName->c_str() );
+					pNPC->wUse_Skill_Time[ i ] = READ_WORD( bstrData, wszFieldNameBuf );
 
 					bFound = true;
 					break;
@@ -347,20 +371,22 @@ bool CNPCTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* 
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}		
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Use_Skill_Tblidx_", wcslen(L"Use_Skill_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszUseSkillTblidxPrefix, WCHARLen(g_wszUseSkillTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NPC_HAVE_SKILL; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Use_Skill_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszUseSkillTblidxFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pNPC->use_Skill_Tblidx[ i ] = READ_DWORD( bstrData );
 
@@ -371,22 +397,24 @@ bool CNPCTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* 
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Use_Skill_Basis_", wcslen(L"Use_Skill_Basis_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszUseSkillBasisPrefix, WCHARLen(g_wszUseSkillBasisPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NPC_HAVE_SKILL; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Use_Skill_Basis_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszUseSkillBasisFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pNPC->byUse_Skill_Basis[ i ] = READ_BYTE( bstrData, pstrDataName->c_str() );
+					pNPC->byUse_Skill_Basis[ i ] = READ_BYTE( bstrData, wszFieldNameBuf );
 
 					bFound = true;
 					break;
@@ -395,22 +423,24 @@ bool CNPCTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* 
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Use_Skill_LP_", wcslen(L"Use_Skill_LP_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszUseSkillLPPrefix, WCHARLen(g_wszUseSkillLPPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_NPC_HAVE_SKILL; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Use_Skill_LP_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszUseSkillLPFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pNPC->wUse_Skill_LP[ i ] = READ_WORD( bstrData, pstrDataName->c_str() );
+					pNPC->wUse_Skill_LP[ i ] = READ_WORD( bstrData, wszFieldNameBuf );
 
 					bFound = true;
 					break;
@@ -419,25 +449,27 @@ bool CNPCTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* 
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Visible_Sight_Range"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Visible_Sight_Range"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->byVisible_Sight_Range = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pNPC->byVisible_Sight_Range = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Merchant_Tblidx_", wcslen(L"Merchant_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszMerchantTblidxPrefix, WCHARLen(g_wszMerchantTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_MERCHANT_TAB_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Merchant_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszMerchantTblidxFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pNPC->amerchant_Tblidx[ i ] = READ_DWORD( bstrData );
 
@@ -448,57 +480,61 @@ bool CNPCTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* 
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Camera_Bone_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Camera_Bone_Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRING(bstrData, pNPC->szCamera_Bone_Name, _countof(pNPC->szCamera_Bone_Name));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Status_Transform_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Status_Transform_Tblidx"))
 		{
 			pNPC->statusTransformTblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Fly_Height"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Fly_Height"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pNPC->fFly_Height = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pNPC->fFly_Height = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Spawn_Animation"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Spawn_Animation"))
 		{
-			pNPC->bSpawn_Animation = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pNPC->bSpawn_Animation = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"ILLust"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"ILLust"))
 		{
 			READ_STRING(bstrData, pNPC->szILLust, _countof(pNPC->szILLust));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Contents_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Contents_Tblidx"))
 		{
 			pNPC->contentsTblidx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Dialog_Group"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Dialog_Group"))
 		{
 			pNPC->dwDialogGroup = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Alliance_Idx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Alliance_Idx"))
 		{
 			pNPC->dwAllianceIdx = READ_DWORD( bstrData );
 		}	
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Aggro_Max_Count"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Aggro_Max_Count"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );// [3/25/2008 SGpro]
-			pNPC->wAggroMaxCount = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wAggroMaxCount = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Basic_Aggro_Point"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Basic_Aggro_Point"))
 		{
-			pNPC->wBasic_Aggro_Point = READ_WORD( bstrData, pstrDataName->c_str(), 0 );
+			pNPC->wBasic_Aggro_Point = READ_WORD( bstrData, wszFieldNameBuf, 0 );
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

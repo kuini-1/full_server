@@ -369,7 +369,7 @@ bool CPlayer::SpamCheck(WCHAR * wMsg)
 	if (m_dwGlobalChatLock > 0)
 		return false;
 
-	if (wcscmp(m_wLastMsg, wMsg) == 0)
+	if (WCHARCmp(m_wLastMsg, wMsg) == 0)
 	{
 		m_dwGlobalChatLock = DWORD(++m_nMsgSpamCount * 2000);
 	}

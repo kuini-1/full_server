@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-12-26
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -21,9 +21,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CStatusTransformTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -53,7 +61,7 @@ void CStatusTransformTable::Init()
 
 void* CStatusTransformTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSTATUS_TRANSFORM_TBLDAT* pNewStatusTransform = new sSTATUS_TRANSFORM_TBLDAT;
 		if (NULL == pNewStatusTransform)
@@ -77,7 +85,7 @@ void* CStatusTransformTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePag
 
 bool CStatusTransformTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSTATUS_TRANSFORM_TBLDAT* pStatusTransform = (sSTATUS_TRANSFORM_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pStatusTransform, sizeof(*pStatusTransform)))
@@ -114,85 +122,90 @@ bool CStatusTransformTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, st
 {
 	sSTATUS_TRANSFORM_TBLDAT* pStatusTransform = (sSTATUS_TRANSFORM_TBLDAT*)pvTable;	
 
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pStatusTransform->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"LP_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"LP_Transform"))
 		{
-			pStatusTransform->fLP_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fLP_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"EP_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"EP_Transform"))
 		{
-			pStatusTransform->fEP_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fEP_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Physical_Offence_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Physical_Offence_Transform"))
 		{
-			pStatusTransform->fPhysical_Offence_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fPhysical_Offence_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Energy_Offence_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Energy_Offence_Transform"))
 		{
-			pStatusTransform->fEnergy_Offence_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fEnergy_Offence_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Physical_Defence_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Physical_Defence_Transform"))
 		{
-			pStatusTransform->fPhysical_Defence_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fPhysical_Defence_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Energy_Defence_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Energy_Defence_Transform"))
 		{
-			pStatusTransform->fEnergy_Defence_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fEnergy_Defence_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Run_Speed_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Run_Speed_Transform"))
 		{
-			pStatusTransform->fRun_Speed_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fRun_Speed_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Speed_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Speed_Transform"))
 		{
-			pStatusTransform->fAttack_Speed_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fAttack_Speed_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Rate_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Rate_Transform"))
 		{
-			pStatusTransform->fAttack_Rate_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fAttack_Rate_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Dodge_Rate_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Dodge_Rate_Transform"))
 		{
-			pStatusTransform->fDodge_Rate_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fDodge_Rate_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Block_Rate_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Block_Rate_Transform"))
 		{
-			pStatusTransform->fBlock_Rate_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fBlock_Rate_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Curse_Success_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Curse_Success_Transform"))
 		{
-			pStatusTransform->fCurse_Success_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fCurse_Success_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Curse_Tolerance_Transform"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Curse_Tolerance_Transform"))
 		{
-			pStatusTransform->fCurse_Tolerance_Transform = READ_FLOAT( bstrData, pstrDataName->c_str(), 1.0f );
+			pStatusTransform->fCurse_Tolerance_Transform = READ_FLOAT( bstrData, wszFieldNameBuf, 1.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Attack_Range_Change"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Attack_Range_Change"))
 		{
-			pStatusTransform->fAttack_Range_Change = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pStatusTransform->fAttack_Range_Change = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"LP_Consume_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"LP_Consume_Rate"))
 		{
-			pStatusTransform->fLP_Consume_Rate = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pStatusTransform->fLP_Consume_Rate = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"EP_Consume_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"EP_Consume_Rate"))
 		{
-			pStatusTransform->fEP_Consume_Rate = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pStatusTransform->fEP_Consume_Rate = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Duration"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Duration"))
 		{
 			pStatusTransform->dwDuration = READ_DWORD( bstrData );
 			pStatusTransform->dwDurationInMilliSecs = (DWORD)(pStatusTransform->dwDuration * 1000);
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

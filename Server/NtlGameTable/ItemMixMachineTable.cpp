@@ -4,7 +4,7 @@
 //
 //	Begin		:	2009-04-24
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Chung Doo sup   ( john@ntl-inc.com )
 //
@@ -21,9 +21,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CItemMixMachineTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -53,7 +61,7 @@ void CItemMixMachineTable::Init()
 
 void* CItemMixMachineTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_MIX_MACHINE_TBLDAT* pNewItem = new sITEM_MIX_MACHINE_TBLDAT;
 		if (NULL == pNewItem)
@@ -75,7 +83,7 @@ void* CItemMixMachineTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage
 
 bool CItemMixMachineTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_MIX_MACHINE_TBLDAT* pItem = (sITEM_MIX_MACHINE_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pItem, sizeof(*pItem)))
@@ -107,7 +115,9 @@ bool CItemMixMachineTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -119,52 +129,58 @@ bool CItemMixMachineTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 bool CItemMixMachineTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
 	
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_MIX_MACHINE_TBLDAT* pItem = (sITEM_MIX_MACHINE_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszBuiltInRecipeTblidxPrefix[] = { 'B', 'u', 'i', 'l', 't', '_', 'I', 'n', '_', 'R', 'e', 'c', 'i', 'p', 'e', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', 0 };
+		static const WCHAR g_wszBuiltInRecipeTblidxFormat[] = { 'B', 'u', 'i', 'l', 't', '_', 'I', 'n', '_', 'R', 'e', 'c', 'i', 'p', 'e', '_', 'T', 'b', 'l', 'i', 'd', 'x', '_', '%', 'd', 0 };
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->tblidx = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp(pstrDataName->c_str(), L"Validity_Able") )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Validity_Able") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bValidityAble = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pItem->bValidityAble = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
 			pItem->name = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Machine_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Machine_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->byMachineType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byMachineType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Function_Bit_Flag"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Function_Bit_Flag"))
 		{
 			pItem->wFunctionBitFlag = (WORD)READ_BITFLAG( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Mix_Zenny_Discount_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Mix_Zenny_Discount_Rate"))
 		{
-			pItem->byMixZennyDiscountRate = READ_BYTE(bstrData, pstrDataName->c_str());
+			pItem->byMixZennyDiscountRate = READ_BYTE(bstrData, wszFieldNameBuf);
 		}		
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Dynamic_Object_Tblidx"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Dynamic_Object_Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->dynamicObjectTblidx = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Built_In_Recipe_Tblidx_", wcslen(L"Built_In_Recipe_Tblidx_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszBuiltInRecipeTblidxPrefix, WCHARLen(g_wszBuiltInRecipeTblidxPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < DBO_MAX_COUNT_RECIPE_MATERIAL_ITEM; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Built_In_Recipe_Tblidx_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszBuiltInRecipeTblidxFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pItem->aBuiltInRecipeTblidx[ i ] = READ_DWORD( bstrData );
 					bFound = true;
@@ -174,13 +190,17 @@ bool CItemMixMachineTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

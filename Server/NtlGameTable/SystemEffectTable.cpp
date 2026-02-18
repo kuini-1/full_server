@@ -10,9 +10,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CSystemEffectTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -43,7 +51,7 @@ void CSystemEffectTable::Init()
 
 void* CSystemEffectTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSYSTEM_EFFECT_TBLDAT* pNewSystemEffect = new sSYSTEM_EFFECT_TBLDAT;
 		if (NULL == pNewSystemEffect)
@@ -65,7 +73,7 @@ void* CSystemEffectTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CSystemEffectTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSYSTEM_EFFECT_TBLDAT* pSystemEffect = (sSYSTEM_EFFECT_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pSystemEffect, sizeof(*pSystemEffect)))
@@ -86,7 +94,7 @@ bool CSystemEffectTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	sSYSTEM_EFFECT_TBLDAT * pTbldat = (sSYSTEM_EFFECT_TBLDAT*) pvTable;
 
-	//  [8/31/2006 zeroera] : Ãß°¡ : System Effect Code MatchUp Table
+	//  [8/31/2006 zeroera] : ??? : System Effect Code MatchUp Table
 	{
 		char buffer[256] = { 0x00, };
 		WideCharToMultiByte( ::GetACP(), 0, pTbldat->wszName, -1, buffer, 256, NULL, NULL );
@@ -136,69 +144,74 @@ bool CSystemEffectTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CSystemEffectTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sSYSTEM_EFFECT_TBLDAT* pSystemEffect = (sSYSTEM_EFFECT_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pSystemEffect->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRINGW(bstrData, pSystemEffect->wszName, _countof(pSystemEffect->wszName));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Effect_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Effect_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pSystemEffect->byEffect_Type = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pSystemEffect->byEffect_Type = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Active_Effect_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Active_Effect_Type"))
 		{
-			pSystemEffect->byActive_Effect_Type = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pSystemEffect->byActive_Effect_Type = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Effect_Info_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Effect_Info_Text"))
 		{
 			pSystemEffect->Effect_Info_Text = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Keep_Effect_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Keep_Effect_Name"))
 		{
 			pSystemEffect->Keep_Effect_Name = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Target_Effect_Position"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Target_Effect_Position"))
 		{
-			pSystemEffect->byTarget_Effect_Position = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pSystemEffect->byTarget_Effect_Position = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Success_Effect_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Success_Effect_Name"))
 		{
 			READ_STRING(bstrData, pSystemEffect->szSuccess_Effect_Name, _countof(pSystemEffect->szSuccess_Effect_Name));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Success_Projectile_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Success_Projectile_Type"))
 		{
-			pSystemEffect->bySuccess_Projectile_Type = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pSystemEffect->bySuccess_Projectile_Type = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Success_Effect_Position"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Success_Effect_Position"))
 		{
-			pSystemEffect->bySuccess_Effect_Position = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pSystemEffect->bySuccess_Effect_Position = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Success_End_Effect_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Success_End_Effect_Name"))
 		{
 			READ_STRING(bstrData, pSystemEffect->szSuccess_End_Effect_Name, _countof(pSystemEffect->szSuccess_End_Effect_Name));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"End_Effect_Position"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"End_Effect_Position"))
 		{
-			pSystemEffect->byEnd_Effect_Position = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pSystemEffect->byEnd_Effect_Position = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Keep_Animation_Index"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Keep_Animation_Index"))
 		{
-			pSystemEffect->wKeep_Animation_Index = READ_WORD( bstrData, pstrDataName->c_str() );
+			pSystemEffect->wKeep_Animation_Index = READ_WORD( bstrData, wszFieldNameBuf );
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

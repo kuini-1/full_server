@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-08-14
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -17,9 +17,17 @@
 
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CWorldZoneTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -49,7 +57,7 @@ void CWorldZoneTable::Init()
 
 void* CWorldZoneTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sWORLD_ZONE_TBLDAT* pNewWorldZone = new sWORLD_ZONE_TBLDAT;
 		if (NULL == pNewWorldZone)
@@ -73,7 +81,7 @@ void* CWorldZoneTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CWorldZoneTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sWORLD_ZONE_TBLDAT* pWorldZone = (sWORLD_ZONE_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pWorldZone, sizeof(*pWorldZone)))
@@ -98,7 +106,9 @@ bool CWorldZoneTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -108,44 +118,49 @@ bool CWorldZoneTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CWorldZoneTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sWORLD_ZONE_TBLDAT* pWorldZone = (sWORLD_ZONE_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pWorldZone->tblidx = READ_DWORD( bstrData );
 		}		
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Function_Bit_Flag" ) )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Function_Bit_Flag") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pWorldZone->wFunctionBitFlag = (WORD)READ_BITFLAG( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"World"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"World"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pWorldZone->worldTblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pWorldZone->nameTblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name_Text"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name_Text"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRINGW(bstrData, pWorldZone->wszName_Text, _countof(pWorldZone->wszName_Text));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Forbidden_Vehicle"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Forbidden_Vehicle"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pWorldZone->bForbidden_Vehicle = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pWorldZone->bForbidden_Vehicle = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

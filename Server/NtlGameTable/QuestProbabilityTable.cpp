@@ -4,9 +4,17 @@
 #include "QuestProbabilityTable.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CQuestProbabilityTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -36,7 +44,7 @@ void CQuestProbabilityTable::Init()
 
 void* CQuestProbabilityTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_PROBABILITY_TBLDAT * pQuestProbability = new sQUEST_PROBABILITY_TBLDAT;
 		if (NULL == pQuestProbability)
@@ -58,7 +66,7 @@ void* CQuestProbabilityTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePa
 
 bool CQuestProbabilityTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_PROBABILITY_TBLDAT * pQuestProbability = (sQUEST_PROBABILITY_TBLDAT *)pvTable;
 		if (FALSE != IsBadReadPtr(pQuestProbability, sizeof(*pQuestProbability)))
@@ -90,7 +98,9 @@ bool CQuestProbabilityTable::AddTable(void * pvTable, bool bReload, bool bUpdate
 			&& INVALID_TBLIDX == pTbldat->asProbabilityData[bySlot].dwMaxValue
 			&& INVALID_TBLIDX == pTbldat->asProbabilityData[bySlot].dwMinValue )
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] entity index[%u] : invalid value",m_wszXmlFileName, pTbldat->tblidx, bySlot );
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] entity index[%u] : invalid value", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx, bySlot );
 			_ASSERTE( 0 );
 
 			return false;
@@ -109,7 +119,9 @@ bool CQuestProbabilityTable::AddTable(void * pvTable, bool bReload, bool bUpdate
 
 	if( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -120,22 +132,31 @@ bool CQuestProbabilityTable::AddTable(void * pvTable, bool bReload, bool bUpdate
 
 bool CQuestProbabilityTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_PROBABILITY_TBLDAT * pProbabilityTbldat = (sQUEST_PROBABILITY_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszRewardTypeFormat[] = { 'R', 'e', 'w', 'a', 'r', 'd', '_', 'T', 'y', 'p', 'e', '%', 'd', 0 };
+		static const WCHAR g_wszRewardTblidxFormat[] = { 'R', 'e', 'w', 'a', 'r', 'd', '_', 'T', 'b', 'l', 'i', 'd', 'x', '%', 'd', 0 };
+		static const WCHAR g_wszMinValueFormat[] = { 'M', 'i', 'n', '_', 'V', 'a', 'l', 'u', 'e', '%', 'd', 0 };
+		static const WCHAR g_wszMaxValueFormat[] = { 'M', 'a', 'x', '_', 'V', 'a', 'l', 'u', 'e', '%', 'd', 0 };
+		static const WCHAR g_wszDropRateFormat[] = { 'D', 'r', 'o', 'p', '_', 'R', 'a', 't', 'e', '%', 'd', 0 };
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pProbabilityTbldat->tblidx = READ_TBLIDX(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Name"))
 		{
 			if( false == READ_STRINGW(bstrData, pProbabilityTbldat->wszName, _countof(pProbabilityTbldat->wszName)) )
 			{
 				return false;
 			}
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Note"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Note"))
 		{
 			if( false == READ_STRINGW(bstrData, pProbabilityTbldat->wszNote, _countof(pProbabilityTbldat->wszNote)) )
 			{
@@ -144,15 +165,15 @@ bool CQuestProbabilityTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, s
 		}
 
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Allow_Blank"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Allow_Blank"))
 		{
-			pProbabilityTbldat->bAllowBlank = READ_BOOL(bstrData, pstrDataName->c_str());
+			pProbabilityTbldat->bAllowBlank = READ_BOOL(bstrData, wszFieldNameBuf);
 		}
 
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Probability_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Probability_Type"))
 		{
-			pProbabilityTbldat->byProbabilityType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pProbabilityTbldat->byProbabilityType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
 		else
 		{
@@ -161,11 +182,11 @@ bool CQuestProbabilityTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, s
 			// Reward Type
 			for( int i = 0; i < NTL_QUEST_PROBABILITY_MAX_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Reward_Type%d", i + 1);
+				NTL_SWPRINTF( szBuffer, 1024, g_wszRewardTypeFormat, i + 1);
 
-				if( 0 == wcscmp( pstrDataName->c_str(), szBuffer ) )
+				if( 0 == WCHARCmp( wszFieldNameBuf, szBuffer ) )
 				{
-					pProbabilityTbldat->asProbabilityData[i].byType = READ_BYTE( bstrData, pstrDataName->c_str() );
+					pProbabilityTbldat->asProbabilityData[i].byType = READ_BYTE( bstrData, wszFieldNameBuf );
 					return true;
 				}
 			}
@@ -173,9 +194,9 @@ bool CQuestProbabilityTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, s
 			// Reward Index
 			for( int i = 0; i < NTL_QUEST_PROBABILITY_MAX_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Reward_Tblidx%d", i + 1);
+				NTL_SWPRINTF( szBuffer, 1024, g_wszRewardTblidxFormat, i + 1);
 
-				if( 0 == wcscmp( pstrDataName->c_str(), szBuffer ) )
+				if( 0 == WCHARCmp( wszFieldNameBuf, szBuffer ) )
 				{
 					pProbabilityTbldat->asProbabilityData[i].tblidx = READ_TBLIDX( bstrData );
 					return true;
@@ -185,9 +206,9 @@ bool CQuestProbabilityTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, s
 			// Reward Index
 			for( int i = 0; i < NTL_QUEST_PROBABILITY_MAX_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Min_Value%d", i + 1);
+				NTL_SWPRINTF( szBuffer, 1024, g_wszMinValueFormat, i + 1);
 
-				if( 0 == wcscmp( pstrDataName->c_str(), szBuffer ) )
+				if( 0 == WCHARCmp( wszFieldNameBuf, szBuffer ) )
 				{
 					pProbabilityTbldat->asProbabilityData[i].dwMinValue = READ_DWORD( bstrData );
 					return true;
@@ -197,9 +218,9 @@ bool CQuestProbabilityTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, s
 			// Reward Index
 			for( int i = 0; i < NTL_QUEST_PROBABILITY_MAX_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Max_Value%d", i + 1);
+				NTL_SWPRINTF( szBuffer, 1024, g_wszMaxValueFormat, i + 1);
 
-				if( 0 == wcscmp( pstrDataName->c_str(), szBuffer ) )
+				if( 0 == WCHARCmp( wszFieldNameBuf, szBuffer ) )
 				{
 					pProbabilityTbldat->asProbabilityData[i].dwMaxValue = READ_DWORD( bstrData );
 					return true;
@@ -209,16 +230,18 @@ bool CQuestProbabilityTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, s
 			// Rate
 			for( int i = 0; i < NTL_QUEST_PROBABILITY_MAX_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Drop_Rate%d", i + 1);
+				NTL_SWPRINTF( szBuffer, 1024, g_wszDropRateFormat, i + 1);
 
-				if( 0 == wcscmp( pstrDataName->c_str(), szBuffer ) )
+				if( 0 == WCHARCmp( wszFieldNameBuf, szBuffer ) )
 				{
 					pProbabilityTbldat->asProbabilityData[i].dwRate = READ_DWORD( bstrData );
 					return true;
 				}
 			}
 
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 
 		} // end if

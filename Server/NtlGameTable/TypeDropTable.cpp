@@ -57,7 +57,7 @@ void CTypeDropTable::Init()
 
 void* CTypeDropTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sTYPE_DROP_TBLDAT* pDrop = new sTYPE_DROP_TBLDAT;
 		if (NULL == pDrop)

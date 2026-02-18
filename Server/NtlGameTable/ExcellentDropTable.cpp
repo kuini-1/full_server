@@ -79,7 +79,7 @@ void* CExcellentDropTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CExcellentDropTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sEXCELLENT_DROP_TBLDAT* pDrop = (sEXCELLENT_DROP_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pDrop, sizeof(*pDrop)))

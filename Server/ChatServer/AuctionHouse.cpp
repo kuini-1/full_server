@@ -24,7 +24,7 @@ struct sAuction_sorting
 			break;
 			case eAUCTION_SORT_TYPE_NAME_DESC:
 			{
-				return wcscmp(struct1->awchItemName, struct2->awchItemName) == 0;
+				return WCHARCmp(struct1->awchItemName, struct2->awchItemName) == 0;
 			}
 			break;
 			case eAUCTION_SORT_TYPE_PRICE_DESC:
@@ -44,7 +44,7 @@ struct sAuction_sorting
 			break;
 			case eAUCTION_SORT_TYPE_NAME_ASC:
 			{
-				return wcscmp(struct2->awchItemName, struct1->awchItemName) > 0;
+				return WCHARCmp(struct2->awchItemName, struct1->awchItemName) > 0;
 			}
 			break;
 			case eAUCTION_SORT_TYPE_PRICE_ASC:

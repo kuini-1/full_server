@@ -7,9 +7,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CItemOptionTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -40,7 +48,7 @@ void CItemOptionTable::Init()
 
 void* CItemOptionTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_OPTION_TBLDAT* pNewItem = new sITEM_OPTION_TBLDAT;
 		if (NULL == pNewItem)
@@ -62,7 +70,7 @@ void* CItemOptionTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CItemOptionTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_OPTION_TBLDAT* pItem = (sITEM_OPTION_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pItem, sizeof(*pItem)))
@@ -110,7 +118,9 @@ bool CItemOptionTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -120,65 +130,77 @@ bool CItemOptionTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CItemOptionTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sITEM_OPTION_TBLDAT* pItem = (sITEM_OPTION_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszSystemEffectPrefix[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', 0 };
+		static const WCHAR g_wszSystemEffectFormat[] = { 'S', 'y', 's', 't', 'e', 'm', '_', 'E', 'f', 'f', 'e', 'c', 't', '_', '%', 'd', 0 };
+		static const WCHAR g_wszTypePrefix[] = { 'T', 'y', 'p', 'e', '_', 0 };
+		static const WCHAR g_wszTypeFormat[] = { 'T', 'y', 'p', 'e', '_', '%', 'd', 0 };
+		static const WCHAR g_wszValuePrefix[] = { 'V', 'a', 'l', 'u', 'e', '_', 0 };
+		static const WCHAR g_wszValueFormat[] = { 'V', 'a', 'l', 'u', 'e', '_', '%', 'd', 0 };
+		static const WCHAR g_wszScouterInfoPrefix[] = { 'S', 'c', 'o', 'u', 't', 'e', 'r', '_', 'I', 'n', 'f', 'o', '_', 0 };
+		static const WCHAR g_wszScouterInfoFormat[] = { 'S', 'c', 'o', 'u', 't', 'e', 'r', '_', 'I', 'n', 'f', 'o', '_', '%', 'd', 0 };
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Option_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Option_Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
 			READ_STRINGW(bstrData, pItem->wszOption_Name, _countof(pItem->wszOption_Name));
 		}
-		else if ( 0 == wcscmp(pstrDataName->c_str(), L"Validity_Able") )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Validity_Able") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bValidity_Able = READ_BOOL( bstrData, pstrDataName->c_str() );
+			pItem->bValidity_Able = READ_BOOL( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Option_Rank"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Option_Rank"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->byOption_Rank = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byOption_Rank = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Item_Group"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Item_Group"))
 		{
-			pItem->byItem_Group = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byItem_Group = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Max_Quality"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Max_Quality"))
 		{
-			pItem->byMaxQuality = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byMaxQuality = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Quality"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Quality"))
 		{
-			pItem->byQuality = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byQuality = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Quality_Index"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Quality_Index"))
 		{
-			pItem->byQualityIndex = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byQualityIndex = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Cost"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Cost"))
 		{
 			pItem->dwCost = READ_DWORD( bstrData, 0 );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Level"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Level"))
 		{
-			pItem->byLevel = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byLevel = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"System_Effect_", wcslen(L"System_Effect_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszSystemEffectPrefix, WCHARLen(g_wszSystemEffectPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_SYSTEM_EFFECT_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"System_Effect_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszSystemEffectFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pItem->system_Effect[ i ] = READ_DWORD( bstrData );
 
@@ -189,22 +211,24 @@ bool CItemOptionTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::ws
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Type_", wcslen(L"Type_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszTypePrefix, WCHARLen(g_wszTypePrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_SYSTEM_EFFECT_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Type_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszTypeFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pItem->bAppliedInPercent[ i ] = READ_BOOL( bstrData, pstrDataName->c_str() );
+					pItem->bAppliedInPercent[ i ] = READ_BOOL( bstrData, wszFieldNameBuf );
 
 					bFound = true;
 					break;
@@ -213,20 +237,22 @@ bool CItemOptionTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::ws
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Value_", wcslen(L"Value_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszValuePrefix, WCHARLen(g_wszValuePrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_SYSTEM_EFFECT_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Value_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszValueFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					pItem->nValue[ i ] = READ_DWORD( bstrData );
 
@@ -237,34 +263,36 @@ bool CItemOptionTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::ws
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Active_Effect"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Active_Effect"))
 		{
 			pItem->activeEffect = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Active_Rate"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Active_Rate"))
 		{
-			pItem->fActiveRate = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pItem->fActiveRate = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Note"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Note"))
 		{
 			READ_STRING(bstrData, pItem->szNote, _countof(pItem->szNote));
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Scouter_Info_", wcslen(L"Scouter_Info_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszScouterInfoPrefix, WCHARLen(g_wszScouterInfoPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < NTL_MAX_SYSTEM_EFFECT_COUNT; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Scouter_Info_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszScouterInfoFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pItem->byScouterInfo[ i ] = READ_BYTE( bstrData, pstrDataName->c_str(), INVALID_BYTE );
+					pItem->byScouterInfo[ i ] = READ_BYTE( bstrData, wszFieldNameBuf, INVALID_BYTE );
 
 					bFound = true;
 					break;
@@ -273,13 +301,17 @@ bool CItemOptionTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::ws
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

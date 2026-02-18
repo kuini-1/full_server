@@ -3,10 +3,17 @@
 #include "QuestRewardTable.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
 
 const WCHAR* CQuestRewardTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -37,7 +44,7 @@ void CQuestRewardTable::Init()
 
 void* CQuestRewardTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_REWARD_TBLDAT* pQuestReward = new sQUEST_REWARD_TBLDAT;
 		if (NULL == pQuestReward)
@@ -59,7 +66,7 @@ void* CQuestRewardTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CQuestRewardTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_REWARD_TBLDAT* pQuestReward = (sQUEST_REWARD_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pQuestReward, sizeof(*pQuestReward)))
@@ -82,7 +89,9 @@ bool CQuestRewardTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pQuestReward->tblidx, pQuestReward)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pQuestReward->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pQuestReward->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -92,125 +101,128 @@ bool CQuestRewardTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CQuestRewardTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sQUEST_REWARD_TBLDAT* pQuestReward = (sQUEST_REWARD_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pQuestReward->tblidx = READ_TBLIDX(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_EXP"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_EXP"))
 		{
 			pQuestReward->dwDef_Reward_EXP = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Zeny"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Zeny"))
 		{
 			pQuestReward->dwDef_Reward_Zeny = READ_DWORD(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Type_0"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Type_0"))
 		{
-			pQuestReward->arsDefRwd[0].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pQuestReward->arsDefRwd[0].byRewardType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Idx_0"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Idx_0"))
 		{
 			pQuestReward->arsDefRwd[0].dwRewardIdx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Val_0"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Val_0"))
 		{
 			pQuestReward->arsDefRwd[0].dwRewardVal = READ_DWORD(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Type_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Type_1"))
 		{
-			pQuestReward->arsDefRwd[1].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pQuestReward->arsDefRwd[1].byRewardType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Idx_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Idx_1"))
 		{
 			pQuestReward->arsDefRwd[1].dwRewardIdx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Val_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Val_1"))
 		{
 			pQuestReward->arsDefRwd[1].dwRewardVal = READ_DWORD(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Type_2"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Type_2"))
 		{
-			pQuestReward->arsDefRwd[2].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pQuestReward->arsDefRwd[2].byRewardType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Idx_2"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Idx_2"))
 		{
 			pQuestReward->arsDefRwd[2].dwRewardIdx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Val_2"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Val_2"))
 		{
 			pQuestReward->arsDefRwd[2].dwRewardVal = READ_DWORD(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Type_3"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Type_3"))
 		{
-			pQuestReward->arsDefRwd[3].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pQuestReward->arsDefRwd[3].byRewardType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Idx_3"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Idx_3"))
 		{
 			pQuestReward->arsDefRwd[3].dwRewardIdx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Def_Reward_Val_3"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Def_Reward_Val_3"))
 		{
 			pQuestReward->arsDefRwd[3].dwRewardVal = READ_DWORD(bstrData);
 		}
 
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Type_0"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Type_0"))
 		{
-			pQuestReward->arsSelRwd[0].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pQuestReward->arsSelRwd[0].byRewardType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Idx_0"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Idx_0"))
 		{
 			pQuestReward->arsSelRwd[0].dwRewardIdx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Val_0"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Val_0"))
 		{
 			pQuestReward->arsSelRwd[0].dwRewardVal = READ_DWORD(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Type_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Type_1"))
 		{
-			pQuestReward->arsSelRwd[1].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pQuestReward->arsSelRwd[1].byRewardType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Idx_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Idx_1"))
 		{
 			pQuestReward->arsSelRwd[1].dwRewardIdx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Val_1"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Val_1"))
 		{
 			pQuestReward->arsSelRwd[1].dwRewardVal = READ_DWORD(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Type_2"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Type_2"))
 		{
 			pQuestReward->arsSelRwd[2].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Idx_2"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Idx_2"))
 		{
 			pQuestReward->arsSelRwd[2].dwRewardIdx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Val_2"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Val_2"))
 		{
 			pQuestReward->arsSelRwd[2].dwRewardVal = READ_DWORD(bstrData);
 		}
 
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Type_3"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Type_3"))
 		{
-			pQuestReward->arsSelRwd[3].byRewardType = READ_BYTE(bstrData, pstrDataName->c_str());
+			pQuestReward->arsSelRwd[3].byRewardType = READ_BYTE(bstrData, wszFieldNameBuf);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Idx_3"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Idx_3"))
 		{
 			pQuestReward->arsSelRwd[3].dwRewardIdx = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Sel_Reward_Val_3"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Sel_Reward_Val_3"))
 		{
 			pQuestReward->arsSelRwd[3].dwRewardVal = READ_DWORD(bstrData);
 		}
@@ -218,7 +230,9 @@ bool CQuestRewardTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

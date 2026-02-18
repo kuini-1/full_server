@@ -222,7 +222,7 @@ void CPartyManager::BudokaiCreateParty(CPlayer * pPlayer, WCHAR * teamName, CHAR
 		if (pParty)
 		{
 			//compare party names
-			if (wcscmp(pParty->GetPartyName(), teamName) == 0)
+			if (WCHARCmp(pParty->GetPartyName(), teamName) == 0)
 			{
 				//add player to party
 				if (pParty->AddPartyMember(pPlayer))

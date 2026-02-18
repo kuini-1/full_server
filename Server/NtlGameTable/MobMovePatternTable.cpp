@@ -6,9 +6,17 @@
 //- yoshiki : Let's consider of implementing NtlAssert series.
 //#include "NtlAssert.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CMobMovePatternTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -38,7 +46,7 @@ void CMobMovePatternTable::Init()
 
 void* CMobMovePatternTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sMOVE_PATTERN_TBLDAT* pPattern = new sMOVE_PATTERN_TBLDAT;
 		if (NULL == pPattern)
@@ -60,7 +68,7 @@ void* CMobMovePatternTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage
 
 bool CMobMovePatternTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sMOVE_PATTERN_TBLDAT* pPattern = (sMOVE_PATTERN_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pPattern, sizeof(*pPattern)))
@@ -93,7 +101,9 @@ bool CMobMovePatternTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -103,26 +113,32 @@ bool CMobMovePatternTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CMobMovePatternTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sMOVE_PATTERN_TBLDAT* pPattern = (sMOVE_PATTERN_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszPatternPrefix[] = { 'P', 'a', 't', 't', 'e', 'r', 'n', '_', 0 };
+		static const WCHAR g_wszPatternFormat[] = { 'P', 'a', 't', 't', 'e', 'r', 'n', '_', '%', 'd', 0 };
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			pPattern->tblidx = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Pattern_", wcslen(L"Pattern_") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszPatternPrefix, WCHARLen(g_wszPatternPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < DBO_MAX_COUNT_MOVE_PATTERN; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Pattern_%d", i + 1 );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszPatternFormat, i + 1 );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
-					pPattern->abyPattern[ i ] = READ_BYTE( bstrData, pstrDataName->c_str() );
+					pPattern->abyPattern[ i ] = READ_BYTE( bstrData, wszFieldNameBuf );
 
 					bFound = true;
 					break;
@@ -131,16 +147,20 @@ bool CMobMovePatternTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Note"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Note"))
 		{
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

@@ -4,7 +4,7 @@
 //
 //	Begin		:	2008-11-04
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //***********************************************************************************
 
@@ -14,9 +14,17 @@
 #include "NtlBattle.h"
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CVehicleTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -46,7 +54,7 @@ void CVehicleTable::Init()
 
 void* CVehicleTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sVEHICLE_TBLDAT* pNewItem = new sVEHICLE_TBLDAT;
 		if (NULL == pNewItem)
@@ -68,7 +76,7 @@ void* CVehicleTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CVehicleTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sVEHICLE_TBLDAT* pItem = (sVEHICLE_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pItem, sizeof(*pItem)))
@@ -100,7 +108,9 @@ bool CVehicleTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -111,51 +121,54 @@ bool CVehicleTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 bool CVehicleTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
 
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sVEHICLE_TBLDAT* pItem = (sVEHICLE_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pItem->tblidx = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Model_Name"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Model_Name"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			READ_STRING( bstrData, pItem->szModelName, _countof(pItem->szModelName) );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"SRP_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"SRP_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bySRPType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->bySRPType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Speed"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Speed"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->bySpeed = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->bySpeed = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		//else if (0 == wcscmp(pstrDataName->c_str(), L"Fuel_Efficiency"))
+		//else if (0 == WStringCmpLiteral(*pstrDataName, L"Fuel_Efficiency"))
 		//{
 		//	CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-		//	pItem->byFuelEfficiency = READ_BYTE( bstrData, pstrDataName->c_str() );
+		//	pItem->byFuelEfficiency = READ_BYTE( bstrData, wszFieldNameBuf );
 		//}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Vehicle_Type"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Vehicle_Type"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->byVehicleType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byVehicleType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp(pstrDataName->c_str(), L"Run_Height") )
+		else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Run_Height") )
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->wRunHeight = READ_WORD( bstrData, pstrDataName->c_str() );
+			pItem->wRunHeight = READ_WORD( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Personnel"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Personnel"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pItem->byPersonnel = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pItem->byPersonnel = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		//else if ( 0 == wcscmp(pstrDataName->c_str(), L"Name") )
+		//else if ( 0 == WStringCmpLiteral(*pstrDataName, L"Name") )
 		//{
 		//	CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 		//	pItem->dwName = READ_DWORD( bstrData );

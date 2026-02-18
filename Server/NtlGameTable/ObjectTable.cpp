@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-09-20
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Jeong Ho, Rho ( lleo52@ntl-inc.com )
 //
@@ -19,10 +19,12 @@
 
 #include "NtlSerializer.h"
 
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
 
 const WCHAR* CObjectTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -53,7 +55,7 @@ void CObjectTable::Init( void )
 
 void* CObjectTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sOBJECT_TBLDAT* pNewObj = new sOBJECT_TBLDAT;
 		if ( NULL == pNewObj ) return NULL;
@@ -74,7 +76,7 @@ void* CObjectTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 
 bool CObjectTable::DeallocNewTable( void* pvTable, WCHAR* pwszSheetName )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sOBJECT_TBLDAT* pObj = (sOBJECT_TBLDAT*)pvTable;
 		if ( IsBadReadPtr( pObj, sizeof(*pObj) ) ) return false;
@@ -124,7 +126,9 @@ bool CObjectTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::map<TBLIDX, sTBLDAT*>::value_type(pTbldat->tblidx, pTbldat)).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -167,96 +171,104 @@ bool CObjectTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstri
 
 	static char szTemp[1024];
 
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sOBJECT_TBLDAT* pObj = (sOBJECT_TBLDAT*)pvTable;
 
-		if ( 0 == wcscmp( pstrDataName->c_str(), L"Tblidx" ) )
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		static const WCHAR g_wszStatePrefix[] = { 'S', 't', 'a', 't', 'e', 0 };
+		static const WCHAR g_wszStateFormat[] = { 'S', 't', 'a', 't', 'e', '%', 'd', 0 };
+		static const WCHAR g_wszClickSoundPrefix[] = { 'C', 'l', 'i', 'c', 'k', '_', 'S', 'o', 'u', 'n', 'd', 0 };
+		static const WCHAR g_wszClickSoundFormat[] = { 'C', 'l', 'i', 'c', 'k', '_', 'S', 'o', 'u', 'n', 'd', '%', 'd', 0 };
+
+		if ( 0 == WStringCmpLiteral( *pstrDataName, L"Tblidx" ) )
 		{
 			pObj->tblidx = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Name" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Name" ) )
 		{
 			pObj->dwName = READ_DWORD( bstrData );
 		}
-//		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Note" ) )
+//		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Note" ) )
 //		{
 //			pObj->dwNote = READ_DWORD( bstrData );
 //		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Loc_X" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Loc_X" ) )
 		{
-			pObj->vLoc.x = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vLoc.x = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Loc_Y" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Loc_Y" ) )
 		{
-			pObj->vLoc.y = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vLoc.y = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Loc_Z" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Loc_Z" ) )
 		{
-			pObj->vLoc.z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vLoc.z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Dir_X" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Dir_X" ) )
 		{
-			pObj->vDir.x = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pObj->vDir.x = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Dir_Y" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Dir_Y" ) )
 		{
-			pObj->vDir.y = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pObj->vDir.y = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Dir_Z" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Dir_Z" ) )
 		{
-			pObj->vDir.z = READ_FLOAT( bstrData, pstrDataName->c_str(), 0.0f );
+			pObj->vDir.z = READ_FLOAT( bstrData, wszFieldNameBuf, 0.0f );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Func" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Func" ) )
 		{
 			pObj->dwFunction = (DWORD)READ_BITFLAG( bstrData, 0 );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Min_X" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Min_X" ) )
 		{
-			pObj->vMin.x = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vMin.x = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Min_Y" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Min_Y" ) )
 		{
-			pObj->vMin.y = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vMin.y = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Min_Z" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Min_Z" ) )
 		{
-			pObj->vMin.z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vMin.z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Max_X" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Max_X" ) )
 		{
-			pObj->vMax.x = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vMax.x = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Max_Y" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Max_Y" ) )
 		{
-			pObj->vMax.y = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vMax.y = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Max_Z" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Max_Z" ) )
 		{
-			pObj->vMax.z = READ_FLOAT( bstrData, pstrDataName->c_str() );
+			pObj->vMax.z = READ_FLOAT( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"StateType"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"StateType"))
 		{
-			pObj->byStateType = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pObj->byStateType = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"DefMainState"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"DefMainState"))
 		{
-			pObj->byDefMainState = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pObj->byDefMainState = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"DefSubState"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"DefSubState"))
 		{
-			pObj->byDefSubState = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pObj->byDefSubState = READ_BYTE( bstrData, wszFieldNameBuf );
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"State", wcslen(L"State") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszStatePrefix, WCHARLen(g_wszStatePrefix)) )
 		{
 			bool bFound = false;
 			WCHAR szBuffer[1024] = { 0x00, };
 
 			for( int i = 0; i < DBO_MAX_OBJECT_STATE; i++ )
 			{
-				swprintf( szBuffer, 1024, L"State%d", i );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszStateFormat, i );
 
-				if( 0 == wcscmp( pstrDataName->c_str(), szBuffer ) )
+				if( 0 == WCHARCmp( wszFieldNameBuf, szBuffer ) )
 				{
 					READ_STATE( i );
 					bFound = true;
@@ -266,20 +278,22 @@ bool CObjectTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstri
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcsncmp(pstrDataName->c_str(), L"Click_Sound", wcslen(L"Click_Sound") ) )
+		else if ( 0 == WCHARNCmp(wszFieldNameBuf, g_wszClickSoundPrefix, WCHARLen(g_wszClickSoundPrefix)) )
 		{
 			bool bFound = false;
 
 			WCHAR szBuffer[1024] = { 0x00, };
 			for( int i = 0; i < DBO_MAX_OBJECT_STATE; i++ )
 			{
-				swprintf( szBuffer, 1024, L"Click_Sound%d", i );
+				NTL_SWPRINTF( szBuffer, 1024, g_wszClickSoundFormat, i );
 
-				if( 0 == wcscmp(pstrDataName->c_str(), szBuffer) )
+				if( 0 == WCHARCmp(wszFieldNameBuf, szBuffer) )
 				{
 					READ_STRING(bstrData, pObj->achClickSound[ i ], _countof(pObj->achClickSound[ i ]));
 					bFound = true;
@@ -289,42 +303,46 @@ bool CObjectTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstri
 
 			if( false == bFound )
 			{
-				CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+				WCHAR wszFormatBuf[512];
+				FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+				CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 				return false;
 			}
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Boundary_Distance" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Boundary_Distance" ) )
 		{
-			pObj->byBoundaryDistance = READ_BYTE( bstrData, pstrDataName->c_str() );
+			pObj->byBoundaryDistance = READ_BYTE( bstrData, wszFieldNameBuf );
 		}		
-		else if (0 == wcscmp(pstrDataName->c_str(), L"ModelName"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"ModelName"))
 		{
-			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
+			CheckNegativeInvalid( wszFieldNameBuf, bstrData );
 
 			READ_STRING(bstrData, pObj->szModelName, _countof(pObj->szModelName));
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Note"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Note"))
 		{
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Contents_Tblidx" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Contents_Tblidx" ) )
 		{
 			pObj->contentsTblidx = READ_DWORD( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Object_Direction_Index" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Object_Direction_Index" ) )
 		{
 			pObj->objectDirectionIndex = READ_DWORD( bstrData );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"MinQuestId"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"MinQuestId"))
 		{
-			pObj->minQuestId = READ_WORD( bstrData, pstrDataName->c_str() );
+			pObj->minQuestId = READ_WORD( bstrData, wszFieldNameBuf );
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"MaxQuestId"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"MaxQuestId"))
 		{
-			pObj->maxQuestId = READ_WORD( bstrData, pstrDataName->c_str() );
+			pObj->maxQuestId = READ_WORD( bstrData, wszFieldNameBuf );
 		}
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

@@ -4,7 +4,7 @@
 //
 //	Begin		:	2006-09-26
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Jeong Ho, Rho ( lleo52@ntl-inc.com )
 //
@@ -18,9 +18,12 @@
 #include "NtlDebug.h"
 #include "NtlSerializer.h"
 
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) { WCharTLiteralToWCHAR(fmt, dest, destSize); }
+
 const WCHAR* CQuestItemTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -50,7 +53,7 @@ void CQuestItemTable::Init( void )
 
 void* CQuestItemTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sQUESTITEM_TBLDAT* pNewObj = new sQUESTITEM_TBLDAT;
 		if ( NULL == pNewObj ) return NULL;
@@ -71,7 +74,7 @@ void* CQuestItemTable::AllocNewTable( WCHAR* pwszSheetName, DWORD dwCodePage )
 
 bool CQuestItemTable::DeallocNewTable( void* pvTable, WCHAR* pwszSheetName )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sQUESTITEM_TBLDAT* pObj = (sQUESTITEM_TBLDAT*)pvTable;
 		if ( IsBadReadPtr( pObj, sizeof(*pObj) ) ) return false;
@@ -92,7 +95,9 @@ bool CQuestItemTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 	sQUESTITEM_TBLDAT* pTbldat = (sQUESTITEM_TBLDAT*)pvTable;
 	if ( false == m_mapTableList.insert( std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat) ).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -103,34 +108,38 @@ bool CQuestItemTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CQuestItemTable::SetTableData( void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData )
 {
-	if ( 0 == wcscmp( pwszSheetName, L"Table_Data_KOR" ) )
+	if ( 0 == WCHARCmp( pwszSheetName, g_wszTableDataKOR ) )
 	{
 		sQUESTITEM_TBLDAT* pObj = (sQUESTITEM_TBLDAT*)pvTable;
 
-		if ( 0 == wcscmp( pstrDataName->c_str(), L"Item_Tblidx" ) )
+		if ( 0 == WStringCmpLiteral( *pstrDataName, L"Item_Tblidx" ) )
 		{
 			pObj->tblidx = READ_TBLIDX( bstrData );
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Item_Name" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Item_Name" ) )
 		{
 			pObj->ItemName = READ_DWORD(bstrData);
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Icon_Name" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Icon_Name" ) )
 		{
 			READ_STRING(bstrData, pObj->szIconName, _countof(pObj->szIconName));
 		}
-		else if ( 0 == wcscmp( pstrDataName->c_str(), L"Note" ) )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Note" ) )
 		{
 			pObj->Note = READ_DWORD(bstrData);
 		}
-		else if ( 0 == wcscmp(pstrDataName->c_str(), L"Function_Bit_Flag") )
+		else if ( 0 == WStringCmpLiteral( *pstrDataName, L"Function_Bit_Flag" ) )
 		{
 			pObj->byFunctionBitFlag = (BYTE)READ_BITFLAG(bstrData);
 		}
 		
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFieldNameBuf[256];
+			WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}

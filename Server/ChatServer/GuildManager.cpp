@@ -69,7 +69,7 @@ CGuild * CGuildManager::GetGuild(WCHAR * wchGuildName)
 
 		if (pGuild)
 		{
-			if (wcscmp(pGuild->GetGuildName(), wchGuildName) == 0)
+			if (WCHARCmp(pGuild->GetGuildName(), wchGuildName) == 0)
 				return pGuild;
 		}
 	}

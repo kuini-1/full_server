@@ -4,7 +4,7 @@
 //
 //	Begin		:	2008-03-03
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Lee Ju-hyung
 //
@@ -18,9 +18,17 @@
 
 #include "NtlSerializer.h"
 
+// Static WCHAR arrays for string literals
+static const WCHAR g_wszTableDataKOR[] = { 'T', 'a', 'b', 'l', 'e', '_', 'D', 'a', 't', 'a', '_', 'K', 'O', 'R', 0 };
+
+// Helper function to convert format string literal to WCHAR* buffer
+static inline void FormatStringToWCHAR(const wchar_t* fmt, WCHAR* dest, size_t destSize) {
+	WCharTLiteralToWCHAR(fmt, dest, destSize);
+}
+
 const WCHAR* CWorldPlayTable::m_pwszSheetList[] =
 {
-	L"Table_Data_KOR",
+	g_wszTableDataKOR,
 	NULL
 };
 
@@ -51,7 +59,7 @@ void CWorldPlayTable::Init()
 
 void* CWorldPlayTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sWORLDPLAY_TBLDAT * pNewWorldPlay = new sWORLDPLAY_TBLDAT;
 		if (NULL == pNewWorldPlay)
@@ -73,7 +81,7 @@ void* CWorldPlayTable::AllocNewTable(WCHAR* pwszSheetName, DWORD dwCodePage)
 
 bool CWorldPlayTable::DeallocNewTable(void* pvTable, WCHAR* pwszSheetName)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sWORLDPLAY_TBLDAT * pWorldPlay = (sWORLDPLAY_TBLDAT*)pvTable;
 		if (FALSE != IsBadReadPtr(pWorldPlay, sizeof(*pWorldPlay)))
@@ -97,7 +105,9 @@ bool CWorldPlayTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert( std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat) ).second )
 	{
-		CTable::CallErrorCallbackFunction(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ",m_wszXmlFileName, pTbldat->tblidx );
+		WCHAR wszFormatBuf[512];
+		FormatStringToWCHAR(L"[File] : %s\r\n Table Tblidx[%u] is Duplicated ", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, pTbldat->tblidx );
 		_ASSERTE( 0 );
 		return false;
 	}
@@ -108,28 +118,31 @@ bool CWorldPlayTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 bool CWorldPlayTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wstring* pstrDataName, BSTR bstrData)
 {
-	if (0 == wcscmp(pwszSheetName, L"Table_Data_KOR"))
+	if (0 == WCHARCmp(pwszSheetName, g_wszTableDataKOR))
 	{
 		sWORLDPLAY_TBLDAT* pTbldat = (sWORLDPLAY_TBLDAT*)pvTable;
 
-		if (0 == wcscmp(pstrDataName->c_str(), L"Tblidx"))
+		WCHAR wszFieldNameBuf[256];
+		WStringCStrToWCHAR(*pstrDataName, wszFieldNameBuf, sizeof(wszFieldNameBuf)/sizeof(WCHAR));
+
+		if (0 == WStringCmpLiteral(*pstrDataName, L"Tblidx"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pTbldat->tblidx = READ_DWORD(bstrData);
 		}
-//		else if (0 == wcscmp(pstrDataName->c_str(), L"WpsId"))
+//		else if (0 == WStringCmpLiteral(*pstrDataName, L"WpsId"))
 //		{
 //			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 //			pTbldat->dwWpsId = READ_DWORD(bstrData);
 //		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Group"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Group"))
 		{
 			pTbldat->dwGroup = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"ExecuterType"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"ExecuterType"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byExecuterType = READ_BYTE( bstrData, pstrDataName->c_str());
+			pTbldat->byExecuterType = READ_BYTE( bstrData, wszFieldNameBuf);
 
 			if( WORLDPLAY_EXECUTER_TYPE_COUNT <= pTbldat->byExecuterType)
 			{
@@ -137,10 +150,10 @@ bool CWorldPlayTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 				return false;
 			}
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"ShareType"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"ShareType"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
-			pTbldat->byShareType = READ_BYTE( bstrData, pstrDataName->c_str());
+			pTbldat->byShareType = READ_BYTE( bstrData, wszFieldNameBuf);
 
 			if( WORLDPLAY_SHARE_TYPE_COUNT <= pTbldat->byShareType)
 			{
@@ -148,12 +161,12 @@ bool CWorldPlayTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 				return false;
 			}
 		}
-		else if( 0 == wcscmp(pstrDataName->c_str(), L"ShareLimitTime"))
+		else if( 0 == WStringCmpLiteral(*pstrDataName, L"ShareLimitTime"))
 		{
 			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 			pTbldat->dwShareLimitTime = READ_DWORD(bstrData);
 		}
-		else if (0 == wcscmp(pstrDataName->c_str(), L"Desc"))
+		else if (0 == WStringCmpLiteral(*pstrDataName, L"Desc"))
 		{
 //			CheckNegativeInvalid( pstrDataName->c_str(), bstrData );
 
@@ -162,7 +175,9 @@ bool CWorldPlayTable::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::wst
 
 		else
 		{
-			CTable::CallErrorCallbackFunction(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", m_wszXmlFileName, pstrDataName->c_str());
+			WCHAR wszFormatBuf[512];
+			FormatStringToWCHAR(L"[File] : %s\n[Error] : Unknown field name found!(Field Name = %s)", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+			CTable::CallErrorCallbackFunction(wszFormatBuf, m_wszXmlFileName, wszFieldNameBuf);
 			return false;
 		}
 	}
