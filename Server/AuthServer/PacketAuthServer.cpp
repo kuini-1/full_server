@@ -211,9 +211,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 				else
 				{
 					NTL_PRINT(PRINT_APP, "[Login] Password hash match! Authentication successful.");
-				}
-				else
-				{
+					
 					bool isGm = (fields[3].GetBYTE() > ADMIN_LEVEL_EARLY_ACCESS);
 					std::string accstatus = fields[2].GetString();
 
