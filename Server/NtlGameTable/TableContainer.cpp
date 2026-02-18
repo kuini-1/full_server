@@ -241,14 +241,25 @@
 																												\
 		wstrFullPath = m_wstrPath;																				\
 		wstrFullPath += L"\\";																					\
-		wstrFullPath += file_name_without_extension;															\
+		/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */		\
+		{																										\
+			size_t len = WCHARLen(file_name_without_extension);												\
+			wchar_t* wbuf = new wchar_t[len + 1];																\
+			for (size_t i = 0; i <= len; i++)																	\
+				wbuf[i] = (wchar_t)file_name_without_extension[i];											\
+			wstrFullPath += std::wstring(wbuf);																\
+			delete[] wbuf;																						\
+		}																										\
 		if (false == need_to_encrypt)																			\
 		{																										\
 			wstrFullPath += L".rdf";																			\
 																												\
 			table_object_pointer->SaveToBinary(serializer);														\
 																												\
-			serializer.SaveFile(wstrFullPath.c_str(), false);											\
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for SaveFile */						\
+			WCHAR wszPathBuf[512];																				\
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));		\
+			serializer.SaveFile(wszPathBuf, false);																\
 		}																										\
 		else																									\
 		{																										\
@@ -261,7 +272,12 @@
 			serializer << nDataSize;																			\
 			serializer.In(dataSerializer.GetData(), nDataSize);													\
 																												\
-			serializer.SaveFile(wstrFullPath.c_str(), true, L"KEY_FOR_GAME_DATA_TABLE");			\
+			/* std::wstring::c_str() returns wchar_t*, convert to WCHAR* for SaveFile. Also convert L"" literal to WCHAR* */	\
+			WCHAR wszPathBuf[512];																				\
+			WCHAR wszKeyBuf[64];																				\
+			WCharTLiteralToWCHAR(wstrFullPath.c_str(), wszPathBuf, sizeof(wszPathBuf)/sizeof(WCHAR));		\
+			WCharTLiteralToWCHAR(L"KEY_FOR_GAME_DATA_TABLE", wszKeyBuf, sizeof(wszKeyBuf)/sizeof(WCHAR));	\
+			serializer.SaveFile(wszPathBuf, true, wszKeyBuf);													\
 		}																										\
 	}
 
@@ -2421,7 +2437,15 @@ bool CTableContainer::ReloadTable(CTable* pTable, CNtlFileSerializer& serializer
 	std::wstring wstrFullPath( m_wstrPath );
 
 	wstrFullPath += L"\\";
-	wstrFullPath += pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		wstrFullPath += std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	switch ( m_eLoadingMethod )
 	{
@@ -2527,7 +2551,15 @@ bool CTableContainer::UpdateTable(CTable* pTable, CNtlFileSerializer& serializer
 	std::wstring wstrFullPath( m_wstrPath );
 
 	wstrFullPath += L"\\";
-	wstrFullPath += pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		wstrFullPath += std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	switch ( m_eLoadingMethod )
 	{
