@@ -23,6 +23,16 @@ int CMasterServerSession::OnConnect()
 	res->sServerInfo.dwMaxLoad = DWORD((float)app->m_config.nMaxConnection * 0.95f); //set max connections to 95% limit
 	res->sServerInfo.wPortForClient = app->m_config.wClientAcceptPort;
 	snprintf(res->sServerInfo.achPublicAddress, NTL_MAX_LENGTH_OF_IP + 1, "%s", app->m_config.strPublicClientAcceptAddr.c_str());
+	
+	// Log what IP we're registering with
+	NTL_PRINT(PRINT_APP, "[CharServer] Registering with Master Server: PublicAddress='%s', Port=%u, ServerID=%u", 
+		res->sServerInfo.achPublicAddress, res->sServerInfo.wPortForClient, app->m_config.byServerID);
+	if (strcmp(res->sServerInfo.achPublicAddress, "0.0.0.0") == 0 || strlen(res->sServerInfo.achPublicAddress) == 0)
+	{
+		ERR_LOG(LOG_SYSTEM, "WARNING: Character Server PublicAddress is 0.0.0.0 or empty! Clients will not be able to connect. Check config file PublicAddress setting.");
+		NTL_PRINT(PRINT_APP, "[CharServer] ERROR: PublicAddress is invalid! Check Character Server config file [Char Server] PublicAddress setting.");
+	}
+	
 	res->sServerInfo.byServerType = NTL_SERVER_TYPE_CHARACTER;
 	res->sServerInfo.byServerIndex = app->m_config.byServerID;
 	packet.SetPacketLen( sizeof(sCM_NOTIFY_SERVER_BEGIN) );

@@ -656,7 +656,8 @@ int CNtlConnection::PostRecv()
 		if (rc == 104)
 		{
 			DecreasePostIoCount();
-			NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Connection reset by peer (104) for Session=%p, IP=%s", this, GetRemoteIP());
+			// Log disabled per user request
+			// NTL_PRINT(PRINT_SYSTEM, "[PostRecv] Connection reset by peer (104) for Session=%p, IP=%s", this, GetRemoteIP());
 			return NTL_ERR_NET_SESSION_CLOSED;
 		}
 #endif

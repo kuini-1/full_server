@@ -78,7 +78,27 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 					NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Character Server available, preparing login response");
 
 					resultcode = AUTH_SUCCESS;
-					snprintf(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, "%s", srvinfo->achPublicAddress);
+					
+					// Check if public address is 0.0.0.0 and use internal address as fallback
+					const char* charServerIP = srvinfo->achPublicAddress;
+					if (strcmp(charServerIP, "0.0.0.0") == 0 || strlen(charServerIP) == 0)
+					{
+						NTL_PRINT(PRINT_APP, "[Login] WARNING: Character Server PublicAddress is 0.0.0.0, trying internal address: %s", srvinfo->achInternalAddress);
+						if (strlen(srvinfo->achInternalAddress) > 0 && strcmp(srvinfo->achInternalAddress, "0.0.0.0") != 0)
+						{
+							charServerIP = srvinfo->achInternalAddress;
+							NTL_PRINT(PRINT_APP, "[Login] Using internal address as fallback: %s", charServerIP);
+						}
+						else
+						{
+							// Last resort: use 127.0.0.1 for localhost (only works if client is on same machine)
+							ERR_LOG(LOG_SYSTEM, "Character Server IP is 0.0.0.0 and internal address is also invalid. Using 127.0.0.1 as fallback. FIX: Set PublicAddress in Character Server config!");
+							NTL_PRINT(PRINT_APP, "[Login] ERROR: Both public and internal Character Server addresses are invalid! Using 127.0.0.1 fallback.");
+							charServerIP = "127.0.0.1";
+						}
+					}
+					
+					snprintf(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, "%s", charServerIP);
 					res->aServerInfo[0].wCharacterServerPortForClient = srvinfo->wPortForClient;
 					res->aServerInfo[0].dwLoad = (DWORD)((float)srvinfo->dwLoad / (float)srvinfo->dwMaxLoad * 100.0f);
 					res->aServerInfo[0].serverfarmID = srvinfo->serverFarmId;
