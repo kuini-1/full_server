@@ -353,7 +353,9 @@ bool CPlayer::IsMuted()
 		sTU_SYSTEM_DISPLAY_TEXT * res = (sTU_SYSTEM_DISPLAY_TEXT *)packet.GetPacketData();
 		res->wOpCode = TU_SYSTEM_DISPLAY_TEXT;
 		res->byDisplayType = SERVER_TEXT_SYSTEM;
-		res->wMessageLengthInUnicode = wString.Format(L"You have been muted :) Mute ends in %f minutes", (float)m_dwMuteDurationInMilliseconds / 60.f / 1000.f);
+		WCHAR wszFormatBuf[256];
+		WCharTLiteralToWCHAR(L"You have been muted :) Mute ends in %f minutes", wszFormatBuf, sizeof(wszFormatBuf)/sizeof(WCHAR));
+		res->wMessageLengthInUnicode = wString.Format(wszFormatBuf, (float)m_dwMuteDurationInMilliseconds / 60.f / 1000.f);
 		NTL_SAFE_WCSCPY(res->wszMessage, wString.c_str());
 		packet.SetPacketLen(sizeof(sTU_SYSTEM_DISPLAY_TEXT));
 		g_pApp->Send(GetClientSessionID(), &packet);

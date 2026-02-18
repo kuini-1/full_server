@@ -214,8 +214,26 @@ void CAutionhouse::LoadAuctionHouseData(CPlayer* pPlayer, sGT_TENKAICHIDAISIJYOU
 
 			if (WCHARLen(req->awchItemName) > 0)
 			{
-				strSearch = ws2s(req->awchItemName);
-				strItemName = ws2s(data->awchItemName);
+				/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+				std::wstring wstrSearch, wstrItemName;
+				{
+					size_t len = WCHARLen(req->awchItemName);
+					wchar_t* wbuf = new wchar_t[len + 1];
+					for (size_t i = 0; i <= len; i++)
+						wbuf[i] = (wchar_t)req->awchItemName[i];
+					wstrSearch = std::wstring(wbuf);
+					delete[] wbuf;
+				}
+				{
+					size_t len = WCHARLen(data->awchItemName);
+					wchar_t* wbuf = new wchar_t[len + 1];
+					for (size_t i = 0; i <= len; i++)
+						wbuf[i] = (wchar_t)data->awchItemName[i];
+					wstrItemName = std::wstring(wbuf);
+					delete[] wbuf;
+				}
+				strSearch = ws2s(wstrSearch);
+				strItemName = ws2s(wstrItemName);
 			}
 
 			if(
