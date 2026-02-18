@@ -190,11 +190,29 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 				
 				// MD5 HASH DEBUGGING
 				NTL_PRINT(PRINT_APP, "[Login] === MD5 PASSWORD VALIDATION DEBUGGING ===");
-				NTL_PRINT(PRINT_APP, "[Login] Password before hashing: length=%zu, content='%s'", strlen(password), password);
+				size_t passwdLenBeforeHash = strlen(password);
+				NTL_PRINT(PRINT_APP, "[Login] Password before hashing: length=%zu, content='%s'", passwdLenBeforeHash, password);
+				
+				// Debug: Show exact bytes of password string
+				NTL_PRINT(PRINT_APP, "[Login] Password bytes (first 16): ");
+				for (size_t i = 0; i < passwdLenBeforeHash && i < 16; i++)
+				{
+					NTL_PRINT(PRINT_APP, "[Login]   [%zu] = 0x%02X ('%c')", i, (unsigned char)password[i], 
+						(password[i] >= 32 && password[i] < 127) ? password[i] : '?');
+				}
+				
+				// Verify MD5 implementation with known test case
+				MD5 testMd;
+				const char* testResult = testMd.digestString((char*)"12");
+				NTL_PRINT(PRINT_APP, "[Login] MD5 test: digestString(\"12\") = '%s' (expected: c20ad4d76fe97759aa27a0c99bff6710)", testResult ? testResult : "(null)");
 				
 				MD5 md;
 				char md5pwd[NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER];
-				snprintf(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, "%s", md.digestString(password));
+				NTL_PRINT(PRINT_APP, "[Login] Calling md.digestString(password) with password='%s', strlen=%zu", password, strlen(password));
+				const char* md5Digest = md.digestString(password);
+				NTL_PRINT(PRINT_APP, "[Login] MD5 digestString() returned: '%s'", md5Digest ? md5Digest : "(null)");
+				// Use strcpy_s like original code (it's defined as a macro in NtlPortable.h)
+				strcpy_s(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, md5Digest);
 				
 				NTL_PRINT(PRINT_APP, "[Login] Computed MD5 hash: '%s' (length=%zu)", md5pwd, strlen(md5pwd));
 				NTL_PRINT(PRINT_APP, "[Login] Stored MD5 hash: '%s' (length=%zu)", storedHash ? storedHash : "(null)", storedHash ? strlen(storedHash) : 0);
