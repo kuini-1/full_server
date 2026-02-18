@@ -1,0 +1,14 @@
+---
+description: Before changing Linux login/character server connection code, read the port log to avoid breaking the login flow
+alwaysApply: true
+globs: Server/AuthServer/*.cpp, Server/AuthServer/*.h, Server/CharServer/*.cpp, Server/CharServer/*.h, Server/MasterServer/*Packet.cpp, Server/MasterServer/*Session.cpp, Server/NtlShared2/NtlPacketAU.h, Server/NtlShared2/NtlPacketUA.h, Server/NtlShared2/NtlPacketUC.h, Server/NtlShared2/NtlPacketCM.h, Server/NtlShared2/NtlPacketMA.h
+---
+# Linux Login and Character Server Port
+
+When changing **login or character server connection** behavior on Linux (PacketAuthServer SendCharLogInReq; MasterServerPacket RecvPlayerOnlineCheck; Character Server registration; UC_LOGIN_REQ handling; MD5 password validation; WCHAR conversion):
+
+1. **Read first:** [docs/LINUX_LOGIN_CHAR_SERVER_PORT_LOG.md](docs/LINUX_LOGIN_CHAR_SERVER_PORT_LOG.md)
+2. **Do not** repeat approaches listed there as failed or as breaking the connection.
+3. **Follow original Windows code** - The original Windows code works 100%. Match it exactly, don't add workarounds or hardcoded fixes.
+4. **After** any new fix attempt, append to the log: what was tried, why (symptom/issue), result (worked/failed), and update "What Works" / "What Failed" if needed.
+5. **Keep MD5 fix** - The UINT4 typedef fix in `Shared/Util/md5.h` is a real Linux bug fix and should remain.

@@ -23,39 +23,28 @@ void CMasterServerSession::RecvServersInfoAdd(CNtlPacket * pPacket, CAuthServer 
 void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServer * app)
 {
 	sMA_ON_PLAYER_CHECK_RES * req = (sMA_ON_PLAYER_CHECK_RES*)pPacket->GetPacketData();
-	NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Received MA_ON_PLAYER_CHECK_RES for AccountID %u, bIsOnline=%d", req->accountId, req->bIsOnline ? 1 : 0);
-	
 	WORD resultcode = AUTH_USER_EXIST_IN_CHARACTER_SERVER;
 	CClientSession* session = app->FindPlayer(req->accountId);
 	if(session != NULL)
 	{
-		NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Found session for AccountID %u", req->accountId);
 		if(req->bIsOnline == false)
 		{
 			if(session != NULL)
 			{
 				resultcode = AUTH_SUCCESS;
-				NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Player is offline, proceeding with login");
 			}
 			else
 			{
 				resultcode = AUTH_USER_NOT_FOUND;
-				NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: ERROR - session is NULL");
 			}
-		}
-		else
-		{
-			NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Player is already online, login failed");
 		}
 
 		if(resultcode == AUTH_SUCCESS)
 		{
 			sDBO_SERVER_INFO* srvinfo = g_pServerInfoManager->GetIdlestServerInfo(NTL_SERVER_TYPE_CHARACTER, 0, 0);
-			NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Looking for Character Server, srvinfo=%p", srvinfo);
 
 			CNtlPacket packet(sizeof(sAU_LOGIN_RES));
 			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
-			ZeroMemory(res, sizeof(sAU_LOGIN_RES));
 			res->wOpCode = AU_LOGIN_RES;
 			NTL_SAFE_WCSCPY(res->awchUserId, req->awchUserId);
 
@@ -64,66 +53,24 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			res->accountId = req->accountId;
 			if (srvinfo)
 			{
-				NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Found Character Server: Index=%u, IP=%s, Port=%u, Load=%u/%u, IsOn=%d", 
-					srvinfo->byServerIndex, srvinfo->achPublicAddress, srvinfo->wPortForClient, 
-					srvinfo->dwLoad, srvinfo->dwMaxLoad, srvinfo->bIsOn ? 1 : 0);
-				
-				if (srvinfo->bIsOn == false)
-				{
-					NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Character Server is OFF, cannot connect");
-					resultcode = AUTH_NO_AVAILABLE_CHARACTER_SERVER;
-				}
-				else if (srvinfo->dwLoad <= srvinfo->dwMaxLoad)
+				if (srvinfo->dwLoad <= srvinfo->dwMaxLoad)
 				{
 					ERR_LOG(LOG_USER, "Account %u connect success to char server %u, dwLoad %u, dwMaxLoad %u", req->accountId, srvinfo->byServerIndex, srvinfo->dwLoad, srvinfo->dwMaxLoad);
-					NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Character Server available, preparing login response");
 
 					resultcode = AUTH_SUCCESS;
-					
-					// Check if public address is 0.0.0.0 and use internal address as fallback
-					const char* charServerIP = srvinfo->achPublicAddress;
-					if (strcmp(charServerIP, "0.0.0.0") == 0 || strlen(charServerIP) == 0)
-					{
-						NTL_PRINT(PRINT_APP, "[Login] WARNING: Character Server PublicAddress is 0.0.0.0, trying internal address: %s", srvinfo->achInternalAddress);
-						if (strlen(srvinfo->achInternalAddress) > 0 && strcmp(srvinfo->achInternalAddress, "0.0.0.0") != 0)
-						{
-							charServerIP = srvinfo->achInternalAddress;
-							NTL_PRINT(PRINT_APP, "[Login] Using internal address as fallback: %s", charServerIP);
-						}
-						else
-						{
-							// Last resort: use 127.0.0.1 for localhost (only works if client is on same machine)
-							ERR_LOG(LOG_SYSTEM, "Character Server IP is 0.0.0.0 and internal address is also invalid. Using 127.0.0.1 as fallback. FIX: Set PublicAddress in Character Server config!");
-							NTL_PRINT(PRINT_APP, "[Login] ERROR: Both public and internal Character Server addresses are invalid! Using 127.0.0.1 fallback.");
-							charServerIP = "127.0.0.1";
-						}
-					}
-					
-					strcpy_s(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, charServerIP);
+					strcpy_s(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
 					res->aServerInfo[0].wCharacterServerPortForClient = srvinfo->wPortForClient;
 					res->aServerInfo[0].dwLoad = (DWORD)((float)srvinfo->dwLoad / (float)srvinfo->dwMaxLoad * 100.0f);
 					res->aServerInfo[0].serverfarmID = srvinfo->serverFarmId;
 					res->aServerInfo[0].serverchannelID = srvinfo->byServerChannelIndex;
 					res->byServerInfoCount = 1;
 
-					NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Sending Character Server info to client: IP=%s, Port=%u, FarmID=%u, ChannelID=%u", 
-						res->aServerInfo[0].szCharacterServerIP, res->aServerInfo[0].wCharacterServerPortForClient,
-						res->aServerInfo[0].serverfarmID, res->aServerInfo[0].serverchannelID);
-
 					//update load
 					srvinfo->dwLoad += 1;
 				}
-				else 
-				{
-					NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Character Server is full: Load=%u, MaxLoad=%u", srvinfo->dwLoad, srvinfo->dwMaxLoad);
-					resultcode = CHARACTER_USER_SHOULD_WAIT_FOR_CONNECT;
-				}
+				else resultcode = CHARACTER_USER_SHOULD_WAIT_FOR_CONNECT;
 			}
-			else 
-			{
-				NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: ERROR - No Character Server found!");
-				resultcode = AUTH_NO_AVAILABLE_CHARACTER_SERVER;
-			}
+			else resultcode = AUTH_NO_AVAILABLE_CHARACTER_SERVER;
 
 			res->wResultCode = resultcode;
 			res->lastServerFarmId = req->lastServerFarmId;
@@ -132,11 +79,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			if (resultcode == AUTH_SUCCESS)
 			{
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
-				int rc = app->SendTo(session, &packet);
-				ERR_LOG(LOG_USER, "Login success: sent AU_LOGIN_RES to client Session %u, Account %u, SendTo rc=%d", session->GetHandle(), req->accountId, rc);
-				NTL_PRINT(PRINT_APP, "[Login] Login success: sent AU_LOGIN_RES to client (Session %u, Account %u, SendTo rc=%d, ResultCode=%u)", session->GetHandle(), req->accountId, rc, resultcode);
-				NTL_PRINT(PRINT_APP, "[Login] Login response details: Character Server IP=%s, Port=%u, ServerCount=%u", 
-					res->aServerInfo[0].szCharacterServerIP, res->aServerInfo[0].wCharacterServerPortForClient, res->byServerInfoCount);
+				app->SendTo(session, &packet);
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
 				sAU_COMMERCIAL_SETTING_NFY * res2 = (sAU_COMMERCIAL_SETTING_NFY *)packet2.GetPacketData();
@@ -154,8 +97,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			}
 		}
 
-		ERR_LOG(LOG_USER, "Account %u connect failed. Resultcode %d", req->accountId, resultcode);
-		NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: Login failed for AccountID %u, resultcode=%u", req->accountId, resultcode);
+		ERR_LOG(LOG_USER, "Account % connect failed. Resultcode %d", req->accountId, resultcode);
 
 		//IF NOT SUCCESS SEND ERROR MSG
 		CNtlPacket packet2(sizeof(sAU_LOGIN_RES));
@@ -163,15 +105,9 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 		res2->wOpCode = AU_LOGIN_RES;
 		res2->wResultCode = resultcode;
 		packet2.SetPacketLen(sizeof(sAU_LOGIN_RES));
-		int rc2 = app->SendTo(session, &packet2);
-		ERR_LOG(LOG_USER, "Login failed (from master check): sent AU_LOGIN_RES to client Session %u, resultcode %d, SendTo rc=%d", session->GetHandle(), resultcode, rc2);
-		NTL_PRINT(PRINT_APP, "[Login] Login failed (from master check): sent AU_LOGIN_RES to client (Session %u, resultcode %d, SendTo rc=%d)", session->GetHandle(), resultcode, rc2);
+		app->SendTo(session, &packet2);
 
 		app->DelPlayer(req->accountId);
-	}
-	else
-	{
-		NTL_PRINT(PRINT_APP, "[Login] RecvPlayerOnlineCheck: ERROR - Session not found for AccountID %u", req->accountId);
 	}
 }
 

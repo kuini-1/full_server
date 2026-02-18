@@ -1,0 +1,159 @@
+# Linux Login and Character Server Port Log
+
+**Purpose:** Track every attempt to port the login → character server connection flow from Windows to Linux. Document what works, what fails, and avoid repeating failed approaches. This is a long-term process until the server works 100% on both Windows and Linux.
+
+**Current goal (full flow):** Login and character server connection on Linux works end-to-end: (1) **Auth Server:** client connects → handshake → login packet received → password validated → Master Server check → AU_LOGIN_RES sent with Character Server info. (2) **Character Server:** client connects to Character Server → UC_LOGIN_REQ received → player created → Master Server auth check → character list loaded. (3) **In-game:** client selects character → connects to Game Server → loads into game world. This log is updated until all three work 100% on Linux.
+
+---
+
+## Reference: How Windows Works
+
+### Login Flow (Windows)
+1. **Client → Auth Server:** Client connects to Auth Server → handshake → sends `UA_LOGIN_REQ_TAIWAN_CT` with username/password
+2. **Auth Server:** Receives login packet → converts WCHAR to multibyte → queries database → computes MD5 hash → compares with stored hash
+3. **Auth → Master Server:** If password matches, Auth Server sends `AM_ON_PLAYER_CHECK_REQ` to Master Server to check if player is already online
+4. **Master → Auth Server:** Master Server responds with `MA_ON_PLAYER_CHECK_RES` indicating if player is online
+5. **Auth → Client:** If player is offline, Auth Server sends `AU_LOGIN_RES` with Character Server IP/Port and auth key
+6. **Client → Character Server:** Client disconnects from Auth Server and connects to Character Server at provided IP/Port → sends `UC_LOGIN_REQ` with auth key
+7. **Character Server:** Receives `UC_LOGIN_REQ` → creates player → sends `CM_LOGIN_REQ` to Master Server for auth key validation
+8. **Master → Character Server:** Master Server validates auth key → responds with `MC_LOGIN_RES`
+9. **Character Server → Client:** Character Server sends character list to client
+
+### Key Components
+- **MD5 Hash:** Password is hashed using MD5 algorithm. Hash is stored in database as 32-character hex string.
+- **WCHAR Conversion:** Username and password arrive as WCHAR (UTF-16LE, 2 bytes per character on Windows). Converted to multibyte (`char*`) using `Ntl_WC2MB`.
+- **Server Registration:** Character Server registers with Master Server using `CM_NOTIFY_SERVER_BEGIN` packet containing `achPublicAddress` (IP clients should connect to).
+- **IP Address Handling:** Character Server config has `PublicAddress` (for clients) and `Address` (for server-to-server). Auth Server sends `PublicAddress` to client in `AU_LOGIN_RES`.
+
+---
+
+## Linux Port (Baseline)
+
+### Differences from Windows
+- **WCHAR Size:** On Linux, `WCHAR` is defined as `unsigned short` (2 bytes) to match Windows behavior, but native `wchar_t` is 4 bytes (UTF-32). The codebase uses `WCHAR` consistently.
+- **MD5 Implementation:** Uses custom MD5 implementation in `Shared/Util/md5.h`. Requires 32-bit integers (`UINT4`) for correct hash computation.
+- **String Functions:** Uses portable macros (`NTL_STRCPY_S`, `NTL_WCSCPY_S`, etc.) defined in `NtlPortable.h` that map to Windows `strcpy_s`/`wcscpy_s` or Linux equivalents.
+- **Network:** Uses same network layer as Windows (NtlNetwork), which has Linux-specific implementations for accept/recv/send.
+
+### Current Status
+- **Login authentication:** Works (MD5 hash fix applied)
+- **Master Server communication:** Works (Auth Server can query Master Server)
+- **Character Server registration:** Works (Character Server registers with Master Server)
+- **Client → Character Server connection:** **NOT WORKING** - Client receives Character Server IP but cannot connect
+
+---
+
+## Fix Attempts (Chronological)
+
+### 1. Fix MD5 Hash Calculation on Linux (UINT4 Size Issue)
+
+- **Symptom:** Login failed with `AUTH_WRONG_PASSWORD` (result code 107). MD5 hash computed for password "12" was `4b4613f0c6bc16b4705507c0d3307f97` but expected/stored hash was `c20ad4d76fe97759aa27a0c99bff6710`.
+- **Root cause:** In `Shared/Util/md5.h`, `UINT4` was defined as `unsigned long int`. On Linux, `unsigned long int` is 64-bit, while MD5 algorithm requires 32-bit integers. This caused incorrect hash computation.
+- **Fix:** Changed `UINT4` typedef in `md5.h`:
+  ```cpp
+  #ifdef _WIN32
+  typedef unsigned long int UINT4;
+  #else
+  #include <stdint.h>
+  typedef uint32_t UINT4;
+  #endif
+  ```
+- **Result:** **WORKED** - MD5 hash now computes correctly. Login authentication succeeds.
+- **Files changed:** `Shared/Util/md5.h`
+- **Date:** 2026-02-18
+
+### 2. Character Server IP Address Issue (0.0.0.0)
+
+- **Symptom:** Client receives login success (`AU_LOGIN_RES` with `ResultCode=100`) but cannot connect to Character Server. Logs show Character Server IP is `0.0.0.0`.
+- **Root cause:** Character Server config file has `PublicAddress = 0.0.0.0` or empty. Character Server registers this with Master Server, and Auth Server sends `0.0.0.0` to client, which cannot connect to it.
+- **Attempted fixes:**
+  - Added fallback logic to use internal address if public is `0.0.0.0`
+  - Added fallback to use `127.0.0.1` if both are invalid
+  - Added internal address registration from Character Server
+- **Result:** **PARTIAL** - Fallback works for localhost testing, but original Windows code doesn't have fallback logic. Restored to original code that trusts config.
+- **Current status:** Character Server must have correct `PublicAddress` in config file. Original Windows code works 100% when config is correct.
+- **Files changed:** (Reverted) `Server/AuthServer/MasterServerPacket.cpp`, `Server/CharServer/MasterServerSession.cpp`
+- **Date:** 2026-02-18
+
+### 3. Restore Original Windows Code
+
+- **What:** Removed all hardcoded changes, fallback logic, and extra logging added during debugging to restore exact Windows behavior.
+- **Why:** Original Windows code works 100%. Linux port should match Windows behavior exactly, not add workarounds.
+- **Changes reverted:**
+  - Removed `ZeroMemory` initialization in `MasterServerPacket.cpp`
+  - Removed all `NTL_PRINT` logging statements added for debugging
+  - Removed `bIsOn` check before using server info
+  - Removed IP fallback logic (0.0.0.0 → internal → 127.0.0.1)
+  - Removed internal address setting in Character Server registration
+  - Removed retry logic for `AddPlayer` in `PacketAuthServer.cpp`
+  - Removed extra logging throughout login flow
+  - Changed `NTL_WCSCPY_S` back to `wcscpy_s` to match original
+- **Result:** **COMPLETED** - Code now matches original Windows implementation exactly.
+- **Files restored:** `Server/AuthServer/MasterServerPacket.cpp`, `Server/CharServer/MasterServerSession.cpp`, `Server/AuthServer/PacketAuthServer.cpp`, `Server/CharServer/PacketCharServer.cpp`, `Server/CharServer/ClientSession.cpp`, `Server/AuthServer/ClientSession.cpp`, `Server/MasterServer/CharPacket.cpp`
+- **Date:** 2026-02-18
+
+---
+
+## Current Status
+
+### What Works
+1. **MD5 hash calculation** - Fixed UINT4 size issue, passwords validate correctly
+2. **Login authentication** - Client can login successfully, receives `AU_LOGIN_RES` with `ResultCode=100`
+3. **Master Server communication** - Auth Server queries Master Server for player online status
+4. **Character Server registration** - Character Server registers with Master Server successfully
+5. **Packet structure** - Login packets are parsed correctly, WCHAR conversion works
+
+### What Doesn't Work
+1. **Client → Character Server connection** - Client receives Character Server IP/Port but cannot connect
+   - Symptom: Client shows "cannot connect to character server" error
+   - Possible causes:
+     - Character Server IP is `0.0.0.0` (config issue)
+     - Client is on different machine and IP is `127.0.0.1` (localhost only)
+     - Network/firewall issue
+     - Character Server not listening on correct interface
+
+### Known Issues
+1. **Character Server config** - If `PublicAddress` is `0.0.0.0` or empty, client cannot connect. Original Windows code trusts config and doesn't validate.
+2. **Localhost vs network IP** - If client is on different machine, `127.0.0.1` won't work. Need actual server IP address.
+
+---
+
+## What Works
+
+1. **MD5 hash fix (UINT4 typedef)** - Use `uint32_t` for `UINT4` on Linux instead of `unsigned long int`
+2. **Original Windows code structure** - Match Windows code exactly, don't add workarounds
+
+---
+
+## What Failed
+
+1. **IP fallback logic** - Adding fallback from `0.0.0.0` → internal → `127.0.0.1` doesn't solve root cause (config issue)
+2. **Hardcoded fixes** - Don't hardcode IP addresses or add workarounds. Fix config or underlying issue.
+
+---
+
+## Next Steps
+
+1. **Investigate Character Server connection issue:**
+   - Check Character Server logs for connection attempts
+   - Verify Character Server is listening on correct interface
+   - Check network connectivity and firewall rules
+   - Verify client is using correct IP address from login response
+
+2. **Document any Linux-specific network issues:**
+   - Socket binding/listening differences
+   - IP address handling differences
+   - Connection acceptance differences
+
+3. **Test end-to-end flow:**
+   - Login → Character Server connection → Character list → Character selection → Game Server connection
+
+---
+
+## Notes
+
+- Original Windows code works 100% when config is correct
+- Linux port should match Windows behavior exactly
+- Don't add workarounds - fix root causes
+- Document all attempts, successful or not
+- Keep MD5 fix (UINT4) - this was a real Linux bug fix
