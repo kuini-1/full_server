@@ -272,7 +272,8 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 							NTL_PRINT(PRINT_APP, "[Login] User %s: MasterServer not connected, sending failure (Session %u)", username.c_str(), GetHandle());
 						}
 						//check if acc already online
-						else if (app->AddPlayer(this->AccountID, this) == true)
+						bool addPlayerResult = app->AddPlayer(this->AccountID, this);
+						if (addPlayerResult == true)
 						{
 							ERR_LOG(LOG_USER, "%s Auth Success. <Online Check>Sending packet to master server \n", username.c_str());
 							NTL_PRINT(PRINT_APP, "[Login] User %s: Auth success, sending online check to MasterServer (Session %u, AccountID %u)", username.c_str(), GetHandle(), this->AccountID);
@@ -305,8 +306,45 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 						}
 						else
 						{
-							resultcode = AUTH_USER_EXIST_IN_CHARACTER_SERVER;
+							// Player already exists in Auth Server's player list (likely from previous session)
+							CClientSession* existingSession = app->FindPlayer(this->AccountID);
+							NTL_PRINT(PRINT_APP, "[Login] User %s (AccountID %u): AddPlayer failed - player already exists. Existing session=%p, Current session=%p", 
+								username.c_str(), this->AccountID, existingSession, this);
+							if (existingSession != NULL && existingSession != this)
+							{
+								NTL_PRINT(PRINT_APP, "[Login] Disconnecting existing session %u to allow new login", existingSession->GetHandle());
+								existingSession->Disconnect(false);
+							}
 							app->DelPlayer(this->AccountID);
+							// Try adding again after cleanup
+							if (app->AddPlayer(this->AccountID, this) == true)
+							{
+								NTL_PRINT(PRINT_APP, "[Login] User %s: Successfully added after cleanup, proceeding with login", username.c_str());
+								// Continue with login flow (same as above)
+								sDBO_SERVER_INFO* pCharServerCheck = g_pServerInfoManager->GetIdlestServerInfo(NTL_SERVER_TYPE_CHARACTER, 0, 0);
+								if (pCharServerCheck != NULL)
+								{
+									NTL_PRINT(PRINT_APP, "[Login] Character Server available: Index=%u, IP=%s, Port=%u, Load=%u/%u", 
+										pCharServerCheck->byServerIndex, pCharServerCheck->achPublicAddress, 
+										pCharServerCheck->wPortForClient, pCharServerCheck->dwLoad, pCharServerCheck->dwMaxLoad);
+								}
+								CNtlPacket packet(sizeof(sAM_ON_PLAYER_CHECK_REQ));
+								sAM_ON_PLAYER_CHECK_REQ * res = (sAM_ON_PLAYER_CHECK_REQ *)packet.GetPacketData();
+								res->wOpCode = AM_ON_PLAYER_CHECK_REQ;
+								res->accountId = this->AccountID;
+								NTL_WCSCPY_S(res->awchUserId, NTL_MAX_SIZE_USERID_UNICODE + 1, req->awchUserId);
+								res->bIsGM = isGm;
+								res->dwAllowedFunctionForDeveloper = DBO_ALLOWED_FUNC_FOR_DEV_FLAG_HUMAN + DBO_ALLOWED_FUNC_FOR_DEV_FLAG_NAMEK + DBO_ALLOWED_FUNC_FOR_DEV_FLAG_MAJIN;
+								res->lastServerFarmId = fields[4].GetBYTE();
+								packet.SetPacketLen(sizeof(sAM_ON_PLAYER_CHECK_REQ));
+								int sendRc = app->SendTo(app->m_pMasterServerSession, &packet);
+								NTL_PRINT(PRINT_APP, "[Login] Sent AM_ON_PLAYER_CHECK_REQ to MasterServer (AccountID %u, SendTo rc=%d)", this->AccountID, sendRc);
+							}
+							else
+							{
+								resultcode = AUTH_USER_EXIST_IN_CHARACTER_SERVER;
+								NTL_PRINT(PRINT_APP, "[Login] User %s: Still failed to add after cleanup, setting resultcode=%u", username.c_str(), resultcode);
+							}
 						}
 					}
 				}

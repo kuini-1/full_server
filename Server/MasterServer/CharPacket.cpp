@@ -14,6 +14,10 @@ void CCharServerPassiveSession::Cm_NfyServerBegin(CNtlPacket * pPacket, CMasterS
 
 	serverIndex = req->sServerInfo.byServerIndex;
 
+	// Log what Character Server is sending
+	NTL_PRINT(PRINT_APP, "[MasterServer] Character Server registration: Index=%u, PublicAddress='%s', InternalAddress='%s', Port=%u", 
+		req->sServerInfo.byServerIndex, req->sServerInfo.achPublicAddress, req->sServerInfo.achInternalAddress, req->sServerInfo.wPortForClient);
+
 	g_pSrvMgr->AddCharServerSession(req->sServerInfo.byServerIndex, this);
 
 	g_pSrvMgr->RefreshServerInfo(&req->sServerInfo);
