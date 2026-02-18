@@ -102,7 +102,13 @@ typedef unsigned char *POINTER;
 typedef unsigned short int UINT2;
 
 // UINT4 defines a four byte word
+// On Linux, unsigned long is 8 bytes, so use uint32_t instead
+#ifdef _WIN32
 typedef unsigned long int UINT4;
+#else
+#include <stdint.h>
+typedef uint32_t UINT4;
+#endif
 
 
 // convenient object that wraps
