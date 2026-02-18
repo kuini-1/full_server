@@ -4,7 +4,7 @@
 //
 //	Begin		:	2007-02-02
 //
-//	Copyright	:	¨Ï NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	
 //
@@ -116,7 +116,15 @@ bool CTableFileNameList::SetFileName(CTableContainer::eTABLE eTable, char* pszFi
 	}
 
 	m_astrFileName[eTable] = pszFileNameWithoutExtension;
-	m_awstrFileName[eTable] = pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		m_awstrFileName[eTable] = std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	Ntl_CleanUpHeapStringW(pwszFileNameWithoutExtension);
 
@@ -143,7 +151,15 @@ bool CTableFileNameList::SetFileName(CTableContainer::eTABLE eTable, WCHAR* pwsz
 	}
 
 	m_astrFileName[eTable] = pszFileNameWithoutExtension;
-	m_awstrFileName[eTable] = pwszFileNameWithoutExtension;
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszFileNameWithoutExtension);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszFileNameWithoutExtension[i];
+		m_awstrFileName[eTable] = std::wstring(wbuf);
+		delete[] wbuf;
+	}
 
 	Ntl_CleanUpHeapString(pszFileNameWithoutExtension);
 
