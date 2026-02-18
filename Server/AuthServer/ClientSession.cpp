@@ -33,6 +33,11 @@ void CClientSession::OnClose()
 		app->DelPlayer(this->AccountID);
 }
 
+int CClientSession::ProcessPacket()
+{
+	return CNtlSession::ProcessPacket();
+}
+
 int CClientSession::OnDispatch(CNtlPacket * pPacket)
 {
 	CAuthServer * app = (CAuthServer*)NtlSfxGetApp();

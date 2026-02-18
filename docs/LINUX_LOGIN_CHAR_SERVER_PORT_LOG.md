@@ -103,6 +103,22 @@
 - **Date:** 2026-02-18
 - **Note:** This is a legitimate Linux port fix using the existing portable macro, not a workaround. The macro works on both Windows and Linux.
 
+### 5. Fix Missing ProcessPacket() Implementation
+
+- **Symptom:** Linker error: `undefined reference to 'CClientSession::ProcessPacket()'`. The function is declared as virtual in `ClientSession.h` but not implemented in `ClientSession.cpp`.
+- **Root cause:** `CClientSession` declares `ProcessPacket()` as virtual (overriding the base class `CNtlSession::ProcessPacket()`), but the implementation was missing from the `.cpp` file.
+- **Fix:** Added `ProcessPacket()` implementation in `ClientSession.cpp` that calls the base class version:
+  ```cpp
+  int CClientSession::ProcessPacket()
+  {
+      return CNtlSession::ProcessPacket();
+  }
+  ```
+- **Result:** **WORKED** - Linker error resolved. The implementation delegates to the base class which handles packet processing logic.
+- **Files changed:** `Server/AuthServer/ClientSession.cpp`
+- **Date:** 2026-02-18
+- **Note:** This may have been missing in the original code or was removed during previous edits. The implementation simply calls the base class method, which is the correct behavior unless custom packet processing is needed.
+
 ---
 
 ## Current Status
@@ -133,7 +149,8 @@
 
 1. **MD5 hash fix (UINT4 typedef)** - Use `uint32_t` for `UINT4` on Linux instead of `unsigned long int`
 2. **wcscpy_s portable macro** - Use `NTL_WCSCPY_S` instead of `wcscpy_s` on Linux (macro available through `NtlSharedCommon.h` → `NtlPortable.h`)
-3. **Original Windows code structure** - Match Windows code exactly, don't add workarounds
+3. **ProcessPacket() implementation** - Implement missing virtual function by delegating to base class
+4. **Original Windows code structure** - Match Windows code exactly, don't add workarounds
 
 ---
 
