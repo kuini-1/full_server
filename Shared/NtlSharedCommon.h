@@ -215,6 +215,10 @@ typedef long long __int64;
 #ifndef _wtoi
 static inline int _wtoi(const wchar_t* s) { return (int)wcstol(s, NULL, 10); }
 #endif
+#if !defined(_WIN32)
+/* Linux: BSTR/WCHAR* overload so _wtoi(bstrData) works (WCHAR is unsigned short, distinct from wchar_t) */
+static inline int _wtoi(const WCHAR* s) { return (int)_wtoi64_WCHAR(s); }
+#endif
 #ifndef _wtoi64
 static inline __int64 _wtoi64(const wchar_t* s) { return (__int64)wcstoll(s, NULL, 10); }
 #endif

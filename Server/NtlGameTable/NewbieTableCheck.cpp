@@ -121,7 +121,7 @@ bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 
 		if (0 == WStringCmpLiteral(*pstrDataName, L"Field_Name"))
 		{
-			pNewbie->wstrField_Name = (bstrData);
+			READ_STR(pNewbie->wstrField_Name, bstrData);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Only_N"))
 		{
@@ -173,7 +173,7 @@ bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table"))
 		{
-			pNewbie->wstrTable = (bstrData);
+			READ_STR(pNewbie->wstrTable, bstrData);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Look_Up_Level"))
 		{
@@ -181,7 +181,7 @@ bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table_Level"))
 		{
-			pNewbie->wstrTable_Level = (bstrData);
+			READ_STR(pNewbie->wstrTable_Level, bstrData);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Look_Up_Field"))
 		{
@@ -189,11 +189,11 @@ bool CNewbieTableCheck::SetTableData(void* pvTable, WCHAR* pwszSheetName, std::w
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Field"))
 		{
-			pNewbie->wstrField = (bstrData);
+			READ_STR(pNewbie->wstrField, bstrData);
 		}
 		else if (0 == WStringCmpLiteral(*pstrDataName, L"Table_Field"))
 		{
-			pNewbie->wstrTable_Field = (bstrData);
+			READ_STR(pNewbie->wstrTable_Field, bstrData);
 		}
 		else
 		{
