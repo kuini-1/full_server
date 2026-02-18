@@ -290,7 +290,7 @@ bool CServerConfigTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 			default:
 			//	CTable::CallErrorCallbackFunction( L"[File] : %s\n[Error] : Invalid Value. (Field Name = %s, Value = %s)",
 			//		m_wszXmlFileName, pTbldat->wstrName.c_str(), pTbldat->wstrValue[1].c_str() );
-				printf("FAAAAIL dwIdx %d \n", dwIdx);
+				printf("FAAAAIL dwIdx %lu \n", (unsigned long)dwIdx);
 				return false;
 			}
 
@@ -813,8 +813,15 @@ bool CServerConfigTable::GetBinaryText(std::wstring & wstrValue, CNtlSerializer&
 	serializer.Out(pwszText, wTextLength * sizeof(WCHAR));
 	pwszText[wTextLength] = L'\0';
 
-	wstrValue = pwszText;
-
+	/* WCHAR* to std::wstring: on Linux WCHAR is unsigned short, std::wstring is wchar_t (UTF-32) */
+	{
+		size_t len = WCHARLen(pwszText);
+		wchar_t* wbuf = new wchar_t[len + 1];
+		for (size_t i = 0; i <= len; i++)
+			wbuf[i] = (wchar_t)pwszText[i];
+		wstrValue = std::wstring(wbuf);
+		delete[] wbuf;
+	}
 	delete [] pwszText;
 
 	return true;
