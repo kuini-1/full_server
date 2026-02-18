@@ -121,7 +121,9 @@ bool CSpawnTable::AddTable(void * pvTable, bool bReload, bool bUpdate)
 
 	if ( false == m_mapTableList.insert(std::pair<TBLIDX, sTBLDAT*>(pTbldat->tblidx, pTbldat)).second )
 	{
-		printf("[File] : %ls\r\n Table Tblidx[%u] is Duplicated. \n",m_wszXmlFileName, pTbldat->tblidx );
+		char szFile[512];
+		WideCharToMultiByte(GetACP(), 0, m_wszXmlFileName, -1, szFile, (int)sizeof(szFile), NULL, NULL);
+		printf("[File] : %s\r\n Table Tblidx[%u] is Duplicated. \n", szFile, (unsigned)pTbldat->tblidx);
 		_ASSERTE( 0 );
 		return false;
 	}
