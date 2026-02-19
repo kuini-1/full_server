@@ -161,7 +161,7 @@ void CMasterServerSession::RecvUserLoginRes(CNtlPacket * pPacket)
 		{
 			if(req->wResultCode == CHARACTER_SUCCESS)
 			{
-				pClientSession->m_bPlayerAddedToMasterServer = true;
+				pClientSession->SetPlayerAddedToMasterServer(true);
 			}
 		}
 

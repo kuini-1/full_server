@@ -66,6 +66,7 @@ public:
 
 	void						SetPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }
 	CPlayer*					GetPlayer() { return m_pPlayer; }
+	void						SetPlayerAddedToMasterServer(bool bAdded) { m_bPlayerAddedToMasterServer = bAdded; }
 
 private:
 
