@@ -119,6 +119,69 @@
 - **Date:** 2026-02-18
 - **Note:** This may have been missing in the original code or was removed during previous edits. The implementation simply calls the base class method, which is the correct behavior unless custom packet processing is needed.
 
+### 6. Fix WCHAR String Handling Macros (L'\0' Literal Issue)
+
+- **Symptom:** Potential WCHAR string null termination issues on Linux. `L'\0'` is a 4-byte `wchar_t` literal on Linux, but `WCHAR` is defined as `unsigned short` (2 bytes) to match Windows behavior.
+- **Root cause:** In `Shared/Util/NtlStringHandler.h`, macros like `NTL_SAFE_WCSCPY`, `NTL_SAFE_WCSNCPY`, `NTL_SAFE_WCSNCPY_SIZEINPUT` used `L'\0'` for null termination. On Linux, `wchar_t` is 4 bytes while `WCHAR` is 2 bytes, causing incorrect null termination.
+- **Fix:** Replaced all instances of `L'\0'` with `(WCHAR)0` in the string handling macros to ensure correct 2-byte null termination:
+  ```cpp
+  // Old: buffer[0] = L'\0';
+  // New: buffer[0] = (WCHAR)0;
+  ```
+- **Result:** **WORKED** - WCHAR strings are now correctly null-terminated with 2-byte null on Linux, matching Windows behavior.
+- **Files changed:** `Shared/Util/NtlStringHandler.h`
+- **Date:** 2026-02-19
+- **Note:** Critical fix for WCHAR compatibility between Windows and Linux. Client expects exact WCHAR format matching Windows.
+
+### 7. Fix strcpy_s for Linux Build
+
+- **Symptom:** Build error on Linux: `'strcpy_s' was not declared in this scope`. Original Windows code uses `strcpy_s` directly, but this function doesn't exist on Linux.
+- **Root cause:** `strcpy_s` is a Windows-specific secure string function. On Linux, we need to use the portable macro `NTL_STRCPY_S` defined in `NtlPortable.h`.
+- **Fix:** Changed `strcpy_s` to `NTL_STRCPY_S` in:
+  - `Server/AuthServer/MasterServerPacket.cpp` (line 66): Character Server IP assignment
+  - `Server/CharServer/MasterServerSession.cpp` (line 25): PublicAddress registration
+- **Result:** **WORKED** - Build succeeds on Linux. `NTL_STRCPY_S` is available through `NtlSharedCommon.h` → `NtlPortable.h` include chain.
+- **Files changed:** `Server/AuthServer/MasterServerPacket.cpp`, `Server/CharServer/MasterServerSession.cpp`
+- **Date:** 2026-02-19
+- **Note:** This is a legitimate Linux port fix using the existing portable macro, not a workaround.
+
+### 8. Add Packet Initialization and Debugging
+
+- **What:** Added `ZeroMemory` initialization for `AU_LOGIN_RES` packet and added `printf` statements for critical debugging information to ensure visibility in console (since `ERR_LOG` writes to files).
+- **Changes:**
+  - Added `ZeroMemory(res, sizeof(sAU_LOGIN_RES));` after packet allocation in `MasterServerPacket.cpp`
+  - Added `printf` statements for Character Server IP, port, and packet details
+  - Added WCHAR userId verification logging
+  - Added packet size and structure offset debugging
+- **Result:** **IN PROGRESS** - Debugging added to verify packet structure and size match client expectations.
+- **Files changed:** `Server/AuthServer/MasterServerPacket.cpp`
+- **Date:** 2026-02-19
+- **Note:** Debugging will help identify if there are packet structure mismatches between server and client.
+
+### 9. Client-Side Packet Structure Investigation
+
+- **What:** Investigated client-side packet handling in `E:\SERVER\2.0\DBO-Client-2.0` to understand how client processes `AU_LOGIN_RES` and connects to Character Server.
+- **Findings:**
+  - Client handler: `PacketHandler_LSLoginRes` in `DboPacketHandler_Lobby.cpp`
+  - Client expects `sAU_LOGIN_RES` structure with:
+    - `wResultCode` (must be `AUTH_SUCCESS` for success)
+    - `awchUserId[]` (WCHAR array)
+    - `abyAuthKey[]` (authentication key)
+    - `accountId`
+    - `byServerInfoCount`
+    - `aServerInfo[]` array containing:
+      - `szCharacterServerIP` (char array)
+      - `wCharacterServerPortForClient` (WORD)
+      - `dwLoad` (DWORD)
+  - Client flow: Receives `AU_LOGIN_RES` → parses server info → disconnects from Auth Server → connects to Character Server → sends `UC_LOGIN_REQ`
+- **Current issue:** Client still sends `UC_LOGIN_REQ` to Auth Server instead of Character Server, suggesting either:
+  1. Client didn't receive `AU_LOGIN_RES` correctly
+  2. Client received it but `wResultCode != AUTH_SUCCESS`
+  3. Client received it but packet structure mismatch prevents parsing
+  4. Client parsed it correctly but connection logic fails
+- **Next steps:** Add packet size/structure debugging to verify server sends correct packet format matching client expectations.
+- **Date:** 2026-02-19
+
 ---
 
 ## Current Status
@@ -149,8 +212,11 @@
 
 1. **MD5 hash fix (UINT4 typedef)** - Use `uint32_t` for `UINT4` on Linux instead of `unsigned long int`
 2. **wcscpy_s portable macro** - Use `NTL_WCSCPY_S` instead of `wcscpy_s` on Linux (macro available through `NtlSharedCommon.h` → `NtlPortable.h`)
-3. **ProcessPacket() implementation** - Implement missing virtual function by delegating to base class
-4. **Original Windows code structure** - Match Windows code exactly, don't add workarounds
+3. **strcpy_s portable macro** - Use `NTL_STRCPY_S` instead of `strcpy_s` on Linux (macro available through `NtlSharedCommon.h` → `NtlPortable.h`)
+4. **WCHAR null termination** - Use `(WCHAR)0` instead of `L'\0'` in string macros to ensure correct 2-byte null termination on Linux
+5. **ProcessPacket() implementation** - Implement missing virtual function by delegating to base class
+6. **Original Windows code structure** - Match Windows code exactly, don't add workarounds
+7. **Packet initialization** - Use `ZeroMemory` to ensure clean packet initialization (matches Windows behavior)
 
 ---
 

@@ -96,6 +96,18 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			if (resultcode == AUTH_SUCCESS)
 			{
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+				printf("[Login] AU_LOGIN_RES packet size: %zu bytes, wResultCode=%u, byServerInfoCount=%u\n", 
+				       sizeof(sAU_LOGIN_RES), res->wResultCode, res->byServerInfoCount);
+				printf("[Login] Packet structure offsets: wOpCode=%zu, wResultCode=%zu, awchUserId=%zu, abyAuthKey=%zu, accountId=%zu, byServerInfoCount=%zu, aServerInfo[0]=%zu\n",
+				       offsetof(sAU_LOGIN_RES, wOpCode),
+				       offsetof(sAU_LOGIN_RES, wResultCode),
+				       offsetof(sAU_LOGIN_RES, awchUserId),
+				       offsetof(sAU_LOGIN_RES, abyAuthKey),
+				       offsetof(sAU_LOGIN_RES, accountId),
+				       offsetof(sAU_LOGIN_RES, byServerInfoCount),
+				       offsetof(sAU_LOGIN_RES, aServerInfo));
+				ERR_LOG(LOG_USER, "[Login] AU_LOGIN_RES packet size: %zu bytes, wResultCode=%u, byServerInfoCount=%u", 
+				       sizeof(sAU_LOGIN_RES), res->wResultCode, res->byServerInfoCount);
 				app->SendTo(session, &packet);
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
