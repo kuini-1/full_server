@@ -45,13 +45,8 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 			CNtlPacket packet(sizeof(sAU_LOGIN_RES));
 			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
-			ZeroMemory(res, sizeof(sAU_LOGIN_RES));
 			res->wOpCode = AU_LOGIN_RES;
 			NTL_SAFE_WCSCPY(res->awchUserId, req->awchUserId);
-			// Verify WCHAR string is correctly null-terminated (first 4 bytes should be username + null)
-			printf("[Login] WCHAR userId: first 4 bytes = 0x%04X 0x%04X 0x%04X 0x%04X (should end with 0x0000)\n", 
-			       (unsigned short)res->awchUserId[0], (unsigned short)res->awchUserId[1], 
-			       (unsigned short)res->awchUserId[2], (unsigned short)res->awchUserId[3]);
 
 			memcpy(res->abyAuthKey, req->abyAuthKey, sizeof(res->abyAuthKey));
 			res->dwAllowedFunctionForDeveloper = req->dwAllowedFunctionForDeveloper;
@@ -64,23 +59,11 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 					resultcode = AUTH_SUCCESS;
 					NTL_STRCPY_S(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
-					printf("[Login] Sending Character Server IP to client: IP='%s', Port=%u (Client IP: %s)\n", srvinfo->achPublicAddress, srvinfo->wPortForClient, session->GetRemoteIP());
-					ERR_LOG(LOG_USER, "[Login] Sending Character Server IP to client: IP='%s', Port=%u (Client IP: %s)", srvinfo->achPublicAddress, srvinfo->wPortForClient, session->GetRemoteIP());
 					res->aServerInfo[0].wCharacterServerPortForClient = srvinfo->wPortForClient;
 					res->aServerInfo[0].dwLoad = (DWORD)((float)srvinfo->dwLoad / (float)srvinfo->dwMaxLoad * 100.0f);
 					res->aServerInfo[0].serverfarmID = srvinfo->serverFarmId;
 					res->aServerInfo[0].serverchannelID = srvinfo->byServerChannelIndex;
 					res->byServerInfoCount = 1;
-					printf("[Login] AU_LOGIN_RES packet: IP='%s' (len=%zu), Port=%u, Count=%u\n", 
-					        res->aServerInfo[0].szCharacterServerIP, 
-					        strlen(res->aServerInfo[0].szCharacterServerIP),
-					        res->aServerInfo[0].wCharacterServerPortForClient,
-					        res->byServerInfoCount);
-					ERR_LOG(LOG_USER, "[Login] AU_LOGIN_RES packet: IP='%s' (len=%zu), Port=%u, Count=%u", 
-					        res->aServerInfo[0].szCharacterServerIP, 
-					        strlen(res->aServerInfo[0].szCharacterServerIP),
-					        res->aServerInfo[0].wCharacterServerPortForClient,
-					        res->byServerInfoCount);
 
 					//update load
 					srvinfo->dwLoad += 1;
@@ -96,27 +79,6 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			if (resultcode == AUTH_SUCCESS)
 			{
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
-				printf("[Login] AU_LOGIN_RES packet size: %zu bytes, wResultCode=%u, byServerInfoCount=%u\n", 
-				       sizeof(sAU_LOGIN_RES), res->wResultCode, res->byServerInfoCount);
-				printf("[Login] Packet structure offsets: wOpCode=%zu, wResultCode=%zu, awchUserId=%zu, abyAuthKey=%zu, accountId=%zu, byServerInfoCount=%zu, aServerInfo[0]=%zu\n",
-				       offsetof(sAU_LOGIN_RES, wOpCode),
-				       offsetof(sAU_LOGIN_RES, wResultCode),
-				       offsetof(sAU_LOGIN_RES, awchUserId),
-				       offsetof(sAU_LOGIN_RES, abyAuthKey),
-				       offsetof(sAU_LOGIN_RES, accountId),
-				       offsetof(sAU_LOGIN_RES, byServerInfoCount),
-				       offsetof(sAU_LOGIN_RES, aServerInfo));
-				// Dump first 100 bytes of packet for debugging
-				BYTE* pPacketBytes = (BYTE*)res;
-				printf("[Login] First 100 bytes of AU_LOGIN_RES packet:\n");
-				for (int i = 0; i < 100 && i < (int)sizeof(sAU_LOGIN_RES); i++) {
-					if (i % 16 == 0) printf("  [%04X] ", i);
-					printf("%02X ", pPacketBytes[i]);
-					if (i % 16 == 15) printf("\n");
-				}
-				if (100 % 16 != 0) printf("\n");
-				ERR_LOG(LOG_USER, "[Login] AU_LOGIN_RES packet size: %zu bytes, wResultCode=%u, byServerInfoCount=%u", 
-				       sizeof(sAU_LOGIN_RES), res->wResultCode, res->byServerInfoCount);
 				app->SendTo(session, &packet);
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));

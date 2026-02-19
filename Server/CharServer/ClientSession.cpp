@@ -18,6 +18,8 @@ int CClientSession::OnAccept()
 {
 	eUserState = NTL_USER_STATE_NONE;
 	m_pPlayer = NULL;
+	m_bPlayerAddedToMasterServer = false;
+	m_bLoginRequestSent = false;
 
 	ERR_LOG(LOG_USER, "[CharServer] Client connection accepted: IP=%s, Port=%u", GetRemoteIP(), GetRemotePort());
 
@@ -35,6 +37,7 @@ void CClientSession::OnClose()
 	CCharServer* app = (CCharServer*)g_pApp;
 
 	//send to master server remove player from char list
+	// Handle both complete login (m_pPlayer exists) and partial login (CM_LOGIN_REQ sent but no response yet)
 	if(m_pPlayer)
 	{
 		//check if in login queue
@@ -46,11 +49,20 @@ void CClientSession::OnClose()
 		}
 #endif
 
-		CNtlPacket packet(sizeof(sCM_LOGOUT_REQ));
-		sCM_LOGOUT_REQ * res = (sCM_LOGOUT_REQ *)packet.GetPacketData();
-		res->wOpCode = CM_LOGOUT_REQ;
-		res->accountId = m_pPlayer->GetAccountID();
-		app->SendTo(app->m_pMasterServerSession, &packet);
+		// Send logout request to Master Server if login request was sent
+		// This handles both cases:
+		// 1. Login completed successfully (m_bPlayerAddedToMasterServer = true)
+		// 2. Login request sent but session closed before response (m_bLoginRequestSent = true)
+		// Master Server will handle gracefully if player wasn't actually added
+		if (m_bPlayerAddedToMasterServer || m_bLoginRequestSent)
+		{
+			CNtlPacket packet(sizeof(sCM_LOGOUT_REQ));
+			sCM_LOGOUT_REQ * res = (sCM_LOGOUT_REQ *)packet.GetPacketData();
+			res->wOpCode = CM_LOGOUT_REQ;
+			res->accountId = m_pPlayer->GetAccountID();
+			packet.SetPacketLen(sizeof(sCM_LOGOUT_REQ));
+			app->SendTo(app->m_pMasterServerSession, &packet);
+		}
 
 		m_pPlayer->SetSession(NULL);
 		m_pPlayer->SetSessionHandle(INVALID_HSESSION);
@@ -58,6 +70,13 @@ void CClientSession::OnClose()
 		g_PlrMgr->RemovePlayer(m_pPlayer);
 
 		m_pPlayer = NULL;
+	}
+	else if (m_bLoginRequestSent)
+	{
+		// Edge case: CM_LOGIN_REQ was sent but player object was destroyed before login completed
+		// This shouldn't normally happen (player should exist if CM_LOGIN_REQ was sent),
+		// but handle it just in case. Master Server will handle timeout cleanup.
+		ERR_LOG(LOG_USER, "[CharServer] Session closed with m_bLoginRequestSent=true but no player object - Master Server will handle timeout cleanup");
 	}
 }
 

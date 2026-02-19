@@ -50,6 +50,11 @@ void CClientSession::SendCharServerReq(CNtlPacket * pPacket)
 	pPlayer->SetServerFarmID(req->serverID);
 	SetPlayer(pPlayer);
 
+	// Mark that we're sending login request to Master Server
+	// This will be set to true when Master Server confirms success (in RecvUserLoginRes)
+	m_bPlayerAddedToMasterServer = false;
+	m_bLoginRequestSent = true;
+
 	//send to master server that user logged in and check auth key
 	CNtlPacket packet(sizeof(sCM_LOGIN_REQ));
 	sCM_LOGIN_REQ * res = (sCM_LOGIN_REQ *)packet.GetPacketData();

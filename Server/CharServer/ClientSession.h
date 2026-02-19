@@ -15,6 +15,10 @@ public:
 
 	CClientSession()
 		:CNtlSession( SESSION_CLIENT )
+		, m_pPlayer(NULL)
+		, m_bPlayerAddedToMasterServer(false)
+		, m_bLoginRequestSent(false)
+		, eUserState(NTL_USER_STATE_NONE)
 	{
 		SetControlFlag( CONTROL_FLAG_CHECK_ALIVE );
 
@@ -66,6 +70,8 @@ public:
 private:
 
 	CPlayer*					m_pPlayer;
+	bool						m_bPlayerAddedToMasterServer;	// Track if player was successfully added to Master Server (set when MC_LOGIN_RES with success is received)
+	bool						m_bLoginRequestSent;				// Track if CM_LOGIN_REQ was sent (for cleanup on disconnect before response)
 
 	eNTL_USER_CONNECTION_STATE	eUserState;
 };

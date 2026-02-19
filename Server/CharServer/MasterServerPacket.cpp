@@ -5,6 +5,7 @@
 #include "NtlResultCode.h"
 #include "Player.h"
 #include "NtlService.h"
+#include "ClientSession.h"
 
 
 //--------------------------------------------------------------------------------------//
@@ -153,6 +154,17 @@ void CMasterServerSession::RecvUserLoginRes(CNtlPacket * pPacket)
 	CPlayer* player = g_PlrMgr->GetPlayer(req->accountId);
 	if(player && player->GetSession())
 	{
+		// Mark that player was successfully added to Master Server (if login succeeded)
+		// Note: Player is actually added in Master Server's Cm_UserLogin() when auth key is valid,
+		// but we mark it here when we receive confirmation
+		if (CClientSession* pClientSession = dynamic_cast<CClientSession*>(player->GetSession()))
+		{
+			if(req->wResultCode == CHARACTER_SUCCESS)
+			{
+				pClientSession->m_bPlayerAddedToMasterServer = true;
+			}
+		}
+
 		if(req->wResultCode == CHARACTER_SUCCESS)
 		{
 			SERVERFARMID lastServerFarmId = player->GetServerFarmID();

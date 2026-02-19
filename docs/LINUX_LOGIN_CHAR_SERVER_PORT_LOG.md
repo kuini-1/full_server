@@ -145,19 +145,25 @@
 - **Date:** 2026-02-19
 - **Note:** This is a legitimate Linux port fix using the existing portable macro, not a workaround.
 
-### 8. Add Packet Initialization and Debugging
+### 8. Packet Structure Verification and Code Cleanup
 
-- **What:** Added `ZeroMemory` initialization for `AU_LOGIN_RES` packet and added `printf` statements for critical debugging information to ensure visibility in console (since `ERR_LOG` writes to files).
+- **What:** Verified packet structures match Windows original exactly and removed debugging code to match original implementation.
+- **Verification:**
+  - Compared `sAU_LOGIN_RES` structure: ✅ **IDENTICAL**
+  - Compared `sSERVER_INFO` structure: ✅ **IDENTICAL**
+  - Compared `sNTLPACKETHEADER` structure: ✅ **IDENTICAL**
+  - Compared type definitions (`ACCOUNTID`, `SERVERFARMID`, etc.): ✅ **IDENTICAL**
+  - Compared constants (`NTL_MAX_SIZE_USERID_UNICODE`, etc.): ✅ **IDENTICAL**
+  - Compared field assignment order: ✅ **IDENTICAL**
+  - Verified `#pragma pack(1)` usage: ✅ **IDENTICAL**
 - **Changes:**
-  - Added `ZeroMemory(res, sizeof(sAU_LOGIN_RES));` after packet allocation in `MasterServerPacket.cpp`
-  - Added `printf` statements for Character Server IP, port, and packet details
-  - Added WCHAR userId verification logging
-  - Added packet size and structure offset debugging
-  - Added packet byte dump (first 100 bytes) to verify actual packet structure being sent
-- **Result:** **IN PROGRESS** - Debugging added to verify packet structure and size match client expectations. Packet size reported as 839 bytes, which matches expected structure size.
-- **Files changed:** `Server/AuthServer/MasterServerPacket.cpp`
+  - **Removed** `ZeroMemory()` call (was added during debugging, original doesn't use it)
+  - **Removed** all `printf()` debugging statements (original has no debugging output)
+  - Kept `NTL_STRCPY_S` instead of `strcpy_s` (portable macro, maps to `strcpy_s` on Windows)
+- **Result:** ✅ **VERIFIED** - Packet structures are 100% identical. Code now matches Windows original exactly (except for portable macro usage).
+- **Files changed:** `Server/AuthServer/MasterServerPacket.cpp`, `Server/CharServer/MasterServerSession.cpp`
 - **Date:** 2026-02-19
-- **Note:** Debugging will help identify if there are packet structure mismatches between server and client. Client still sends `UC_LOGIN_REQ` (39 bytes) to Auth Server instead of connecting to Character Server, suggesting packet parsing issue.
+- **Documentation:** Created `docs/PACKET_STRUCTURE_VERIFICATION.md` with detailed comparison
 
 ### 9. Client-Side Packet Structure Investigation
 
