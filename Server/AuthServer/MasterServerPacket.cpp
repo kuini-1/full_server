@@ -106,6 +106,15 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 				       offsetof(sAU_LOGIN_RES, accountId),
 				       offsetof(sAU_LOGIN_RES, byServerInfoCount),
 				       offsetof(sAU_LOGIN_RES, aServerInfo));
+				// Dump first 100 bytes of packet for debugging
+				BYTE* pPacketBytes = (BYTE*)res;
+				printf("[Login] First 100 bytes of AU_LOGIN_RES packet:\n");
+				for (int i = 0; i < 100 && i < (int)sizeof(sAU_LOGIN_RES); i++) {
+					if (i % 16 == 0) printf("  [%04X] ", i);
+					printf("%02X ", pPacketBytes[i]);
+					if (i % 16 == 15) printf("\n");
+				}
+				if (100 % 16 != 0) printf("\n");
 				ERR_LOG(LOG_USER, "[Login] AU_LOGIN_RES packet size: %zu bytes, wResultCode=%u, byServerInfoCount=%u", 
 				       sizeof(sAU_LOGIN_RES), res->wResultCode, res->byServerInfoCount);
 				app->SendTo(session, &packet);

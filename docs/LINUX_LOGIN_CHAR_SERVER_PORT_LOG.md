@@ -153,10 +153,11 @@
   - Added `printf` statements for Character Server IP, port, and packet details
   - Added WCHAR userId verification logging
   - Added packet size and structure offset debugging
-- **Result:** **IN PROGRESS** - Debugging added to verify packet structure and size match client expectations.
+  - Added packet byte dump (first 100 bytes) to verify actual packet structure being sent
+- **Result:** **IN PROGRESS** - Debugging added to verify packet structure and size match client expectations. Packet size reported as 839 bytes, which matches expected structure size.
 - **Files changed:** `Server/AuthServer/MasterServerPacket.cpp`
 - **Date:** 2026-02-19
-- **Note:** Debugging will help identify if there are packet structure mismatches between server and client.
+- **Note:** Debugging will help identify if there are packet structure mismatches between server and client. Client still sends `UC_LOGIN_REQ` (39 bytes) to Auth Server instead of connecting to Character Server, suggesting packet parsing issue.
 
 ### 9. Client-Side Packet Structure Investigation
 
