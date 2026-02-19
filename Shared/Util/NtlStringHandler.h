@@ -21,9 +21,9 @@
 	buffer[buffer_size - 1] = '\0';
 
 #define NTL_SAFE_WCSCPY(buffer, original_string) \
-	if ( NULL==(WCHAR*)original_string ) buffer[0] = L'\0'; \
+	if ( NULL==(WCHAR*)original_string ) buffer[0] = (WCHAR)0; \
 	else NTL_WCSNCPY_S((WCHAR*)(buffer), _countof(buffer), (original_string), _countof(buffer) - 1); \
-	buffer[_countof(buffer) - 1] = L'\0';
+	buffer[_countof(buffer) - 1] = (WCHAR)0;
 
 #define NTL_SAFE_STRNCPY(buffer, original_string, character_count) \
 	if ( NULL==(char*)original_string ) buffer[0] = '\0'; \
@@ -31,14 +31,14 @@
 	buffer[character_count] = '\0';
 
 #define NTL_SAFE_WCSNCPY(buffer, original_string, character_count) \
-	if ( NULL==(WCHAR*)original_string ) buffer[0] = L'\0'; \
+	if ( NULL==(WCHAR*)original_string ) buffer[0] = (WCHAR)0; \
 	else NTL_WCSNCPY_S((WCHAR*)(buffer), _countof(buffer), (original_string), (character_count)); \
-	buffer[character_count] = L'\0';
+	buffer[character_count] = (WCHAR)0;
 
 #define NTL_SAFE_WCSNCPY_SIZEINPUT(buffer, buffer_size, original_string, character_count) \
-	if ( NULL==(WCHAR*)original_string ) buffer[0] = L'\0'; \
+	if ( NULL==(WCHAR*)original_string ) buffer[0] = (WCHAR)0; \
 	else NTL_WCSNCPY_S((WCHAR*)(buffer), (buffer_size), (original_string), (character_count)); \
-	buffer[character_count] = L'\0';
+	buffer[character_count] = (WCHAR)0;
 
 
 WCHAR* Ntl_MB2WC(char* pszOriginalString);

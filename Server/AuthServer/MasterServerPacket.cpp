@@ -48,6 +48,10 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			ZeroMemory(res, sizeof(sAU_LOGIN_RES));
 			res->wOpCode = AU_LOGIN_RES;
 			NTL_SAFE_WCSCPY(res->awchUserId, req->awchUserId);
+			// Verify WCHAR string is correctly null-terminated (first 4 bytes should be username + null)
+			printf("[Login] WCHAR userId: first 4 bytes = 0x%04X 0x%04X 0x%04X 0x%04X (should end with 0x0000)\n", 
+			       (unsigned short)res->awchUserId[0], (unsigned short)res->awchUserId[1], 
+			       (unsigned short)res->awchUserId[2], (unsigned short)res->awchUserId[3]);
 
 			memcpy(res->abyAuthKey, req->abyAuthKey, sizeof(res->abyAuthKey));
 			res->dwAllowedFunctionForDeveloper = req->dwAllowedFunctionForDeveloper;
