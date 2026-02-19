@@ -45,6 +45,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 			CNtlPacket packet(sizeof(sAU_LOGIN_RES));
 			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+			ZeroMemory(res, sizeof(sAU_LOGIN_RES)); // Ensure clean initialization
 			res->wOpCode = AU_LOGIN_RES;
 			NTL_SAFE_WCSCPY(res->awchUserId, req->awchUserId);
 
@@ -81,6 +82,11 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			if (resultcode == AUTH_SUCCESS)
 			{
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+				// Verify packet structure before sending
+				sAU_LOGIN_RES * verifyRes = (sAU_LOGIN_RES *)packet.GetPacketData();
+				printf("[AuthServer] Sending AU_LOGIN_RES packet: wOpCode=%u, wResultCode=%u, byServerInfoCount=%u, IP='%s', Port=%u, packetLen=%u\n",
+					verifyRes->wOpCode, verifyRes->wResultCode, verifyRes->byServerInfoCount, 
+					verifyRes->aServerInfo[0].szCharacterServerIP, verifyRes->aServerInfo[0].wCharacterServerPortForClient, packet.GetPacketLen());
 				app->SendTo(session, &packet);
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
