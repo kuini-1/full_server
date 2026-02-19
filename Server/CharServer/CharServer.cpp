@@ -97,11 +97,25 @@ int CCharServer::OnCreate()
 {
 	int rc = NTL_SUCCESS;
 
+	printf("[CharServer] Starting client acceptor: Address='%s', Port=%u, PublicAddress='%s'\n", 
+		m_config.strClientAcceptAddr.c_str(), m_config.wClientAcceptPort, m_config.strPublicClientAcceptAddr.c_str());
 	rc = m_clientAcceptor.Create(m_config.strClientAcceptAddr.c_str(), m_config.wClientAcceptPort, 1, m_config.wClientAcceptPort, SESSION_CLIENT, m_config.nMaxConnection, m_config.nMaxConnection, m_config.nMaxConnection, m_config.nMaxConnection);
+	if (rc != NTL_SUCCESS)
+	{
+		printf("[CharServer] ERROR: Failed to create client acceptor: rc=%d\n", rc);
+		return rc;
+	}
+	printf("[CharServer] Client acceptor created successfully\n");
 	if ( NTL_SUCCESS != rc )
 		return rc;
 	
 	rc = m_network.Associate( &m_clientAcceptor, true );
+	if (rc != NTL_SUCCESS)
+	{
+		printf("[CharServer] ERROR: Failed to associate client acceptor with network: rc=%d\n", rc);
+		return rc;
+	}
+	printf("[CharServer] Client acceptor associated with network successfully\n");
 	if( NTL_SUCCESS != rc )
 		return rc;
 

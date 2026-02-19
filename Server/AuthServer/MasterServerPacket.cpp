@@ -60,6 +60,8 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 					resultcode = AUTH_SUCCESS;
 					NTL_STRCPY_S(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
 					res->aServerInfo[0].wCharacterServerPortForClient = srvinfo->wPortForClient;
+					printf("[AuthServer] Sending Character Server info to client: IP='%s', Port=%u, AccountID=%u\n", 
+						srvinfo->achPublicAddress, srvinfo->wPortForClient, req->accountId);
 					res->aServerInfo[0].dwLoad = (DWORD)((float)srvinfo->dwLoad / (float)srvinfo->dwMaxLoad * 100.0f);
 					res->aServerInfo[0].serverfarmID = srvinfo->serverFarmId;
 					res->aServerInfo[0].serverchannelID = srvinfo->byServerChannelIndex;
