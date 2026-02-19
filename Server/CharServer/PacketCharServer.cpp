@@ -30,7 +30,7 @@ void CClientSession::SendCharServerReq(CNtlPacket * pPacket)
 {
 	sUC_LOGIN_REQ * req = (sUC_LOGIN_REQ *)pPacket->GetPacketData();
 
-	ERR_LOG(LOG_USER, "[CharServer] Received UC_LOGIN_REQ from client: AccountID=%u, IP=%s", req->accountId, GetRemoteIP());
+	printf("[CharServer] Received UC_LOGIN_REQ from client: AccountID=%u, IP=%s, ServerID=%u\n", req->accountId, GetRemoteIP(), req->serverID);
 
 	CCharServer* app = (CCharServer*)g_pApp;
 

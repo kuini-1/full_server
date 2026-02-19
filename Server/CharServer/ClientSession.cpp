@@ -21,7 +21,7 @@ int CClientSession::OnAccept()
 	m_bPlayerAddedToMasterServer = false;
 	m_bLoginRequestSent = false;
 
-	ERR_LOG(LOG_USER, "[CharServer] Client connection accepted: IP=%s, Port=%u", GetRemoteIP(), GetRemotePort());
+	printf("[CharServer] Client connection accepted: IP=%s, Port=%u, Handle=%u\n", GetRemoteIP(), GetRemotePort(), GetHandle());
 
 	//start handshake (with client)
 	unsigned char buf[] = { 0x03, 0x00, 0xac, 0x86, 0xf5, 0x74 };
@@ -76,7 +76,7 @@ void CClientSession::OnClose()
 		// Edge case: CM_LOGIN_REQ was sent but player object was destroyed before login completed
 		// This shouldn't normally happen (player should exist if CM_LOGIN_REQ was sent),
 		// but handle it just in case. Master Server will handle timeout cleanup.
-		ERR_LOG(LOG_USER, "[CharServer] Session closed with m_bLoginRequestSent=true but no player object - Master Server will handle timeout cleanup");
+		printf("[CharServer] Session closed with m_bLoginRequestSent=true but no player object - Master Server will handle timeout cleanup\n");
 	}
 }
 
