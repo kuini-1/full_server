@@ -56,8 +56,8 @@ int CClientSession::OnDispatch(CNtlPacket * pPacket)
 		{
 			// Log unexpected packets - client should disconnect from Auth Server after receiving AU_LOGIN_RES
 			// If we receive UC_LOGIN_REQ (2001) or other Character Server packets, client didn't disconnect properly
-			ERR_LOG(LOG_USER, "[AuthServer] Received unexpected packet opcode %u (size %u) from client AccountID=%u, IP=%s. Client should have disconnected after AU_LOGIN_RES.", 
-				pHeader->wOpCode, pPacket->GetPacketLen(), this->AccountID, GetRemoteIP());
+			printf("[AuthServer] Received unexpected packet opcode %u (size %u) from client AccountID=%u, IP=%s. Client should have disconnected after AU_LOGIN_RES.\n", 
+				pHeader->wOpCode, pPacket->GetPacketLen(), this->AccountID ? this->AccountID : 0, GetRemoteIP());
 			return CNtlSession::OnDispatch(pPacket);
 		}break;
 	}
