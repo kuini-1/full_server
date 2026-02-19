@@ -50,14 +50,22 @@ int CClientSession::OnDispatch(CNtlPacket * pPacket)
 		case UA_LOGIN_REQ_TAIWAN_CT:	{	this->SendCharLogInReq(pPacket, app);	}	break;
 		case UA_LOGIN_CREATEUSER_REQ:	{	this->SendCreateUserReq(pPacket, app);	}	break;
 		case UA_LOGIN_DISCONNECT_CN_REQ:
-		case UA_LOGIN_DISCONNECT_TW_REQ:	{	this->SendLoginDcReq(pPacket, app);	}	break;
+		case UA_LOGIN_DISCONNECT_TW_REQ:	
+		{
+			printf("[AuthServer] Client disconnecting: AccountID=%u, IP=%s, packet size=%u\n", 
+				this->AccountID ? this->AccountID : 0, GetRemoteIP(), pPacket->GetPacketLen());
+			this->SendLoginDcReq(pPacket, app);
+		}	break;
 
 		default: 
 		{
-			// Log unexpected packets - client should disconnect from Auth Server after receiving AU_LOGIN_RES
-			// If we receive UC_LOGIN_REQ (2001) or other Character Server packets, client didn't disconnect properly
-			printf("[AuthServer] Received unexpected packet opcode %u (size %u) from client AccountID=%u, IP=%s. Client should have disconnected after AU_LOGIN_RES.\n", 
-				pHeader->wOpCode, pPacket->GetPacketLen(), this->AccountID ? this->AccountID : 0, GetRemoteIP());
+			// System packets (SYS_ALIVE=1, SYS_AUTH_RES=4) are handled by base class, not errors
+			// Log only Character Server packets (UC_* opcodes 2000-2999) which indicate client didn't disconnect properly
+			if (pHeader->wOpCode >= 2000 && pHeader->wOpCode < 3000)
+			{
+				printf("[AuthServer] ERROR: Received Character Server packet opcode %u (size %u) from client AccountID=%u, IP=%s. Client should have disconnected after AU_LOGIN_RES.\n", 
+					pHeader->wOpCode, pPacket->GetPacketLen(), this->AccountID ? this->AccountID : 0, GetRemoteIP());
+			}
 			return CNtlSession::OnDispatch(pPacket);
 		}break;
 	}
