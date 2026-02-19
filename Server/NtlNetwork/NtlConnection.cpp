@@ -828,6 +828,7 @@ int CNtlConnection::PostAccept(CNtlAcceptor* pAcceptor)
 	
 	if (rc == NTL_SUCCESS)
 	{
+		printf("[PostAccept] AcceptEx SUCCEEDED! Connection accepted for Session=%p\n", this);
 		NTL_PRINT(PRINT_SYSTEM, "[PostAccept] AcceptEx SUCCEEDED! Connection accepted for Session=%p", this);
 	}
 	else if (rc != ERROR_IO_PENDING)

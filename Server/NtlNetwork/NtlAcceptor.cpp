@@ -373,6 +373,8 @@ void	CNtlAcceptor::OnAccepted(CNtlConnection * pConnection)
 	CNtlSession* pCon = static_cast<CNtlSession*>(pConnection);
 	if (pCon)
 	{
+		printf("[Acceptor] OnAccepted called! Session=%p, Handle=%u, IP=%s, Port=%u, SessionType=%d\n", 
+			pCon, pCon->GetHandle(), pCon->GetRemoteIP(), pCon->GetRemotePort(), m_sessionType);
 		NTL_PRINT(PRINT_SYSTEM, "[OnAccepted] Connection accepted! Session=%p, Handle=%u, IP=%s, Port=%u", 
 			pCon, pCon->GetHandle(), pCon->GetRemoteIP(), pCon->GetRemotePort());
 	}
