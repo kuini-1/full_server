@@ -59,6 +59,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 					resultcode = AUTH_SUCCESS;
 					strcpy_s(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
+					ERR_LOG(LOG_USER, "[Login] Sending Character Server IP to client: IP='%s', Port=%u (Client IP: %s)", srvinfo->achPublicAddress, srvinfo->wPortForClient, session->GetRemoteIP());
 					res->aServerInfo[0].wCharacterServerPortForClient = srvinfo->wPortForClient;
 					res->aServerInfo[0].dwLoad = (DWORD)((float)srvinfo->dwLoad / (float)srvinfo->dwMaxLoad * 100.0f);
 					res->aServerInfo[0].serverfarmID = srvinfo->serverFarmId;

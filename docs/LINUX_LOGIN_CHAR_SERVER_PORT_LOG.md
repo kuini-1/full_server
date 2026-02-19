@@ -179,6 +179,36 @@
 
 ---
 
+## WSL Networking Notes
+
+**Important:** When testing with WSL (Windows Subsystem for Linux):
+
+1. **WSL IP Address**: WSL has its own IP address (usually `172.x.x.x`). The Windows host can access WSL services, but `127.0.0.1` in WSL is NOT the same as `127.0.0.1` on Windows.
+
+2. **Character Server Configuration** (`charserver.ini`):
+   - `Address` should be `0.0.0.0` (listen on all interfaces) or the WSL IP
+   - `PublicAddress` should be the WSL IP address (not `127.0.0.1` or `0.0.0.0`)
+   - To find WSL IP: Run `hostname -I` or `ip addr show eth0` in WSL
+
+3. **Client Connection**:
+   - If client runs on Windows, it needs the WSL IP address to connect
+   - If client runs in WSL, it can use `127.0.0.1` or the WSL IP
+
+4. **Example Configuration**:
+   ```
+   [Char Server]
+   Address=0.0.0.0                    # Listen on all interfaces
+   PublicAddress=172.28.112.1         # WSL IP address (use actual WSL IP)
+   Port=20310
+   ```
+
+5. **Port Forwarding** (if needed):
+   - WSL2: May need to forward ports from Windows to WSL
+   - Check Windows firewall rules
+   - Use `netsh interface portproxy` if needed
+
+---
+
 ## Notes
 
 - Original Windows code works 100% when config is correct

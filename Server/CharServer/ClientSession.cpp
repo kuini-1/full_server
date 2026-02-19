@@ -19,6 +19,8 @@ int CClientSession::OnAccept()
 	eUserState = NTL_USER_STATE_NONE;
 	m_pPlayer = NULL;
 
+	ERR_LOG(LOG_USER, "[CharServer] Client connection accepted: IP=%s, Port=%u", GetRemoteIP(), GetRemotePort());
+
 	//start handshake (with client)
 	unsigned char buf[] = { 0x03, 0x00, 0xac, 0x86, 0xf5, 0x74 };
 	CNtlPacket packet(buf, 0x06);
