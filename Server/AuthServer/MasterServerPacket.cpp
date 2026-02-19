@@ -45,6 +45,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 			CNtlPacket packet(sizeof(sAU_LOGIN_RES));
 			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+			ZeroMemory(res, sizeof(sAU_LOGIN_RES));
 			res->wOpCode = AU_LOGIN_RES;
 			NTL_SAFE_WCSCPY(res->awchUserId, req->awchUserId);
 
@@ -58,13 +59,18 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 					ERR_LOG(LOG_USER, "Account %u connect success to char server %u, dwLoad %u, dwMaxLoad %u", req->accountId, srvinfo->byServerIndex, srvinfo->dwLoad, srvinfo->dwMaxLoad);
 
 					resultcode = AUTH_SUCCESS;
-					strcpy_s(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
+					NTL_STRCPY_S(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
 					ERR_LOG(LOG_USER, "[Login] Sending Character Server IP to client: IP='%s', Port=%u (Client IP: %s)", srvinfo->achPublicAddress, srvinfo->wPortForClient, session->GetRemoteIP());
 					res->aServerInfo[0].wCharacterServerPortForClient = srvinfo->wPortForClient;
 					res->aServerInfo[0].dwLoad = (DWORD)((float)srvinfo->dwLoad / (float)srvinfo->dwMaxLoad * 100.0f);
 					res->aServerInfo[0].serverfarmID = srvinfo->serverFarmId;
 					res->aServerInfo[0].serverchannelID = srvinfo->byServerChannelIndex;
 					res->byServerInfoCount = 1;
+					ERR_LOG(LOG_USER, "[Login] AU_LOGIN_RES packet: IP='%s' (len=%zu), Port=%u, Count=%u", 
+					        res->aServerInfo[0].szCharacterServerIP, 
+					        strlen(res->aServerInfo[0].szCharacterServerIP),
+					        res->aServerInfo[0].wCharacterServerPortForClient,
+					        res->byServerInfoCount);
 
 					//update load
 					srvinfo->dwLoad += 1;
