@@ -111,10 +111,10 @@ struct sWEB_CHANNEL_FLAG
 //------------------------------------------------------------------
 //
 //------------------------------------------------------------------
-/* Use first-member wOpCode instead of inheritance so GCC applies __attribute__((packed)); layout matches sNTLPACKETHEADER at offset 0. */
 #define BEGIN_PROTOCOL(opcode)						\
-struct s##opcode {									\
-	WORD wOpCode;
+struct s##opcode :									\
+	public sNTLPACKETHEADER							\
+{
 
 #define END_PROTOCOL()	};
 

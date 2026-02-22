@@ -10,5 +10,6 @@ When changing **login or character server connection** behavior on Linux (Packet
 1. **Read first:** [docs/LINUX_LOGIN_CHAR_SERVER_PORT_LOG.md](docs/LINUX_LOGIN_CHAR_SERVER_PORT_LOG.md)
 2. **Do not** repeat approaches listed there as failed or as breaking the connection.
 3. **Follow original Windows code** - The original Windows code works 100%. Match it exactly, don't add workarounds or hardcoded fixes.
-4. **After** any new fix attempt, append to the log: what was tried, why (symptom/issue), result (worked/failed), and update "What Works" / "What Failed" if needed.
-5. **Keep MD5 fix** - The UINT4 typedef fix in `Shared/Util/md5.h` is a real Linux bug fix and should remain.
+4. **No manual packet construction** - Do not build AU_LOGIN_RES (or any packet) at fixed byte offsets in MasterServerPacket.cpp. See [.cursor/rules/linux-packet-layout.mdc](.cursor/rules/linux-packet-layout.mdc) and find a global packet layout fix.
+5. **After** any new fix attempt, append to the log: what was tried, why (symptom/issue), result (worked/failed), and update "What Works" / "What Failed" if needed.
+6. **Keep MD5 fix** - The UINT4 typedef fix in `Shared/Util/md5.h` is a real Linux bug fix and should remain.

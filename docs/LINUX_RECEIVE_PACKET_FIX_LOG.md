@@ -173,9 +173,11 @@
 - **Fix 3:** Reverted Fix 2 (packed structs). **Manual packet construction on Linux only** in Server/AuthServer/MasterServerPacket.cpp - rejected; user wanted root cause fix, no manual packet definitions.
 - **Fix 4:** **POD packet header (root cause fix):** GCC ignores `__attribute__((packed))` on structs that inherit from a non-POD base. Removed constructor from `sNTLPACKETHEADER` and from `BEGIN_PROTOCOL` macro. Added `NTL_STRUCT_PACKED` macro, applied packed only to `sAU_LOGIN_RES` and `sSERVER_INFO`. **Result:** sizeof(sAU_LOGIN_RES) on Linux still 839; packed did not take effect.
 - **Fix 5:** **Manual packet construction on Linux only** - worked but not a real fix; reverted.
-- **Fix 6:** **Composition instead of inheritance:** GCC ignores packed on structs that inherit from a base. Changed `BEGIN_PROTOCOL` to emit `struct s##opcode { WORD wOpCode;` (first member) instead of inheriting `sNTLPACKETHEADER`. Layout unchanged (wOpCode at offset 0); no base class so struct is standard-layout and `__attribute__((packed))` applies. Reverted manual construction in MasterServerPacket.cpp; use struct on both platforms.
-- **Files Modified:** Server/NtlShared2/NtlPacketCommon.h, Server/AuthServer/MasterServerPacket.cpp
-- **Result:** [Test on Linux - expect sizeof(sAU_LOGIN_RES)=795 and client connects without manual build]
+- **Fix 6:** **Composition instead of inheritance** - reverted; sizeof still 839 on Linux.
+- **Fix 7:** **Manual packet construction on Linux (restored):** Reverted per user: no manual construction ever; find global fix.
+- **Fix 8:** **Global pack via -fpack-struct (Linux):** Add `-fpack-struct` for Linux in CMakeLists.txt so all structs are packed and packet layout matches Windows. Reverted manual construction. Fix reference-to-packed-field: in PacketCharServer.cpp, copy to temporary sVECTOR3 then assign to res (avoid binding reference to packed field). Add static_assert(sizeof(sAU_LOGIN_RES)==795) on Linux in NtlPacketAU.h to catch regressions.
+- **Files Modified:** CMakeLists.txt, Server/CharServer/PacketCharServer.cpp, Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp
+- **Result:** [Test on Linux - expect sizeof 795 and client connects; if other "bind packed field" errors appear, fix with same temp-copy pattern]
 
 ---
 
@@ -195,6 +197,7 @@
 4. **Do not** apply FORCE_CLOSE without the pending flag check (TakePendingForceClose).
 5. **Before** changing recv/CompleteRecv/PostRecv flow, re-read this log and the "What Works" / "What Failed" sections.
 6. **After** any new attempt, add an entry to this log: what you tried, result (worked / failed / partial), and any new "what works" or "what failed" finding.
+7. **No manual packet construction ever.** Do not build packet payloads at fixed byte offsets in .cpp. Find a global fix for packet struct layout (Linux vs Windows) that applies to all packets without modifying every single packet (e.g. compiler flag, pragma, or struct/ABI fix).
 
 ---
 

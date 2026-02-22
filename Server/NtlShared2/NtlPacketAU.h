@@ -49,6 +49,11 @@ BEGIN_PROTOCOL(AU_LOGIN_RES)
 	BYTE				byServerInfoCount;
 	sSERVER_INFO		aServerInfo[DBO_MAX_CHARACTER_SERVER_COUNT];
 END_PROTOCOL_PACKED()
+
+#if !defined(_WIN32)
+/* Linux: with -fpack-struct, layout must match Windows (795 bytes) for client compatibility */
+static_assert(sizeof(sAU_LOGIN_RES) == 795, "sAU_LOGIN_RES must be 795 bytes; use -fpack-struct or fix packet layout");
+#endif
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(AU_LOGIN_CREATEUSER_RES)
 	WORD		wResultCode;

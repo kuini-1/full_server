@@ -71,6 +71,8 @@ endif()
 
 if(UNIX AND NOT APPLE)
   find_package(Threads REQUIRED)
+  # Pack all structs so packet layout matches Windows (795-byte AU_LOGIN_RES etc.). Required for client compatibility.
+  add_compile_options(-fpack-struct)
 endif()
 
 # Boost (required: Database uses boost::thread/mutex/condition)

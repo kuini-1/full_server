@@ -229,12 +229,22 @@ void CClientSession::SendCharCreateReq(CNtlPacket * pPacket)
 		res->byHairColor = req->byHairColor;
 		res->bySkinColor = req->bySkinColor;
 		res->byBlood = 0;
-		NewbieTblData->vSpawn_Loc.CopyTo(res->vSpawn_Loc);
-		NewbieTblData->vSpawn_Dir.CopyTo(res->vSpawn_Dir);
+		{
+			sVECTOR3 tmp;
+			NewbieTblData->vSpawn_Loc.CopyTo(tmp);
+			res->vSpawn_Loc.x = tmp.x; res->vSpawn_Loc.y = tmp.y; res->vSpawn_Loc.z = tmp.z;
+			NewbieTblData->vSpawn_Dir.CopyTo(tmp);
+			res->vSpawn_Dir.x = tmp.x; res->vSpawn_Dir.y = tmp.y; res->vSpawn_Dir.z = tmp.z;
+		}
 		res->byBindType = DBO_BIND_TYPE_POPO_STONE;
 		res->bindWorldId = NewbieTblData->world_Id;
-		NewbieTblData->vBind_Loc.CopyTo(res->vBind_Loc);
-		NewbieTblData->vBind_Dir.CopyTo(res->vBind_Dir);
+		{
+			sVECTOR3 tmp;
+			NewbieTblData->vBind_Loc.CopyTo(tmp);
+			res->vBind_Loc.x = tmp.x; res->vBind_Loc.y = tmp.y; res->vBind_Loc.z = tmp.z;
+			NewbieTblData->vBind_Dir.CopyTo(tmp);
+			res->vBind_Dir.x = tmp.x; res->vBind_Dir.y = tmp.y; res->vBind_Dir.z = tmp.z;
+		}
 		res->mapNameTblidx = NewbieTblData->mapNameTblidx;
 
 
