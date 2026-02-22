@@ -51,8 +51,21 @@ BEGIN_PROTOCOL(AU_LOGIN_RES)
 END_PROTOCOL_PACKED()
 
 #if !defined(_WIN32)
-/* Linux: with -fpack-struct, layout must match Windows (795 bytes) for client compatibility */
-static_assert(sizeof(sAU_LOGIN_RES) == 795, "sAU_LOGIN_RES must be 795 bytes; use -fpack-struct or fix packet layout");
+/* Linux: GCC adds padding after base when derived has packed. Use flat struct (no inheritance) so __attribute__((packed)) applies; same wire layout as Windows (795 bytes). */
+struct sAU_LOGIN_RES_wire
+{
+	WORD				wOpCode;
+	WORD				wResultCode;
+	WCHAR				awchUserId[NTL_MAX_SIZE_USERID_UNICODE + 1];
+	BYTE				abyAuthKey[NTL_MAX_SIZE_AUTH_KEY];
+	ACCOUNTID			accountId;
+	SERVERFARMID		lastServerFarmId;
+	DWORD				dwAllowedFunctionForDeveloper;
+	BYTE				bIsGM;
+	BYTE				byServerInfoCount;
+	sSERVER_INFO		aServerInfo[DBO_MAX_CHARACTER_SERVER_COUNT];
+} __attribute__((packed));
+static_assert(sizeof(sAU_LOGIN_RES_wire) == 795, "sAU_LOGIN_RES_wire must be 795 bytes for Windows client");
 #endif
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(AU_LOGIN_CREATEUSER_RES)

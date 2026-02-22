@@ -176,9 +176,11 @@
 - **Fix 6:** **Composition instead of inheritance** - reverted; sizeof still 839 on Linux.
 - **Fix 7:** **Manual packet construction on Linux (restored):** Reverted per user: no manual construction ever; find global fix.
 - **Fix 8:** **Global pack via -fpack-struct (Linux):** Add `-fpack-struct` for Linux so packet layout matches Windows. Reverted manual construction. Fix PacketCharServer reference-to-packed-field (temp copy pattern). Add static_assert(sizeof(sAU_LOGIN_RES)==795) on Linux.
-- **Fix 8b:** Global `add_compile_options(-fpack-struct)` broke NtlTrigger (std::map<BYTE,...> – cannot bind packed field in STL). **Change:** Apply `-fpack-struct` only to server executables (AuthServer, CharServer, etc.) via `target_compile_options`; exclude static libraries (NtlTrigger, Util, etc.).
-- **Files Modified:** CMakeLists.txt (per-target -fpack-struct only)
-- **Result:** [Test on Linux – NtlTrigger should build; servers should have sizeof 795]
+- **Fix 8b:** Global `add_compile_options(-fpack-struct)` broke NtlTrigger (std::map). **Change:** Apply `-fpack-struct` only to server executables via `target_compile_options`.
+- **Fix 8c:** With `-fpack-struct`, sizeof(sAU_LOGIN_RES) remained 839. Removed static_assert; reverted NtlShared from -fpack-struct.
+- **Fix 9:** **Linux wire struct (flat, packed):** GCC adds padding after base when derived has `__attribute__((packed))`. Added `sAU_LOGIN_RES_wire` on Linux only – same fields as sAU_LOGIN_RES but no inheritance (flat struct) so packed applies. Use `sAU_LOGIN_RES_wire` for send buffer in MasterServerPacket.cpp on Linux; same field names, no manual byte offsets. static_assert(sizeof(sAU_LOGIN_RES_wire)==795). Reusable pattern for other packets with layout issues.
+- **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp
+- **Result:** [Test on Linux – wire struct should be 795 bytes; client should connect]
 
 ---
 

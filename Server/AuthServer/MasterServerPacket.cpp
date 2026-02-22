@@ -43,8 +43,13 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 		{
 			sDBO_SERVER_INFO* srvinfo = g_pServerInfoManager->GetIdlestServerInfo(NTL_SERVER_TYPE_CHARACTER, 0, 0);
 
+#if !defined(_WIN32)
+			CNtlPacket packet(sizeof(sAU_LOGIN_RES_wire));
+			sAU_LOGIN_RES_wire * res = (sAU_LOGIN_RES_wire *)packet.GetPacketData();
+#else
 			CNtlPacket packet(sizeof(sAU_LOGIN_RES));
 			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+#endif
 			res->wOpCode = AU_LOGIN_RES;
 			NTL_SAFE_WCSCPY(res->awchUserId, req->awchUserId);
 
@@ -78,12 +83,21 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 			if (resultcode == AUTH_SUCCESS)
 			{
+#if !defined(_WIN32)
+				packet.SetPacketLen(sizeof(sAU_LOGIN_RES_wire));
+				printf("[AU_LOGIN_RES] Linux wire struct: sizeof(sAU_LOGIN_RES_wire)=%zu (expect 795)\n", sizeof(sAU_LOGIN_RES_wire));
+#else
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+				printf("[AU_LOGIN_RES] sizeof(sAU_LOGIN_RES)=%zu (expect 795 for Windows client compat)\n", sizeof(sAU_LOGIN_RES));
+#endif
 				{
-					printf("[AU_LOGIN_RES] sizeof(sAU_LOGIN_RES)=%zu (expect 795 for Windows client compat)\n", sizeof(sAU_LOGIN_RES));
 					BYTE * buf = packet.GetPacketBuffer();
 					WORD len = packet.GetUsedSize();
+#if !defined(_WIN32)
+					sAU_LOGIN_RES_wire * dbg = (sAU_LOGIN_RES_wire *)packet.GetPacketData();
+#else
 					sAU_LOGIN_RES * dbg = (sAU_LOGIN_RES *)packet.GetPacketData();
+#endif
 					printf("[AU_LOGIN_RES hex dump] total=%u bytes (header=%u payload=%u)\n",
 						(unsigned)len, (unsigned)packet.GetHeaderSize(), (unsigned)(len - packet.GetHeaderSize()));
 					printf("[AU_LOGIN_RES hex dump] szCharacterServerIP='%s' Port=%u byServerInfoCount=%u\n",
@@ -110,11 +124,20 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 		ERR_LOG(LOG_USER, "Account % connect failed. Resultcode %d", req->accountId, resultcode);
 
 		//IF NOT SUCCESS SEND ERROR MSG
+#if !defined(_WIN32)
+		CNtlPacket packet2(sizeof(sAU_LOGIN_RES_wire));
+		sAU_LOGIN_RES_wire * res2 = (sAU_LOGIN_RES_wire *)packet2.GetPacketData();
+		memset(packet2.GetPacketData(), 0, sizeof(sAU_LOGIN_RES_wire));
+		res2->wOpCode = AU_LOGIN_RES;
+		res2->wResultCode = resultcode;
+		packet2.SetPacketLen(sizeof(sAU_LOGIN_RES_wire));
+#else
 		CNtlPacket packet2(sizeof(sAU_LOGIN_RES));
 		sAU_LOGIN_RES * res2 = (sAU_LOGIN_RES *)packet2.GetPacketData();
 		res2->wOpCode = AU_LOGIN_RES;
 		res2->wResultCode = resultcode;
 		packet2.SetPacketLen(sizeof(sAU_LOGIN_RES));
+#endif
 		app->SendTo(session, &packet2);
 
 		app->DelPlayer(req->accountId);

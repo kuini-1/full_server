@@ -430,13 +430,12 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(GameServer PRIVATE Threads::Threads)
 endif()
 
-# Pack structs for NtlShared and server executables on Linux only (packet layout must match Windows; NtlTrigger/Util use std::map which breaks with -fpack-struct)
+# Pack structs for server executables on Linux only (NtlTrigger/Util use std::map which breaks with -fpack-struct). Note: -fpack-struct does not reduce sAU_LOGIN_RES to 795 on GCC; sizeof stays 839.
 if(DBO_PACK_STRUCT_FOR_LINUX)
-  target_compile_options(NtlShared PRIVATE -fpack-struct)
   foreach(_exe IN ITEMS AuthServer CharServer ChatServer QueryServer MasterServer GameServer)
     target_compile_options(${_exe} PRIVATE -fpack-struct)
   endforeach()
-  message(STATUS "Linux: -fpack-struct applied to NtlShared and server executables for packet layout compatibility")
+  message(STATUS "Linux: -fpack-struct applied to server executables (packet layout may still differ from Windows)")
 endif()
 
 # Windows resources (optional)
