@@ -440,13 +440,9 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(GameServer PRIVATE Threads::Threads)
 endif()
 
-# Pack structs for server executables on Linux (packet wire format for Windows client). NtlShared also gets -fpack-struct above.
-if(DBO_PACK_STRUCT_FOR_LINUX)
-  foreach(_exe IN ITEMS AuthServer CharServer ChatServer QueryServer MasterServer GameServer)
-    target_compile_options(${_exe} PRIVATE -fpack-struct)
-  endforeach()
-  message(STATUS "Linux: -fpack-struct applied to server executables")
-endif()
+# Pack structs: NtlShared gets -fpack-struct for packet wire layout. Do NOT apply to server executables
+# (Fix 9f): -fpack-struct on executables broke CNtlIniFile (std::map corruption in destructor). Packet
+# headers use #pragma pack(1) in their own headers, so executables still get correct packet layout.
 
 # Windows resources (optional)
 if(WIN32)
