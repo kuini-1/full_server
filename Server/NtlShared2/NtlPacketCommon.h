@@ -5,6 +5,7 @@
 
 #include "NtlSharedType.h"
 #include "NtlSharedDef.h"
+#include "../../Shared/NtlSharedCommon.h"
 
 #include <string>
 
@@ -122,7 +123,7 @@ struct s##opcode :									\
 	{												\
 	}
 
-#define END_PROTOCOL()	};
+#define END_PROTOCOL()	} NTL_STRUCT_PACKED;
 
 //------------------------------------------------------------------
 //

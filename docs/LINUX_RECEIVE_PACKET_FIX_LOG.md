@@ -164,13 +164,14 @@
 - **Use:** Distinguishes: (a) client closed before sending → CompleteRecv(0), (b) client sent data then closed during re-post → PostRecv returns SESSION_CLOSED.
 - **Files:** `Server/NtlNetwork/NtlConnection.cpp`
 
-### 19. AU_LOGIN_RES struct layout: bool bIsGM causes 4-byte padding on Linux (szCharacterServerIP offset mismatch)
+### 19. AU_LOGIN_RES struct layout: bool bIsGM and GCC padding (szCharacterServerIP offset mismatch)
 
 - **Symptom:** Hex dump comparison showed Linux AU_LOGIN_RES = 841 bytes vs Windows 795 bytes. Client receives login success but never connects to Character Server (never attempts TCP to Char Server port).
-- **Root cause:** On GCC/Linux, `bool bIsGM` can be 4 bytes (or cause alignment padding), while MSVC/Windows uses 1 byte. Linux had 4 extra bytes (`00 00 00 00`) between `dwAllowedFunctionForDeveloper` and `bIsGM`/`byServerInfoCount`, shifting `szCharacterServerIP` in the payload. The Windows client parses at fixed offsets; it read zeros instead of the IP string.
-- **Fix:** Changed `bool bIsGM` to `BYTE bIsGM` in `sAU_LOGIN_RES` (Server/NtlShared2/NtlPacketAU.h). Use 0/1 for false/true. Ensures 1-byte layout matching Windows client.
-- **Files Modified:** `Server/NtlShared2/NtlPacketAU.h`
-- **Result:** [Pending test - should fix client not connecting to Char Server]
+- **Root cause:** On GCC/Linux, `#pragma pack(1)` alone does not suppress all ABI padding; struct was 839 bytes vs Windows 795 bytes. Extra 44 bytes shift `szCharacterServerIP` offset; Windows client reads zeros instead of the IP.
+- **Fix 1:** Changed `bool bIsGM` to `BYTE bIsGM` in `sAU_LOGIN_RES` (Server/NtlShared2/NtlPacketAU.h). Use 0/1 for false/true.
+- **Fix 2:** `sizeof` still 839 after Fix 1. Added `__attribute__((packed))` for GCC: (1) `NTL_STRUCT_PACKED` macro in Shared/NtlSharedCommon.h (Linux: `__attribute__((packed))`, Windows: empty), (2) `sSERVER_INFO` in NtlCSArchitecture.h gets `} NTL_STRUCT_PACKED;`, (3) `END_PROTOCOL()` in NtlPacketCommon.h expands to `} NTL_STRUCT_PACKED;` so all protocol structs get packed on Linux.
+- **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Shared/NtlSharedCommon.h, Server/NtlShared2/NtlCSArchitecture.h, Server/NtlShared2/NtlPacketCommon.h
+- **Result:** [Pending test - should yield sizeof(sAU_LOGIN_RES)=795 and fix client connection]
 
 ---
 

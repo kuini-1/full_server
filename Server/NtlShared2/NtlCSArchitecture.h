@@ -3,6 +3,7 @@
 #include "NtlSharedType.h"
 #include "NtlSharedDef.h"
 #include "NtlCharacter.h"
+#include "../../Shared/NtlSharedCommon.h"
 
 // Server Type Enumeration
 enum eNtlServerType : BYTE
@@ -39,7 +40,7 @@ enum eNtlServerGroupType
 	NTL_SERVER_GROUP_TYPE_CHARACTER,
 	NTL_SERVER_GROUP_TYPE_SERVERFARM_TOP,//??? ??????? ?????
 	NTL_SERVER_GROUP_TYPE_SERVERFARM, //?????? ??????
-	NTL_SERVER_GROUP_TYPE_CHANNEL,//?????? ??? ä??
+	NTL_SERVER_GROUP_TYPE_CHANNEL,//?????? ??? ???
 
 	NTL_SERVER_GROUP_TYPE_INVALID = 0xFF,
 
@@ -136,7 +137,7 @@ struct sSERVER_INFO
 	DWORD		dwLoad;
 	BYTE		serverfarmID;
 	BYTE		serverchannelID;
-};
+} NTL_STRUCT_PACKED;
 
 struct sDBO_SERVER_CHANNEL_CONNECTED_USER_INFO
 {

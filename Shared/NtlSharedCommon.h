@@ -16,6 +16,9 @@
 
 typedef unsigned __int64 ntl_uint64;
 
+/* Windows: #pragma pack handles struct packing; no attribute needed */
+#define NTL_STRUCT_PACKED
+
 /* Path separator for format strings (e.g. "%s" NTL_PATH_SEP "%04d") */
 #define NTL_PATH_SEP "\\"
 
@@ -58,6 +61,9 @@ typedef unsigned __int64 ntl_uint64;
 // WCHAR must be 2 bytes (UTF-16) to match Windows and the game protocol
 // On Linux, wchar_t is 4 bytes (UTF-32), so we use unsigned short instead
 typedef unsigned short WCHAR;
+
+/* GCC: __attribute__((packed)) enforces minimal padding; #pragma pack(1) alone can leave ABI padding on some archs */
+#define NTL_STRUCT_PACKED __attribute__((packed))
 
 #include "Util/NtlPortable.h"
 #include <sys/socket.h>
