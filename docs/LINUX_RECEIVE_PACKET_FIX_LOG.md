@@ -157,6 +157,13 @@
   - `CMakeLists.txt`: Added `iconv` library linking for Util
 - **Result:** [Pending test - should fix username truncation issue]
 
+### 18. CompleteRecv diagnostic logging (rc=100045 on Char client)
+
+- **Symptom:** Client connects to Character Server, session accepted, then immediately `[IOCP Worker] CompleteIO failed -> Close session. rc=100045, iomode=3`. Client shows "failed to connect to character server".
+- **Change:** Added printf logs in CompleteRecv: (1) when dwTransferedBytes==0 (peer closed before/without sending), (2) when PostRecv fails (peer closed during re-post), (3) when receiving data (byte count, excluding 4/12 heartbeat).
+- **Use:** Distinguishes: (a) client closed before sending → CompleteRecv(0), (b) client sent data then closed during re-post → PostRecv returns SESSION_CLOSED.
+- **Files:** `Server/NtlNetwork/NtlConnection.cpp`
+
 ---
 
 ## Remaining Work (until 100% fixed)

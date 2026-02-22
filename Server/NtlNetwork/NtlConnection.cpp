@@ -930,8 +930,13 @@ int CNtlConnection::CompleteRecv(DWORD dwTransferedBytes)
 	// Remote close
 	if( 0 == dwTransferedBytes )
 	{
+		printf("[CompleteRecv] Got 0 bytes (peer closed) -> SESSION_CLOSED, Session=%p, IP=%s\n", this, GetRemoteIP());
 		return NTL_ERR_NET_SESSION_CLOSED;
 	}
+
+	// Log first recv for Char client connections (helps debug "failed to connect")
+	if (dwTransferedBytes != 4 && dwTransferedBytes != 12)
+		printf("[CompleteRecv] Received %u bytes, Session=%p, IP=%s\n", dwTransferedBytes, this, GetRemoteIP());
 
 	UpdateTrafficInfo(dwTransferedBytes);
 
@@ -947,7 +952,10 @@ int CNtlConnection::CompleteRecv(DWORD dwTransferedBytes)
 	// Otherwise dispatcher may run ProcessPacket (e.g. decryption failure -> FORCE_CLOSE) before we call PostRecv(), causing rc=100045.
 	int rc = PostRecv();
 	if (rc != NTL_SUCCESS)
+	{
+		printf("[CompleteRecv] PostRecv failed rc=%d (bytes=%u), Session=%p, IP=%s\n", rc, dwTransferedBytes, this, GetRemoteIP());
 		return rc;
+	}
 
 	// Parse and dispatch packets (may post NETEVENT_RECV / FORCE_CLOSE)
 	rc = RecvPackets(0);
