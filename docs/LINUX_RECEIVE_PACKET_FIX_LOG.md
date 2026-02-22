@@ -169,7 +169,7 @@
 - **Symptom:** Hex dump comparison showed Linux AU_LOGIN_RES = 841 bytes vs Windows 795 bytes. Client receives login success but never connects to Character Server (never attempts TCP to Char Server port).
 - **Root cause:** On GCC/Linux, `#pragma pack(1)` alone does not suppress all ABI padding; struct was 839 bytes vs Windows 795 bytes. Extra 44 bytes shift `szCharacterServerIP` offset; Windows client reads zeros instead of the IP.
 - **Fix 1:** Changed `bool bIsGM` to `BYTE bIsGM` in `sAU_LOGIN_RES` (Server/NtlShared2/NtlPacketAU.h). Use 0/1 for false/true.
-- **Fix 2:** `sizeof` still 839 after Fix 1. Added `__attribute__((packed))` for GCC: (1) `NTL_STRUCT_PACKED` macro in Shared/NtlSharedCommon.h (Linux: `__attribute__((packed))`, Windows: empty), (2) `sSERVER_INFO` in NtlCSArchitecture.h gets `} NTL_STRUCT_PACKED;`, (3) `END_PROTOCOL()` in NtlPacketCommon.h expands to `} NTL_STRUCT_PACKED;` so all protocol structs get packed on Linux.
+- **Fix 2:** `sizeof` still 839 after Fix 1. Added `__attribute__((packed))` for GCC, applied **only** to `sAU_LOGIN_RES` and `sSERVER_INFO` (not globally): (1) `NTL_STRUCT_PACKED` macro in Shared/NtlSharedCommon.h, (2) `sSERVER_INFO` in NtlCSArchitecture.h gets `} NTL_STRUCT_PACKED;`, (3) `END_PROTOCOL_PACKED()` in NtlPacketCommon.h for use with sAU_LOGIN_RES only. Using packed globally broke build (cannot bind packed field to reference in PacketCharServer.cpp).
 - **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Shared/NtlSharedCommon.h, Server/NtlShared2/NtlCSArchitecture.h, Server/NtlShared2/NtlPacketCommon.h
 - **Result:** [Pending test - should yield sizeof(sAU_LOGIN_RES)=795 and fix client connection]
 

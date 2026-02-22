@@ -5,7 +5,6 @@
 
 #include "NtlSharedType.h"
 #include "NtlSharedDef.h"
-#include "../../Shared/NtlSharedCommon.h"
 
 #include <string>
 
@@ -123,7 +122,10 @@ struct s##opcode :									\
 	{												\
 	}
 
-#define END_PROTOCOL()	} NTL_STRUCT_PACKED;
+#define END_PROTOCOL()	};
+
+/* Linux: use END_PROTOCOL_PACKED for structs that must match Windows wire layout exactly (e.g. sAU_LOGIN_RES). Requires NtlSharedCommon.h for NTL_STRUCT_PACKED. */
+#define END_PROTOCOL_PACKED()	} NTL_STRUCT_PACKED;
 
 //------------------------------------------------------------------
 //

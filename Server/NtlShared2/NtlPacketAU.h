@@ -48,7 +48,7 @@ BEGIN_PROTOCOL(AU_LOGIN_RES)
 	BYTE				bIsGM;	/* Use BYTE for wire compatibility: bool can be 4 bytes on GCC/Linux causing szCharacterServerIP offset mismatch vs Windows client */
 	BYTE				byServerInfoCount;
 	sSERVER_INFO		aServerInfo[DBO_MAX_CHARACTER_SERVER_COUNT];
-END_PROTOCOL()
+END_PROTOCOL_PACKED()
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(AU_LOGIN_CREATEUSER_RES)
 	WORD		wResultCode;
