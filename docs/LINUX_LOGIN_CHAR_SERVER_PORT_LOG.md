@@ -193,6 +193,20 @@
 
 ## Current Status
 
+### Critical Issue: Client Not Connecting to Character Server
+
+**Status:** IN PROGRESS - Client receives `AU_LOGIN_RES` but does not connect to Character Server.
+
+**See:** `docs/CLIENT_CHAR_SERVER_CONNECTION_ISSUE.md` for detailed analysis and verification plan.
+
+**Key Facts:**
+- Windows server code works 100%
+- Linux port has client connection issue
+- Client disconnects from Auth Server but never connects to Character Server
+- Character Server is listening correctly
+- Network connectivity is fine
+- **Root cause likely:** WCHAR handling or packet structure mismatch
+
 ### What Works
 1. **MD5 hash calculation** - Fixed UINT4 size issue, passwords validate correctly
 2. **Login authentication** - Client can login successfully, receives `AU_LOGIN_RES` with `ResultCode=100`

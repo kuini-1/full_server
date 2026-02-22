@@ -45,7 +45,6 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 			CNtlPacket packet(sizeof(sAU_LOGIN_RES));
 			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
-			ZeroMemory(res, sizeof(sAU_LOGIN_RES)); // Ensure clean initialization
 			res->wOpCode = AU_LOGIN_RES;
 			NTL_SAFE_WCSCPY(res->awchUserId, req->awchUserId);
 
@@ -61,8 +60,6 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 					resultcode = AUTH_SUCCESS;
 					NTL_STRCPY_S(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
 					res->aServerInfo[0].wCharacterServerPortForClient = srvinfo->wPortForClient;
-					printf("[AuthServer] Sending Character Server info to client: IP='%s', Port=%u, AccountID=%u\n", 
-						srvinfo->achPublicAddress, srvinfo->wPortForClient, req->accountId);
 					res->aServerInfo[0].dwLoad = (DWORD)((float)srvinfo->dwLoad / (float)srvinfo->dwMaxLoad * 100.0f);
 					res->aServerInfo[0].serverfarmID = srvinfo->serverFarmId;
 					res->aServerInfo[0].serverchannelID = srvinfo->byServerChannelIndex;
@@ -82,11 +79,21 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			if (resultcode == AUTH_SUCCESS)
 			{
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
-				// Verify packet structure before sending
-				sAU_LOGIN_RES * verifyRes = (sAU_LOGIN_RES *)packet.GetPacketData();
-				printf("[AuthServer] Sending AU_LOGIN_RES packet: wOpCode=%u, wResultCode=%u, byServerInfoCount=%u, IP='%s', Port=%u, packetLen=%u\n",
-					verifyRes->wOpCode, verifyRes->wResultCode, verifyRes->byServerInfoCount, 
-					verifyRes->aServerInfo[0].szCharacterServerIP, verifyRes->aServerInfo[0].wCharacterServerPortForClient, packet.GetPacketLen());
+				/* WCHAR debug log - compare with Windows output */
+				{
+					sAU_LOGIN_RES * dbg = (sAU_LOGIN_RES *)packet.GetPacketData();
+					printf("[Linux-AU_LOGIN_RES] awchUserId hex (first 34 bytes): ");
+					for (int i = 0; i < 17 && i < (int)(sizeof(dbg->awchUserId)/sizeof(WCHAR)); i++)
+						printf("%04X ", (unsigned)dbg->awchUserId[i]);
+					printf("\n");
+					printf("[Linux-AU_LOGIN_RES] szCharacterServerIP='%s' Port=%u byServerInfoCount=%u\n",
+						dbg->aServerInfo[0].szCharacterServerIP, dbg->aServerInfo[0].wCharacterServerPortForClient, dbg->byServerInfoCount);
+					printf("[Linux-AU_LOGIN_RES] packet bytes offset awchUserId: ");
+					BYTE * p = (BYTE *)&dbg->awchUserId;
+					for (int i = 0; i < 34 && i < (int)(sizeof(dbg->awchUserId)); i++)
+						printf("%02X ", p[i]);
+					printf("\n");
+				}
 				app->SendTo(session, &packet);
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
