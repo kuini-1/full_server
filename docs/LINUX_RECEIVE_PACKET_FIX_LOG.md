@@ -182,9 +182,10 @@
 - **Fix 8c:** With `-fpack-struct`, sizeof(sAU_LOGIN_RES) remained 839. Removed static_assert; reverted NtlShared from -fpack-struct.
 - **Fix 9:** **Linux wire struct (flat, packed):** GCC adds padding after base when derived has `__attribute__((packed))`. Added `sAU_LOGIN_RES_wire` on Linux only – same fields as sAU_LOGIN_RES but no inheritance (flat struct) so packed applies. Use `sAU_LOGIN_RES_wire` for send buffer in MasterServerPacket.cpp on Linux; same field names, no manual byte offsets. static_assert(sizeof(sAU_LOGIN_RES_wire)==795). **Result:** sizeof still 839 – sSERVER_INFO array elements still get padding when used inside packed struct.
 - **Fix 9b:** **sSERVER_INFO_wire (inline packed element):** GCC adds padding to `sSERVER_INFO` when used as array element. Added flat packed `sSERVER_INFO_wire` and use it in sAU_LOGIN_RES_wire. **Result:** sSERVER_INFO_wire still 77 bytes (GCC tail padding); static_assert fails.
-- **Fix 9c:** **-fpack-struct on NtlShared (Linux):** NtlShared compiles packet headers (NtlPacketAU.cpp). Previously -fpack-struct was only on executables; NtlPacketAU.cpp is in NtlShared so it never got packed. Added `target_compile_options(NtlShared PRIVATE -fpack-struct)` for Linux so NtlShared's packet structs are packed. Wire structs + pragma pack + -fpack-struct should yield 73/795 bytes. NtlShared does not include NtlTrigger headers in NtlPacketAU.cpp, so no ODR/STL conflict.
+- **Fix 9c:** **-fpack-struct on NtlShared (Linux):** NtlShared compiles packet headers (NtlPacketAU.cpp). Added `target_compile_options(NtlShared PRIVATE -fpack-struct)`. Wire structs still 77/839 (GCC array-element tail padding).
+- **Fix 9d:** **Use original structs only (no wire structs):** Removed sSERVER_INFO_wire and sAU_LOGIN_RES_wire from NtlPacketAU.h. MasterServerPacket.cpp now uses sAU_LOGIN_RES everywhere (same as Windows reference). Fix at compiler level: -fpack-struct on NtlShared remains; optional -DDBO_USE_CLANG=ON to try Clang for Linux (may produce sizeof(sAU_LOGIN_RES)==795).
 - **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp, CMakeLists.txt
-- **Result:** [Test on Linux – wire struct 795 bytes; client should connect]
+- **Result:** [Test on Linux – with GCC sizeof may be 839; try Clang with -DDBO_USE_CLANG=ON to test 795-byte layout]
 
 ---
 

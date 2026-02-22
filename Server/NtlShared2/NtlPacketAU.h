@@ -49,36 +49,6 @@ BEGIN_PROTOCOL(AU_LOGIN_RES)
 	BYTE				byServerInfoCount;
 	sSERVER_INFO		aServerInfo[DBO_MAX_CHARACTER_SERVER_COUNT];
 END_PROTOCOL_PACKED()
-
-#if !defined(_WIN32)
-/* Linux: GCC adds padding despite __attribute__((packed)). Use pragma pack + packed and force no tail padding by making element size 73 via trailing array. */
-#pragma pack(push, 1)
-struct __attribute__((packed)) sSERVER_INFO_wire
-{
-	char		szCharacterServerIP[NTL_MAX_LENGTH_OF_IP + 1];
-	WORD		wCharacterServerPortForClient;
-	DWORD		dwLoad;
-	BYTE		serverfarmID;
-	BYTE		serverchannelID;
-};
-
-struct __attribute__((packed)) sAU_LOGIN_RES_wire
-{
-	WORD				wOpCode;
-	WORD				wResultCode;
-	WCHAR				awchUserId[NTL_MAX_SIZE_USERID_UNICODE + 1];
-	BYTE				abyAuthKey[NTL_MAX_SIZE_AUTH_KEY];
-	ACCOUNTID			accountId;
-	SERVERFARMID		lastServerFarmId;
-	DWORD				dwAllowedFunctionForDeveloper;
-	BYTE				bIsGM;
-	BYTE				byServerInfoCount;
-	sSERVER_INFO_wire	aServerInfo[DBO_MAX_CHARACTER_SERVER_COUNT];
-};
-#pragma pack(pop)
-static_assert(sizeof(sSERVER_INFO_wire) == 73, "sSERVER_INFO_wire must be 73 bytes");
-static_assert(sizeof(sAU_LOGIN_RES_wire) == 795, "sAU_LOGIN_RES_wire must be 795 bytes for Windows client");
-#endif
 //------------------------------------------------------------------
 BEGIN_PROTOCOL(AU_LOGIN_CREATEUSER_RES)
 	WORD		wResultCode;

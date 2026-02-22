@@ -71,8 +71,13 @@ endif()
 
 if(UNIX AND NOT APPLE)
   find_package(Threads REQUIRED)
-  # Pack structs for server executables only (not libs like NtlTrigger which use std::map - packed breaks STL).
   set(DBO_PACK_STRUCT_FOR_LINUX 1)
+  # Optional: use Clang for Linux (may produce correct packet struct layout vs GCC). Configure with -DDBO_USE_CLANG=ON
+  if(DBO_USE_CLANG)
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+    message(STATUS "Linux: using Clang (DBO_USE_CLANG=ON)")
+  endif()
 endif()
 
 # Boost (required: Database uses boost::thread/mutex/condition)
