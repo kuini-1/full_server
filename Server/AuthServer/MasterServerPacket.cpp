@@ -88,6 +88,14 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 						(unsigned)len, (unsigned)packet.GetHeaderSize(), (unsigned)(len - packet.GetHeaderSize()));
 					printf("[AU_LOGIN_RES hex dump] szCharacterServerIP='%s' Port=%u byServerInfoCount=%u\n",
 						dbg->aServerInfo[0].szCharacterServerIP, dbg->aServerInfo[0].wCharacterServerPortForClient, dbg->byServerInfoCount);
+					// Raw hex: first 128 bytes, then bytes around sSERVER_INFO start (offset varies by platform)
+					printf("[AU_LOGIN_RES hex dump] raw hex first 128:");
+					for (unsigned i = 0; i < 128 && i < len; i++)
+						printf(" %02x", buf[i]);
+					printf("\n[AU_LOGIN_RES hex dump] raw hex bytes 400-550 (sSERVER_INFO region):");
+					for (unsigned i = 400; i < 550 && i < len; i++)
+						printf(" %02x", buf[i]);
+					printf("\n");
 				}
 				app->SendTo(session, &packet);
 
