@@ -11,7 +11,8 @@ CMG_Opcodes::CMG_Opcodes()
 
 CMG_Opcodes::~CMG_Opcodes()
 {
-	delete[] aOpcodeHandler;
+	for (int i = 0; i < MG_OPCODE_END - MG_OPCODE_BEGIN; i++)
+		delete aOpcodeHandler[i];
 }
 
 

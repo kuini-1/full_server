@@ -11,7 +11,8 @@ CGT_Opcodes::CGT_Opcodes()
 
 CGT_Opcodes::~CGT_Opcodes()
 {
-	delete[] aOpcodeHandler;
+	for (int i = 0; i < GT_OPCODE_END - GT_OPCODE_BEGIN; i++)
+		delete aOpcodeHandler[i];
 }
 
 

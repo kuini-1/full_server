@@ -11,7 +11,8 @@ CUC_Opcodes::CUC_Opcodes()
 
 CUC_Opcodes::~CUC_Opcodes()
 {
-	delete[] aOpcodeHandler;
+	for (int i = 0; i < UC_OPCODE_END - UC_OPCODE_BEGIN; i++)
+		delete aOpcodeHandler[i];
 }
 
 

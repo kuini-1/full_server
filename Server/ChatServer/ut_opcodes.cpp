@@ -11,7 +11,8 @@ CUT_Opcodes::CUT_Opcodes()
 
 CUT_Opcodes::~CUT_Opcodes()
 {
-	delete[] aOpcodeHandler;
+	for (int i = 0; i < UT_OPCODE_END - UT_OPCODE_BEGIN; i++)
+		delete aOpcodeHandler[i];
 }
 
 

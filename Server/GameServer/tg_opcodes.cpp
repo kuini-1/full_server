@@ -11,7 +11,8 @@ CTG_Opcodes::CTG_Opcodes()
 
 CTG_Opcodes::~CTG_Opcodes()
 {
-	delete[] aOpcodeHandler;
+	for (int i = 0; i < TG_OPCODE_END - TG_OPCODE_BEGIN; i++)
+		delete aOpcodeHandler[i];
 }
 
 

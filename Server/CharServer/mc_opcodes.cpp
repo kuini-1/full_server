@@ -11,7 +11,8 @@ CMC_Opcodes::CMC_Opcodes()
 
 CMC_Opcodes::~CMC_Opcodes()
 {
-	delete[] aOpcodeHandler;
+	for (int i = 0; i < MC_OPCODE_END - MC_OPCODE_BEGIN; i++)
+		delete aOpcodeHandler[i];
 }
 
 

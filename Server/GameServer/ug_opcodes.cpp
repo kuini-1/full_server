@@ -12,7 +12,8 @@ CUG_Opcodes::CUG_Opcodes()
 
 CUG_Opcodes::~CUG_Opcodes()
 {
-	delete[] aOpcodeHandler;
+	for (int i = 0; i < UG_OPCODE_END - UG_OPCODE_BEGIN; i++)
+		delete aOpcodeHandler[i];
 }
 
 

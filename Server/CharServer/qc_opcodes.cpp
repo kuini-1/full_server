@@ -11,7 +11,8 @@ CQC_Opcodes::CQC_Opcodes()
 
 CQC_Opcodes::~CQC_Opcodes()
 {
-	delete[] aOpcodeHandler;
+	for (int i = 0; i < QC_OPCODE_END - QC_OPCODE_BEGIN; i++)
+		delete aOpcodeHandler[i];
 }
 
 
