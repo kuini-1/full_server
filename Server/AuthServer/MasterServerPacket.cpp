@@ -79,25 +79,6 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			if (resultcode == AUTH_SUCCESS)
 			{
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
-				/* Hex dump for comparison with Windows server - use diff to compare outputs */
-				{
-					printf("[AU_LOGIN_RES] sizeof(sAU_LOGIN_RES)=%zu (expect 795 for Windows client compat)\n", sizeof(sAU_LOGIN_RES));
-					BYTE * buf = packet.GetPacketBuffer();
-					WORD len = packet.GetUsedSize();
-					sAU_LOGIN_RES * dbg = (sAU_LOGIN_RES *)packet.GetPacketData();
-					printf("[AU_LOGIN_RES hex dump] total=%u bytes (header=%u payload=%u)\n",
-						(unsigned)len, (unsigned)packet.GetHeaderSize(), (unsigned)(len - packet.GetHeaderSize()));
-					printf("[AU_LOGIN_RES hex dump] full packet bytes: ");
-					for (WORD i = 0; i < len; i++)
-						printf("%02X ", buf[i]);
-					printf("\n");
-					printf("[AU_LOGIN_RES hex dump] szCharacterServerIP='%s' Port=%u byServerInfoCount=%u\n",
-						dbg->aServerInfo[0].szCharacterServerIP, dbg->aServerInfo[0].wCharacterServerPortForClient, dbg->byServerInfoCount);
-					printf("[AU_LOGIN_RES hex dump] awchUserId hex: ");
-					for (int i = 0; i < 17 && i < (int)(sizeof(dbg->awchUserId)/sizeof(WCHAR)); i++)
-						printf("%04X ", (unsigned)dbg->awchUserId[i]);
-					printf("\n");
-				}
 				app->SendTo(session, &packet);
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));

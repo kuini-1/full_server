@@ -169,9 +169,11 @@
 - **Symptom:** Hex dump comparison showed Linux AU_LOGIN_RES = 841 bytes vs Windows 795 bytes. Client receives login success but never connects to Character Server (never attempts TCP to Char Server port).
 - **Root cause:** On GCC/Linux, `#pragma pack(1)` alone does not suppress all ABI padding; struct was 839 bytes vs Windows 795 bytes. Extra 44 bytes shift `szCharacterServerIP` offset; Windows client reads zeros instead of the IP.
 - **Fix 1:** Changed `bool bIsGM` to `BYTE bIsGM` in `sAU_LOGIN_RES` (Server/NtlShared2/NtlPacketAU.h). Use 0/1 for false/true.
-- **Fix 2:** `sizeof` still 839 after Fix 1. Added `__attribute__((packed))` for GCC, applied **only** to `sAU_LOGIN_RES` and `sSERVER_INFO` (not globally): (1) `NTL_STRUCT_PACKED` macro in Shared/NtlSharedCommon.h, (2) `sSERVER_INFO` in NtlCSArchitecture.h gets `} NTL_STRUCT_PACKED;`, (3) `END_PROTOCOL_PACKED()` in NtlPacketCommon.h for use with sAU_LOGIN_RES only. Using packed globally broke build (cannot bind packed field to reference in PacketCharServer.cpp).
-- **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Shared/NtlSharedCommon.h, Server/NtlShared2/NtlCSArchitecture.h, Server/NtlShared2/NtlPacketCommon.h
-- **Result:** [Pending test - should yield sizeof(sAU_LOGIN_RES)=795 and fix client connection]
+- **Fix 2:** `sizeof` still 839 after Fix 1. Added `__attribute__((packed))` for GCC, applied **only** to `sAU_LOGIN_RES` and `sSERVER_INFO` (not globally): (1) `NTL_STRUCT_PACKED` macro in Shared/NtlSharedCommon.h, (2) `sSERVER_INFO` in NtlCSArchitecture.h gets `} NTL_STRUCT_PACKED;`, (3) `END_PROTOCOL_PACKED()` in NtlPacketCommon.h for use with sAU_LOGIN_RES only. Using packed globally broke build (cannot bind packed field to reference in PacketCharServer.cpp). Packed on sAU_LOGIN_RES alone did not reduce sizeof.
+- **Fix 3:** Reverted Fix 2 (packed structs). **Manual packet construction on Linux only** in Server/AuthServer/MasterServerPacket.cpp - rejected; user wanted root cause fix, no manual packet definitions.
+- **Fix 4:** **POD packet header (root cause fix):** GCC ignores `__attribute__((packed))` on structs that inherit from a non-POD base. Removed constructor from `sNTLPACKETHEADER` and from `BEGIN_PROTOCOL` macro, making the struct POD so GCC respects packed. Added `NTL_STRUCT_PACKED` macro (empty on Windows, `__attribute__((packed))` on Linux). Applied packed only to `sAU_LOGIN_RES` (via `END_PROTOCOL_PACKED`) and `sSERVER_INFO`. Reverted manual packet construction in MasterServerPacket.cpp; restore struct-based code.
+- **Files Modified:** Server/NtlShared2/NtlPacketCommon.h, Shared/NtlSharedCommon.h, Server/NtlShared2/NtlCSArchitecture.h, Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp
+- **Result:** [Pending test on Linux - should yield sizeof(sAU_LOGIN_RES)=795 and fix client connection]
 
 ---
 

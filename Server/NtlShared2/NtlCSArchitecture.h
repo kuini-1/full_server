@@ -3,7 +3,7 @@
 #include "NtlSharedType.h"
 #include "NtlSharedDef.h"
 #include "NtlCharacter.h"
-#include "../../Shared/NtlSharedCommon.h"
+#include "NtlSharedCommon.h"
 
 // Server Type Enumeration
 enum eNtlServerType : BYTE

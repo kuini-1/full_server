@@ -62,7 +62,7 @@ typedef unsigned __int64 ntl_uint64;
 // On Linux, wchar_t is 4 bytes (UTF-32), so we use unsigned short instead
 typedef unsigned short WCHAR;
 
-/* GCC: __attribute__((packed)) enforces minimal padding; #pragma pack(1) alone can leave ABI padding on some archs */
+/* GCC: __attribute__((packed)) enforces minimal padding for wire layout compatibility */
 #define NTL_STRUCT_PACKED __attribute__((packed))
 
 #include "Util/NtlPortable.h"
