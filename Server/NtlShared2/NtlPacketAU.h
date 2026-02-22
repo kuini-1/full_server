@@ -51,7 +51,16 @@ BEGIN_PROTOCOL(AU_LOGIN_RES)
 END_PROTOCOL_PACKED()
 
 #if !defined(_WIN32)
-/* Linux: GCC adds padding after base when derived has packed. Use flat struct (no inheritance) so __attribute__((packed)) applies; same wire layout as Windows (795 bytes). */
+/* Linux: GCC adds padding. Use flat packed structs (no inheritance) for wire layout (795 bytes). sSERVER_INFO alone still gets array padding; inline definition avoids it. */
+struct sSERVER_INFO_wire
+{
+	char		szCharacterServerIP[NTL_MAX_LENGTH_OF_IP + 1];
+	WORD		wCharacterServerPortForClient;
+	DWORD		dwLoad;
+	BYTE		serverfarmID;
+	BYTE		serverchannelID;
+} __attribute__((packed));
+
 struct sAU_LOGIN_RES_wire
 {
 	WORD				wOpCode;
@@ -63,8 +72,9 @@ struct sAU_LOGIN_RES_wire
 	DWORD				dwAllowedFunctionForDeveloper;
 	BYTE				bIsGM;
 	BYTE				byServerInfoCount;
-	sSERVER_INFO		aServerInfo[DBO_MAX_CHARACTER_SERVER_COUNT];
+	sSERVER_INFO_wire	aServerInfo[DBO_MAX_CHARACTER_SERVER_COUNT];
 } __attribute__((packed));
+static_assert(sizeof(sSERVER_INFO_wire) == 73, "sSERVER_INFO_wire must be 73 bytes");
 static_assert(sizeof(sAU_LOGIN_RES_wire) == 795, "sAU_LOGIN_RES_wire must be 795 bytes for Windows client");
 #endif
 //------------------------------------------------------------------
