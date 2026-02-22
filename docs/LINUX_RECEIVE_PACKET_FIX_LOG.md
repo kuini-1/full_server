@@ -184,6 +184,7 @@
 - **Fix 9b:** **sSERVER_INFO_wire (inline packed element):** GCC adds padding to `sSERVER_INFO` when used as array element. Added flat packed `sSERVER_INFO_wire` and use it in sAU_LOGIN_RES_wire. **Result:** sSERVER_INFO_wire still 77 bytes (GCC tail padding); static_assert fails.
 - **Fix 9c:** **-fpack-struct on NtlShared (Linux):** NtlShared compiles packet headers (NtlPacketAU.cpp). Added `target_compile_options(NtlShared PRIVATE -fpack-struct)`. Wire structs still 77/839 (GCC array-element tail padding).
 - **Fix 9d:** **Use original structs only (no wire structs):** Removed sSERVER_INFO_wire and sAU_LOGIN_RES_wire from NtlPacketAU.h. MasterServerPacket.cpp now uses sAU_LOGIN_RES everywhere (same as Windows reference). Fix at compiler level: -fpack-struct on NtlShared remains; optional -DDBO_USE_CLANG=ON to try Clang for Linux (may produce sizeof(sAU_LOGIN_RES)==795).
+- **Fix 9e:** **CNtlIniFile + -fpack-struct segfault:** MasterServer (built with -fpack-struct) uses CNtlIniFile with std::map m_iniData. Packed layout misaligns the map; destructor crashed in _Rb_tree::_S_right (corrupt tree pointers). **Fix:** Add `#pragma pack(push, 8)` / `#pragma pack(pop)` around CNtlIniFile class in NtlIniFile.h on Linux so std::map gets proper alignment when included from packed contexts.
 - **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp, CMakeLists.txt
 - **Result:** [Test on Linux – with GCC sizeof may be 839; try Clang with -DDBO_USE_CLANG=ON to test 795-byte layout]
 

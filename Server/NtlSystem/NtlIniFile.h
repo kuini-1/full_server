@@ -22,6 +22,9 @@
 #include <string>
 #endif
 
+#if !defined(_WIN32)
+#pragma pack(push, 8)
+#endif
 class CNtlIniFile
 {
 public:
@@ -85,5 +88,8 @@ private:
 #endif
 
 };
+#if !defined(_WIN32)
+#pragma pack(pop)
+#endif
 
 #endif // __NTLINIFILE_H__
