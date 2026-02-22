@@ -84,7 +84,8 @@ private:
 
 #if !defined(_WIN32)
 	// Linux: store parsed INI data as map<section, map<key, value>>
-	std::map<std::string, std::map<std::string, std::string> > m_iniData;
+	// alignas(8) prevents -fpack-struct (used by server exes) from misaligning the map
+	alignas(8) std::map<std::string, std::map<std::string, std::string> > m_iniData;
 #endif
 
 };
