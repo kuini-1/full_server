@@ -81,6 +81,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
 				/* Hex dump for comparison with Windows server - use diff to compare outputs */
 				{
+					printf("[AU_LOGIN_RES] sizeof(sAU_LOGIN_RES)=%zu (expect 795 for Windows client compat)\n", sizeof(sAU_LOGIN_RES));
 					BYTE * buf = packet.GetPacketBuffer();
 					WORD len = packet.GetUsedSize();
 					sAU_LOGIN_RES * dbg = (sAU_LOGIN_RES *)packet.GetPacketData();
