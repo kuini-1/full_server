@@ -282,7 +282,7 @@ int main(int argc, _TCHAR* argv[])
 #endif
 
 	// CHECK INI FILE AND START PROGRAM
-	int rc = app.Create(argc, argv, (argc > 1) ? argv[1] : "./config/CharServer.ini");
+	int rc = app.Create(argc, argv, (argc > 1) ? argv[1] : "../config/CharServer.ini");
 	if (NTL_SUCCESS != rc)
 		return rc;
 
@@ -294,20 +294,20 @@ int main(int argc, _TCHAR* argv[])
 
 	// LOG FILE
 #if !defined(_WIN32)
-	mkdir("./logs", 0755);
-	mkdir("./logs/charserver", 0755);
+	mkdir("../logs", 0755);
+	mkdir("../logs/charserver", 0755);
 	char indexDir[256];
-	snprintf(indexDir, sizeof(indexDir), "./logs/charserver/index_%u", app.GetServerIndex());
+	snprintf(indexDir, sizeof(indexDir), "../logs/charserver/index_%u", app.GetServerIndex());
 	mkdir(indexDir, 0755);
 #endif
 	char m_LogFile[256];
 #if defined(_WIN32)
-	snprintf(m_LogFile, sizeof(m_LogFile), ".\\logs\\charserver\\index_%u\\log_%02d-%02d-%02d.txt", app.GetServerIndex(), ti.wYear, ti.wMonth, ti.wDay);
+	snprintf(m_LogFile, sizeof(m_LogFile), "..\\logs\\charserver\\index_%u\\log_%02d-%02d-%02d.txt", app.GetServerIndex(), ti.wYear, ti.wMonth, ti.wDay);
 #else
 	if (ti_ptr)
-		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/charserver/index_%u/log_%02d-%02d-%02d.txt", app.GetServerIndex(), ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
+		snprintf(m_LogFile, sizeof(m_LogFile), "../logs/charserver/index_%u/log_%02d-%02d-%02d.txt", app.GetServerIndex(), ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
 	else
-		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/charserver/index_%u/log_00-00-00.txt", app.GetServerIndex());
+		snprintf(m_LogFile, sizeof(m_LogFile), "../logs/charserver/index_%u/log_00-00-00.txt", app.GetServerIndex());
 #endif
 
 	rc = traceFileStream.Create(m_LogFile);

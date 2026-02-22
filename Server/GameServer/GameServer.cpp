@@ -746,7 +746,7 @@ int main(int argc, _TCHAR* argv[])
 #endif
 
 	// CHECK INI FILE AND START PROGRAM
-	int rc = app.Create(argc, argv, argv[1]);
+	int rc = app.Create(argc, argv, (argc > 1) ? argv[1] : "../config/GameServer.ini");
 	if( NTL_SUCCESS != rc )
 		return rc;
 
@@ -759,10 +759,10 @@ int main(int argc, _TCHAR* argv[])
 
 	// LOG FILE
 #if !defined(_WIN32)
-	mkdir("./logs", 0755);
-	mkdir("./logs/gameserver", 0755);
+	mkdir("../logs", 0755);
+	mkdir("../logs/gameserver", 0755);
 	char channelDir[256];
-	snprintf(channelDir, sizeof(channelDir), "./logs/gameserver/channel%u", app.GetGsChannel());
+	snprintf(channelDir, sizeof(channelDir), "../logs/gameserver/channel%u", app.GetGsChannel());
 	mkdir(channelDir, 0755);
 #endif
 	char m_LogFile[256];
@@ -770,9 +770,9 @@ int main(int argc, _TCHAR* argv[])
 	sprintf(m_LogFile,"%s\\channel%u\\gamelog_%02u-%02u-%02u.txt", app.GetLogPath().c_str() ,app.GetGsChannel(), ti.wYear, ti.wMonth, ti.wDay);
 #else
 	if (ti_ptr)
-		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/gameserver/channel%u/gamelog_%02d-%02d-%02d.txt", app.GetGsChannel(), ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
+		snprintf(m_LogFile, sizeof(m_LogFile), "../logs/gameserver/channel%u/gamelog_%02d-%02d-%02d.txt", app.GetGsChannel(), ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
 	else
-		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/gameserver/channel%u/gamelog_00-00-00.txt", app.GetGsChannel());
+		snprintf(m_LogFile, sizeof(m_LogFile), "../logs/gameserver/channel%u/gamelog_00-00-00.txt", app.GetGsChannel());
 #endif
 
 	rc = traceFileStream.Create( m_LogFile );

@@ -218,7 +218,7 @@ bool CTableContainerManager::CreateTableContainer(BYTE LoadTableFormat, char* ps
 
 
 	flagManager.Set(CTableContainer::TABLE_PASS_POINT);		//dont have all path (.pth) files
-	fileNameList.SetFileName(CTableContainer::TABLE_PASS_POINT,				".\\resource\\server_data\\world_data\\Path");
+	fileNameList.SetFileName(CTableContainer::TABLE_PASS_POINT,				"../resource/server_data/world_data/Path");
 
 //	flagManager.Set(CTableContainer::TABLE_DROP);// DONT WORK IS EMPTY
 //	fileNameList.SetFileName(CTableContainer::TABLE_DROP,					"table_drop_data");
@@ -238,7 +238,7 @@ bool CTableContainerManager::CreateTableContainer(BYTE LoadTableFormat, char* ps
 	fileNameList.SetFileName(CTableContainer::TABLE_DYNAMIC_FIELD_SYSTEM, "Table_Event_System_Dynamic_Data");
 
 	flagManager.Set(CTableContainer::TABLE_MODEL_TOOL_CHAR);
-	fileNameList.SetFileName(CTableContainer::TABLE_MODEL_TOOL_CHAR, ".\\resource\\property");
+	fileNameList.SetFileName(CTableContainer::TABLE_MODEL_TOOL_CHAR, "../resource/property");
 	//flagManager.Set(CTableContainer::TABLE_MODEL_TOOL_OBJ);
 	//fileNameList.SetFileName(CTableContainer::TABLE_MODEL_TOOL_OBJ, ".\\resource\\property");
 

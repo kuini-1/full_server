@@ -229,7 +229,7 @@ int main(int argc, _TCHAR* argv[])
 	SetConsoleTitle( TEXT("DBOD CHAT") );
 #endif
 
-	int rc = app.Create(argc, argv, (argc > 1) ? argv[1] : "./config/ChatServer.ini");
+	int rc = app.Create(argc, argv, (argc > 1) ? argv[1] : "../config/ChatServer.ini");
 	if (NTL_SUCCESS != rc)
 	{
 		NTL_PRINT(PRINT_APP, "Server Application Create Fail %d(%s)", rc, NtlGetErrorMessage(rc));
@@ -238,17 +238,17 @@ int main(int argc, _TCHAR* argv[])
 
 	// LOG FILE
 #if !defined(_WIN32)
-	mkdir("./logs", 0755);
-	mkdir("./logs/chatserver", 0755);
+	mkdir("../logs", 0755);
+	mkdir("../logs/chatserver", 0755);
 #endif
 	char m_LogFile[256];
 #if defined(_WIN32)
 	sprintf(m_LogFile, ".\\logs\\chatserver\\chatlog%02u-%02u-%02u.txt", ti.wYear, ti.wMonth, ti.wDay);
 #else
 	if (ti_ptr)
-		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/chatserver/chatlog%02d-%02d-%02d.txt", ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
+		snprintf(m_LogFile, sizeof(m_LogFile), "../logs/chatserver/chatlog%02d-%02d-%02d.txt", ti_ptr->tm_year + 1900, ti_ptr->tm_mon + 1, ti_ptr->tm_mday);
 	else
-		snprintf(m_LogFile, sizeof(m_LogFile), "./logs/chatserver/chatlog00-00-00.txt");
+		snprintf(m_LogFile, sizeof(m_LogFile), "../logs/chatserver/chatlog00-00-00.txt");
 #endif
 
 	rc = traceFileStream.Create(m_LogFile);

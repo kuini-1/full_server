@@ -23,7 +23,7 @@ void CReserveName::LoadFile()
 	// Keep Linux build compiling (no behavior guarantee on non-Windows yet).
 	return;
 #else
-	WCHAR* path = L".\\resource\\server_data\\reserve_name.xml";
+	WCHAR* path = L"..\\resource\\server_data\\reserve_name.xml";
 
 	CNtlXMLDoc doc;
 	doc.Create();
