@@ -72,7 +72,7 @@ endif()
 if(UNIX AND NOT APPLE)
   find_package(Threads REQUIRED)
   set(DBO_PACK_STRUCT_FOR_LINUX 1)
-  # Optional: use Clang for Linux (may produce correct packet struct layout vs GCC). Configure with -DDBO_USE_CLANG=ON
+  # Optional: use Clang for Linux (may produce correct packet struct layout). Configure with -DDBO_USE_CLANG=ON
   if(DBO_USE_CLANG)
     set(CMAKE_C_COMPILER clang)
     set(CMAKE_CXX_COMPILER clang++)
