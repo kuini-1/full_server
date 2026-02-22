@@ -78,6 +78,40 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 			if (resultcode == AUTH_SUCCESS)
 			{
+#if !defined(_WIN32)
+				/* Linux: GCC struct layout 839 bytes vs Windows 795. POD fix did not work. Build payload at fixed offsets for Windows client compatibility. */
+				CNtlPacket packetLinux(795);
+				BYTE * p = packetLinux.GetPacketData();
+				*(WORD*)(p + 0) = AU_LOGIN_RES;
+				*(WORD*)(p + 2) = resultcode;
+				memcpy(p + 4, req->awchUserId, 34);
+				memcpy(p + 38, req->abyAuthKey, 16);
+				*(ACCOUNTID*)(p + 54) = req->accountId;
+				p[58] = req->lastServerFarmId;
+				*(DWORD*)(p + 59) = req->dwAllowedFunctionForDeveloper;
+				p[63] = req->bIsGM ? 1 : 0;
+				p[64] = 1;
+				NTL_STRCPY_S((char*)(p + 65), NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
+				*(WORD*)(p + 130) = srvinfo->wPortForClient;
+				*(DWORD*)(p + 132) = (DWORD)((float)srvinfo->dwLoad / (float)srvinfo->dwMaxLoad * 100.0f);
+				p[136] = srvinfo->serverFarmId;
+				p[137] = srvinfo->byServerChannelIndex;
+				packetLinux.SetPacketLen(795);
+				{
+					printf("[AU_LOGIN_RES] Linux manual build: payload=795 bytes (Windows layout)\n");
+					BYTE * buf = packetLinux.GetPacketBuffer();
+					WORD len = packetLinux.GetUsedSize();
+					printf("[AU_LOGIN_RES hex dump] total=%u bytes (header=%u payload=%u)\n",
+						(unsigned)len, (unsigned)packetLinux.GetHeaderSize(), (unsigned)(len - packetLinux.GetHeaderSize()));
+					printf("[AU_LOGIN_RES hex dump] full packet bytes: ");
+					for (WORD i = 0; i < len; i++)
+						printf("%02X ", buf[i]);
+					printf("\n");
+					printf("[AU_LOGIN_RES hex dump] szCharacterServerIP='%s' Port=%u byServerInfoCount=1\n",
+						(const char*)(p + 65), (unsigned)*(WORD*)(p + 130));
+					app->SendTo(session, &packetLinux);
+				}
+#else
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
 				{
 					printf("[AU_LOGIN_RES] sizeof(sAU_LOGIN_RES)=%zu (expect 795 for Windows client compat)\n", sizeof(sAU_LOGIN_RES));
@@ -98,6 +132,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 					printf("\n");
 				}
 				app->SendTo(session, &packet);
+#endif
 
 				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
 				sAU_COMMERCIAL_SETTING_NFY * res2 = (sAU_COMMERCIAL_SETTING_NFY *)packet2.GetPacketData();
@@ -118,11 +153,20 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 		ERR_LOG(LOG_USER, "Account % connect failed. Resultcode %d", req->accountId, resultcode);
 
 		//IF NOT SUCCESS SEND ERROR MSG
+#if !defined(_WIN32)
+		CNtlPacket packet2(795);
+		BYTE * p2 = packet2.GetPacketData();
+		memset(p2, 0, 795);
+		*(WORD*)(p2 + 0) = AU_LOGIN_RES;
+		*(WORD*)(p2 + 2) = resultcode;
+		packet2.SetPacketLen(795);
+#else
 		CNtlPacket packet2(sizeof(sAU_LOGIN_RES));
 		sAU_LOGIN_RES * res2 = (sAU_LOGIN_RES *)packet2.GetPacketData();
 		res2->wOpCode = AU_LOGIN_RES;
 		res2->wResultCode = resultcode;
 		packet2.SetPacketLen(sizeof(sAU_LOGIN_RES));
+#endif
 		app->SendTo(session, &packet2);
 
 		app->DelPlayer(req->accountId);

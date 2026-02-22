@@ -171,9 +171,10 @@
 - **Fix 1:** Changed `bool bIsGM` to `BYTE bIsGM` in `sAU_LOGIN_RES` (Server/NtlShared2/NtlPacketAU.h). Use 0/1 for false/true.
 - **Fix 2:** `sizeof` still 839 after Fix 1. Added `__attribute__((packed))` for GCC, applied **only** to `sAU_LOGIN_RES` and `sSERVER_INFO` (not globally): (1) `NTL_STRUCT_PACKED` macro in Shared/NtlSharedCommon.h, (2) `sSERVER_INFO` in NtlCSArchitecture.h gets `} NTL_STRUCT_PACKED;`, (3) `END_PROTOCOL_PACKED()` in NtlPacketCommon.h for use with sAU_LOGIN_RES only. Using packed globally broke build (cannot bind packed field to reference in PacketCharServer.cpp). Packed on sAU_LOGIN_RES alone did not reduce sizeof.
 - **Fix 3:** Reverted Fix 2 (packed structs). **Manual packet construction on Linux only** in Server/AuthServer/MasterServerPacket.cpp - rejected; user wanted root cause fix, no manual packet definitions.
-- **Fix 4:** **POD packet header (root cause fix):** GCC ignores `__attribute__((packed))` on structs that inherit from a non-POD base. Removed constructor from `sNTLPACKETHEADER` and from `BEGIN_PROTOCOL` macro, making the struct POD so GCC respects packed. Added `NTL_STRUCT_PACKED` macro (empty on Windows, `__attribute__((packed))` on Linux). Applied packed only to `sAU_LOGIN_RES` (via `END_PROTOCOL_PACKED`) and `sSERVER_INFO`. Reverted manual packet construction in MasterServerPacket.cpp; restore struct-based code.
-- **Files Modified:** Server/NtlShared2/NtlPacketCommon.h, Shared/NtlSharedCommon.h, Server/NtlShared2/NtlCSArchitecture.h, Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp
-- **Result:** [Pending test on Linux - should yield sizeof(sAU_LOGIN_RES)=795 and fix client connection]
+- **Fix 4:** **POD packet header (root cause fix):** GCC ignores `__attribute__((packed))` on structs that inherit from a non-POD base. Removed constructor from `sNTLPACKETHEADER` and from `BEGIN_PROTOCOL` macro. Added `NTL_STRUCT_PACKED` macro, applied packed only to `sAU_LOGIN_RES` and `sSERVER_INFO`. **Result:** sizeof(sAU_LOGIN_RES) on Linux still 839; packed did not take effect.
+- **Fix 5:** **Manual packet construction on Linux only:** Since POD/packed fix did not work, fallback to building AU_LOGIN_RES payload at fixed byte offsets (795 bytes) on Linux. Windows unchanged (uses struct). Success and error paths both use manual construction on Linux. Hex dump logging retained for comparison with Windows.
+- **Files Modified:** Server/AuthServer/MasterServerPacket.cpp
+- **Result:** [Pending test on Linux - should send 795-byte payload and fix client connection]
 
 ---
 
