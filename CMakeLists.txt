@@ -274,6 +274,11 @@ target_link_libraries(NtlSfx PUBLIC dbo_includes NtlNetwork NtlSystem NtlThread)
 dbo_collect_sources(_dbo_ntlshared_src "${CMAKE_CURRENT_SOURCE_DIR}/Server/NtlShared2")
 add_library(NtlShared STATIC ${_dbo_ntlshared_src})
 target_link_libraries(NtlShared PUBLIC dbo_includes NtlSystem NtlTrigger)
+# Linux: Pack structs for packet wire layout (match Windows client). NtlShared compiles packet headers; must pack here for sizeof checks.
+if(DBO_PACK_STRUCT_FOR_LINUX)
+  target_compile_options(NtlShared PRIVATE -fpack-struct)
+  message(STATUS "Linux: -fpack-struct applied to NtlShared (packet wire format for Windows client)")
+endif()
 
 dbo_collect_sources(_dbo_ntlgametable_src "${CMAKE_CURRENT_SOURCE_DIR}/Server/NtlGameTable")
 add_library(NtlGameTable STATIC ${_dbo_ntlgametable_src})
@@ -430,12 +435,12 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(GameServer PRIVATE Threads::Threads)
 endif()
 
-# Pack structs for server executables on Linux only (NtlTrigger/Util use std::map which breaks with -fpack-struct). Note: -fpack-struct does not reduce sAU_LOGIN_RES to 795 on GCC; sizeof stays 839.
+# Pack structs for server executables on Linux (packet wire format for Windows client). NtlShared also gets -fpack-struct above.
 if(DBO_PACK_STRUCT_FOR_LINUX)
   foreach(_exe IN ITEMS AuthServer CharServer ChatServer QueryServer MasterServer GameServer)
     target_compile_options(${_exe} PRIVATE -fpack-struct)
   endforeach()
-  message(STATUS "Linux: -fpack-struct applied to server executables (packet layout may still differ from Windows)")
+  message(STATUS "Linux: -fpack-struct applied to server executables")
 endif()
 
 # Windows resources (optional)

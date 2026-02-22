@@ -2,6 +2,8 @@
 
 **Purpose:** Track every attempt to fix "receive packet" on Linux so it behaves like Windows, and avoid breaking the client connection. Do not repeat failed approaches.
 
+**Development focus:** Linux-first (test from WSL/Linux). The **Windows C++ client** cannot be modified; all packets sent from the Linux server **must match the exact wire format** the client expects (byte layout, sizes, offsets).
+
 **Current goal (full flow):** Packet handling on Linux works end-to-end: (1) **Auth:** client connects → handshake → login packet received and processed → client receives AU_LOGIN_RES and can proceed. (2) **Char server:** client joins char server and receives responses. (3) **In-game:** client loads into game. This log is updated until all three work 100%.
 
 ---
@@ -179,9 +181,10 @@
 - **Fix 8b:** Global `add_compile_options(-fpack-struct)` broke NtlTrigger (std::map). **Change:** Apply `-fpack-struct` only to server executables via `target_compile_options`.
 - **Fix 8c:** With `-fpack-struct`, sizeof(sAU_LOGIN_RES) remained 839. Removed static_assert; reverted NtlShared from -fpack-struct.
 - **Fix 9:** **Linux wire struct (flat, packed):** GCC adds padding after base when derived has `__attribute__((packed))`. Added `sAU_LOGIN_RES_wire` on Linux only – same fields as sAU_LOGIN_RES but no inheritance (flat struct) so packed applies. Use `sAU_LOGIN_RES_wire` for send buffer in MasterServerPacket.cpp on Linux; same field names, no manual byte offsets. static_assert(sizeof(sAU_LOGIN_RES_wire)==795). **Result:** sizeof still 839 – sSERVER_INFO array elements still get padding when used inside packed struct.
-- **Fix 9b:** **sSERVER_INFO_wire (inline packed element):** GCC adds padding to `sSERVER_INFO` when used as array element inside sAU_LOGIN_RES_wire. Added flat packed `sSERVER_INFO_wire` (same fields as sSERVER_INFO) and use `sSERVER_INFO_wire aServerInfo[10]` in sAU_LOGIN_RES_wire instead of sSERVER_INFO. Field names identical so MasterServerPacket.cpp needs no change. static_assert(sizeof(sSERVER_INFO_wire)==73), static_assert(sizeof(sAU_LOGIN_RES_wire)==795).
-- **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp
-- **Result:** [Test on Linux – wire struct should be 795 bytes; client should connect]
+- **Fix 9b:** **sSERVER_INFO_wire (inline packed element):** GCC adds padding to `sSERVER_INFO` when used as array element. Added flat packed `sSERVER_INFO_wire` and use it in sAU_LOGIN_RES_wire. **Result:** sSERVER_INFO_wire still 77 bytes (GCC tail padding); static_assert fails.
+- **Fix 9c:** **-fpack-struct on NtlShared (Linux):** NtlShared compiles packet headers (NtlPacketAU.cpp). Previously -fpack-struct was only on executables; NtlPacketAU.cpp is in NtlShared so it never got packed. Added `target_compile_options(NtlShared PRIVATE -fpack-struct)` for Linux so NtlShared's packet structs are packed. Wire structs + pragma pack + -fpack-struct should yield 73/795 bytes. NtlShared does not include NtlTrigger headers in NtlPacketAU.cpp, so no ODR/STL conflict.
+- **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp, CMakeLists.txt
+- **Result:** [Test on Linux – wire struct 795 bytes; client should connect]
 
 ---
 
@@ -201,7 +204,7 @@
 4. **Do not** apply FORCE_CLOSE without the pending flag check (TakePendingForceClose).
 5. **Before** changing recv/CompleteRecv/PostRecv flow, re-read this log and the "What Works" / "What Failed" sections.
 6. **After** any new attempt, add an entry to this log: what you tried, result (worked / failed / partial), and any new "what works" or "what failed" finding.
-7. **No manual packet construction ever.** Do not build packet payloads at fixed byte offsets in .cpp. Find a global fix for packet struct layout (Linux vs Windows) that applies to all packets without modifying every single packet (e.g. compiler flag, pragma, or struct/ABI fix).
+7. **Wire format = Windows client.** Packets sent to the client must have the exact byte layout (sizes, offsets) the Windows C++ client expects. Use compiler flags (-fpack-struct), wire structs, or other ABI fixes to ensure layout match. Avoid manual byte-offset construction unless no other option works.
 
 ---
 
