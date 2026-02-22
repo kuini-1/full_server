@@ -71,8 +71,8 @@ endif()
 
 if(UNIX AND NOT APPLE)
   find_package(Threads REQUIRED)
-  # Pack all structs so packet layout matches Windows (795-byte AU_LOGIN_RES etc.). Required for client compatibility.
-  add_compile_options(-fpack-struct)
+  # Pack structs for server executables only (not libs like NtlTrigger which use std::map - packed breaks STL).
+  set(DBO_PACK_STRUCT_FOR_LINUX 1)
 endif()
 
 # Boost (required: Database uses boost::thread/mutex/condition)
@@ -428,6 +428,14 @@ if(WIN32)
 endif()
 if(UNIX AND NOT APPLE)
   target_link_libraries(GameServer PRIVATE Threads::Threads)
+endif()
+
+# Pack structs for server executables on Linux only (packet layout must match Windows; libs like NtlTrigger use std::map which breaks with -fpack-struct)
+if(DBO_PACK_STRUCT_FOR_LINUX)
+  foreach(_exe IN ITEMS AuthServer CharServer ChatServer QueryServer MasterServer GameServer)
+    target_compile_options(${_exe} PRIVATE -fpack-struct)
+  endforeach()
+  message(STATUS "Linux: -fpack-struct applied to server executables for packet layout compatibility")
 endif()
 
 # Windows resources (optional)

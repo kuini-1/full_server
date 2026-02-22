@@ -175,9 +175,10 @@
 - **Fix 5:** **Manual packet construction on Linux only** - worked but not a real fix; reverted.
 - **Fix 6:** **Composition instead of inheritance** - reverted; sizeof still 839 on Linux.
 - **Fix 7:** **Manual packet construction on Linux (restored):** Reverted per user: no manual construction ever; find global fix.
-- **Fix 8:** **Global pack via -fpack-struct (Linux):** Add `-fpack-struct` for Linux in CMakeLists.txt so all structs are packed and packet layout matches Windows. Reverted manual construction. Fix reference-to-packed-field: in PacketCharServer.cpp, copy to temporary sVECTOR3 then assign to res (avoid binding reference to packed field). Add static_assert(sizeof(sAU_LOGIN_RES)==795) on Linux in NtlPacketAU.h to catch regressions.
-- **Files Modified:** CMakeLists.txt, Server/CharServer/PacketCharServer.cpp, Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp
-- **Result:** [Test on Linux - expect sizeof 795 and client connects; if other "bind packed field" errors appear, fix with same temp-copy pattern]
+- **Fix 8:** **Global pack via -fpack-struct (Linux):** Add `-fpack-struct` for Linux so packet layout matches Windows. Reverted manual construction. Fix PacketCharServer reference-to-packed-field (temp copy pattern). Add static_assert(sizeof(sAU_LOGIN_RES)==795) on Linux.
+- **Fix 8b:** Global `add_compile_options(-fpack-struct)` broke NtlTrigger (std::map<BYTE,...> – cannot bind packed field in STL). **Change:** Apply `-fpack-struct` only to server executables (AuthServer, CharServer, etc.) via `target_compile_options`; exclude static libraries (NtlTrigger, Util, etc.).
+- **Files Modified:** CMakeLists.txt (per-target -fpack-struct only)
+- **Result:** [Test on Linux – NtlTrigger should build; servers should have sizeof 795]
 
 ---
 
