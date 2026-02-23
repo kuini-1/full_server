@@ -36,7 +36,10 @@ bool CNeighborServerInfoManager::Create(eNtlServerType byOwnerServerType)
 
 void CNeighborServerInfoManager::Destroy()
 {
+	EnterCriticalSection(&m_csServerInfo);
 	DestroyAllServerInfo();
+	LeaveCriticalSection(&m_csServerInfo);
+	DeleteCriticalSection(&m_csServerInfo);
 	m_byOwnerServerType = NTL_SERVER_TYPE_INVALID;
 	m_byOwnerServerIndex = 0;
 }
@@ -44,6 +47,7 @@ void CNeighborServerInfoManager::Destroy()
 
 void CNeighborServerInfoManager::Init()
 {
+	InitializeCriticalSection(&m_csServerInfo);
 	m_listMasterServerInfo.clear();
 	m_listAuthServerInfo.clear();
 	m_listCharacterServerInfo.clear();
@@ -154,9 +158,11 @@ bool CNeighborServerInfoManager::AddServerChannelInfo(sDBO_GAME_SERVER_CHANNEL_I
 
 bool CNeighborServerInfoManager::AddServerInfo(sDBO_SERVER_INFO *pServerInfoRef)
 {
+	EnterCriticalSection(&m_csServerInfo);
 	if (!pServerInfoRef)
 	{
 		printf("Line 153: pServerInfoRef is null \n");
+		LeaveCriticalSection(&m_csServerInfo);
 		return false;
 	}
 
@@ -165,7 +171,10 @@ bool CNeighborServerInfoManager::AddServerInfo(sDBO_SERVER_INFO *pServerInfoRef)
 	if (pServerInfoList)
 	{
 		if (GetServerInfoHelper(pServerInfoList, pServerInfoRef->byServerIndex))
+		{
+			LeaveCriticalSection(&m_csServerInfo);
 			return false;
+		}
 
 		sDBO_SERVER_INFO* pInfo = new sDBO_SERVER_INFO(pServerInfoRef);
 
@@ -195,9 +204,11 @@ bool CNeighborServerInfoManager::AddServerInfo(sDBO_SERVER_INFO *pServerInfoRef)
 			break;
 		}
 
+		LeaveCriticalSection(&m_csServerInfo);
 		return true;
 	}
 
+	LeaveCriticalSection(&m_csServerInfo);
 	return false;
 }
 
@@ -304,9 +315,11 @@ bool CNeighborServerInfoManager::RefreshServerChannelInfo(sDBO_GAME_SERVER_CHANN
 
 bool CNeighborServerInfoManager::RefreshServerInfo(sDBO_SERVER_INFO *pServerInfoRef)
 {
+	EnterCriticalSection(&m_csServerInfo);
 	if (!pServerInfoRef)
 	{
 		printf("Line 297: pServerInfoRef is null \n");
+		LeaveCriticalSection(&m_csServerInfo);
 		return false;
 	}
 
@@ -314,6 +327,7 @@ bool CNeighborServerInfoManager::RefreshServerInfo(sDBO_SERVER_INFO *pServerInfo
 	if (!pServerInfoList)
 	{
 		printf("Line 304: GetServerInfoList failed, pServerInfoRef->serverFarmId = %u, pServerInfoRef->byServerChannelIndex = %u, pServerInfoRef->byServerType = %u \n", pServerInfoRef->serverFarmId, pServerInfoRef->byServerChannelIndex, pServerInfoRef->byServerType);
+		LeaveCriticalSection(&m_csServerInfo);
 		return false;
 	}
 
@@ -321,6 +335,7 @@ bool CNeighborServerInfoManager::RefreshServerInfo(sDBO_SERVER_INFO *pServerInfo
 	if (pHelper)
 	{
 		pHelper->operator=(*pServerInfoRef);
+		LeaveCriticalSection(&m_csServerInfo);
 		return true;
 	}
 
@@ -352,6 +367,7 @@ bool CNeighborServerInfoManager::RefreshServerInfo(sDBO_SERVER_INFO *pServerInfo
 		break;
 	}
 
+	LeaveCriticalSection(&m_csServerInfo);
 	return true;
 }
 
@@ -415,11 +431,13 @@ sSERVER_CHANNEL_INFO* CNeighborServerInfoManager::GetServerChannelInfo(SERVERFAR
 
 sDBO_SERVER_INFO* CNeighborServerInfoManager::GetServerInfo(BYTE byServerType, SERVERFARMID serverFarmId, SERVERCHANNELID byServerChannelIndex, SERVERINDEX byServerIndex)
 {
+	EnterCriticalSection(&m_csServerInfo);
 	std::list<sDBO_SERVER_INFO *>* pServerInfoList = GetServerInfoList(serverFarmId, byServerChannelIndex, byServerType);
+	sDBO_SERVER_INFO* pRet = NULL;
 	if (pServerInfoList)
-		return GetServerInfoHelper(pServerInfoList, byServerIndex);
-
-	return NULL;
+		pRet = GetServerInfoHelper(pServerInfoList, byServerIndex);
+	LeaveCriticalSection(&m_csServerInfo);
+	return pRet;
 }
 
 
@@ -433,21 +451,23 @@ sDBO_SERVER_INFO* CNeighborServerInfoManager::GetServerInfo(BYTE byServerType, W
 
 sDBO_SERVER_INFO* CNeighborServerInfoManager::GetServerInfo(BYTE byServerType, char *pszServerIP)
 {
+	EnterCriticalSection(&m_csServerInfo);
+	sDBO_SERVER_INFO* pRet = NULL;
 	switch (byServerType)
 	{
 		case NTL_SERVER_TYPE_MASTER:
 		{
-			return GetServerInfoHelper(&m_listMasterServerInfo, pszServerIP);
+			pRet = GetServerInfoHelper(&m_listMasterServerInfo, pszServerIP);
 		}
 		break;
 		case NTL_SERVER_TYPE_AUTH:
 		{
-			return GetServerInfoHelper(&m_listAuthServerInfo, pszServerIP);
+			pRet = GetServerInfoHelper(&m_listAuthServerInfo, pszServerIP);
 		}
 		break;
 		case NTL_SERVER_TYPE_CHARACTER:
 		{
-			return GetServerInfoHelper(&m_listCharacterServerInfo, pszServerIP);
+			pRet = GetServerInfoHelper(&m_listCharacterServerInfo, pszServerIP);
 		}
 		break;
 
@@ -456,11 +476,11 @@ sDBO_SERVER_INFO* CNeighborServerInfoManager::GetServerInfo(BYTE byServerType, c
 		case NTL_SERVER_TYPE_QUERY:
 		case NTL_SERVER_TYPE_COMMUNITY:
 		{
-			for (std::map<SERVERFARMID, sSERVER_FARM_INFO *>::iterator it = m_mapGameServerFarmInfo.begin(); it != m_mapGameServerFarmInfo.end(); it++)
+			for (std::map<SERVERFARMID, sSERVER_FARM_INFO *>::iterator it = m_mapGameServerFarmInfo.begin(); pRet == NULL && it != m_mapGameServerFarmInfo.end(); it++)
 			{
 				sSERVER_FARM_INFO* pGameFarm = it->second;
 
-				for (std::map<SERVERCHANNELID, sSERVER_CHANNEL_INFO*>::iterator it2 = pGameFarm->mapGameServerChannelInfo.begin(); it2 != pGameFarm->mapGameServerChannelInfo.end(); it2++)
+				for (std::map<SERVERCHANNELID, sSERVER_CHANNEL_INFO*>::iterator it2 = pGameFarm->mapGameServerChannelInfo.begin(); pRet == NULL && it2 != pGameFarm->mapGameServerChannelInfo.end(); it2++)
 				{
 					sSERVER_CHANNEL_INFO* pServerChannelInfo = it2->second;
 
@@ -468,22 +488,22 @@ sDBO_SERVER_INFO* CNeighborServerInfoManager::GetServerInfo(BYTE byServerType, c
 					{
 						case NTL_SERVER_TYPE_GAME:
 						{
-							return GetServerInfoHelper(&pServerChannelInfo->listGameServerInfoRef, pszServerIP);
+							pRet = GetServerInfoHelper(&pServerChannelInfo->listGameServerInfoRef, pszServerIP);
 						}
 						break;
 						case NTL_SERVER_TYPE_NPC:
 						{
-							return GetServerInfoHelper(&pServerChannelInfo->listNpcServerInfoRef, pszServerIP);
+							pRet = GetServerInfoHelper(&pServerChannelInfo->listNpcServerInfoRef, pszServerIP);
 						}
 						break;
 						case NTL_SERVER_TYPE_QUERY:
 						{
-							return GetServerInfoHelper(&pGameFarm->listQueryServerInfoRef, pszServerIP);
+							pRet = GetServerInfoHelper(&pGameFarm->listQueryServerInfoRef, pszServerIP);
 						}
 						break;
 						case NTL_SERVER_TYPE_COMMUNITY:
 						{
-							return GetServerInfoHelper(&pGameFarm->listCommunityServerInfoRef, pszServerIP);
+							pRet = GetServerInfoHelper(&pGameFarm->listCommunityServerInfoRef, pszServerIP);
 						}
 						break;
 
@@ -512,23 +532,23 @@ sDBO_SERVER_INFO* CNeighborServerInfoManager::GetServerInfo(BYTE byServerType, c
 
 		default: printf("line 499: byServerType invalid %u \n", byServerType); break;
 	}
-
-	return NULL;
+	LeaveCriticalSection(&m_csServerInfo);
+	return pRet;
 }
 
 
 sDBO_SERVER_INFO* CNeighborServerInfoManager::GetIdlestServerInfo(BYTE byServerType, SERVERFARMID serverFarmId, SERVERCHANNELID byServerChannelIndex)
 {
+	EnterCriticalSection(&m_csServerInfo);
 	std::list<sDBO_SERVER_INFO *>* pServerInfoList = GetServerInfoList(serverFarmId, byServerChannelIndex, byServerType);
+	sDBO_SERVER_INFO* pReturnInfo = NULL;
 	if (pServerInfoList)
 	{
-		sDBO_SERVER_INFO* pReturnInfo = NULL;
-
 		for (std::list<sDBO_SERVER_INFO *>::iterator it = pServerInfoList->begin(); it != pServerInfoList->end(); it++)
 		{
 			sDBO_SERVER_INFO* pInfo = *it;
 
-			if (pInfo->bIsOn && pInfo->byRunningState == DBO_SERVER_RUNNING_STATE_RUNNING)
+			if (pInfo && pInfo->bIsOn && pInfo->byRunningState == DBO_SERVER_RUNNING_STATE_RUNNING)
 			{
 				if (pReturnInfo)
 				{
@@ -541,11 +561,9 @@ sDBO_SERVER_INFO* CNeighborServerInfoManager::GetIdlestServerInfo(BYTE byServerT
 				}
 			}
 		}
-
-		return pReturnInfo;
 	}
-
-	return NULL;
+	LeaveCriticalSection(&m_csServerInfo);
+	return pReturnInfo;
 }
 
 

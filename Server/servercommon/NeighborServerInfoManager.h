@@ -148,6 +148,8 @@ protected:
 	BYTE											m_byOwnerServerType;
 	BYTE											m_byOwnerServerIndex;
 
+	CRITICAL_SECTION								m_csServerInfo;
+
 
 	//Authtentication system
 private:
