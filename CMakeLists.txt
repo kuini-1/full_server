@@ -440,9 +440,17 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(GameServer PRIVATE Threads::Threads)
 endif()
 
-# Pack structs: NtlShared gets -fpack-struct for packet wire layout. Do NOT apply to server executables
-# (Fix 9f): -fpack-struct on executables broke CNtlIniFile (std::map corruption in destructor). Packet
-# headers use #pragma pack(1) in their own headers, so executables still get correct packet layout.
+# Pack structs: NtlShared gets -fpack-struct for packet wire layout. Do NOT apply to entire executables
+# (Fix 9f): -fpack-struct on executables broke CNtlIniFile (std::map corruption in destructor).
+# (Fix 9g): #pragma pack(1) in packet headers is insufficient for GCC; Linux got 839 bytes vs Windows 795.
+# Apply -fpack-struct only to source files that BUILD packets sent to client (MasterServerPacket.cpp).
+if(DBO_PACK_STRUCT_FOR_LINUX)
+  set_source_files_properties(
+    "${CMAKE_CURRENT_SOURCE_DIR}/Server/AuthServer/MasterServerPacket.cpp"
+    PROPERTIES COMPILE_OPTIONS "-fpack-struct"
+  )
+  message(STATUS "Linux: -fpack-struct applied to AuthServer/MasterServerPacket.cpp (AU_LOGIN_RES wire format)")
+endif()
 
 # Windows resources (optional)
 if(WIN32)
