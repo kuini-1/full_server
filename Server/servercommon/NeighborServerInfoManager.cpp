@@ -567,54 +567,6 @@ sDBO_SERVER_INFO* CNeighborServerInfoManager::GetIdlestServerInfo(BYTE byServerT
 }
 
 
-bool CNeighborServerInfoManager::GetIdlestServerInfoCopy(BYTE byServerType, SERVERFARMID serverFarmId, SERVERCHANNELID byServerChannelIndex, sDBO_SERVER_INFO& out)
-{
-	EnterCriticalSection(&m_csServerInfo);
-	std::list<sDBO_SERVER_INFO *>* pServerInfoList = GetServerInfoList(serverFarmId, byServerChannelIndex, byServerType);
-	sDBO_SERVER_INFO* pReturnInfo = NULL;
-	if (pServerInfoList)
-	{
-		for (std::list<sDBO_SERVER_INFO *>::iterator it = pServerInfoList->begin(); it != pServerInfoList->end(); it++)
-		{
-			sDBO_SERVER_INFO* pInfo = *it;
-
-			if (pInfo && pInfo->bIsOn && pInfo->byRunningState == DBO_SERVER_RUNNING_STATE_RUNNING)
-			{
-				if (pReturnInfo)
-				{
-					if (pReturnInfo->dwLoad > pInfo->dwLoad)
-						pReturnInfo = pInfo;
-				}
-				else
-				{
-					pReturnInfo = pInfo;
-				}
-			}
-		}
-	}
-	bool ok = false;
-	if (pReturnInfo)
-	{
-		memcpy(&out, pReturnInfo, sizeof(sDBO_SERVER_INFO));
-		ok = true;
-	}
-	LeaveCriticalSection(&m_csServerInfo);
-	return ok;
-}
-
-
-bool CNeighborServerInfoManager::IncrementServerLoad(BYTE byServerType, SERVERFARMID serverFarmId, SERVERCHANNELID byServerChannelIndex, SERVERINDEX byServerIndex)
-{
-	EnterCriticalSection(&m_csServerInfo);
-	std::list<sDBO_SERVER_INFO *>* pList = GetServerInfoList(serverFarmId, byServerChannelIndex, byServerType);
-	sDBO_SERVER_INFO* pInfo = pList ? GetServerInfoHelper(pList, byServerIndex) : NULL;
-	if (pInfo)
-		pInfo->dwLoad += 1;
-	LeaveCriticalSection(&m_csServerInfo);
-	return (pInfo != NULL);
-}
-
-
 sDBO_SERVER_INFO* CNeighborServerInfoManager::GetIdlestQueryServerInfo()
 {
 	sDBO_SERVER_INFO* pReturnInfo = NULL;

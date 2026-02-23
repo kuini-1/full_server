@@ -76,10 +76,6 @@ public:
 
 	sDBO_SERVER_INFO*								GetIdlestServerInfo(BYTE byServerType, SERVERFARMID serverFarmId, SERVERCHANNELID byServerChannelIndex);
 
-	bool											GetIdlestServerInfoCopy(BYTE byServerType, SERVERFARMID serverFarmId, SERVERCHANNELID byServerChannelIndex, sDBO_SERVER_INFO& out);
-
-	bool											IncrementServerLoad(BYTE byServerType, SERVERFARMID serverFarmId, SERVERCHANNELID byServerChannelIndex, SERVERINDEX byServerIndex);
-
 	sDBO_SERVER_INFO*								GetIdlestQueryServerInfo();
 
 
