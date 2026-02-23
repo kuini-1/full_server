@@ -10,13 +10,50 @@
 //--------------------------------------------------------------------------------------//
 //		Get the account ID and log in to Char Server									//
 //--------------------------------------------------------------------------------------//
-void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app) 
+void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 {
+	if (!pPacket || !pPacket->GetPacketData())
+	{
+		WORD resultcode = AUTH_USER_NOT_FOUND;
+		CNtlPacket packet(sizeof(sAU_LOGIN_RES));
+		sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+		res->wOpCode = AU_LOGIN_RES;
+		res->wResultCode = resultcode;
+		packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+		app->Send(GetHandle(), &packet);
+		return;
+	}
+
 	sUA_LOGIN_REQ_TAIWAN_CT * req = (sUA_LOGIN_REQ_TAIWAN_CT *)pPacket->GetPacketData();
 
-	std::string username = Ntl_WC2MB(req->awchUserId);
+	char* username_c = Ntl_WC2MB(req->awchUserId);
+	if (!username_c)
+	{
+		WORD resultcode = AUTH_USER_NOT_FOUND;
+		CNtlPacket packet(sizeof(sAU_LOGIN_RES));
+		sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+		res->wOpCode = AU_LOGIN_RES;
+		res->wResultCode = resultcode;
+		packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+		app->Send(GetHandle(), &packet);
+		return;
+	}
+
 	char* password = Ntl_WC2MB(req->awchPasswd);
-	
+	if (!password)
+	{
+		Ntl_CleanUpHeapString(username_c);
+		WORD resultcode = AUTH_USER_NOT_FOUND;
+		CNtlPacket packet(sizeof(sAU_LOGIN_RES));
+		sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+		res->wOpCode = AU_LOGIN_RES;
+		res->wResultCode = resultcode;
+		packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+		app->Send(GetHandle(), &packet);
+		return;
+	}
+
+	std::string username(username_c);
 
 	ERR_LOG(LOG_USER, "User %s request connection! req->wLVersion %i, req->wRVersion %i, state %hu, mac %hu\n", username.c_str(), (int)req->wLVersion, (int)req->wRVersion, req->byState, req->abyMacAddress[0]);
 	
@@ -45,11 +82,11 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 			{
 				MD5 md;
 				char md5pwd[NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER];
-				strcpy_s(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, md.digestString(password));
+				NTL_STRCPY_S(md5pwd, NTL_MAX_SIZE_USERPW_MULTIBYTE_BUFFER, md.digestString(password));
 
 				Field* fields = result->Fetch();
 
-				if (0 != _stricmp(fields[1].GetString(), md5pwd)) //check password
+				if (0 != NTL_STRICMP(fields[1].GetString(), md5pwd)) //check password
 					resultcode = AUTH_WRONG_PASSWORD;
 				else
 				{
@@ -131,7 +168,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 		}
 //	}
 
-	username.erase();
+	Ntl_CleanUpHeapString(username_c);
 	Ntl_CleanUpHeapString(password);
 }
 
