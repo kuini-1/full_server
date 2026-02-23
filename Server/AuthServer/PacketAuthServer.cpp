@@ -24,11 +24,10 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 //	{
 		WORD resultcode = AUTH_SUCCESS;
 		
-		sDBO_SERVER_INFO charSrvCopy;
-		bool haveCharServer = g_pServerInfoManager->GetIdlestServerInfoCopy(NTL_SERVER_TYPE_CHARACTER, 0, 0, charSrvCopy);
-		if (!haveCharServer)
+		sDBO_SERVER_INFO* pCharServer = g_pServerInfoManager->GetIdlestServerInfo(NTL_SERVER_TYPE_CHARACTER, 0, 0);
+		if (pCharServer == NULL)
 			resultcode = AUTH_NO_AVAILABLE_CHARACTER_SERVER;
-		else if (!charSrvCopy.bIsOn)
+		else if (!pCharServer->bIsOn)
 			resultcode = AUTH_NO_AVAILABLE_CHARACTER_SERVER;
 			//<Anti Hack>check username size
 		else if (username.size() >= NTL_MAX_SIZE_USERID_UNICODE || username.size() < 3)
@@ -73,7 +72,7 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 
 					if (/*accstatus == "pending" ||*/ accstatus == "block") // pending = need email activate | block = account banned
 						resultcode = AUTH_USER_BLOCK;
-					else if (charSrvCopy.dwLoad >= charSrvCopy.dwMaxLoad && !isGm)
+					else if (pCharServer->dwLoad >= pCharServer->dwMaxLoad && !isGm)
 						resultcode = CHARACTER_USER_SHOULD_WAIT_FOR_CONNECT;
 
 					if (resultcode == AUTH_SUCCESS)

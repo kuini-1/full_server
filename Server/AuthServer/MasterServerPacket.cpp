@@ -119,7 +119,7 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			}
 		}
 
-		ERR_LOG(LOG_USER, "Account % connect failed. Resultcode %d", req->accountId, resultcode);
+		ERR_LOG(LOG_USER, "Account %u connect failed. Resultcode %d", req->accountId, resultcode);
 
 		//IF NOT SUCCESS SEND ERROR MSG
 		CNtlPacket packet2(sizeof(sAU_LOGIN_RES));
