@@ -428,7 +428,7 @@ inline int CNtlSocket::SendEx(LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD l
 		const char* buf = lpBuffers[i].buf;
 		while (len > 0)
 		{
-			ssize_t n = send(m_socket, buf, len, 0);
+			ssize_t n = send(m_socket, buf, len, MSG_NOSIGNAL);
 			if (n < 0)
 			{
 				int e = errno;
