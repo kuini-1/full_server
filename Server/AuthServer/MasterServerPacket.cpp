@@ -4,6 +4,7 @@
 #include "AuthServer.h"
 #include "NtlPacketAU.h"
 #include "NtlResultCode.h"
+#include "NtlConnection.h"
 
 //--------------------------------------------------------------------------------------//
 //		ADD SERVER INFO
@@ -11,6 +12,13 @@
 void CMasterServerSession::RecvServersInfoAdd(CNtlPacket * pPacket, CAuthServer * app)
 {
 	UNREFERENCED_PARAMETER(app);
+	WORD payLen = pPacket->GetUsedSize() - (WORD)pPacket->GetHeaderSize();
+	size_t minSize = sizeof(sDBO_SERVER_INFO);
+	if (payLen < (WORD)minSize)
+	{
+		printf("[MA_SERVERS_INFO_ADD] packet too small: payload=%u, need %zu - skip\n", (unsigned)payLen, minSize);
+		return;
+	}
 	sMA_SERVERS_INFO_ADD * req = (sMA_SERVERS_INFO_ADD*)pPacket->GetPacketData();
 
 	printf("received server info. index %u port %u\n", req->serverInfo.byServerIndex, req->serverInfo.wPortForClient);
@@ -21,12 +29,15 @@ void CMasterServerSession::RecvServersInfoAdd(CNtlPacket * pPacket, CAuthServer 
 //--------------------------------------------------------------------------------------//
 //		PLAYER ONLINE CHECK RESULT. IF OFFLINE THEN SEND LOGIN SUCCESS
 //--------------------------------------------------------------------------------------//
+/* Minimum wire size for MA_ON_PLAYER_CHECK_RES (accountId 4 + bIsOnline 1 + awchUserId 34 + lastServerFarmId 1 + dwAllowed 4 + bIsGM 1 + abyAuthKey 16 = 61) so 67-byte payload is accepted even when sizeof() has padding */
+static const size_t MIN_MA_ON_PLAYER_CHECK_RES_PAYLOAD = 61;
+
 void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServer * app)
 {
 	WORD payLen = pPacket->GetUsedSize() - (WORD)pPacket->GetHeaderSize();
-	if (payLen < (WORD)sizeof(sMA_ON_PLAYER_CHECK_RES))
+	if (payLen < (WORD)MIN_MA_ON_PLAYER_CHECK_RES_PAYLOAD)
 	{
-		printf("[MA_ON_PLAYER_CHECK_RES] packet too small: payload=%u, need %zu - skip\n", (unsigned)payLen, sizeof(sMA_ON_PLAYER_CHECK_RES));
+		printf("[MA_ON_PLAYER_CHECK_RES] packet too small: payload=%u, need %zu - skip\n", (unsigned)payLen, MIN_MA_ON_PLAYER_CHECK_RES_PAYLOAD);
 		return;
 	}
 	sMA_ON_PLAYER_CHECK_RES * req = (sMA_ON_PLAYER_CHECK_RES*)pPacket->GetPacketData();
@@ -36,6 +47,11 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 	CClientSession* session = app->FindPlayer(accountId);
 	if(session != NULL)
 	{
+		if (!session->IsStatus(CNtlConnection::STATUS_ACTIVE))
+		{
+			app->DelPlayer(accountId);
+			return;
+		}
 		if(bIsOnline == false)
 		{
 			if(session != NULL)
@@ -50,7 +66,8 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 		if(resultcode == AUTH_SUCCESS)
 		{
-			sDBO_SERVER_INFO* srvinfo = g_pServerInfoManager->GetIdlestServerInfo(NTL_SERVER_TYPE_CHARACTER, 0, 0);
+			sDBO_SERVER_INFO srvCopy;
+			bool haveServer = g_pServerInfoManager->GetIdlestServerInfoCopy(NTL_SERVER_TYPE_CHARACTER, 0, 0, srvCopy);
 
 			CNtlPacket packet(sizeof(sAU_LOGIN_RES));
 			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
@@ -60,25 +77,25 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 			memcpy(res->abyAuthKey, req->abyAuthKey, sizeof(res->abyAuthKey));
 			res->dwAllowedFunctionForDeveloper = req->dwAllowedFunctionForDeveloper;
 			res->accountId = accountId;
-			if (srvinfo)
+			if (haveServer)
 			{
-				DWORD dwLoad = srvinfo->dwLoad;
-				DWORD dwMaxLoad = srvinfo->dwMaxLoad;
+				DWORD dwLoad = srvCopy.dwLoad;
+				DWORD dwMaxLoad = srvCopy.dwMaxLoad;
 				if (dwMaxLoad == 0)
 					dwMaxLoad = 1;
 				if (dwLoad <= dwMaxLoad)
 				{
-					ERR_LOG(LOG_USER, "Account %u connect success to char server %u, dwLoad %u, dwMaxLoad %u", accountId, srvinfo->byServerIndex, dwLoad, dwMaxLoad);
+					ERR_LOG(LOG_USER, "Account %u connect success to char server %u, dwLoad %u, dwMaxLoad %u", accountId, srvCopy.byServerIndex, dwLoad, dwMaxLoad);
 
 					resultcode = AUTH_SUCCESS;
-					NTL_STRCPY_S(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvinfo->achPublicAddress);
-					res->aServerInfo[0].wCharacterServerPortForClient = srvinfo->wPortForClient;
+					NTL_STRCPY_S(res->aServerInfo[0].szCharacterServerIP, NTL_MAX_LENGTH_OF_IP + 1, srvCopy.achPublicAddress);
+					res->aServerInfo[0].wCharacterServerPortForClient = srvCopy.wPortForClient;
 					res->aServerInfo[0].dwLoad = (DWORD)((float)dwLoad / (float)dwMaxLoad * 100.0f);
-					res->aServerInfo[0].serverfarmID = srvinfo->serverFarmId;
-					res->aServerInfo[0].serverchannelID = srvinfo->byServerChannelIndex;
+					res->aServerInfo[0].serverfarmID = srvCopy.serverFarmId;
+					res->aServerInfo[0].serverchannelID = srvCopy.byServerChannelIndex;
 					res->byServerInfoCount = 1;
 
-					srvinfo->dwLoad += 1;
+					g_pServerInfoManager->IncrementServerLoad(NTL_SERVER_TYPE_CHARACTER, 0, 0, srvCopy.byServerIndex);
 				}
 				else resultcode = CHARACTER_USER_SHOULD_WAIT_FOR_CONNECT;
 			}
@@ -90,6 +107,11 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 
 			if (resultcode == AUTH_SUCCESS)
 			{
+				if (!session->IsStatus(CNtlConnection::STATUS_ACTIVE))
+				{
+					app->DelPlayer(accountId);
+					return;
+				}
 				packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
 				printf("[AU_LOGIN_RES] sizeof(sAU_LOGIN_RES)=%zu (expect 795 for client)\n", (size_t)sizeof(sAU_LOGIN_RES));
 				{
@@ -115,17 +137,22 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 				}
 				app->SendTo(session, &packet);
 
-				CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
-				sAU_COMMERCIAL_SETTING_NFY * res2 = (sAU_COMMERCIAL_SETTING_NFY *)packet2.GetPacketData();
-				res2->wOpCode = AU_COMMERCIAL_SETTING_NFY;
-				res2->abySetting[0] = 55;
-				res2->abySetting[1] = 255;
-				res2->abySetting[2] = 255;
-				packet2.SetPacketLen(sizeof(sAU_COMMERCIAL_SETTING_NFY));
-				app->SendTo(session, &packet2);
-
-				GetAccDB.Execute("UPDATE accounts SET last_login=CURRENT_TIMESTAMP, last_ip='%s' WHERE AccountID = %u LIMIT 1", session->GetRemoteIP(), accountId);
-				GetLogDB.Execute("INSERT INTO auth_login_log(AccountID, IP) VALUES (%u, '%s')", accountId, session->GetRemoteIP());
+				if (session->IsStatus(CNtlConnection::STATUS_ACTIVE))
+				{
+					CNtlPacket packet2(sizeof(sAU_COMMERCIAL_SETTING_NFY));
+					sAU_COMMERCIAL_SETTING_NFY * res2 = (sAU_COMMERCIAL_SETTING_NFY *)packet2.GetPacketData();
+					res2->wOpCode = AU_COMMERCIAL_SETTING_NFY;
+					res2->abySetting[0] = 55;
+					res2->abySetting[1] = 255;
+					res2->abySetting[2] = 255;
+					packet2.SetPacketLen(sizeof(sAU_COMMERCIAL_SETTING_NFY));
+					app->SendTo(session, &packet2);
+				}
+				if (session->IsStatus(CNtlConnection::STATUS_ACTIVE))
+				{
+					GetAccDB.Execute("UPDATE accounts SET last_login=CURRENT_TIMESTAMP, last_ip='%s' WHERE AccountID = %u LIMIT 1", session->GetRemoteIP(), accountId);
+					GetLogDB.Execute("INSERT INTO auth_login_log(AccountID, IP) VALUES (%u, '%s')", accountId, session->GetRemoteIP());
+				}
 
 				return;
 			}
@@ -134,14 +161,16 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 		ERR_LOG(LOG_USER, "Account %u connect failed. Resultcode %d", accountId, resultcode);
 
 		//IF NOT SUCCESS SEND ERROR MSG
-		CNtlPacket packet2(sizeof(sAU_LOGIN_RES));
-		sAU_LOGIN_RES * res2 = (sAU_LOGIN_RES *)packet2.GetPacketData();
-		memset(packet2.GetPacketData(), 0, sizeof(sAU_LOGIN_RES));
-		res2->wOpCode = AU_LOGIN_RES;
-		res2->wResultCode = resultcode;
-		packet2.SetPacketLen(sizeof(sAU_LOGIN_RES));
-		app->SendTo(session, &packet2);
-
+		if (session->IsStatus(CNtlConnection::STATUS_ACTIVE))
+		{
+			CNtlPacket packet2(sizeof(sAU_LOGIN_RES));
+			sAU_LOGIN_RES * res2 = (sAU_LOGIN_RES *)packet2.GetPacketData();
+			memset(packet2.GetPacketData(), 0, sizeof(sAU_LOGIN_RES));
+			res2->wOpCode = AU_LOGIN_RES;
+			res2->wResultCode = resultcode;
+			packet2.SetPacketLen(sizeof(sAU_LOGIN_RES));
+			app->SendTo(session, &packet2);
+		}
 		app->DelPlayer(accountId);
 	}
 }

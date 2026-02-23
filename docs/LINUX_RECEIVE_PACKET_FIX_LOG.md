@@ -190,6 +190,16 @@
 - **Files Modified:** Server/NtlShared2/NtlPacketAU.h, Server/AuthServer/MasterServerPacket.cpp, CMakeLists.txt
 - **Result:** [Test on Linux – with GCC sizeof may be 839; try Clang with -DDBO_USE_CLANG=ON to test 795-byte layout]
 
+### 20. Auth login crash (RecvServersInfoAdd overread, server-info pointer use, session validity)
+
+- **Symptom:** Auth server segfault during login when processing MA_ON_PLAYER_CHECK_RES (69 bytes) or when using server info from GetIdlestServerInfo.
+- **Fix 1:** In RecvServersInfoAdd, validate payload size >= sizeof(sDBO_SERVER_INFO) before using req; skip and log if too small to prevent buffer overread when RefreshServerInfo copies from packet buffer.
+- **Fix 2:** Add GetIdlestServerInfoCopy (copy out under lock, return bool) and IncrementServerLoad; use them in RecvPlayerOnlineCheck and SendCharLogInReq so no code holds a raw pointer from the list across unlock.
+- **Fix 3:** MA_ON_PLAYER_CHECK_RES: use minimum wire payload size (61 bytes) instead of sizeof() so 67-byte payload is accepted when struct has padding.
+- **Fix 4:** Before SendTo(session, ...) and session->GetRemoteIP(), check session->IsStatus(CNtlConnection::STATUS_ACTIVE); skip send and DelPlayer when inactive to avoid use-after-free if client disconnected.
+- **Files:** Server/AuthServer/MasterServerPacket.cpp, Server/servercommon/NeighborServerInfoManager.h/cpp, Server/AuthServer/PacketAuthServer.cpp
+- **Result:** [Pending test – should eliminate auth login crash]
+
 ---
 
 ## Remaining Work (until 100% fixed)
