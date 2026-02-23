@@ -21,6 +21,7 @@
 
 #if !defined(_WIN32)
 
+#include <csignal>
 #include <fcntl.h>
 #include <netinet/tcp.h>
 
@@ -42,6 +43,7 @@ CNtlSocket::~CNtlSocket()
 
 int CNtlSocket::StartUp()
 {
+	signal(SIGPIPE, SIG_IGN);
 	return NTL_SUCCESS;
 }
 
