@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <cstddef>
 #include "NtlPacketMA.h"
 #include "AuthServer.h"
 #include "NtlPacketAU.h"
@@ -84,16 +85,20 @@ void CMasterServerSession::RecvPlayerOnlineCheck(CNtlPacket * pPacket, CAuthServ
 					BYTE * buf = packet.GetPacketBuffer();
 					WORD len = packet.GetUsedSize();
 					sAU_LOGIN_RES * dbg = (sAU_LOGIN_RES *)packet.GetPacketData();
-					printf("[AU_LOGIN_RES hex dump] total=%u bytes (header=%u payload=%u)\n",
-						(unsigned)len, (unsigned)packet.GetHeaderSize(), (unsigned)(len - packet.GetHeaderSize()));
+					unsigned hdr = (unsigned)packet.GetHeaderSize();
+					unsigned pay = (unsigned)(len - hdr);
+					printf("[AU_LOGIN_RES hex dump] total=%u bytes (header=%u payload=%u)\n", (unsigned)len, hdr, pay);
 					printf("[AU_LOGIN_RES hex dump] szCharacterServerIP='%s' Port=%u byServerInfoCount=%u\n",
 						dbg->aServerInfo[0].szCharacterServerIP, dbg->aServerInfo[0].wCharacterServerPortForClient, dbg->byServerInfoCount);
-					// Raw hex: first 128 bytes, then bytes around sSERVER_INFO start (offset varies by platform)
-					printf("[AU_LOGIN_RES hex dump] raw hex first 128:");
-					for (unsigned i = 0; i < 128 && i < len; i++)
+					printf("[AU_LOGIN_RES hex dump] offsetof aServerInfo=%zu sizeof(sSERVER_INFO)=%zu\n",
+						offsetof(sAU_LOGIN_RES, aServerInfo), sizeof(sSERVER_INFO));
+					printf("[AU_LOGIN_RES hex dump] raw hex first 140 (header+payload start):");
+					for (unsigned i = 0; i < 140 && i < len; i++)
 						printf(" %02x", buf[i]);
-					printf("\n[AU_LOGIN_RES hex dump] raw hex bytes 400-550 (sSERVER_INFO region):");
-					for (unsigned i = 400; i < 550 && i < len; i++)
+					printf("\n[AU_LOGIN_RES hex dump] raw hex bytes %zu-%zu (first sSERVER_INFO, client expects ~54-127):",
+						(unsigned)(hdr + offsetof(sAU_LOGIN_RES, aServerInfo)), (unsigned)(hdr + offsetof(sAU_LOGIN_RES, aServerInfo) + sizeof(sSERVER_INFO)));
+					unsigned start = hdr + (unsigned)offsetof(sAU_LOGIN_RES, aServerInfo);
+					for (unsigned i = start; i < start + sizeof(sSERVER_INFO) && i < len; i++)
 						printf(" %02x", buf[i]);
 					printf("\n");
 				}
