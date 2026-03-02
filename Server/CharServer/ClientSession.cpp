@@ -23,9 +23,13 @@ int CClientSession::OnAccept()
 
 	printf("[CharServer] Client connection accepted: IP=%s, Port=%u, Handle=%u\n", GetRemoteIP(), GetRemotePort(), GetHandle());
 
-	//start handshake (with client)
+	//start handshake (with client) – same as Windows; client expects this before UC_LOGIN_REQ
 	unsigned char buf[] = { 0x03, 0x00, 0xac, 0x86, 0xf5, 0x74 };
 	CNtlPacket packet(buf, 0x06);
+	printf("[CharServer] Handshake: sending to client (payload 6 bytes):");
+	for (int i = 0; i < 6; i++)
+		printf(" %02X", buf[i]);
+	printf("\n");
 	g_pApp->Send(GetHandle(), &packet);
 
 	return CNtlSession::OnAccept();

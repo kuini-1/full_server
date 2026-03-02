@@ -1,0 +1,36 @@
+*** Dumping AST Record Layout
+         0 | struct sAU_LOGIN_RES
+         0 |   header_and_fixed
+        65 |   sSERVER_INFO aServerInfo_region
+           | [sizeof=795, dsize=795, align=1,
+           |  nvsize=795, nvalign=1]
+*** Dumping AST Record Layout
+         0 | struct sCU_LOGIN_RES
+         0 |   full
+           | [sizeof=13, dsize=13, align=1,
+           |  nvsize=13, nvalign=1]
+*** Dumping AST Record Layout
+         0 | struct sUC_LOGIN_REQ
+         0 |   full
+           | [sizeof=23, dsize=23, align=1,
+           |  nvsize=23, nvalign=1]
+*** Dumping AST Record Layout
+         0 | struct sCU_CHARACTER_SERVERLIST_RES
+         0 |   full
+           | [sizeof=4, dsize=4, align=1,
+           |  nvsize=4, nvalign=1]
+*** Dumping AST Record Layout
+         0 | struct sCU_CHARACTER_SERVERLIST_ONE_RES
+         0 |   full
+           | [sizeof=4, dsize=4, align=1,
+           |  nvsize=4, nvalign=1]
+*** Dumping AST Record Layout
+         0 | struct sUC_CHARACTER_SERVERLIST_REQ
+         0 |   full
+           | [sizeof=2, dsize=2, align=1,
+           |  nvsize=2, nvalign=1]
+*** Dumping AST Record Layout
+         0 | struct sUC_CHARACTER_SERVERLIST_ONE_REQ
+         0 |   full
+           | [sizeof=2, dsize=2, align=1,
+           |  nvsize=2, nvalign=1]

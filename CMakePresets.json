@@ -11,11 +11,13 @@
       "displayName": "WSL 2.0 Debug",
       "description": "Build for WSL (Linux) with debug info",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "binaryDir": "${sourceDir}/build/",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "DBO_PROJECT_ROOT": "${sourceDir}"
+        "DBO_PROJECT_ROOT": "${sourceDir}",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
       },
       "vendor": {
         "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {

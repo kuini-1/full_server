@@ -31,10 +31,16 @@
 //};
 //#pragma pack(pop)   /* restore original alignment from stack */
 
+#if defined(__x86_64__) && !defined(_WIN32)
+#pragma ms_struct on
+#endif
 struct sNTLPACKETHEADER
 {
 	WORD			wOpCode;
 };
+#if defined(__x86_64__) && !defined(_WIN32)
+#pragma ms_struct off
+#endif
 
 struct sWEB_ONLINE_PLAYER
 {

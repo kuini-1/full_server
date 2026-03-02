@@ -12,14 +12,20 @@
 //--------------------------------------------------------------------------------------//
 void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 {
+	printf("[AuthServer] SendCharLogInReq entered, pPacket=%p\n", (void*)pPacket);
+	fflush(stdout);
 	if (!pPacket || !pPacket->GetPacketData())
 	{
 		WORD resultcode = AUTH_USER_NOT_FOUND;
 		CNtlPacket packet(sizeof(sAU_LOGIN_RES));
-		sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+		sAU_LOGIN_RES* res = (sAU_LOGIN_RES*)packet.GetPacketData();
+		memset(res, 0, sizeof(sAU_LOGIN_RES));
 		res->wOpCode = AU_LOGIN_RES;
 		res->wResultCode = resultcode;
+		res->byServerInfoCount = 0;
 		packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+		printf("[AuthServer] Sending AU_LOGIN_RES to client (early: null packet), resultCode=%u\n", (unsigned)resultcode);
+		fflush(stdout);
 		app->Send(GetHandle(), &packet);
 		return;
 	}
@@ -31,10 +37,14 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 	{
 		WORD resultcode = AUTH_USER_NOT_FOUND;
 		CNtlPacket packet(sizeof(sAU_LOGIN_RES));
-		sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+		sAU_LOGIN_RES* res = (sAU_LOGIN_RES*)packet.GetPacketData();
+		memset(res, 0, sizeof(sAU_LOGIN_RES));
 		res->wOpCode = AU_LOGIN_RES;
 		res->wResultCode = resultcode;
+		res->byServerInfoCount = 0;
 		packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+		printf("[AuthServer] Sending AU_LOGIN_RES to client (early: username convert fail), resultCode=%u\n", (unsigned)resultcode);
+		fflush(stdout);
 		app->Send(GetHandle(), &packet);
 		return;
 	}
@@ -45,10 +55,14 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 		Ntl_CleanUpHeapString(username_c);
 		WORD resultcode = AUTH_USER_NOT_FOUND;
 		CNtlPacket packet(sizeof(sAU_LOGIN_RES));
-		sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+		sAU_LOGIN_RES* res = (sAU_LOGIN_RES*)packet.GetPacketData();
+		memset(res, 0, sizeof(sAU_LOGIN_RES));
 		res->wOpCode = AU_LOGIN_RES;
 		res->wResultCode = resultcode;
+		res->byServerInfoCount = 0;
 		packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
+		printf("[AuthServer] Sending AU_LOGIN_RES to client (early: password convert fail), resultCode=%u\n", (unsigned)resultcode);
+		fflush(stdout);
 		app->Send(GetHandle(), &packet);
 		return;
 	}
@@ -120,6 +134,8 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 						if (app->AddPlayer(this->AccountID, this) == true)
 						{
 							ERR_LOG(LOG_USER, "%s Auth Success. <Online Check>Sending packet to master server \n", username.c_str());
+							printf("[AuthServer] Sending AM_ON_PLAYER_CHECK_REQ to Master, waiting for MA_ON_PLAYER_CHECK_RES\n");
+							fflush(stdout);
 
 							//send check req if player online to master server
 							CNtlPacket packet(sizeof(sAM_ON_PLAYER_CHECK_REQ));
@@ -148,14 +164,19 @@ void CClientSession::SendCharLogInReq(CNtlPacket * pPacket, CAuthServer * app)
 		if(resultcode != AUTH_SUCCESS)
 		{
 			ERR_LOG(LOG_SYSTEM, "Session %u, Login trys %u, User %s Connection failed. Resultcode %u \n", GetHandle(), m_byLoginTrys, username.c_str(), resultcode);
+			printf("[AuthServer] Sending AU_LOGIN_RES to client (failure path), resultCode=%u\n", (unsigned)resultcode);
+			fflush(stdout);
 
 			if(resultcode == AUTH_WRONG_PASSWORD || resultcode == AUTH_USER_NOT_FOUND)
 				++m_byLoginTrys;
 
 			CNtlPacket packet(sizeof(sAU_LOGIN_RES));
-			sAU_LOGIN_RES * res = (sAU_LOGIN_RES *)packet.GetPacketData();
+			sAU_LOGIN_RES* res = (sAU_LOGIN_RES*)packet.GetPacketData();
+			memset(res, 0, sizeof(sAU_LOGIN_RES));
 			res->wOpCode = AU_LOGIN_RES;
 			res->wResultCode = resultcode;
+			res->byServerInfoCount = 0;
+			packet.SetPacketLen(sizeof(sAU_LOGIN_RES));
 			app->Send(GetHandle(), &packet);
 
 			if (m_byLoginTrys >= 5)
@@ -183,6 +204,7 @@ void CClientSession::SendLoginDcReq(CNtlPacket * pPacket, CAuthServer * app)
 	sAU_LOGIN_DISCONNECT_RES * res = (sAU_LOGIN_DISCONNECT_RES *)packet.GetPacketData();
 	res->wOpCode = AU_LOGIN_DISCONNECT_RES;
 	packet.SetPacketLen(sizeof(sAU_LOGIN_DISCONNECT_RES));
+	printf("[AuthServer] Sending AU_LOGIN_DISCONNECT_RES to client; client should connect to Char server next (IP/port were in AU_LOGIN_RES).\n");
 	app->SendTo(this, &packet);
 }
 

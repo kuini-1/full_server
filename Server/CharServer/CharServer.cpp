@@ -99,6 +99,7 @@ int CCharServer::OnCreate()
 
 	printf("[CharServer] Starting client acceptor: Address='%s', Port=%u, PublicAddress='%s'\n", 
 		m_config.strClientAcceptAddr.c_str(), m_config.wClientAcceptPort, m_config.strPublicClientAcceptAddr.c_str());
+	printf("[CharServer] Clients must connect to %s:%u (from PublicAddress/Port).\n", m_config.strPublicClientAcceptAddr.c_str(), (unsigned)m_config.wClientAcceptPort);
 	rc = m_clientAcceptor.Create(m_config.strClientAcceptAddr.c_str(), m_config.wClientAcceptPort, 1, m_config.wClientAcceptPort, SESSION_CLIENT, m_config.nMaxConnection, m_config.nMaxConnection, m_config.nMaxConnection, m_config.nMaxConnection);
 	if (rc != NTL_SUCCESS)
 	{

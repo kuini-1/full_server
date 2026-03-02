@@ -50,10 +50,11 @@ int CClientSession::OnDispatch(CNtlPacket * pPacket)
 		case UA_LOGIN_REQ_TAIWAN_CT:	{	this->SendCharLogInReq(pPacket, app);	}	break;
 		case UA_LOGIN_CREATEUSER_REQ:	{	this->SendCreateUserReq(pPacket, app);	}	break;
 		case UA_LOGIN_DISCONNECT_CN_REQ:
-		case UA_LOGIN_DISCONNECT_TW_REQ:	
+		case UA_LOGIN_DISCONNECT_TW_REQ:
 		{
-			printf("[AuthServer] Client disconnecting: AccountID=%u, IP=%s, packet size=%u\n", 
-				this->AccountID ? this->AccountID : 0, GetRemoteIP(), pPacket->GetPacketLen());
+			const char* reqName = (pHeader->wOpCode == UA_LOGIN_DISCONNECT_CN_REQ) ? "UA_LOGIN_DISCONNECT_CN_REQ" : "UA_LOGIN_DISCONNECT_TW_REQ";
+			printf("[AuthServer] Received %s (opcode=%u, size=%u): client leaving Auth to connect to Char server. AccountID=%u, IP=%s\n",
+				reqName, (unsigned)pHeader->wOpCode, pPacket->GetPacketLen(), this->AccountID ? this->AccountID : 0, GetRemoteIP());
 			this->SendLoginDcReq(pPacket, app);
 		}	break;
 

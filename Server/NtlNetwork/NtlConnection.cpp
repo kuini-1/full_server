@@ -27,6 +27,7 @@
 
 #include "PacketBlock.h"
 #include "NtlPacket.h"
+#include "PacketWireLayout.h"
 
 
 //-----------------------------------------------------------------------------------
@@ -519,8 +520,99 @@ int CNtlConnection::PostSend_Ex()
 	return NTL_SUCCESS;
 }
 
+#if !defined(_WIN32)
+void CNtlConnection::GetSendBufferAndSize(CNtlPacket* pPacket, BYTE** ppBuf, WORD* pSize)
+{
+	WORD ourPayloadSize = pPacket->GetPacketDataSize();
+	const BYTE* pOurPayload = pPacket->GetPacketData();
+	unsigned int wOpCode = (ourPayloadSize >= 2) ? *(const WORD*)pOurPayload : 0;
+	unsigned int wirePayloadSize = PacketWire_GetWirePayloadSize(wOpCode);
+	if (wirePayloadSize != 0 && wirePayloadSize <= (PACKET_HEADSIZE + PACKET_MAX_SIZE - PACKET_HEADSIZE))
+	{
+		unsigned int encoded = PacketWire_EncodePayload(wOpCode, pOurPayload, ourPayloadSize,
+			m_wireEncodeBuffer + PACKET_HEADSIZE, (unsigned int)(PACKET_MAX_SIZE));
+		if (encoded != 0)
+		{
+			BYTE* pWirePayload = m_wireEncodeBuffer + PACKET_HEADSIZE;
+			printf("[PacketWire] send opcode=%u our_payload=%u wire_payload=%u\n", wOpCode, (unsigned)ourPayloadSize, (unsigned)encoded);
+			/* AU_LOGIN_RES = 1002: verify first sSERVER_INFO (wire offset 65) so client reads correct IP/port */
+			if (wOpCode == 1002 && encoded >= 65u + 67u) /* need 65 + 65 (IP) + 2 (port) */
+			{
+				/* Sanity check: wResultCode should be AUTH_SUCCESS (100 -> 0x64 0x00) on the success path */
+				if (encoded >= 4u && (pWirePayload[2] != 0x64 || pWirePayload[3] != 0x00))
+				{
+					printf("[PacketWire] AU_LOGIN_RES WARNING: wResultCode bytes=%02X %02X (expected 64 00 for AUTH_SUCCESS=100)\n",
+						(unsigned)pWirePayload[2], (unsigned)pWirePayload[3]);
+				}
+				const BYTE* pFirstServerInfo = pWirePayload + 65;
+				/* Raw bytes we send (payload only): compare with Windows server capture to confirm layout. */
+				printf("[PacketWire] AU_LOGIN_RES wire payload hex (first 140 bytes = fixed + first sSERVER_INFO):");
+				for (unsigned int i = 0; i < 140 && i < encoded; i++)
+					printf(" %02X", pWirePayload[i]);
+				printf("\n");
+				printf("[PacketWire] AU_LOGIN_RES first server info block (wire offset 65), 73 bytes:");
+				for (unsigned int i = 0; i < 73 && i < (encoded - 65u); i++)
+					printf(" %02X", pFirstServerInfo[i]);
+				printf("\n");
+				/* Verify IP and port at wire offsets (sSERVER_INFO: szCharacterServerIP[65], then WORD port) */
+				char ipBuf[66];
+				ipBuf[65] = '\0';
+				for (int i = 0; i < 65; i++)
+					ipBuf[i] = (char)((pFirstServerInfo[i] >= 32 && pFirstServerInfo[i] < 127) ? pFirstServerInfo[i] : '.');
+				unsigned int portWire = (unsigned int)pFirstServerInfo[65] | ((unsigned int)pFirstServerInfo[66] << 8);
+				printf("[PacketWire] AU_LOGIN_RES verify: szCharacterServerIP='%s' wCharacterServerPortForClient=%u (client will use this)\n", ipBuf, portWire);
+			}
+			LPSTHeaderBase pHeader = (LPSTHeaderBase)m_wireEncodeBuffer;
+			pHeader->wPacketLen = (WORD)encoded;
+			pHeader->bEncrypt = pPacket->GetPacketHeader()->bEncrypt;
+			*ppBuf = m_wireEncodeBuffer;
+			*pSize = (WORD)(PACKET_HEADSIZE + encoded);
+			return;
+		}
+	}
+	*ppBuf = pPacket->GetPacketBuffer();
+	*pSize = pPacket->GetUsedSize();
+}
+
+bool CNtlConnection::DecodeRecvPacket(const BYTE* pWire, WORD wireTotalLen, BYTE** ppOurBuf, WORD* pOurTotalLen)
+{
+	if (wireTotalLen <= PACKET_HEADSIZE)
+		return false;
+	WORD wirePayloadLen = ((LPSTHeaderBase)pWire)->wPacketLen;
+	if (wireTotalLen != PACKET_HEADSIZE + wirePayloadLen)
+		return false;
+	const BYTE* pWirePayload = pWire + PACKET_HEADSIZE;
+	unsigned int wOpCode = (wirePayloadLen >= 2) ? *(const WORD*)pWirePayload : 0;
+	unsigned int ourPayloadSize = PacketWire_GetOurPayloadSize(wOpCode);
+	if (ourPayloadSize == 0 || ourPayloadSize > PACKET_MAX_SIZE)
+		return false;
+	unsigned int decoded = PacketWire_DecodePayload(wOpCode, pWirePayload, wirePayloadLen,
+		m_wireDecodeBuffer + PACKET_HEADSIZE, (unsigned int)(PACKET_MAX_SIZE));
+	if (decoded == 0)
+		return false;
+	printf("[PacketWire] recv opcode=%u wire_payload=%u our_payload=%u\n", wOpCode, (unsigned)wirePayloadLen, (unsigned)decoded);
+	LPSTHeaderBase pOutHeader = (LPSTHeaderBase)m_wireDecodeBuffer;
+	pOutHeader->wPacketLen = (WORD)decoded;
+	pOutHeader->bEncrypt = ((LPSTHeaderBase)pWire)->bEncrypt;
+	*ppOurBuf = m_wireDecodeBuffer;
+	*pOurTotalLen = (WORD)(PACKET_HEADSIZE + decoded);
+	return true;
+}
+#endif
+
 int CNtlConnection::AddToSendBuffer(CNtlPacket * pPacket)
 {
+#if !defined(_WIN32)
+	BYTE* pSendBuf = NULL;
+	WORD sendSize = 0;
+	GetSendBufferAndSize(pPacket, &pSendBuf, &sendSize);
+	if (CPacketBlock* pBlock = m_queSending.GetPacketBlock(sendSize))
+	{
+		pBlock->Push(pSendBuf, sendSize);
+		IncreasePacketSend();
+		return NTL_SUCCESS;
+	}
+#else
 	if (CPacketBlock* pBlock = m_queSending.GetPacketBlock(pPacket->GetUsedSize()))
 	{
 		pBlock->Push(pPacket->GetPacketBuffer(), pPacket->GetUsedSize());
@@ -529,6 +621,7 @@ int CNtlConnection::AddToSendBuffer(CNtlPacket * pPacket)
 
 		return NTL_SUCCESS;
 	}
+#endif
 
 	return NTL_ERR_NET_SESSION_SEND_BUFFER_OVERFLOW;
 }
@@ -992,13 +1085,25 @@ int CNtlConnection::CompleteSend(DWORD dwTransferedBytes)
 		CNtlPacket * pSendPacket = m_sendQueue.PeekPacket();
 		while (pSendPacket)
 		{
+#if !defined(_WIN32)
+			BYTE* pSendBuf = NULL;
+			WORD sendSize = 0;
+			GetSendBufferAndSize(pSendPacket, &pSendBuf, &sendSize);
+			if (m_sendBuffer.GetPushAvailableSize() <= sendSize)
+#else
 			if (m_sendBuffer.GetPushAvailableSize() <= pSendPacket->GetUsedSize())
+#endif
 			{
 				break;
 			}
 
+#if !defined(_WIN32)
+			memcpy(m_sendBuffer.GetQueuePushPtr(), pSendBuf, sendSize);
+			m_sendBuffer.IncreasePushPos(sendSize);
+#else
 			memcpy(m_sendBuffer.GetQueuePushPtr(), pSendPacket->GetPacketBuffer(), pSendPacket->GetUsedSize());
 			m_sendBuffer.IncreasePushPos(pSendPacket->GetUsedSize());
+#endif
 			IncreasePacketSend();
 
 			m_sendQueue.PopPacket();
@@ -1276,10 +1381,19 @@ bool CNtlConnection::PopPacket(CNtlPacket * pPacket)
 		return false;
 	}
 
-
 	int nPacketLen = GetPacketLen( m_recvBuffer.GetQueuePopPtr() );
+	WORD wireTotalLen = (WORD)(GetHeaderSize() + nPacketLen);
 
-	pPacket->AttachData( m_recvBuffer.GetQueuePopPtr(), (WORD) (GetHeaderSize() + nPacketLen) );
+#if !defined(_WIN32)
+	BYTE* pOurBuf = NULL;
+	WORD ourTotalLen = 0;
+	if (DecodeRecvPacket(m_recvBuffer.GetQueuePopPtr(), wireTotalLen, &pOurBuf, &ourTotalLen))
+		pPacket->AttachData(pOurBuf, ourTotalLen);
+	else
+		pPacket->AttachData(m_recvBuffer.GetQueuePopPtr(), wireTotalLen);
+#else
+	pPacket->AttachData( m_recvBuffer.GetQueuePopPtr(), wireTotalLen );
+#endif
 
 	if( false == pPacket->IsValidPacket() )
 	{
@@ -1348,7 +1462,14 @@ int CNtlConnection::PushPacket(CNtlPacket * pPacket)
 	}
 
 
+#if !defined(_WIN32)
+	BYTE* pSendBuf = NULL;
+	WORD sendSize = 0;
+	GetSendBufferAndSize(pPacket, &pSendBuf, &sendSize);
+	if (m_sendBuffer.GetPushAvailableSize() <= sendSize)
+#else
 	if (m_sendBuffer.GetPushAvailableSize() <= pPacket->GetUsedSize())
+#endif
 	{
 		//printf("m_sendBuffer.GetPushAvailableSize() %u <= pPacket->GetUsedSize() %u \n", m_sendBuffer.GetPushAvailableSize(), pPacket->GetUsedSize());
 		CNtlPacket * pQueuedPacket = new CNtlPacket(*pPacket);
@@ -1367,12 +1488,16 @@ int CNtlConnection::PushPacket(CNtlPacket * pPacket)
 		return NTL_SUCCESS;
 	}
 
+#if !defined(_WIN32)
+	memcpy( m_sendBuffer.GetQueuePushPtr(), pSendBuf, sendSize );
+	m_sendBuffer.IncreasePushPos( sendSize );
+#else
 	memcpy( m_sendBuffer.GetQueuePushPtr(), pPacket->GetPacketBuffer(), pPacket->GetUsedSize() );
+	m_sendBuffer.IncreasePushPos( pPacket->GetUsedSize() );
+#endif
+	IncreasePacketSend();
 
 	int rc = NTL_SUCCESS;
-
-	m_sendBuffer.IncreasePushPos( pPacket->GetUsedSize() );
-	IncreasePacketSend();
 
 
 	if( false == m_bSending )

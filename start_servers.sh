@@ -38,7 +38,7 @@ start_server() {
     echo -e "${GREEN}Starting $NAME...${NC}"
 
     tmux new -d -s "$NAME" \
-        "cd '$BUILD_DIR' && ./$BIN config/$CONF"
+    "cd '$SCRIPT_DIR' && ./build/$BIN config/$CONF"
 
     sleep 0.3
 
@@ -54,10 +54,10 @@ echo -e "\n${GREEN}=== Launch Order ===${NC}"
 start_server "master" "MasterServer" "MasterServer.ini"
 sleep 2
 
-start_server "auth"   "AuthServer"   "AuthServer.ini"
+#start_server "auth"   "AuthServer"   "AuthServer.ini"
 start_server "query"  "QueryServer"  "QueryServer.ini"
 start_server "char"   "CharServer"   "CharServer.ini"
-start_server "chat"   "ChatServer"   "ChatServer.ini"
+#start_server "chat"   "ChatServer"   "ChatServer.ini"
 start_server "game"   "GameServer"   "GameServer.ini"
 
 echo -e "\n${GREEN}Done.${NC}"

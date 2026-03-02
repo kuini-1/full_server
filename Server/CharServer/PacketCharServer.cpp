@@ -11,6 +11,8 @@
 #include "NewbieTable.h"
 #include "ItemTable.h"
 #include "ReserveName.h"
+#include "NtlPacket.h"
+#include "PacketWireLayout.h"
 
 
 
@@ -30,6 +32,33 @@ void CClientSession::SendCharServerReq(CNtlPacket * pPacket)
 {
 	sUC_LOGIN_REQ * req = (sUC_LOGIN_REQ *)pPacket->GetPacketData();
 
+	{
+		BYTE* buf = pPacket->GetPacketBuffer();
+		WORD len = pPacket->GetUsedSize();
+		unsigned hdr = (unsigned)pPacket->GetHeaderSize();
+		size_t paySize = (len > hdr) ? (size_t)(len - hdr) : 0;
+#if !defined(_WIN32)
+		unsigned int ourPayload = PacketWire_GetOurPayloadSize(UC_LOGIN_REQ);
+		unsigned int wirePayload = PacketWire_GetWirePayloadSize(UC_LOGIN_REQ);
+		printf("[UC_LOGIN_REQ hex dump] PacketWire wire=%u our=%u opcode=%u\n", wirePayload, ourPayload, (unsigned)UC_LOGIN_REQ);
+		if (ourPayload != 0)
+		{
+			printf("[UC_LOGIN_REQ hex dump] actual received from client: wire payload %u bytes (decoded to our layout)\n", wirePayload);
+			printf("[UC_LOGIN_REQ hex dump] our buffer: total=%u (header=%u payload=%zu)\n", (unsigned)len, hdr, paySize);
+		}
+		else
+#endif
+		printf("[UC_LOGIN_REQ hex dump] total=%u bytes (header=%u payload=%zu)\n", (unsigned)len, hdr, paySize);
+		printf("[UC_LOGIN_REQ hex dump] full packet bytes:");
+		for (unsigned i = 0; i < len; i++)
+			printf(" %02X", buf[i]);
+		printf("\n");
+		printf("[UC_LOGIN_REQ hex dump] AccountID=%u ServerID=%u IP=%s\n", req->accountId, req->serverID, GetRemoteIP());
+		printf("[UC_LOGIN_REQ hex dump] abyAuthKey hex:");
+		for (unsigned i = 0; i < sizeof(req->abyAuthKey); i++)
+			printf(" %02X", (unsigned)req->abyAuthKey[i]);
+		printf("\n");
+	}
 	printf("[CharServer] Received UC_LOGIN_REQ from client: AccountID=%u, IP=%s, ServerID=%u\n", req->accountId, GetRemoteIP(), req->serverID);
 
 	CCharServer* app = (CCharServer*)g_pApp;

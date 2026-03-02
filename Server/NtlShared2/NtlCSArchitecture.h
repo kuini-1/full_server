@@ -129,7 +129,9 @@ enum eDBO_STATS_AGE_RANGE
 #define DBO_MAX_ADAPTER_ADDRESS_LENGTH			(6)
 
 #pragma pack(1)
-
+#if defined(__x86_64__) && !defined(_WIN32)
+#pragma ms_struct on
+#endif
 struct sSERVER_INFO
 {
 	char		szCharacterServerIP[NTL_MAX_LENGTH_OF_IP + 1];
@@ -138,6 +140,9 @@ struct sSERVER_INFO
 	BYTE		serverfarmID;
 	BYTE		serverchannelID;
 } NTL_STRUCT_PACKED;
+#if defined(__x86_64__) && !defined(_WIN32)
+#pragma ms_struct off
+#endif
 
 struct sDBO_SERVER_CHANNEL_CONNECTED_USER_INFO
 {

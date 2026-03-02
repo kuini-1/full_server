@@ -29,6 +29,9 @@ void CAuthServerPassiveSession::Am_CheckPlayerOnline(CNtlPacket * pPacket, CMast
 
 	bool playeronlinecheck = g_pSrvMgr->IsPlayerOnline(req->accountId);
 
+	// Debug: trace online check result so we understand why MA_ON_PLAYER_CHECK_RES.bIsOnline is set
+	printf("Am_CheckPlayerOnline: Account %u IsPlayerOnline=%s\n", req->accountId, playeronlinecheck ? "true" : "false");
+
 	CNtlPacket packet(sizeof(sMA_ON_PLAYER_CHECK_RES));
 	sMA_ON_PLAYER_CHECK_RES * res = (sMA_ON_PLAYER_CHECK_RES *)packet.GetPacketData();
 	res->wOpCode = MA_ON_PLAYER_CHECK_RES;
@@ -40,15 +43,20 @@ void CAuthServerPassiveSession::Am_CheckPlayerOnline(CNtlPacket * pPacket, CMast
 		if (g_pSrvMgr->GenerateAuthKey(res->abyAuthKey, req->accountId) == true) 
 		{
 			res->bIsOnline = false;
+			printf("Am_CheckPlayerOnline: Account %u offline, generated new auth key and set bIsOnline=false\n", req->accountId);
 		} 
 		else 
 		{
-			ERR_LOG(LOG_USER,"Account %d offline but failed to generate auth key", req->accountId);
+			printf("Am_CheckPlayerOnline: Account %u offline but failed to generate auth key\n", req->accountId);
 			//log: player offline but auth already exist
 			res->bIsOnline = true;
 		}
 	}
-	else res->bIsOnline = true;
+	else
+	{
+		res->bIsOnline = true;
+		printf("Am_CheckPlayerOnline: Account %u considered online (IsPlayerOnline=true), bIsOnline=true\n", req->accountId);
+	}
 
 
 	NTL_SAFE_WCSCPY(res->awchUserId, req->awchUserId);

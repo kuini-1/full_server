@@ -4,7 +4,7 @@
 //
 //	Begin		:	2005-12-19
 //
-//	Copyright	:	ⓒ NTL-Inc Co., Ltd
+//	Copyright	:	?? NTL-Inc Co., Ltd
 //
 //	Author		:	Hyun Woo, Koo   ( zeroera@ntl-inc.com )
 //
@@ -63,14 +63,14 @@ public:
 
 	enum eSTATUS					
 	{
-		STATUS_INIT = 0,			// 초기상태
-		STATUS_CREATE,				// 생성상태
-		STATUS_ACCEPT,				// Accept 대기 상태
-		STATUS_CONNECT,				// Connect 대기 상태 ( AcceptEx, ConnectEx 에서 사용 )
-		STATUS_ACTIVE,				// 활동상태
-		STATUS_CLOSE,				// 닫힌 상태
-		STATUS_SHUTDOWN,			// 종료 상태
-		STATUS_DESTROY,				// 소멸 상태
+		STATUS_INIT = 0,			// ??????
+		STATUS_CREATE,				// ????????
+		STATUS_ACCEPT,				// Accept ??? ????
+		STATUS_CONNECT,				// Connect ??? ???? ( AcceptEx, ConnectEx ???? ??? )
+		STATUS_ACTIVE,				// ???????
+		STATUS_CLOSE,				// ???? ????
+		STATUS_SHUTDOWN,			// ???? ????
+		STATUS_DESTROY,				// ??? ????
 		STATUS_CHANGE_PORT,
 
 		MAX_STATUS
@@ -284,9 +284,14 @@ private:
 
 	void								Destroy();
 
-private:
+	private:
 
 	int									CheckForSending(CNtlPacket* pPacket);
+
+#if !defined(_WIN32)
+	void								GetSendBufferAndSize(CNtlPacket* pPacket, BYTE** ppBuf, WORD* pSize);
+	bool								DecodeRecvPacket(const BYTE* pWire, WORD wireTotalLen, BYTE** ppOurBuf, WORD* pOurTotalLen);
+#endif
 
 private:
 
@@ -376,6 +381,12 @@ private:
 	DWORD								m_dwTimeTrafficControlStarted;
 	bool								m_bIsTrafficHeavy;
 	bool								m_bHasWrittenHeavyTrafficLog;
+
+#if !defined(_WIN32)
+	// Global wire layout: encode (send) and decode (recv) so Linux matches Windows client.
+	BYTE								m_wireEncodeBuffer[PACKET_HEADSIZE + PACKET_MAX_SIZE];
+	BYTE								m_wireDecodeBuffer[PACKET_HEADSIZE + PACKET_MAX_SIZE];
+#endif
 
 };
 

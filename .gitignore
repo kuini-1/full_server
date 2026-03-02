@@ -17,3 +17,27 @@ DboServerFiles.sln
 /out
 /build_win
 /build_linux
+/build_plan_test
+**/*Zone.Identifier
+
+# IDE / editor
+.vscode/
+
+# Runtime
+logs/
+resource/
+
+# Backup / OS / crash
+*~
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+Desktop.ini
+core
+core.*
+*.core
+*.user
+*.suo
+*.sln.docstates
+*.vcxproj.user

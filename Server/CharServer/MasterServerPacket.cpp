@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "NtlService.h"
 #include "ClientSession.h"
+#include "NtlPacket.h"
+#include "PacketWireLayout.h"
 
 
 //--------------------------------------------------------------------------------------//
@@ -150,7 +152,7 @@ void CMasterServerSession::RecvGameServerChannelUpdated(CNtlPacket * pPacket)
 void CMasterServerSession::RecvUserLoginRes(CNtlPacket * pPacket)
 {
 	sMC_LOGIN_RES * req = (sMC_LOGIN_RES*)pPacket->GetPacketData();
-	
+	printf("[CharServer] Received MC_LOGIN_RES from Master: accountId=%u resultCode=%u\n", (unsigned)req->accountId, (unsigned)req->wResultCode);
 	CPlayer* player = g_PlrMgr->GetPlayer(req->accountId);
 	if(player && player->GetSession())
 	{
@@ -192,6 +194,30 @@ void CMasterServerSession::RecvUserLoginRes(CNtlPacket * pPacket)
 			res->wSlotBasic = CREATE_CHAR_BASIC_SLOT;
 			res->wSlotPremium = CREATE_CHAR_PREMIUM_SLOT;
 			packet.SetPacketLen(sizeof(sCU_LOGIN_RES));
+			{
+				BYTE* buf = packet.GetPacketBuffer();
+				WORD len = packet.GetUsedSize();
+				unsigned hdr = (unsigned)packet.GetHeaderSize();
+				size_t paySize = (len > hdr) ? (size_t)(len - hdr) : 0;
+#if !defined(_WIN32)
+				unsigned int wirePayload = PacketWire_GetWirePayloadSize(CU_LOGIN_RES);
+				printf("[CU_LOGIN_RES hex dump] PacketWire_GetWirePayloadSize=%u opcode=%u\n", wirePayload, (unsigned)CU_LOGIN_RES);
+				if (wirePayload != 0)
+				{
+					unsigned int totalSent = (unsigned int)PACKET_HEADSIZE + wirePayload;
+					printf("[CU_LOGIN_RES hex dump] actual sent to client: %u bytes total (wire payload %u)\n", totalSent, wirePayload);
+					printf("[CU_LOGIN_RES hex dump] app buffer: total=%u (header=%u payload=%zu)\n", (unsigned)len, hdr, paySize);
+				}
+				else
+#endif
+				printf("[CU_LOGIN_RES hex dump] total=%u bytes (header=%u payload=%zu)\n", (unsigned)len, hdr, paySize);
+				printf("[CU_LOGIN_RES hex dump] full packet bytes:");
+				for (unsigned i = 0; i < len; i++)
+					printf(" %02X", buf[i]);
+				printf("\n");
+				printf("[CU_LOGIN_RES hex dump] wResultCode=%u lastServerFarmId=%u\n", (unsigned)res->wResultCode, (unsigned)res->lastServerFarmId);
+			}
+			printf("[CharServer] Sending CU_LOGIN_RES to client (success): %u bytes\n", (unsigned)packet.GetUsedSize());
 			g_pApp->Send(player->GetSessionHandle(), &packet);
 		}
 		else

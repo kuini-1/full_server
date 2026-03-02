@@ -1,5 +1,25 @@
 cmake_minimum_required(VERSION 3.15)
 
+# Linux: set compiler before project(). Prefer GCC 9 when available to test packet layout.
+if(UNIX AND NOT APPLE)
+  if(DBO_USE_CLANG)
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+  else()
+    find_program(DBO_GCC_9_CXX NAMES g++-9 DOC "GCC 9 C++ compiler")
+    find_program(DBO_GCC_9_C NAMES gcc-9 DOC "GCC 9 C compiler")
+    if(DBO_GCC_9_CXX AND DBO_GCC_9_C)
+      set(CMAKE_C_COMPILER "${DBO_GCC_9_C}")
+      set(CMAKE_CXX_COMPILER "${DBO_GCC_9_CXX}")
+      set(DBO_LINUX_GCC_9 ON CACHE INTERNAL "Using GCC 9 for Linux build")
+    else()
+      set(CMAKE_C_COMPILER gcc)
+      set(CMAKE_CXX_COMPILER g++)
+      set(DBO_LINUX_GCC_9 OFF CACHE INTERNAL "Using default g++ for Linux build")
+    endif()
+  endif()
+endif()
+
 project(DboServerFiles LANGUAGES C CXX)
 
 # Enforce Linux-only configuration.
@@ -12,6 +32,7 @@ set(DBO_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}")
 message(STATUS "DBO_PROJECT_ROOT=${DBO_PROJECT_ROOT}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/third_party.cmake")
+include(ExternalProject)
 
 function(dbo_collect_sources out_var base_dir)
   file(GLOB_RECURSE _dbo_src
@@ -65,9 +86,11 @@ add_compile_definitions(
 find_package(Threads REQUIRED)
 
 if(DBO_USE_CLANG)
-  set(CMAKE_C_COMPILER clang)
-  set(CMAKE_CXX_COMPILER clang++)
   message(STATUS "Linux: using Clang (DBO_USE_CLANG=ON)")
+elseif(DBO_LINUX_GCC_9)
+  message(STATUS "Linux: using GCC 9 (g++-9) for packet layout test")
+else()
+  message(STATUS "Linux: using default g++ (install g++-9 to try GCC 9)")
 endif()
 
 # Boost (Linux): find shared or system libraries
@@ -196,7 +219,22 @@ add_library(NtlThread STATIC ${_dbo_ntlthread_src})
 target_link_libraries(NtlThread PUBLIC dbo_includes NtlSystem)
 
 dbo_collect_sources(_dbo_ntlnetwork_src "${DBO_PROJECT_ROOT}/Server/NtlNetwork")
-add_library(NtlNetwork STATIC ${_dbo_ntlnetwork_src})
+list(FILTER _dbo_ntlnetwork_src EXCLUDE REGEX ".*[/\\\\]PacketWireLayout\\.cpp$")
+list(FILTER _dbo_ntlnetwork_src EXCLUDE REGEX ".*[/\\\\]PacketWireLayout\\.generated\\.cpp$")
+# One-shot generated wire layer: run generator to produce PacketWireLayout.generated.cpp
+set(_wire_gen_out "${CMAKE_BINARY_DIR}/PacketWireLayout.generated.cpp")
+add_custom_command(OUTPUT "${_wire_gen_out}"
+  COMMAND "${CMAKE_COMMAND}" -E env PYTHONIOENCODING=utf-8
+    python3 "${DBO_PROJECT_ROOT}/tools/gen_packet_wire.py"
+    --wire "${DBO_PROJECT_ROOT}/wire/wire_layout.txt"
+    --our "${DBO_PROJECT_ROOT}/wire/our_layout.txt"
+    -o "${_wire_gen_out}"
+  DEPENDS "${DBO_PROJECT_ROOT}/wire/wire_layout.txt"
+          "${DBO_PROJECT_ROOT}/wire/our_layout.txt"
+          "${DBO_PROJECT_ROOT}/tools/gen_packet_wire.py"
+  WORKING_DIRECTORY "${DBO_PROJECT_ROOT}"
+  COMMENT "Generating packet wire layout (one-shot)")
+add_library(NtlNetwork STATIC ${_dbo_ntlnetwork_src} "${_wire_gen_out}")
 target_link_libraries(NtlNetwork PUBLIC dbo_includes NtlSystem NtlThread Util)
 
 dbo_collect_sources(_dbo_ntlsfx_src "${DBO_PROJECT_ROOT}/Server/NtlSfx")
@@ -206,6 +244,10 @@ target_link_libraries(NtlSfx PUBLIC dbo_includes NtlNetwork NtlSystem NtlThread)
 dbo_collect_sources(_dbo_ntlshared_src "${DBO_PROJECT_ROOT}/Server/NtlShared2")
 add_library(NtlShared STATIC ${_dbo_ntlshared_src})
 target_link_libraries(NtlShared PUBLIC dbo_includes NtlSystem NtlTrigger)
+# Option 1 global packet layout: MS-compatible struct layout for client wire format (no -fpack-struct)
+if(UNIX)
+  target_compile_options(NtlShared PRIVATE -mms-bitfields)
+endif()
 
 dbo_collect_sources(_dbo_ntlgametable_src "${DBO_PROJECT_ROOT}/Server/NtlGameTable")
 add_library(NtlGameTable STATIC ${_dbo_ntlgametable_src})
@@ -266,6 +308,7 @@ else()
   message(STATUS "  Linking Boost.Thread by name: boost_thread")
   target_link_libraries(AuthServer PRIVATE boost_thread)
 endif()
+# Fix 9g/19b/19d: Do NOT use -fpack-struct on MasterServerPacket.cpp. It parses incoming MA_ON_PLAYER_CHECK_RES (69 bytes from Master); packed layout caused segfault when handling that packet (fix log 19d). AU_LOGIN_RES we send remains default layout (839 bytes).
 
 dbo_collect_sources(_dbo_charserver_src "${DBO_PROJECT_ROOT}/Server/CharServer")
 add_executable(CharServer ${_dbo_charserver_src})

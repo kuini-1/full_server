@@ -189,6 +189,18 @@
 - **Next steps:** Add packet size/structure debugging to verify server sends correct packet format matching client expectations.
 - **Date:** 2026-02-19
 
+### 10. Char handshake packets and logging (2026-03)
+
+- **What:** Clarified Char server handshake and added logging to verify client→Char flow.
+- **Handshake:** On client connect, Char sends a fixed 6-byte payload (same as Windows): `03 00 ac 86 f5 74` (total packet 8 bytes: 2-byte header with length 6 + 6-byte payload). Client must receive this before sending `UC_LOGIN_REQ`.
+- **Wire layout:** `sUC_LOGIN_REQ` and `sCU_LOGIN_RES` are both 23 and 13 bytes with `#pragma pack(1)`; wire and our layouts match, so no wire table fix needed for Char login. `UC_LOGIN_REQ` (opcode 2001) is in the wire table (decode wire→our on receive). `CU_LOGIN_RES` (opcode 3003) is not in the table (generator opcode mapping off-by-one for CU); we send raw 13-byte payload, which matches client expectation.
+- **Logging added:**
+  - Char `OnAccept`: log handshake bytes sent to client.
+  - Char when sending `CU_LOGIN_RES`: log "Sending CU_LOGIN_RES to client (success): N bytes".
+- **How to use:** When testing login, check Char server log: (1) "Client connection accepted" then "Handshake: sending to client (payload 6 bytes): 03 00 AC 86 F5 74"; (2) if client sends, you should see "[PostRecv] *** DATA RECEIVED!***" and "[CharServer] Received UC_LOGIN_REQ from client"; (3) after Master responds, "Sending CU_LOGIN_RES to client (success): 15 bytes". If (1) appears but not (2), the client is not sending (wrong handshake or client not connecting to Char). If (2) appears but not (3), Master→Char or send path issue.
+- **Files changed:** `Server/CharServer/ClientSession.cpp`, `Server/CharServer/MasterServerPacket.cpp`, `docs/LINUX_LOGIN_CHAR_SERVER_PORT_LOG.md`
+- **Date:** 2026-03-02
+
 ---
 
 ## Current Status

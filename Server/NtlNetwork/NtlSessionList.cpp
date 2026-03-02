@@ -20,7 +20,9 @@
 #if !defined(_WIN32)
 #include <map>
 #endif
+#include <set>
 
+static std::set<CNtlSession*> s_timeoutLoggedSessions;
 
 //-----------------------------------------------------------------------------------
 //		Purpose	:
@@ -105,10 +107,14 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 		//	}
 			/*else*/ if( false == pSession->ValidCheck( dwTickTime ) )
 			{
-				// Only log timeout once per session - check if session is already being disconnected
+				// Log timeout only once per session to avoid spam until the session is removed
 				if (!pSession->IsShutdownable() && pSession->IsStatus(CNtlConnection::STATUS_ACTIVE))
 				{
-					NTL_PRINT(PRINT_SYSTEM, "The session[%X] should be disconnected due to timeout.", pSession);
+					if (s_timeoutLoggedSessions.find(pSession) == s_timeoutLoggedSessions.end())
+					{
+						s_timeoutLoggedSessions.insert(pSession);
+						NTL_PRINT(PRINT_SYSTEM, "The session[%X] should be disconnected due to timeout.", pSession);
+					}
 				}
 				pSession->Disconnect( false );	
 			}
@@ -158,6 +164,7 @@ void CNtlSessionList::ValidCheck(DWORD dwTickTime)
 
 			if (pSession->CanbeDestroy())
 			{
+				s_timeoutLoggedSessions.erase(pSession);
 				it = m_sessionList.Remove(it);
 				m_pNetworkRef->PostNetEventMessage((WPARAM)NETEVENT_DESTROY, (LPARAM)pSession);
 
