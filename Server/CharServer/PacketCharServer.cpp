@@ -168,6 +168,10 @@ void CClientSession::SendCharCreateReq(CNtlPacket * pPacket)
 		return;
 	}
 
+	printf("[CharServer] UC_CHARACTER_ADD_REQ: byRace=%u byClass=%u byGender=%u byFace=%u byHair=%u byHairColor=%u bySkinColor=%u\n",
+		(unsigned)req->byRace, (unsigned)req->byClass, (unsigned)req->byGender,
+		(unsigned)req->byFace, (unsigned)req->byHair, (unsigned)req->byHairColor, (unsigned)req->bySkinColor);
+
 	CCharServer* app = (CCharServer*)g_pApp;
 
 	//check & remove from queue
@@ -225,7 +229,11 @@ void CClientSession::SendCharCreateReq(CNtlPacket * pPacket)
 	{
 		NewbieTblData = (sNEWBIE_TBLDAT*)app->g_pTableContainer->GetNewbieTable()->GetNewbieTbldat(req->byRace, req->byClass);
 		if (NewbieTblData == NULL)
+		{
 			resultcode = CHARACTER_RACE_NOT_ALLOWED;
+			printf("[CharServer] CharCreate: CHARACTER_RACE_NOT_ALLOWED for race=%u class=%u (no NewbieTblData)\n",
+				(unsigned)req->byRace, (unsigned)req->byClass);
+		}
 		else if (charname.length() < NTL_MIN_SIZE_CHAR_NAME)
 			resultcode = CHARACTER_TOO_SHORT_NAME;
 		else if (charname.length() > NTL_MAX_SIZE_CHAR_NAME)
@@ -242,6 +250,9 @@ void CClientSession::SendCharCreateReq(CNtlPacket * pPacket)
 				resultcode = CHARACTER_SAMENAME_EXIST;
 		}
 	}
+
+	printf("[CharServer] CharCreate validation result: resultcode=%u (race=%u class=%u)\n",
+		(unsigned)resultcode, (unsigned)req->byRace, (unsigned)req->byClass);
 
 	if (resultcode == CHARACTER_SUCCESS)
 	{

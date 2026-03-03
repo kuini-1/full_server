@@ -106,7 +106,11 @@ def extract_protocols_from_headers():
         # Enum typically has OPCODE_BEGIN=base, first opcode=base+1, second=base+2, ...
         counter = base + 1
         content = h.read_text(encoding="utf-8", errors="replace")
-        for m in re.finditer(r"BEGIN_PROTOCOL\s*\(\s*([A-Za-z0-9_]+)\s*\)", content):
+        # Strip block comments and line comments so we don't pick up
+        # BEGIN_PROTOCOL inside /* ... */ or after // (commented-out packets).
+        content_nocomments = re.sub(r"/\*.*?\*/", "", content, flags=re.S)
+        content_nocomments = re.sub(r"//.*", "", content_nocomments)
+        for m in re.finditer(r"BEGIN_PROTOCOL\s*\(\s*([A-Za-z0-9_]+)\s*\)", content_nocomments):
             name = m.group(1)
             if name.startswith("//"):
                 continue
@@ -197,6 +201,22 @@ def compute_copy_ops(wire_size, wire_regions, our_size, our_regions):
         if wire_size == our_size and wire_size > 0:
             return [(0, 0, wire_size)]
         return []
+
+    # Special case: wire has exactly two regions (fixed + array), our layout has
+    # been dumped with full member offsets (many small regions). Collapse our
+    # regions into two aggregated regions that match this pattern:
+    #   - fixed region: [0, array_start)
+    #   - array region: [array_start, our_size)
+    # We assume the last region start offset is the start of the array member.
+    if len(wire_regions) == 2 and len(our_regions) >= 2:
+        o_fixed_off = our_regions[0][0]
+        o_array_off = our_regions[-1][0]
+        if o_array_off > o_fixed_off and our_size > o_array_off:
+            our_regions = [
+                (o_fixed_off, o_array_off - o_fixed_off),
+                (o_array_off, our_size - o_array_off),
+            ]
+
     if len(wire_regions) != len(our_regions):
         if wire_size == our_size:
             return [(0, 0, wire_size)]
@@ -371,7 +391,14 @@ def main():
         # Generate stub that includes all packet headers and one global per struct to force layout dump
         WIRE_DIR.mkdir(parents=True, exist_ok=True)
         stub_path = WIRE_DIR / "PacketLayoutDump.cpp"
-        includes = '#include "NtlSharedCommon.h"\n#include "NtlPacketAll.h"\n#include "NtlPacketWM.h"\n'
+        # Include common + aggregated header, then all individual NtlPacket*.h so that
+        # every BEGIN_PROTOCOL struct we discovered is visible (including MW/WM, etc.).
+        include_lines = ['#include "NtlSharedCommon.h"', '#include "NtlPacketAll.h"']
+        for h in sorted(NTL_SHARED.glob("NtlPacket*.h")):
+            if h.name in ("NtlPacketCommon.h", "NtlPacketAll.h"):
+                continue
+            include_lines.append(f'#include "{h.name}"')
+        includes = "\n".join(include_lines) + "\n"
         # One global per struct so clang dumps each layout (global triggers dump)
         globals_list = "\n".join("char _ref_%s[sizeof(%s)];" % (n.replace("s", ""), n) for n, _ in structs)
         stub_content = '''// Generated stub for -fdump-record-layouts

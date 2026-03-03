@@ -54,9 +54,9 @@ echo -e "\n${GREEN}=== Launch Order ===${NC}"
 start_server "master" "MasterServer" "MasterServer.ini"
 sleep 2
 
-#start_server "auth"   "AuthServer"   "AuthServer.ini"
+start_server "auth"   "AuthServer"   "AuthServer.ini"
 start_server "query"  "QueryServer"  "QueryServer.ini"
-start_server "char"   "CharServer"   "CharServer.ini"
+#start_server "char"   "CharServer"   "CharServer.ini"
 #start_server "chat"   "ChatServer"   "ChatServer.ini"
 start_server "game"   "GameServer"   "GameServer.ini"
 

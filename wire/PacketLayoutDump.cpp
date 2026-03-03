@@ -1,7 +1,39 @@
 // Generated stub for -fdump-record-layouts
 #include "NtlSharedCommon.h"
 #include "NtlPacketAll.h"
+#include "NtlPacketAM.h"
+#include "NtlPacketAU.h"
+#include "NtlPacketCM.h"
+#include "NtlPacketCQ.h"
+#include "NtlPacketCU.h"
+#include "NtlPacketGM.h"
+#include "NtlPacketGN.h"
+#include "NtlPacketGQ.h"
+#include "NtlPacketGT.h"
+#include "NtlPacketGU.h"
+#include "NtlPacketMA.h"
+#include "NtlPacketMC.h"
+#include "NtlPacketMG.h"
+#include "NtlPacketMQ.h"
+#include "NtlPacketMT.h"
+#include "NtlPacketMW.h"
+#include "NtlPacketNG.h"
+#include "NtlPacketQC.h"
+#include "NtlPacketQG.h"
+#include "NtlPacketQM.h"
+#include "NtlPacketQT.h"
+#include "NtlPacketTG.h"
+#include "NtlPacketTL.h"
+#include "NtlPacketTM.h"
+#include "NtlPacketTQ.h"
+#include "NtlPacketTU.h"
+#include "NtlPacketUA.h"
+#include "NtlPacketUC.h"
+#include "NtlPacketUG.h"
+#include "NtlPacketUT.h"
+#include "NtlPacketUtil.h"
 #include "NtlPacketWM.h"
+#include "NtlPacketXR.h"
 
 char _ref_AM_NOTIFY_SERVER_BEGIN[sizeof(sAM_NOTIFY_SERVER_BEGIN)];
 char _ref_AM_HEARTBEAT[sizeof(sAM_HEARTBEAT)];
@@ -142,15 +174,6 @@ char _ref_GM_WEB_SET_KILL_DEBUFF_RES[sizeof(sGM_WEB_SET_KILL_DEBUFF_RES)];
 char _ref_GM_WEB_RESET_SKILL_COOLDOWN_RES[sizeof(sGM_WEB_RESET_SKILL_COOLDOWN_RES)];
 char _ref_GM_WEB_RESET_SKILL_COOLDOWN_ALL_RES[sizeof(sGM_WEB_RESET_SKILL_COOLDOWN_ALL_RES)];
 char _ref_GM_WEB_SET_CHANNEL_STAT_BONUS_RES[sizeof(sGM_WEB_SET_CHANNEL_STAT_BONUS_RES)];
-char _ref_GN_GAME_DATA_RES[sizeof(sGN_GAME_DATA_RES)];
-char _ref_GN_CHAR_SPAWN_REQ[sizeof(sGN_CHAR_SPAWN_REQ)];
-char _ref_GN_WORLD_CREATED_NFY[sizeof(sGN_WORLD_CREATED_NFY)];
-char _ref_GN_WORLD_DESTROYED_NFY[sizeof(sGN_WORLD_DESTROYED_NFY)];
-char _ref_GN_OBJECT_CREATED_NFY[sizeof(sGN_OBJECT_CREATED_NFY)];
-char _ref_GN_OBJECT_DESTROYED_NFY[sizeof(sGN_OBJECT_DESTROYED_NFY)];
-char _ref_GN_OBJECT_WORLD_ENTERED[sizeof(sGN_OBJECT_WORLD_ENTERED)];
-char _ref_GN_OBJECT_WORLD_LEAVED[sizeof(sGN_OBJECT_WORLD_LEAVED)];
-char _ref_GN_PREPARE_ENTER_GAME[sizeof(sGN_PREPARE_ENTER_GAME)];
 char _ref_GN_ENTER_GAME_RES[sizeof(sGN_ENTER_GAME_RES)];
 char _ref_GN_LEAVE_GAME_RES[sizeof(sGN_LEAVE_GAME_RES)];
 char _ref_GN_ENTER_WORLD_RES[sizeof(sGN_ENTER_WORLD_RES)];
@@ -235,7 +258,6 @@ char _ref_GQ_SAVE_SKILL_DATA_REQ[sizeof(sGQ_SAVE_SKILL_DATA_REQ)];
 char _ref_GQ_SAVE_HTB_DATA_REQ[sizeof(sGQ_SAVE_HTB_DATA_REQ)];
 char _ref_GQ_SAVE_BUFF_DATA_REQ[sizeof(sGQ_SAVE_BUFF_DATA_REQ)];
 char _ref_GQ_PC_EXIT[sizeof(sGQ_PC_EXIT)];
-char _ref_GQ_MAKE_AUTH_KEY_REQ[sizeof(sGQ_MAKE_AUTH_KEY_REQ)];
 char _ref_GQ_SHOP_BUY_REQ[sizeof(sGQ_SHOP_BUY_REQ)];
 char _ref_GQ_SHOP_SELL_REQ[sizeof(sGQ_SHOP_SELL_REQ)];
 char _ref_GQ_LOAD_PC_BANK_DATA_REQ[sizeof(sGQ_LOAD_PC_BANK_DATA_REQ)];
@@ -1413,7 +1435,6 @@ char _ref_NG_LEAVE_GAME_REQ[sizeof(sNG_LEAVE_GAME_REQ)];
 char _ref_NG_ENTER_WORLD_REQ[sizeof(sNG_ENTER_WORLD_REQ)];
 char _ref_NG_LEAVE_WORLD_REQ[sizeof(sNG_LEAVE_WORLD_REQ)];
 char _ref_NG_SPS_SERVER_EVENT[sizeof(sNG_SPS_SERVER_EVENT)];
-char _ref_NG_CHAR_SPAWN_RES[sizeof(sNG_CHAR_SPAWN_RES)];
 char _ref_NG_CHAR_READY[sizeof(sNG_CHAR_READY)];
 char _ref_NG_CHAR_MOVE[sizeof(sNG_CHAR_MOVE)];
 char _ref_NG_CHAR_DESTMOVE[sizeof(sNG_CHAR_DESTMOVE)];
@@ -1500,7 +1521,6 @@ char _ref_QG_SAVE_SKILL_DATA_RES[sizeof(sQG_SAVE_SKILL_DATA_RES)];
 char _ref_QG_SAVE_HTB_DATA_RES[sizeof(sQG_SAVE_HTB_DATA_RES)];
 char _ref_QG_SAVE_BUFF_DATA_RES[sizeof(sQG_SAVE_BUFF_DATA_RES)];
 char _ref_QG_PC_EXIT_RES[sizeof(sQG_PC_EXIT_RES)];
-char _ref_QG_MAKE_AUTH_KEY_RES[sizeof(sQG_MAKE_AUTH_KEY_RES)];
 char _ref_QG_SHOP_BUY_RES[sizeof(sQG_SHOP_BUY_RES)];
 char _ref_QG_SHOP_SELL_RES[sizeof(sQG_SHOP_SELL_RES)];
 char _ref_QG_PARTY_ACTIVATE_CHARM_RES[sizeof(sQG_PARTY_ACTIVATE_CHARM_RES)];
@@ -1710,7 +1730,6 @@ char _ref_QG_MASCOT_SEAL_SET_RES[sizeof(sQG_MASCOT_SEAL_SET_RES)];
 char _ref_QG_MASCOT_SEAL_CLEAR_RES[sizeof(sQG_MASCOT_SEAL_CLEAR_RES)];
 char _ref_QM_NOTIFY_SERVER_BEGIN[sizeof(sQM_NOTIFY_SERVER_BEGIN)];
 char _ref_QM_HEARTBEAT[sizeof(sQM_HEARTBEAT)];
-char _ref_QM_CHAR_PUNISH_RES[sizeof(sQM_CHAR_PUNISH_RES)];
 char _ref_QM_SERVER_CONTROL_TURN_OFF_ALL_NFY[sizeof(sQM_SERVER_CONTROL_TURN_OFF_ALL_NFY)];
 char _ref_QM_REPORT_LOAD[sizeof(sQM_REPORT_LOAD)];
 char _ref_QM_PING_RES[sizeof(sQM_PING_RES)];
@@ -2028,7 +2047,6 @@ char _ref_UG_CHAR_DEST_MOVE[sizeof(sUG_CHAR_DEST_MOVE)];
 char _ref_UG_CHAR_CHANGE_HEADING[sizeof(sUG_CHAR_CHANGE_HEADING)];
 char _ref_UG_CHAR_MOVE_COLLISION[sizeof(sUG_CHAR_MOVE_COLLISION)];
 char _ref_UG_CHAR_MOVE_COLLISION_END[sizeof(sUG_CHAR_MOVE_COLLISION_END)];
-char _ref_UG_CHAR_MOVE_SYNC[sizeof(sUG_CHAR_MOVE_SYNC)];
 char _ref_UG_CHAR_CHANGE_DIRECTION_ON_FLOATING[sizeof(sUG_CHAR_CHANGE_DIRECTION_ON_FLOATING)];
 char _ref_UG_CHAR_FOLLOW_MOVE[sizeof(sUG_CHAR_FOLLOW_MOVE)];
 char _ref_UG_CHAR_DASH_KEYBOARD[sizeof(sUG_CHAR_DASH_KEYBOARD)];
@@ -2094,7 +2112,6 @@ char _ref_UG_PARTY_KICK_OUT_REQ[sizeof(sUG_PARTY_KICK_OUT_REQ)];
 char _ref_UG_PARTY_CHANGE_LEADER_REQ[sizeof(sUG_PARTY_CHANGE_LEADER_REQ)];
 char _ref_UG_PARTY_CHANGE_ZENNY_LOOTING_METHOD_REQ[sizeof(sUG_PARTY_CHANGE_ZENNY_LOOTING_METHOD_REQ)];
 char _ref_UG_PARTY_CHANGE_ITEM_LOOTING_METHOD_REQ[sizeof(sUG_PARTY_CHANGE_ITEM_LOOTING_METHOD_REQ)];
-char _ref_UG_PARTY_INVEN_ITEM_RANK_SET_REQ[sizeof(sUG_PARTY_INVEN_ITEM_RANK_SET_REQ)];
 char _ref_UG_BANK_START_REQ[sizeof(sUG_BANK_START_REQ)];
 char _ref_UG_BANK_MOVE_REQ[sizeof(sUG_BANK_MOVE_REQ)];
 char _ref_UG_BANK_MOVE_STACK_REQ[sizeof(sUG_BANK_MOVE_STACK_REQ)];
@@ -2170,7 +2187,6 @@ char _ref_UG_PRIVATESHOP_BUSINESS_WAITTIMEOUT_NFY[sizeof(sUG_PRIVATESHOP_BUSINES
 char _ref_UG_PRIVATESHOP_BUSINESS_PRICEFLUCTUATIONS_REQ[sizeof(sUG_PRIVATESHOP_BUSINESS_PRICEFLUCTUATIONS_REQ)];
 char _ref_UG_PRIVATESHOP_BUSINESS_IMMEDIATE_ITEM_BUYING_REQ[sizeof(sUG_PRIVATESHOP_BUSINESS_IMMEDIATE_ITEM_BUYING_REQ)];
 char _ref_UG_PRIVATESHOP_BUSINESS_CANCEL_REQ[sizeof(sUG_PRIVATESHOP_BUSINESS_CANCEL_REQ)];
-char _ref_UG_PORTAL_START_REQ[sizeof(sUG_PORTAL_START_REQ)];
 char _ref_UG_PORTAL_ADD_REQ[sizeof(sUG_PORTAL_ADD_REQ)];
 char _ref_UG_PORTAL_REQ[sizeof(sUG_PORTAL_REQ)];
 char _ref_UG_PING[sizeof(sUG_PING)];
